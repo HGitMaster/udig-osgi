@@ -287,13 +287,13 @@ public class WMSTileSet implements TileSet {
                     double topleft_y = bboxSrs.getMaxY();
                     double tileleft_x = e.getMinX();
                     double tileleft_y = e.getMaxY();
-                    
-                    double spacex = tileleft_x - topleft_x;
-                    double spacey = topleft_y - tileleft_y;
-                    
-                    int posx = (int)Math.round(spacex/xscale);
+
+                    double spacex = tileleft_x - topleft_x;  // x is  left to right
+                    double spacey = topleft_y - tileleft_y;  // y is top to bottom
+
+                    int posx = (int)Math.round(spacex/xscale); 
                     int posy = (int)Math.round(spacey/yscale);
-                    
+
                     String position = posx + "_" + posy; //$NON-NLS-1$
                     tile.setPosition(position);
                     viewportTiles.put(tileid, tile);

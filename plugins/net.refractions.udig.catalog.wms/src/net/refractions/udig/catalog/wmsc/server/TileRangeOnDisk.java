@@ -1,8 +1,12 @@
 package net.refractions.udig.catalog.wmsc.server;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.imageio.ImageIO;
 
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.preferences.PreferenceConstants;
@@ -39,9 +43,9 @@ public class TileRangeOnDisk extends AbstractTileRange {
 			using_threadpools = false;
 			//this.writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
 		}
-//		else {
-//			this.writeTileWorkQueue = writeTileWorkQueue;
-//		} 		
+		else {
+			this.writeTileWorkQueue = writeTileWorkQueue;
+		} 		
 		
 		// load the disk cache location from plugin preferences
 		String dir = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
@@ -57,24 +61,39 @@ public class TileRangeOnDisk extends AbstractTileRange {
 	 * remove them from the not-loaded list
 	 */
 	private void checkDiskForLoadedTiles() {
-		String filetype = getFileType();
-		Map<String, Tile> tilesToRemove = new HashMap<String, Tile>();
-        for( Iterator<Entry<String, Tile>> iterator = tilesWaitingToLoad.entrySet().iterator(); iterator.hasNext(); ) {
-            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
-            Tile tile = tileentry.getValue();
-            if (tileReadWriter.tileFileExists(tile, filetype)) {
-            	boolean success = tileReadWriter.readTile(tile, filetype);
-            	if (success) {
-            		tilesToRemove.put(tileentry.getKey(), tile);
-            	}
-            }
-        }
-        // Remove any tiles we were able to load
-        for( Iterator<Entry<String, Tile>> iterator = tilesToRemove.entrySet().iterator(); iterator.hasNext(); ) {
-            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
-            tilesWaitingToLoad.remove(tileentry.getKey());
-            //System.out.println("loaded tile from disk");
-        }
+        try {
+            tilesWaitingToLoad_lock.writeLock().lock();      	
+		
+			String filetype = getFileType();
+			Map<String, Tile> tilesToRemove = new HashMap<String, Tile>();
+	        for( Iterator<Entry<String, Tile>> iterator = tilesWaitingToLoad.entrySet().iterator(); iterator.hasNext(); ) {
+	            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
+	            Tile tile = tileentry.getValue();
+	            if (tileReadWriter.tileFileExists(tile, filetype)) {
+	            	boolean success = tileReadWriter.readTile(tile, filetype);
+	            	if (success) {
+	            		tilesToRemove.put(tileentry.getKey(), tile);
+	            	}
+	            }
+	        }
+	        // Remove any tiles we were able to load
+	        for( Iterator<Entry<String, Tile>> iterator = tilesToRemove.entrySet().iterator(); iterator.hasNext(); ) {
+	            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
+	            tilesWaitingToLoad.remove(tileentry.getKey());
+	            //System.out.println("loaded tile from disk");
+//	            File file = new File(tileentry.getValue().getPosition()+"."+filetype);
+//	            try {
+//					ImageIO.write(tileentry.getValue().getBufferedImage(), filetype, file);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+	        }
+	        
+        } finally {
+            // unlock the write lock
+            tilesWaitingToLoad_lock.writeLock().unlock();
+        }	
 	}
 
 	/**

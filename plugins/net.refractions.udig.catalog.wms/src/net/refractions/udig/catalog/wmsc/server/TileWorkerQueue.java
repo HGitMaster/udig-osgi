@@ -9,6 +9,8 @@ import java.util.LinkedList;
  * of threads to be reused to do the work.  It can also be used to manage the threads
  * for sending tile requests out, but there should be a separate queue for each.
  * 
+ * NOTE: This class is not intended to be subclassed or extended.
+ * 
  * The base of this class was copied from IBM's online resource
  * "Java theory and practice: Thread pools and work queues"
  * @see http://www.ibm.com/developerworks/library/j-jtp0730.html
@@ -16,11 +18,12 @@ import java.util.LinkedList;
  * @author GDavis
  *
  */
-public class TileWorkerQueue {
+public final class TileWorkerQueue {
     private final int nThreads;
     private final PoolWorker[] threads;
     private final LinkedList<Runnable> queue;
     public static final int defaultWorkingQueueSize = 16;
+    private boolean isTerminated = false;
 
     public TileWorkerQueue(int nThreads)
     {
@@ -45,9 +48,9 @@ public class TileWorkerQueue {
         public void run() {
             Runnable r;
 
-            while (true) {
+            while (!isTerminated) {
                 synchronized(queue) {
-                    while (queue.isEmpty()) {
+                    while (queue.isEmpty() && !isTerminated) {
                         try
                         {
                             queue.wait();
@@ -57,7 +60,12 @@ public class TileWorkerQueue {
                         }
                     }
 
-                    r = (Runnable) queue.removeFirst();
+                    if (!queue.isEmpty()) {
+                    	r = (Runnable) queue.removeFirst();
+                    }
+                    else {
+                    	r = null;
+                    }
                 }
 
                 // If we don't catch RuntimeException, 
@@ -76,9 +84,14 @@ public class TileWorkerQueue {
      * Stop and delete all the threads
      */
     public void dispose() {
+    	this.isTerminated = true;
         for (int i=0; i<this.nThreads; i++) {
             threads[i] = null;
         }
+        synchronized(queue) {
+            queue.clear();
+            queue.notifyAll();
+        }        
     }
 }
 

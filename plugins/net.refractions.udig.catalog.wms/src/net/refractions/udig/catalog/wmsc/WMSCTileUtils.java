@@ -92,7 +92,7 @@ public class WMSCTileUtils {
         		tileRangeTiles.clear();
         		while (iterator.hasNext()) {
         			if (monitor.isCanceled()) {
-        				this.monitor.done();
+        				cleanup();
         				return;
         			}
         			requestCount++;
@@ -119,7 +119,7 @@ public class WMSCTileUtils {
             	}
         	}
         	
-    		this.monitor.done();
+    		cleanup();
         	return;
 		}
 		
@@ -138,6 +138,17 @@ public class WMSCTileUtils {
 			requestCount = 0;
 			tileRangeBounds = new Envelope();
 			tileRangeTiles.clear();
+		}
+		
+		/**
+		 * Task is complete or cancelled, so cleanup the threads and other objects
+		 */
+		private void cleanup() {
+			requestTileWorkQueue.dispose();
+			writeTileWorkQueue.dispose();
+			requestTileWorkQueue = null;
+			writeTileWorkQueue = null;
+			this.monitor.done();
 		}
 		
 	};	

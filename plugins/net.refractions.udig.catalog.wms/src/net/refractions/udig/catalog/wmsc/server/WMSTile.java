@@ -42,7 +42,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 1.2.0
  */
 public class WMSTile implements Tile {
-	
+
 	private final static boolean testing = false;  // for testing output
 	
     public static final int INERROR = 1;
@@ -118,10 +118,28 @@ public class WMSTile implements Tile {
         return scale;
     }
     
-    /* (non-Javadoc)
+    /**
+     * Set the buffered image while locking and set the state of the tile.
+     * 
 	 * @see net.refractions.udig.catalog.wmsc.server.Tile#setBufferedImage(java.awt.image.BufferedImage)
 	 */
     public void setBufferedImage(BufferedImage im) {
+        Object lock = getTileLock();
+        synchronized (lock) {    	
+        	setBufferedImageInternal(im);
+        	if (getBufferedImage() != null) {
+        		setTileState(WMSTile.OK);
+        	}
+        	else {
+        		setTileState(WMSTile.INERROR);
+        	}
+        }
+    }    
+    
+    /**
+     * See the buffered image without locking.
+     */
+    private void setBufferedImageInternal(BufferedImage im) {
         this.image = im;
     }
     
@@ -140,6 +158,20 @@ public class WMSTile implements Tile {
         // id contains scale and bounds so compare with that
         return getId().compareTo( other.getId() );
     }
+    
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof Tile) {
+			Tile tile = (Tile) arg0;
+			// id contains scale and bounds so compare with that
+			if (getId().equals(tile.getId())) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return super.equals(arg0);
+	}
       
     /* (non-Javadoc)
 	 * @see net.refractions.udig.catalog.wmsc.server.Tile#getTileState()
@@ -226,21 +258,21 @@ public class WMSTile implements Tile {
                 }
                 bufImage = ImageIO.read(inputStream);
                 if (bufImage != null) {
-                    setBufferedImage(bufImage);
+                    setBufferedImageInternal(bufImage);
                     setTileState(WMSTile.OK);
                 }else{
                 	// create an error buffered image
-                    setBufferedImage(createErrorImage());
+                    setBufferedImageInternal(createErrorImage());
                     setTileState(WMSTile.INERROR);
                 }
             } catch (Exception e1) {
             	// create an error buffered image
-                setBufferedImage(createErrorImage());
+                setBufferedImageInternal(createErrorImage());
                 setTileState(WMSTile.INERROR);
                 WmsPlugin.log("error loading tile, placeholder created:", e1); //$NON-NLS-1$
             } catch( Throwable t){
             	// create an error buffered image
-                setBufferedImage(createErrorImage());
+                setBufferedImageInternal(createErrorImage());
                 setTileState(WMSTile.INERROR);
                 WmsPlugin.log("error loading tile, placeholder created:", t); //$NON-NLS-1$
             } finally {

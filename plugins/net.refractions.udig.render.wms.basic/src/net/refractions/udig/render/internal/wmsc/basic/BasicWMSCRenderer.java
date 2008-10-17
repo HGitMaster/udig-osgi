@@ -198,7 +198,7 @@ public class BasicWMSCRenderer extends RendererImpl implements IRenderer {
                 // block until all the missing tiles have come through (and draw them
                 // as they are added to the blocking queue
                 while (!notRenderedTiles.isEmpty()) {
-                    // check that the rendering is not cancelled
+                    // check that the rendering is not canceled
                     if (monitor.isCanceled()) {
                         setState(CANCELLED);       
                         if (testing) {
@@ -245,7 +245,7 @@ public class BasicWMSCRenderer extends RendererImpl implements IRenderer {
                     // only draw tiles that haven't already been drawn (panning fast
                     // can result in listeners being notified the same tile is ready multiple
                     // times but we don't want to draw it more than once per render cycle)
-//                    ReferencedEnvelope viewbounds = getContext().getViewportModel().getBounds();
+                    //ReferencedEnvelope viewbounds = getContext().getViewportModel().getBounds();
                     ReferencedEnvelope viewbounds = getContext().getImageBounds();
                     if (tile != null && tile.getBufferedImage() != null &&
                             viewbounds != null && viewbounds.intersects(tile.getBounds()) &&

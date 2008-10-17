@@ -77,7 +77,7 @@ public abstract class AbstractTileRange implements TileRange {
 		}
 		else {
 			using_threadpools = true;
-			//this.requestTileWorkQueue = requestTileWorkQueue;
+			this.requestTileWorkQueue = requestTileWorkQueue;
 		}        
         
         // calculate what tiles are not yet loaded
