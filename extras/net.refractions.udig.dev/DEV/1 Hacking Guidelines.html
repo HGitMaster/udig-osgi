@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 1 Hacking Guidelines</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 1 Hacking Guidelines -->
+       <h1>1 Hacking Guidelines</h1>
+
+       <p>The uDig application is guided by a small number of general principles. We have also highlighted common mistakes that you should be aware of.</p>
+
+<p>Finally we have gather the <a href="Eclipse House Rules.html" title="Eclipse House Rules">Eclipse House Rules</a> into one location. These are actual rules that must be followed for the application to function as intended Eclipse plug-in.</p>
+
+<h2><a name="1HackingGuidelines-UDIGGuidelines"></a>UDIG Guidelines</h2>
+
+<p>These are simply guidelines and are not required, any plug-in that becomes part of the core eclipse project will have considered the following points:</p>
+
+<h3><a name="1HackingGuidelines-SensibleDefaults"></a>Sensible Defaults</h3>
+
+<ul>
+	<li>application is "user friendly", make the right choices rather than complicate matters</li>
+</ul>
+
+
+<h3><a name="1HackingGuidelines-CodeforConvenience"></a>Code for Convenience</h3>
+
+<ul>
+	<li>this system is designed to be extended by others.</li>
+	<li>principle of "least surprise" applies to developers as well as users</li>
+</ul>
+
+
+<h3><a name="1HackingGuidelines-Codelikeyoumeanit"></a>Code like you mean it</h3>
+
+<ul>
+	<li>this project is on a short timeline, don't waste time in "Analysis Paralysis". We are developers if we change our mind we can change our code.</li>
+	<li>There is time enough for the code base to be entrenched later</li>
+</ul>
+
+
+<h3><a name="1HackingGuidelines-TestTestTest"></a>Test Test Test</h3>
+
+<ul>
+	<li>You are a Java developer - please use JUnit rather than test everything by hand</li>
+</ul>
+
+
+<h3><a name="1HackingGuidelines-StaticAnalysis"></a>Static Analysis</h3>
+<ul>
+	<li>Run Find Bugs on each plug-in when it is committed.  Find Bugs is included in the extras pack and is run by right clicking on a project and selecting <b>Find Bugs &gt; Find Bugs</b>.</li>
+</ul>
+
+
+<p>Other things that you would normally expect to see in this list are covered by Eclipse Configuration, using the code formatter to supply file headers and that sort of thing. We don't want to waste your time, or ours, deciding where spaces should go.</p>
+
+<h3><a name="1HackingGuidelines-ProvideWarningswithDefaults"></a>Provide Warnings with Defaults</h3>
+
+<p>When you are programmatically looking up something that should or could be supplied by a developer, but you resort to a default, please provide a warning. This way the user knows that they <b>can</b> provide their own value (or implementation, etc.). This is in reference to aspects of the framework, not the GUI, which should always use sensible defaults.</p>
+
+<h2><a name="1HackingGuidelines-CommonMistakes"></a>Common Mistakes</h2>
+
+<p>The following is a persistent problem, in the sense that it keeps following us around.</p>
+
+<h3><a name="1HackingGuidelines-EclipseRCPGuideline"></a>Eclipse RCP Guideline</h3>
+
+<ul>
+	<li>Anything that references a resource is not intended for RCP developers because of the extra code and dependencies on workspaces it pulls in. So if you see the org.eclipse.core.resources plug-in in your dependency list, or see an import for some class from that package, you're probably doing something wrong.</li>
+</ul>
+
+
+<p><em>Recently the 3.1 M5 release has improved class discovery to the level where only classes which are visible from your work area can be found.</em></p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=3490">[wiki]</a>
+</small>
+    </body>
+</html>

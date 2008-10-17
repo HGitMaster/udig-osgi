@@ -1,0 +1,172 @@
+package net.refractions.udig.catalog.wmsc.server;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import net.refractions.udig.project.internal.ProjectPlugin;
+import net.refractions.udig.project.preferences.PreferenceConstants;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
+import com.vividsolutions.jts.geom.Envelope;
+
+/**
+ * A TileRangeOnDisk represents a set of Tiles in a given bounds and stores them on disk.  
+ * This TileRange is responsible for fetching the individual tiles if they are not yet
+ * "complete" and ready to paint, which it does by first checking if they are stored on
+ * disk, and then through a TiledWebMapServer.  The  TileRange really only lives for the 
+ * cycle of fetching all the tiles.  Once then TileRange has finished loading (when all the 
+ * tiles are complete), its use is pretty much done. 
+ * 
+ * Every time a tile is "completed", all listeners will be notified.
+ * 
+ * @author GDavis
+ * @since 1.2.0
+ */
+public class TileRangeOnDisk extends AbstractTileRange {
+
+	private TileImageReadWriter tileReadWriter;
+	private TileWorkerQueue writeTileWorkQueue;
+	
+	public TileRangeOnDisk(TiledWebMapServer server, TileSet tileset,
+			Envelope bounds, Map<String, Tile> tiles, TileWorkerQueue requestTileWorkQueue,
+			TileWorkerQueue writeTileWorkQueue) {
+		super(server, tileset, bounds, tiles, requestTileWorkQueue);
+		
+		if (writeTileWorkQueue == null) {
+			using_threadpools = false;
+			//this.writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
+		}
+//		else {
+//			this.writeTileWorkQueue = writeTileWorkQueue;
+//		} 		
+		
+		// load the disk cache location from plugin preferences
+		String dir = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
+		tileReadWriter = new TileImageReadWriter(server, dir);
+		
+		// the super's constructor will have built the list of tiles not loaded, so
+		// now remove any tiles that we can find already on disk from before
+		checkDiskForLoadedTiles();
+	}
+
+	/**
+	 * Check the disk for any tiles that have not yet been loaded, load them, and
+	 * remove them from the not-loaded list
+	 */
+	private void checkDiskForLoadedTiles() {
+		String filetype = getFileType();
+		Map<String, Tile> tilesToRemove = new HashMap<String, Tile>();
+        for( Iterator<Entry<String, Tile>> iterator = tilesWaitingToLoad.entrySet().iterator(); iterator.hasNext(); ) {
+            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
+            Tile tile = tileentry.getValue();
+            if (tileReadWriter.tileFileExists(tile, filetype)) {
+            	boolean success = tileReadWriter.readTile(tile, filetype);
+            	if (success) {
+            		tilesToRemove.put(tileentry.getKey(), tile);
+            	}
+            }
+        }
+        // Remove any tiles we were able to load
+        for( Iterator<Entry<String, Tile>> iterator = tilesToRemove.entrySet().iterator(); iterator.hasNext(); ) {
+            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
+            tilesWaitingToLoad.remove(tileentry.getKey());
+            //System.out.println("loaded tile from disk");
+        }
+	}
+
+	/**
+	 * Try caching the tile on disk.
+	 */
+	public void cacheTile(Tile tile) {
+		saveTileToDisk(tile, new NullProgressMonitor());
+	}
+	
+    /**
+     * This method will attempt to save a Tile's image to disk.  It checks if
+     * thread pools are being used, if not it will create
+     * a single thread and use it.
+     * 
+     * @param tile
+     * @param monitor
+     * @throws Exception
+     */
+    protected void saveTileToDisk( final Tile tile, final IProgressMonitor monitor ) {
+
+    	if (using_threadpools) {
+	    	Runnable r = new Runnable() {
+	            public void run() {
+	            	internalSaveTileToDisk(tile, monitor);
+	            }
+	        };
+	        writeTileWorkQueue.execute(r);
+    	}
+    	else {
+    		Thread t = new Thread() {
+    			@Override
+    			public void run() {
+    				internalSaveTileToDisk(tile, monitor);
+    			}
+    		};
+    		t.start();
+    	}    	
+    }   
+    
+    /**
+     * Do the work of saving a tile to disk
+     * 
+     * @param tile
+     * @param monitor
+     */
+    private void internalSaveTileToDisk(final Tile tile, final IProgressMonitor monitor) {
+        // get a lock on the tile and only write it to disk if it has a valid
+    	// buffered image
+        Object lock = tile.getTileLock();
+        if (testing) {
+            System.out.println("getting lock for disk write: "+tile.getId()); //$NON-NLS-1$
+        }
+        synchronized (lock) {
+            if (testing) {
+                System.out.println("got lock for disk write: "+tile.getId()); //$NON-NLS-1$
+            }
+            // try to write the tile's image to disk
+            if (tile.getBufferedImage() != null) {
+            	String filetype = getFileType();
+            	try {
+            		boolean success = tileReadWriter.writeTile(tile, filetype);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            }
+            
+        } // end synchronized block
+        
+        if (testing) {
+            System.out.println("REMOVING lock for disk write: "+tile.getId()); //$NON-NLS-1$
+        }
+    }
+    
+    /**
+     * Get the file type of the tiles (this is in the format of png, or jpg, etc)
+     * 
+     * @return
+     */
+    protected String getFileType() {
+    	// format is like "image\png" so strip out the beginning
+    	String format = tileset.getFormat();
+    	int indexOf = format.indexOf("\\");
+    	if (indexOf < 0) {
+    		indexOf = format.indexOf("/");
+    		if (indexOf < 0) {
+    			return format;
+    		}
+    	}
+    	if (indexOf >= (format.length()-1) ) {
+    		return format;
+    	}
+    	return format.substring(indexOf+1);
+    }	
+
+}

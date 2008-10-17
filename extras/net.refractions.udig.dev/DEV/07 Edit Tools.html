@@ -1,0 +1,564 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 07 Edit Tools</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 07 Edit Tools -->
+       <h1>07 Edit Tools</h1>
+
+       <p>The Edit Tools represent a real-world application of the uDig Tools framework. </p>
+
+<div>
+<ul>
+    <li><a href='#07EditTools-Overview'>Overview</a></li>
+<ul>
+    <li><a href='#07EditTools-UseofBlackboard'>Use of Blackboard</a></li>
+    <li><a href='#07EditTools-UseofIProvider'>Use of IProvider</a></li>
+</ul>
+    <li><a href='#07EditTools-EditToolFramework'>Edit Tool Framework</a></li>
+<ul>
+    <li><a href='#07EditTools-AbstractEditTool'>AbstractEditTool</a></li>
+    <li><a href='#07EditTools-EditToolHandler'>EditToolHandler</a></li>
+    <li><a href='#07EditTools-EditBlackBoard'>EditBlackBoard</a></li>
+<ul>
+    <li><a href='#07EditTools-EditGeom'>EditGeom</a></li>
+</ul>
+</ul>
+    <li><a href='#07EditTools-ToolLifecycle'>Tool Lifecycle</a></li>
+<ul>
+    <li><a href='#07EditTools-EnablementBehaviour'>EnablementBehaviour</a></li>
+    <li><a href='#07EditTools-Activator'>Activator</a></li>
+</ul>
+    <li><a href='#07EditTools-ToolFunctionality'>Tool Functionality</a></li>
+<ul>
+    <li><a href='#07EditTools-Behaviour'>Behaviour</a></li>
+</ul>
+    <li><a href='#07EditTools-EventHandling'>Event Handling</a></li>
+<ul>
+    <li><a href='#07EditTools-EventBehaviour'>EventBehaviour</a></li>
+    <li><a href='#07EditTools-EditToolConfigurationHelper'>EditToolConfigurationHelper</a></li>
+<ul>
+    <li><a href='#07EditTools-OrderedList'>Ordered List</a></li>
+    <li><a href='#07EditTools-MutuallyExclusiveList'>Mutually Exclusive List</a></li>
+    <li><a href='#07EditTools-AdvancedFeatures'>Advanced Features</a></li>
+</ul>
+    <li><a href='#07EditTools-Commands'>Commands</a></li>
+<ul>
+    <li><a href='#07EditTools-SelectionCommandSupport'>Selection Command Support</a></li>
+    <li><a href='#07EditTools-IEditValidator'>IEditValidator</a></li>
+    <li><a href='#07EditTools-PopupBubblesFeedback'>Pop-up Bubbles Feedback</a></li>
+</ul>
+</ul>
+    <li><a href='#07EditTools-ArchivedEditToolDocs'>Archived Edit Tool Docs</a></li>
+<ul>
+<ul>
+    <li><a href='#07EditTools-ClassDiagramofEditToolframework'>Class Diagram of Edit Tool frame work</a></li>
+    <li><a href='#07EditTools-InteractionDiagramofaMouseReleasedEvent'>Interaction Diagram of a Mouse Released Event</a></li>
+</ul>
+</ul>
+</ul></div>
+
+<p>Working with Edit Tools is a pretty advanced topic that brings together all your knowledge of uDig development. Be kind to yourself and go through this material slowly, asking questions on the developer list as needed.</p>
+
+<h1><a name="07EditTools-Overview"></a>Overview</h1>
+
+<p>The main purpose of Tools is to intercept events from the user and produce commands to modify the data model.</p>
+
+<p><img src="download/attachments/8001/EditTool.png" align="absmiddle" border="0"/></p>
+
+<h2><a name="07EditTools-UseofBlackboard"></a>Use of Blackboard</h2>
+
+<p>The layer black board is always used as a place for plug-in collaboration. While the blackboard is often used to store simple data, it can also be used to store complete Objects (with their own functionality and event system). </p>
+
+<p>The Edit Tools framework uses the layer blackboard in this manner, to store an entire object:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">EditBlackboard editBlackboard = layer.getBlackboard().get(EditBlackboardUtil.EDIT_BLACKBOARD_KEY);</pre>
+</div></div>
+
+<p>The <b>EditBlackboard</b> is used to gather up changes provided by the Edit Tools. We are going to move on to the details now, please keep this overview on how tool / layer / command collaboration works in mind.</p>
+
+<p><img src="download/attachments/8001/EditBlackboard.png" align="absmiddle" border="0"/></p>
+
+<h2><a name="07EditTools-UseofIProvider"></a>Use of IProvider</h2>
+
+<p>The <b>IProvider</b> interface is really just used to capture the idea of a pointer or proxy to a value. It represents a promises that a value of the<br/>
+expected type will be available when asked.</p>
+
+<p>The Edit Tool Framework makes use of:</p>
+<ul>
+	<li>IProvider&lt;Cursor&gt; to provide a cursor when and if needed</li>
+	<li>IProvider&lt;String&gt; to provide a message when and if needed</li>
+</ul>
+
+
+<h1><a name="07EditTools-EditToolFramework"></a>Edit Tool Framework</h1>
+
+<p>The central classes in the editing framework are the <b>AbstractEditTool</b>, <b>EditToolHandler</b>, <b>EditBlackboard</b> classes.</p>
+
+<h2><a name="07EditTools-AbstractEditTool"></a>AbstractEditTool</h2>
+
+<p>Edit Tools literally are an extention of SimpleTool (that is they have a right click "context" menu), that delegate their functionality to a small "engine" called EditToolHandler. The AbstractEditTool has little functionality beyond configuring the <b>EditToolHandler</b> object upon creation.</p>
+
+<p><img src="download/attachments/8001/EditTool.GIF" align="absmiddle" border="0"/></p>
+
+<p>AbstractEditTool implementations are responsible implementing several <b>init</b> methods that are used when configuring the EditToolHandler for use. </p>
+<ul>
+	<li>initEnablementBehaviours(List&lt;EnablementBehaviour&gt;) - define when a tool is enabled</li>
+	<li>initActivators(Set&lt;Activator&gt;) - activate and deactivate a tool</li>
+	<li>initAcceptBehaviours(List&lt;Behaviour&gt;) - define how a tool completes its work</li>
+	<li>initCancelBehaviours(List&lt;Behaviour&gt;) - define how a tool cancels its work</li>
+	<li>initEventBehaviours(EditToolConfigurationHelper) - define how the tools responds to events</li>
+</ul>
+
+
+<p>You will notice that each one of these methods is provided with a configuration object (a List or EditToolConfigurationHelper) which it can fill in.</p>
+
+<p>You can think of these methods as provided a simple scripting language which is used to describe what the tool is capable of.</p>
+
+<h2><a name="07EditTools-EditToolHandler"></a>EditToolHandler</h2>
+
+<p>Edit Tool handler operates as an "engine" that will dispatch the incoming events to any active Behaviors; it is responsble for holding the "state" of the AbstractEditTool including the cursor and any draw commands providing visual feedback.</p>
+
+<p><img src="download/attachments/8001/EditToolHandler.GIF" align="absmiddle" border="0"/></p>
+
+<p>The EditToolHandler:</p>
+<ul>
+	<li>is composed of <b>EventBehaviours</b>, <b>Activators</b> and <b>AcceptBehaviours</b> as shown above.</li>
+	<li>accepts mouse and keyboard events from the <b>AbstractEditTool</b> and delegates the events to "EventBehaviour* objects that are valid for the type of event.  All <b>EventBehaviour</b> objects that are valid will have the commands returned by their getCommand() method sent to the map's commandStack for execution.</li>
+	<li><b>Activators</b> are ran when the tool is activated and deactivated.</li>
+	<li><b>AcceptBehaviours</b> are ran when the tool is deactivated, when a behaviour requests that the current changes be accepted or when the user presses "Enter" key.</li>
+	<li>has a locking mechanism so that a group of <b>EventBehaviours</b> can lock out other potentially valid behaviours. <br clear="all" /> For example a move vertex behaviour (Valid during drag events) may wish to lock the handler so that the SelectVertexBox behaviour (Also valid during drag events) is not disturbed.</li>
+	<li>The current geometry and shape (shell or hole) being edited can be accessed throught the <b>EditToolHandler</b></li>
+	<li>Use <b>MouseTracker</b> if you want to inspect the queue of previous events, current point and so on</li>
+	<li>The current edit state can be accessed via the <b>EditToolHandler</b>.  The possible edit states are listed in the enum <b>EditState</b>.</li>
+</ul>
+
+
+<h2><a name="07EditTools-EditBlackBoard"></a>EditBlackBoard</h2>
+
+<p>The Edit Blackboard is used as a scratch pad for EditTools to collaborate; literally it is used to hold on to any selected Features (each selected Feature is represented as an <b>EditGeom</b>. You can switch between tools, each of which will interact with the EditBlackBoard in a different manner.</p>
+
+<p><img src="download/attachments/8001/EditBlackBoard.GIF" align="absmiddle" border="0"/></p>
+
+<p>The main responsibility of the EditBlackboard is to provide methods for efficiently editing geometries. To that effect:</p>
+<ul>
+	<li>Geometries can be added to the blackboard and vertices can be added, removed and moved by making requests to the <b>EditBlackboard</b>.  When a Geometry is added to the <b>EditBlackboard</b> it is converted into one or more <b>EditGeom</b> objects.  All editing is done in terms of pixels, the <b>EditBlackboard</b> will transparently perform a requested operation on all coordinates mapping to the pixel(s) and will handle all the transformations required.</li>
+	<li>The EditBlackboard also has a <b>Selection</b> which is a selection of points and Coordinates at that point.  When the Selection is obtained it is a snap shot of the selection at that point in time.  If a reference is maintained to a selection and a point is added to the selection via the methods on the <b>EditBlackboard</b> the referenced Selection will not change.  <b>HOWEVER</b>, if a point is moved on the EditBlackboard the selection will be updated to reflect the move.  Similarly, if a point is removed from the <b>EditBlackboard</b> the point (and all associated coordinates) will be removed from the selection.  It is important to not keep references to <b>Selections</b> any longer than necessary because <b>Selections</b> will receive events as long as they are referenced.  The <b>EditBlackboard</b>'s list of listeners are weak references so all that needs to be done to remove a listener from the <b>EditBlackboard</b> is to remove all references to the object.  That is also a warning.  If an object is listening to the <b>EditBlackboard</b> it is important to keep a reference to the listener.</li>
+	<li>The <b>EditBlackboard</b> can be useful for implementing coverage-like editing.  If two geometries are added to the <b>EditBlackboard</b> that share an edge; edits moving one of the shared vertices will automatically move the coordinates in both geometries.</li>
+</ul>
+
+
+<h3><a name="07EditTools-EditGeom"></a>EditGeom</h3>
+
+<p>Represents a selected Feature on the EditBlackboard, while this sounds like a simple responsibility the reality is a bit more complicated in that visual feedback and interaction requires a <b>very</b> fast response. As such the EditGeom maintains a bunch of cached information (usually simplifications of the original Geometry) in order to respond quickly to mouse clicks.</p>
+
+<p><img src="download/attachments/8001/EditGeom.GIF" align="absmiddle" border="0"/></p>
+
+<p>In the above diagram you can see a little bit of the "cached information" in the form of:</p>
+<ul>
+	<li>PrimitiveShape -</li>
+	<li>PointCoordMap - Maps from a Point to a list of LazyCoord represented by that Point</li>
+	<li>Point - an x,y location on the screen that can be compared using the \=\= operator for speed</li>
+	<li>LazyCoord - an implementation of JTS Coordinate that has been transformed; will not actually calculate the final value until needed</li>
+</ul>
+
+
+<h1><a name="07EditTools-ToolLifecycle"></a>Tool Lifecycle</h1>
+
+<p><b>AbstractEditTool.initEnablementBehaviours</b> is used to define when the tools should be enabled for use. </p>
+
+<p>Here is an example from the PointTool:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">protected</span> void initEnablementBehaviours( List&lt;EnablementBehaviour&gt; helper ) {
+        helper.add(<span class="code-keyword">new</span> WithinLegalLayerBoundsBehaviour());
+        helper.add(<span class="code-keyword">new</span> ValidToolDetectionActivator(<span class="code-keyword">new</span> <span class="code-object">Class</span>[]{Geometry.class, Point.class, MultiPoint.class}));
+    }</pre>
+</div></div>
+
+<p><b>initActivators</b> is used to provide a list of things to do when the tool is enabled and disabled.</p>
+
+<p>Here is an example from the PointTool:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">protected</span> void initActivators( Set&lt;Activator&gt; activators ) {
+        activators.add(<span class="code-keyword">new</span> EditStateListenerActivator());
+        activators.add(<span class="code-keyword">new</span> DeleteGlobalActionSetterActivator());
+        activators.add(<span class="code-keyword">new</span> DrawGeomsActivator(DrawGeomsActivator.DrawType.POINT));
+        activators.add(<span class="code-keyword">new</span> DrawCurrentGeomVerticesActivator());
+        activators.add(<span class="code-keyword">new</span> SetSnapBehaviourCommandHandlerActivator());
+        activators.add(<span class="code-keyword">new</span> AdvancedBehaviourCommandHandlerActivator());
+        activators.add(<span class="code-keyword">new</span> SetRenderingFilter());
+        activators.add(<span class="code-keyword">new</span> GridActivator());
+    }</pre>
+</div></div>
+
+<h2><a name="07EditTools-EnablementBehaviour"></a>EnablementBehaviour</h2>
+
+<p>An EnablementBehaviour is a callback object invoked by EditToolHandler to check if the tool can be used at the present time. Please note that this callback object will return a String to be used in the status bar; or null if everything is okay.</p>
+
+<p><img src="download/attachments/8001/EnablementBehavior.GIF" align="absmiddle" border="0"/></p>
+
+<h2><a name="07EditTools-Activator"></a>Activator</h2>
+
+<p>An activator is a simple callback object invoked by the EditToolHandler to wire the edit tool framework up to the application (using listeners, providing draw commands for visual feedback and so forth):</p>
+<ul>
+	<li>AbstractEditTool.setActive( boolean ) is called</li>
+	<li>AbstractEditTool.setContext( IToolContext ) is called</li>
+</ul>
+
+
+<p><img src="download/attachments/8001/Activator.GIF" align="absmiddle" border="0"/></p>
+
+<p>In practice an Activator is used in a manner similar to a Runnable to wire the application together - examples include:</p>
+<ul>
+	<li>listening to the data model (responsible for FeatureStore events)</li>
+	<li>listening to the "EditManager" (responsible for the commit / revert workflow)</li>
+	<li>listening to the EditBlackboard and adding/invalidating DrawGeomsCommands as needed for visual feedback</li>
+	<li>adding a Grid to the Map for snapping</li>
+	<li>and so on...</li>
+</ul>
+
+
+<h1><a name="07EditTools-ToolFunctionality"></a>Tool Functionality</h1>
+
+<p><b>initAcceptsBehaviours</b> lists ways in which the tool knows a feature is "Accepted" and ready to be sent to the FeatureStore. The <b>AcceptChangesBehaviour</b> is bound to a double click action or the "Enter" key being pressed. You may also consider the <b>DeslectEditShapeAcceptBehaviour</b> to accept a change when the user moves on to a different feature.</p>
+
+<p>Here is an example from the PointTool:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">protected</span> void initAcceptBehaviours( List&lt;Behaviour&gt; acceptBehaviours ) {
+        acceptBehaviours.add( <span class="code-keyword">new</span> AcceptChangesBehaviour(Point.class, <span class="code-keyword">false</span>) );
+        acceptBehaviours.add( <span class="code-keyword">new</span> DeselectEditShapeAcceptBehaviour() );
+    }</pre>
+</div></div>
+
+<p><b>initCancelBehaviors</b> lists way for a tool to know that modifications to a feature are "Canceled" and should be thrown out.</p>
+
+<p>Here is an example from the PointTool:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">protected</span> void initCancelBehaviours( List&lt;Behaviour&gt; cancelBehaviours ) {
+        cancelBehaviours.add(<span class="code-keyword">new</span> DefaultCancelBehaviour());
+    }</pre>
+</div></div>
+
+<h2><a name="07EditTools-Behaviour"></a>Behaviour</h2>
+
+<p>Functionality used by the EditToolHandler if the <b>isValid</b> method returns true.</p>
+
+<p><img src="download/attachments/8001/Behaviour.GIF" align="absmiddle" border="0"/></p>
+
+<p>Example implementations:</p>
+<ul>
+	<li><b>AcceptChangesBehaviour</b> is bound to a double click action or the "Enter" key being pressed.</li>
+	<li><b>DeslectEditShapeAcceptBehaviour</b> to accept a change when the user moves on to a different feature.</li>
+	<li><b>DefaultCanelBehaviour</b> is based on the "Clear Selection" menu bar command, or the "Esc" key being pressed.</li>
+</ul>
+
+
+<h1><a name="07EditTools-EventHandling"></a>Event Handling</h1>
+
+<p>The <b>initEventBehaviours</b> captures how the AbstractEditTool interacts with the user. Rather than a simple list, a EditToolConfigurationHelper object is provided for you to fill in. You can treat this method like a small scripting language in which you can define alternative functionality based on what the user is doing (say if the user is over top of a vertex you may want to move the vertex rather than create a new point).</p>
+
+<p>Here is an example from the PointTool:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">protected</span> void initEventBehaviours( EditToolConfigurationHelper helper ) {
+        helper.add( <span class="code-keyword">new</span> DrawCreateVertexSnapAreaBehaviour());
+        helper.add(<span class="code-keyword">new</span> StartEditingBehaviour(ShapeType.POINT));    
+        helper.add( <span class="code-keyword">new</span> AcceptBehaviour() );
+        helper.add( <span class="code-keyword">new</span> SetSnapSizeBehaviour());
+        helper.done();
+   }</pre>
+</div></div>
+
+<h2><a name="07EditTools-EventBehaviour"></a>EventBehaviour</h2>
+
+<p>EventBehaviour is literally the point of the edit tool framework; it is responsible for turning events into commands. Implementations exist for a range of activities; and you are free to make your own.</p>
+
+<p><img src="download/attachments/8001/EventBehaviour.GIF" align="absmiddle" border="0"/></p>
+
+<p><b>EventBehaviour</b> is called when when events are raised by the mouse or keyboard.  All <b>EventBehaviours</b> have an <em>isValid()</em> method that is called to determine whether or not the behaviour is can be used given the current state of the <b>EditToolHandler</b> and and the type of event that occurred.  If the <b>EventBehaviour</b> is valid then the <em>getCommand()</em> method will be called by the <b>EditToolHandler</b> and executed by the current map's command manager.  Since both <em>isValid()</em> and <em>getCommand()</em> are executed in the display thread the amount of work they do must be very quickly executed so as to not impact the user interaction.</p>
+
+<p>*EventBehaviour.isValid() is used to determine the behavior is applicable or can be used.</p>
+
+<p>Here is an example from AcceptBehaviour:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">public</span> <span class="code-object">boolean</span> isValid( EditToolHandler handler, MapMouseEvent e, EventType eventType ) {
+    <span class="code-object">boolean</span> legalState=handler.getCurrentState()==EditState.CREATING;
+    <span class="code-object">boolean</span> legalEventType=eventType==EventType.RELEASED;
+    <span class="code-object">boolean</span> shapeAndGeomNotNull=handler.getCurrentShape()!=<span class="code-keyword">null</span>;
+    <span class="code-object">boolean</span> button1Released=e.button==MapMouseEvent.BUTTON1;
+        
+    <span class="code-keyword">return</span> legalState &amp;&amp; legalEventType &amp;&amp; shapeAndGeomNotNull &amp;&amp; button1Released &amp;&amp; !e.buttonsDown() &amp;&amp; !e.modifiersDown();
+}</pre>
+</div></div>
+
+<p><b>getCommand()</b> is called to turn the provided event into an UndoableMapCommand that will be executed on your behalf:</p>
+
+<p>Here is an example from AcceptBehaviour:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">public</span> UndoableMapCommand getCommand( EditToolHandler handler, MapMouseEvent e, EventType eventType ) {
+    <span class="code-keyword">if</span>( !isValid(handler, e, eventType) )
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> IllegalArgumentException(<span class="code-quote">"Current state is not legal"</span>); <span class="code-comment">//$NON-NLS-1$
+</span>    
+    List&lt;UndoableMapCommand&gt; commands=<span class="code-keyword">new</span> ArrayList&lt;UndoableMapCommand&gt;();
+    commands.add(handler.getCommand(handler.getAcceptBehaviours()));
+    <span class="code-keyword">if</span>( handler.getCurrentState()==EditState.CREATING)
+        commands.add(<span class="code-keyword">new</span> SetEditStateCommand(handler, EditState.MODIFYING));
+    UndoableComposite undoableComposite = <span class="code-keyword">new</span> UndoableComposite(commands);
+    undoableComposite.setMap(handler.getContext().getMap());
+    <span class="code-keyword">try</span> {
+        undoableComposite.run(<span class="code-keyword">new</span> NullProgressMonitor());
+    } <span class="code-keyword">catch</span> (Exception e1) {
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> RuntimeException(e1);
+    }
+    <span class="code-keyword">return</span> <span class="code-keyword">new</span> UndoRedoCommand(undoableComposite);
+}</pre>
+</div></div>
+
+<p>Finally <b>handleError</b> is used to provide feedback in the case of an exception; feedback can range from a pop up bubble to a simple log message:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">public</span> void handleError( EditToolHandler handler, Throwable error, UndoableMapCommand command ) {
+   EditPlugin.log( <span class="code-quote">"Could not move vertex"</span>, error); <span class="code-comment">//$NON-NLS-1$
+</span>}</pre>
+</div></div>
+
+<h2><a name="07EditTools-EditToolConfigurationHelper"></a>EditToolConfigurationHelper</h2>
+
+<p>This class is where all the "fun" comes into the edit tool framework; the use of this class when implementing <b>AbstractEditTool.initEventBehaviours</b> is where you seriously get to customize and define what the user experience is.</p>
+
+<p>You can <b>add()</b> a Behaviour to an EditToolConfigurationHelper in a manner similar to a list; and call <b>done()</b> at the end of your script:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.add( <span class="code-keyword">new</span> DrawCreateVertexSnapAreaBehaviour());
+helper.add(<span class="code-keyword">new</span> StartEditingBehaviour(ShapeType.POINT));    
+helper.add( <span class="code-keyword">new</span> AcceptBehaviour() );
+helper.add( <span class="code-keyword">new</span> SetSnapSizeBehaviour());
+helper.done();</pre>
+</div></div>
+
+<h3><a name="07EditTools-OrderedList"></a>Ordered List</h3>
+
+<p>You can define list of behaviours to execute in order. This operates in a manner similar to a series of statements in a programming language.</p>
+
+<p>By default behaviours are processed in the DisplayThread:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.startOrderedList();
+helper.add( ... step one ... );
+helper.add( ... step two... );
+helper.stopOrderedList();</pre>
+</div></div>
+<p>Behaviours executed in the display thread should not perform <b>any</b> I/O and should be used for quick updates to the model only.</p>
+
+<p>You can also ask for the behaviours to be run in the command thread:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.startOrderedList( <span class="code-keyword">true</span> );
+helper.add( ... step one ... );
+helper.add( ... step two... );
+helper.stopOrderedList();</pre>
+</div></div>
+<p>This is useful when earlier commands change state required by later commands; or if any I/O is required.</p>
+
+<h3><a name="07EditTools-MutuallyExclusiveList"></a>Mutually Exclusive List</h3>
+
+<p>You can define a mutually exclusive list of behaviours (only the first one that is valid will be used) using the following syntax:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.startMutualExclusiveList();
+helper.add( <span class="code-keyword">new</span> SelectVertexOnMouseDownBehaviour() );
+helper.add( <span class="code-keyword">new</span> SelectVertexBehaviour() );
+helper.add( <span class="code-keyword">new</span> SelectFeatureBehaviour( ... ));
+helper.stopMutualExclusiveList();</pre>
+</div></div>
+
+<p>This operates in a manner similar to a series of if / then / elseif statements in a programming language.</p>
+
+<h3><a name="07EditTools-AdvancedFeatures"></a>Advanced Features</h3>
+
+<p>You can define "advanced features" using the following syntax:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.add( ..normal behaviour... )
+helper.startAdvancedFeatures();
+helper.add( ...behaviour <span class="code-keyword">for</span> advanced mode only... );
+helper.stopAdvancedFeatures();</pre>
+</div></div>
+
+<p>You can also include an optional section of "else features" that will only be included in normal mode:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.add( ..normal behaviour... )
+helper.startAdvancedFeatures();
+helper.add( ...behaviour <span class="code-keyword">for</span> advanced mode only... );
+helper.startElseFeatures();
+helper.add( ...behaviour <span class="code-keyword">for</span> normal mode only... );
+helper.stopElseFeatures();
+helper.stopAdvancedFeatures();</pre>
+</div></div>
+
+<p>The idea of Advanced Features acts as a big switch the user can throw as a Windows &gt; Preference setting. You can consider this switch as a toggle; when it is enabled EditToolConfiguration will read in one configuration</p>
+
+<p>Consider the previous example of PointTool; if we wanted to make an advanced PointTool that in addition to creating points could also select existing points and move them we would have a script like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.add( <span class="code-keyword">new</span> DrawCreateVertexSnapAreaBehaviour());
+helper.add( <span class="code-keyword">new</span> CursorControlBehaviour( .. ));
+
+helper.startMutualExclusiveList(); <span class="code-comment">// choose the first one that works
+</span>  helper.add( <span class="code-keyword">new</span> SelectVertexOnMouseDownBehaviour() );
+  helper.add( <span class="code-keyword">new</span> SelectVertexBehaviour() );
+  helper.add( <span class="code-keyword">new</span> SelectFeatureBehaviour( ... ));        
+helper.stopMutualExclusiveList();
+
+helper.add( <span class="code-keyword">new</span> MoveVertexBehaviour() );
+helper.add( <span class="code-keyword">new</span> AcceptBehaviour() );
+helper.add( <span class="code-keyword">new</span> SetSnapSizeBehaviour());
+helper.done();</pre>
+</div></div>
+
+<p>We can combine both ideas using a single script:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">helper.add( <span class="code-keyword">new</span> DrawCreateVertexSnapAreaBehaviour());
+        
+        {   helper.startAdvancedFeatures();
+            ConditionalProvider defaultMessage = <span class="code-keyword">new</span> ConditionalProvider( handler, Messages.PointTool_select_or_create_feature,Messages.PointTool_add_vertex_or_finish);
+            CursorControlBehaviour.SystemCursorProvider overVertexCursor = <span class="code-keyword">new</span> CursorControlBehaviour.SystemCursorProvider(SWT.CURSOR_SIZEALL);
+            ConditionalProvider overVertexMessage = <span class="code-keyword">new</span> ConditionalProvider( handler, Messages.PointTool_move_vertex,<span class="code-keyword">null</span> );
+            CursorControlBehaviour.SystemCursorProvider overEdgeCursor = <span class="code-keyword">new</span> CursorControlBehaviour.SystemCursorProvider(SWT.CURSOR_CROSS);
+            ConditionalProvider overEdgeMessage = <span class="code-keyword">new</span> ConditionalProvider( handler, Messages.PointTool_add_vertex, <span class="code-keyword">null</span>);
+            helper.add(
+                    <span class="code-keyword">new</span> CursorControlBehaviour(
+                            handler,
+                            defaultMessage,
+                            overVertexCursor,
+                            overVertexMessage, 
+                            overEdgeCursor,
+                            overEdgeMessage
+                    )
+            );
+            helper.stopAdvancedFeatures();
+        }
+
+        <span class="code-comment">// vertex selection OR geometry selection should not both happen so make them a mutual exclusion behaviour
+</span>        {   helper.startMutualExclusiveList();
+            {   helper.startAdvancedFeatures();
+                helper.add( <span class="code-keyword">new</span> SelectVertexOnMouseDownBehaviour() );
+                helper.add( <span class="code-keyword">new</span> SelectVertexBehaviour() );
+
+                SelectFeatureBehaviour selectGeometryBehaviour = <span class="code-keyword">new</span> SelectFeatureBehaviour(<span class="code-keyword">new</span> <span class="code-object">Class</span>[]{Point.class, MultiPoint.class}, BBOX.class);
+                selectGeometryBehaviour.initDefaultStrategies(ShapeType.POINT);
+                helper.add(selectGeometryBehaviour);
+                
+                {   helper.startElseFeatures();
+                    helper.add(<span class="code-keyword">new</span> StartEditingBehaviour(ShapeType.POINT));
+                    helper.stopElseFeatures();
+                }
+                helper.stopAdvancedFeatures();                
+            }
+            helper.stopMutualExclusiveList();
+        }
+        {   helper.startAdvancedFeatures();
+            helper.add( <span class="code-keyword">new</span> MoveVertexBehaviour() );
+            helper.stopAdvancedFeatures();
+        }
+        helper.add( <span class="code-keyword">new</span> AcceptBehaviour() );
+        helper.add( <span class="code-keyword">new</span> SetSnapSizeBehaviour());
+        helper.done();
+    }</pre>
+</div></div>
+
+<h2><a name="07EditTools-Commands"></a>Commands</h2>
+
+<p>The point of an <b>EventBehavior</b> is to set up some (usually undoable) commands for the system to perform. </p>
+
+<h3><a name="07EditTools-SelectionCommandSupport"></a>Selection Command Support</h3>
+
+<p>Selecting feature content is an interesting enough problem that there is a ready made <b>SelectFeaturesAtPointCommand</b> ready to leap into action. </p>
+
+<p><img src="download/attachments/8001/selection.GIF" align="absmiddle" border="0"/></p>
+
+<p>To customize the functionality of this Selection command (or your own selection command). You can make use of the following:</p>
+<ul>
+	<li><b>SelectParameter</b></li>
+	<li><b>SelectStratagy</b> a callback object that will be run as a feature is selected</li>
+	<li><b>DeselectionStratagy</b></li>
+</ul>
+
+
+<p>For more information please review the <b>net.refractions.udig.tutorials.tool.coverage</b> implementation of a selection command that works on a single feature while selecting its neighbors as well.</p>
+
+<p>Here is an example selection parameter taken from the above tutorial:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">protected</span> void initEventBehaviours( EditToolConfigurationHelper helper ) {
+        helper.startMutualExclusiveList();
+        helper.add(<span class="code-keyword">new</span> SelectVertexOnMouseDownBehaviour());
+        helper.add(<span class="code-keyword">new</span> SelectVertexBehaviour());
+        SelectFeatureBehaviour selectFeatureBehaviour =
+        	<span class="code-keyword">new</span> SelectFeatureBehaviour(<span class="code-keyword">new</span> <span class="code-object">Class</span>[]{Geometry.class}, Intersects.class );
+        selectFeatureBehaviour.addSelectionStrategy(<span class="code-keyword">new</span> SelectNeightborsStrategy());
+        
+        helper.add(selectFeatureBehaviour);
+        helper.stopMutualExclusiveList();
+    
+        helper.add( <span class="code-keyword">new</span> MoveVertexBehaviour() );
+        
+        helper.done();
+    }</pre>
+</div></div>
+
+<h3><a name="07EditTools-IEditValidator"></a>IEditValidator</h3>
+
+<p>When manipulating feature content it is really easy to make something that is invalid (say a polygon with a "hole" that crosses the edge of the polygon). While it is easy to catch this problem at the end of the day (when accept behaviours churn through your edit black board and fail when creating a geometry) it is much nicer to provide an immediate check and let the user know something is wrong.</p>
+
+<p><img src="download/attachments/8001/edit_validator.GIF" align="absmiddle" border="0"/></p>
+
+<p>The class will return a String consisting of the error message.</p>
+
+<p>The <b>IEditValidator</b> interface defines a single <b>isValid</b> method; the implementation here is an example from PolygonCreationValidator:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">public</span> <span class="code-object">String</span> isValid( EditToolHandler handler, MapMouseEvent event, EventType type ) {
+        PrimitiveShape shell = handler.getCurrentShape();
+        Point newPoint = Point.valueOf(event.x, event.y);
+
+        <span class="code-object">int</span> lastPointIndex = shell.getNumPoints()-1;
+        <span class="code-keyword">if</span>( shell.getNumPoints()&gt;2 &amp;&amp; EditUtils.instance.intersection(shell.getPoint(lastPointIndex), newPoint, shell, 0, lastPointIndex) ){
+            <span class="code-keyword">return</span> Messages.ValidHoleValidator_selfIntersection;
+        }
+        <span class="code-keyword">return</span> <span class="code-keyword">null</span>;
+    }</pre>
+</div></div>
+
+<p>The following implementations are provided out of the box:</p>
+<ul>
+	<li>IEditValidator.TRUE - class constant that is always valid</li>
+	<li>LegalShapeValidator - will fail if a geometry could not be created from the edit blackboard</li>
+	<li>PolygonCreationValidator</li>
+	<li>ValidHoleValidator</li>
+</ul>
+
+
+<p>You will want to make your own implementation when providing immediate feedback on additional restrictions.</p>
+
+<h3><a name="07EditTools-PopupBubblesFeedback"></a>Pop-up Bubbles Feedback</h3>
+
+<p>When changing snapping behavior; or failing a validation check you can see feedback in the form of little pop-up bubbles. Here is how this is done for MoveVertexBehavior when a validation fails.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">private</span> void openErrorBubble( EditToolHandler handler, MapMouseEvent e, <span class="code-object">String</span> errorMessage ) {
+    MessageBubble bubble=<span class="code-keyword">new</span> MessageBubble(e.getPoint().x, e.getPoint().y, errorMessage,
+                    PreferenceUtil.instance().getMessageDisplayDelay() );
+    AnimationUpdater.runTimer(handler.getContext().getMapDisplay(), bubble);</pre>
+</div></div>
+
+<p>Note the positioning of the bubble right at the location the user just gave us - making sure they notice the feedback.</p>
+
+<h1><a name="07EditTools-ArchivedEditToolDocs"></a>Archived Edit Tool Docs</h1>
+
+<p>Edit tools are another sub-type of tools, however they do not (yet) have their own extension point.  Instead they are extensions of the net.refractions.udig.project.ui.tool extension point.  Because there are a large number of editing tools that can be created an many of them have similar functionality there is a little framework associated with edit tools development.  </p>
+
+<h3><a name="07EditTools-ClassDiagramofEditToolframework"></a>Class Diagram of Edit Tool frame work</h3>
+<p><a href='http://udig.refractions.net/confluence//download/attachments/8001/edit_tool_design.png' target='edit_tool_design.png' onClick='window.open("http://udig.refractions.net/confluence//download/attachments/8001/edit_tool_design.png", "edit_tool_design.png", "height=900,width=1218,menubar=no,status=no,toolbar=no"); return false;'><img src="download/thumbnails/8001/edit_tool_design.png" align="absmiddle" border="0"/></a></p>
+
+<h3><a name="07EditTools-InteractionDiagramofaMouseReleasedEvent"></a>Interaction Diagram of a Mouse Released Event</h3>
+<p><a href='http://udig.refractions.net/confluence//download/attachments/8001/mouse_click_nonselected_feature_behaviour.png' target='mouse_click_nonselected_feature_behaviour.png' onClick='window.open("http://udig.refractions.net/confluence//download/attachments/8001/mouse_click_nonselected_feature_behaviour.png", "mouse_click_nonselected_feature_behaviour.png", "height=407,width=932,menubar=no,status=no,toolbar=no"); return false;'><img src="download/thumbnails/8001/mouse_click_nonselected_feature_behaviour.png" align="absmiddle" border="0" title="sequence diagram of clicking on a feature that is not selected"/></a></p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=8001">[wiki]</a>
+</small>
+    </body>
+</html>

@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 06 Traditional Menus using Actions and ActionSets</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 06 Traditional Menus using Actions and ActionSets -->
+       <h1>06 Traditional Menus using Actions and ActionSets</h1>
+
+       <p>Contribution additional functionality into Eclipse RCP applications is traditionally done with Actions. This functionality is now deprecated; new code should look into use commands and handlers.</p>
+
+<ul>
+	<li><a href="#06TraditionalMenususingActionsandActionSets-MenuPathConstants">Menu Path Constants</a></li>
+	<li><a href="#06TraditionalMenususingActionsandActionSets-UseofIAction">Use of IAction</a></li>
+	<li><a href="#06TraditionalMenususingActionsandActionSets-DefaultRCPMenusPaths">Default RCP Menus Paths</a>
+	<ul>
+		<li><a href="#06TraditionalMenususingActionsandActionSets-AddinganIActionusinganActionBarAdvisor">Adding an IAction using an ActionBarAdvisor</a></li>
+		<li><a href="#06TraditionalMenususingActionsandActionSets-AddinganIActionusinganActionSet">Adding an IAction using an ActionSet</a></li>
+	</ul>
+	</li>
+	<li><a href="#06TraditionalMenususingActionsandActionSets-GeospatialPlatformMenuPaths">Geospatial Platform Menu Paths</a></li>
+	<li><a href="#06TraditionalMenususingActionsandActionSets-GeospatialApplicationMenuPaths">Geospatial Application Menu Paths</a></li>
+</ul>
+
+
+<h4><a name="06TraditionalMenususingActionsandActionSets-RelatedInformation"></a>Related Information</h4>
+
+<ul>
+	<li><a href="http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/workbench_basicext.htm">Basic workbench extention points using actions</a></li>
+	<li><a href="07 New Menus based on Commands, Handlers and Key Bindings.html" title="07 New Menus based on Commands, Handlers and Key Bindings">07 New Menus based on Commands, Handlers and Key Bindings</a></li>
+	<li><a href="09 uDig menus using Operations and Tools.html" title="09 uDig menus using Operations and Tools">09 uDig menus using Operations and Tools</a></li>
+</ul>
+
+
+<ul><li><a href="Adding a Menu to uDig 1.0.html" title="Adding a Menu to uDig 1.0">Adding a Menu to uDig 1.0</a></li></ul>
+
+<h2><a name="06TraditionalMenususingActionsandActionSets-MenuPathConstants"></a>Menu Path Constants</h2>
+
+<p>The class UDIGActionBarAdvisor is used to define the menu paths on this page in the usual manner; submitting a series of contributions to a "MenuManager" relative to series of known <b>constant</b> locations.</p>
+
+<p>These locations are defined as Constants in the following files:</p>
+<ul>
+	<li>IWorkbenchActionConstants: well known locations for RCP applications</li>
+	<li>Constants: well known locations for uDig applications</li>
+</ul>
+
+
+<h2><a name="06TraditionalMenususingActionsandActionSets-UseofIAction"></a>Use of IAction</h2>
+
+<p>There are many examples of the use IAction, the related extention points are deprecated:</p>
+<ul>
+	<li>org.eclipse.ui.ActionsSets</li>
+	<li>org.eclipse.ui.EditorActions</li>
+	<li>org.eclipse.ui.popupMenus</li>
+	<li>org.eclipse.ui.viewActions</li>
+</ul>
+
+
+<p>When possible please make use of <b>org.eclipse.ui.menu</b>.</p>
+
+<h2><a name="06TraditionalMenususingActionsandActionSets-DefaultRCPMenusPaths"></a>Default RCP Menus Paths</h2>
+
+<p>For the uDig application (net.refractions.udig.ui) these reference points are contributed directly by the UDIGActionBarAdvisor. Most of these are from IWorkbenchActionConstants and can be expected in any RCP application.</p>
+
+<p>Standard menus expected for any RCP application:</p>
+<ul>
+	<li>file</li>
+	<li>edit</li>
+	<li>additions (group)- ie. IWorkbenchActionConstants.MB_ADDITIONS</li>
+	<li>window</li>
+	<li>help</li>
+</ul>
+
+
+<p>File menu:</p>
+<ul>
+	<li>file/fileStart</li>
+	<li>file/new.ext</li>
+	<li>file/new</li>
+	<li>file/close.ext</li>
+	<li>file/close</li>
+	<li>file/save.ext</li>
+	<li>file/save</li>
+	<li>file/additions</li>
+	<li>file/print.ext</li>
+	<li>file/import.ext</li>
+	<li>file/import</li>
+	<li>file/export</li>
+	<li>file/mru</li>
+	<li>file/fileEnd</li>
+	<li>file/quit</li>
+</ul>
+
+
+<p>Edit menu:</p>
+<ul>
+	<li>edit/editStart</li>
+	<li>edit/undo</li>
+	<li>edit/redo</li>
+	<li>edit/undo.ext</li>
+	<li>edit/cut</li>
+	<li>edit/copy</li>
+	<li>edit/paste</li>
+	<li>edit/cut.ext</li>
+	<li>edit/delete</li>
+	<li>edit/selectAll</li>
+	<li>edit/bookmark</li>
+	<li>edit/editEnd</li>
+</ul>
+
+
+<p>When creating your own RCP application please ensure the above menu paths are available (other uDig modules expect to be able to use them). This should be pretty easy as they are all based on the usual IWorkbenchActionConstants.</p>
+
+<p>Examples menu paths:</p>
+<ul>
+	<li>menu:org.eclipse.ui.main.menu?after=additions</li>
+	<li>menu:org.eclipse.ui.main.menu?after=file/new</li>
+	<li>toolbar:org.eclipse.ui.main.toolbar?after=additions</li>
+</ul>
+
+
+<p>Example for any popup (must use visibleWhen):</p>
+<ul>
+	<li>popup:org.eclipse.ui.popup.any?after=additions</li>
+</ul>
+
+
+<h2><a name="06TraditionalMenususingActionsandActionSets-AddinganIActionusinganActionBarAdvisor"></a>Adding an IAction using an ActionBarAdvisor</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">IMenuManager fileMenu = menuBar.findMenuUsingPath(IWorkbenchActionConstants.M_FILE);
+
+IAction exit = ActionFactory.QUIT.create(window);
+fileMenu.insertAfter(Constants.FILE_END, exit);</pre>
+</div></div>
+<p>You would be doing this sort of thing if you are rolling your own ActionBarAdvisor as part of a new RCP Application. As of Eclipse 3.3 you should be able to use the <b>org.eclipse.ui.menu</b> extension point and avoid this step.</p>
+
+<h2><a name="06TraditionalMenususingActionsandActionSets-AddinganIActionusinganActionSet"></a>Adding an IAction using an ActionSet</h2>
+
+<p>You can also define ActionSets that map from an IAction to a menu path.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-xml"><span class="code-tag"><span class="code-comment">&lt;!-- pending --&gt;</span></span></pre>
+</div></div>
+<p>This is the preferred way since the resulting ActionSet can be toggle on and off when switching perspectives.</p>
+
+<h1><a name="06TraditionalMenususingActionsandActionSets-GeospatialPlatformMenuPaths"></a>Geospatial Platform Menu Paths</h1>
+
+<p>These paths are contributed by the <b>org.eclipse.ui.menu</b> extension point as part of <b>net.refractions.udig.catalog.ui</b>.</p>
+
+<p>Data menu:</p>
+<ul>
+	<li>data/dataStart</li>
+	<li>..</li>
+	<li>data/additions</li>
+	<li>data/dataEnd</li>
+</ul>
+
+
+<h3><a name="06TraditionalMenususingActionsandActionSets-AvailableViews"></a>Available Views</h3>
+
+<p>Catalog view:</p>
+<ul>
+	<li>menu:net.refractions.udig.catalog.ui.CatalogView?after=additions</li>
+	<li>popup:net.refractions.udig.catalog.ui.CatalogView?after=additions</li>
+</ul>
+
+
+<p>Search view:</p>
+<ul>
+	<li>menu:net.refractions.udig.catalog.ui.Search?after=additions</li>
+	<li>popup:net.refractions.udig.catalog.ui.Search?after=additions</li>
+</ul>
+
+
+<h3><a name="06TraditionalMenususingActionsandActionSets-AvailableNouns"></a>Available Nouns</h3>
+
+<p>When using a contribution to any context menu:</p>
+<ul>
+	<li>popup:org.eclipse.ui.popup.any?after=additions</li>
+</ul>
+
+
+<h1><a name="06TraditionalMenususingActionsandActionSets-GeospatialApplicationMenuPaths"></a>Geospatial Application Menu Paths</h1>
+
+<p>Navigation menu:</p>
+<ul>
+	<li>navigate/navStart</li>
+	<li>...</li>
+	<li>navigation/additions</li>
+	<li>navigation/navEnd</li>
+</ul>
+
+
+<p>Layer menu:</p>
+<ul>
+	<li>layer/layerStart</li>
+	<li>...</li>
+	<li>layer/additions</li>
+	<li>layer/LayerEnd</li>
+</ul>
+
+
+<p>Map menu:</p>
+<ul>
+	<li>map/mapStart</li>
+	<li>...</li>
+	<li>map/additions</li>
+	<li>map/mapEnd</li>
+</ul>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=11153">[wiki]</a>
+</small>
+    </body>
+</html>

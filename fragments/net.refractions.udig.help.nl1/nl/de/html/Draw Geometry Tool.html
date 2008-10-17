@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>Benutzerhandbuch : Draw Geometry Tool</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- Benutzerhandbuch : Draw Geometry Tool -->
+       <h3><a name="DrawGeometryTool-Geometriezeichnen%21newfreehandmode.gifborder%3D1%21">Geometrie zeichnen - <img src="Draw Geometry Tool_attachments/new_freehand_mode.gif" align="absmiddle" border="1" /></a></h3>
+
+<p>Das Geometriezeichenwerkzeug erlaubt es, Linien, Polyone und Löcher im Freihand-Zeichenstil anzulegen. Das Werkzeugt versucht selbstständig herauszufinden, welche Art Geometrie erzeugt wird, indem es den Featuretyp des Kartenlayers untersucht. In Polygon- und Linienlayern werden Polygone bzw. Linien erzeugt. Ist der Featuretyp "Geometrie" (und kann also Polygone und Linien enthalten), so zeichnet dieses Werkzeug Linien, es sei denn, Anfangs- und Endpunkt sind identisch und die Geometrie damit geschlossen; in diesem Fall wird ein Polygon erzeugt.<br/>
+<img src="Draw Geometry Tool_attachments/drawGeom.png" align="absmiddle" border="0" /></p>
+
+<p>Das Werkzeug kann auch Löcher in bestehenden Polygonen erzeugen. Gehen Sie dazu wie folgt vor:<br/>
+1. Wählen Sie die zu bearbeitende Geometrie. Dazu müssen die erweiterten Bearbeitungsfunktionen aktiv sein.<br/>
+2. Zeichnen Sie nun das Loch in das Polygon.</p>
+
+<p>Wie auch bei der <a href="Line Creation Tool.html" title="Line Creation Tool">Linienerstellung</a>, so kann auch dieses Werkzeug bestehende Linien verlängern:<br/>
+1. Wählen Sie die zu bearbeitende Geometrie. Dazu müssen die erweiterten Bearbeitungsfunktionen aktiv sein.<br/>
+2. Klicken Sie auf einen der Endpunkte.<br/>
+3. Zeichnen Sie von dort wie gewohnt eine Linie.<br/>
+<b>Achtung:</b> Die Erweiterung muß an der existierenden Linie <em>beginnen</em>. Eine Linie, die lediglich an einer bestehenden Linie endet, wird als neue Linie angelegt und nicht als Verlängerung der bestehenden.</p>
+
+  <img src="http://udig.refractions.net/image/DE/ngrelr.gif">
+
+<ul>
+	<li>Erweiterte Bearbeitungsfunktionen</li>
+	<li><a href="EditBlackboard.html" title="EditBlackboard">EditBlackboard</a></li>
+	<li><a href="Vertex Tools.html" title="Vertex Tools">Eckpunkt-Werkzeuge</a></li>
+	<li><a href="Geometry Creation Tools.html" title="Geometry Creation Tools">Geometrieerstellungswerkzeuge</a></li>
+	<li><a href="Feature Edit Tools.html" title="Feature Edit Tools">Objektbearbeitungswerkzeuge</a></li>
+</ul>
+
+
+<small>(c) Copyright (c) 2004,2005 Refractions Research Inc. and others.</small>
+<!--Content from <a href="http://udig.refractions.net/">udig.refractions.net</a> -->
+    </body>
+</html>

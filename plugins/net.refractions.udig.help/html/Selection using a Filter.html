@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>Users Guide : Selection using a Filter</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- Users Guide : Selection using a Filter -->
+       <div class="information-block" align='center'><div class='informationMacroPadding'><table cellpadding='5' width='85%' cellspacing='0' class='warningMacro' border='0'><tr><td width='16' valign='top'><img src="/confluence/images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b class="strong">Warning</b><br />
+<p>This article doesn't seem to reflect reality at all and should probably be deleted.</p></td></tr></table></div></div>
+
+<p>Selection using a Filter</p>
+
+<p>   1. Open the Select View<br/>
+   2. Select a Layer<br/>
+   3. The current Filter is displayed at the top, while the results are displayed in a table</p>
+
+<p>Filter Notation</p>
+
+<p>jrmacgill: note there is a difference in meaning between () and []<br/>
+jrmacgill: not that there should be… but.  I'll explain<br/>
+jrmacgill: the [] are used to box off filters<br/>
+jrmacgill: the () are used for expressions<br/>
+jrmacgill: they are added as it guarantees that the boolean operations will work properly<br/>
+jrmacgill: it uses too many of them, but I could not be bothered to be smart (yet).<br/>
+           If you take them out then multiple boolen logic operations will work incorrectly<br/>
+jrmacgill: A AND B OR C<br/>
+jrmacgill: I just boxed everything so that it is explicit<br/>
+jrmacgill: [[A AND B] OR C]<br/>
+jrmacgill: a good number of those square brackets can go, and you don't need them when you<br/>
+           write your own, but the toString plays it safe<br/>
+jrmacgill: the interesting thing about bbox is that it can take a null for the left hand side<br/>
+jrmacgill: but the parser can't handle that<br/>
+jrmacgill: filter = (Filter)ExpressionBuilder.parse("testInteger &lt; 2000"); also works<br/>
+Jody Garnett: I am getting a null pointer at some point<br/>
+jrmacgill: thats a miss named variable normalyt<br/>
+Jody Garnett: I was also trying string EQ = == and so on<br/>
+jrmacgill: == should work too</p>
+
+
+<small>(c) Copyright (c) 2004,2005 Refractions Research Inc. and others.</small>
+<!--Content from <a href="http://udig.refractions.net/">udig.refractions.net</a> -->
+    </body>
+</html>

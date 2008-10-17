@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 4 Example of extending an existing perspective</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 4 Example of extending an existing perspective -->
+       <h1>4 Example of extending an existing perspective</h1>
+
+       <h2><a name="4Exampleofextendinganexistingperspective-ExtendinganExistingPerspective"></a>Extending an Existing Perspective</h2>
+
+<p>This tutorial continues the <a href="3 Example of creating a view.html" title="3 Example of creating a view">3 Example of creating a view</a> tutorial, it assumes that a view and a plugin have both be created.</p>
+
+<h3><a name="4Exampleofextendinganexistingperspective-DeclareExtensioninplugin.xml%3A"></a>Declare Extension in plugin.xml:</h3>
+<p>Edit the plugin.xml file of your plugin.  Add a extension to the org.eclipse.ui.perspectiveExtensions extension point.  The following snippet of xml should be added to the plugin.xml file:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-xml">&lt;extension
+         point=<span class="code-quote">"org.eclipse.ui.perspectiveExtensions"</span>&gt;
+      <span class="code-tag">&lt;perspectiveExtension targetID=<span class="code-quote">"org.eclipse.ui.resourcePerspective"</span>&gt;</span>
+         &lt;view
+               id=<span class="code-quote">"tutorial.view1"</span>
+               relationship=<span class="code-quote">"stack"</span>
+               relative=<span class="code-quote">"org.eclipse.ui.views.ResourceNavigator"</span>/&gt;
+      <span class="code-tag">&lt;/perspectiveExtension&gt;</span>
+   <span class="code-tag">&lt;/extension&gt;</span></pre>
+</div></div>
+
+<p>The extensions tab of the plugin.xml editor should now look similar to the following image:<br/>
+<div align="center"><img src="download/attachments/4862/perspectiveExtension.gif" border="0"/></div></p>
+
+<h3><a name="4Exampleofextendinganexistingperspective-RunApplication"></a>Run Application</h3>
+<p>Create a new Application Launcher by doing the following:</p>
+
+<ul>
+	<li>Right click on your new plugin and select Run As &gt; Eclipse Application.</li>
+	<li>Your view should open up and you can click you button (which does nothing currently).</li>
+	<li>Close the intro page</li>
+</ul>
+
+
+<p>The workbench should now look similar to the following image:</p>
+
+<p><div align="center"><img src="download/attachments/4862/running.gif" border="0"/></div></p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=4862">[wiki]</a>
+</small>
+    </body>
+</html>

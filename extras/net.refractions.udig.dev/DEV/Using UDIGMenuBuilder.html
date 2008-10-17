@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : Using UDIGMenuBuilder</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : Using UDIGMenuBuilder -->
+       <h1>Using UDIGMenuBuilder</h1>
+
+       <p>This is the first attempt at the "use the UDIGWorkBenchAdvisor but let me change some stuff story". </p>
+
+<p>The use of this class is triggered by providing the <b>net.refractions.udig.ui.menuBuilders</b> extention:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-xml">&lt;extension
+          point=<span class="code-quote">"net.refractions.udig.ui.menuBuilders"</span>&gt;
+       &lt;menuBuilder
+             class=<span class="code-quote">"net.refractions.udig.ui.UDIGMenuBuilder"</span>
+             id=<span class="code-quote">"net.refractions.udig.ui.menuBuilder"</span>&gt;
+       <span class="code-tag">&lt;/menuBuilder&gt;</span>
+    <span class="code-tag">&lt;/extension&gt;</span></pre>
+</div></div>
+
+<p>There are a couple of reasons why you may wish to use this class.</p>
+
+<h1><a name="UsingUDIGMenuBuilder-OverrideUDIGWorkBenchAdvisor"></a>Override UDIGWorkBenchAdvisor</h1>
+
+<p>By implementing this extension point you can pretty mych override the default UDIGWorkBenchAdvisor. </p>
+
+<p>Why would you do this rather than make up your own WorkBenchAdvisor implementation? Well for uDig 1.0 the default UDIGApplication performed some nice JAI and GDI checks; now that these have been made available as utility methods there is little reason for this class.</p>
+
+<h1><a name="UsingUDIGMenuBuilder-MixinUDIGcontributionstoanexistingRCPApplication"></a>Mix in UDIG contributions to an existing RCP Application</h1>
+
+<p>If you have an existing RCP application you can use the UDIGMenuBuilder to "mix in" the expected UDIG Menus (such as Navigation and Layer).</p>
+
+<p>I have not figured out the best place to call UDIGMenuBuilder from an RCP application:</p>
+<ul>
+	<li>extention org.eclipse.ui.startup: happens too late in the startup process, probably as a result of everything moving to OSGi</li>
+	<li>extention net.refractions.udig.ui.workbenchConfigurations: happens too early in the start up process (before org.eclipse.ui.menus has been processed) so positioning menus relative to expected ones does not work</li>
+	<li>Only working advise is to call it from your <tt>ActionBarAdvisor</tt> implementation as used for your application. This does not accomplish the goal of making uDig plugins "drop in" to an existing RCP application</li>
+	<li>Your suggestions are welcome on this one</li>
+</ul>
+
+
+<p>As we move towards the use of the <b>org.eclipse.ui.menu</b> extention point this use case for UDIGMenuBuilder will also vanish.</p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=11186">[wiki]</a>
+</small>
+    </body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : How should I use a Progress Monitor</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : How should I use a Progress Monitor -->
+       <h1>How should I use a Progress Monitor</h1>
+
+       <p><b>Q</b> How should Progress Monitors be used?</p>
+
+<p><b>A</b> A few tips on using Progress Monitors:</p>
+
+<ul class="alternate" type="square">
+	<li>Always start the progress monitor and do at least 1 bit of work.  For example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">monitor.beginTask(<span class="code-quote">"Working"</span>, 4);
+monitor.work(1);</pre>
+</div></div></li>
+</ul>
+
+
+<ul class="alternate" type="square">
+	<li>Always finish started job.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">try</span>{
+  monitor.beginTask(<span class="code-quote">"Working"</span>, 4);
+  monitor.work(1);
+  <span class="code-comment">// some work
+</span>}<span class="code-keyword">finally</span>{
+  monitor.done();
+}</pre>
+</div></div></li>
+</ul>
+
+
+<ul class="alternate" type="square">
+	<li>Make use of SubProgressMonitor if sending the monitor to another method:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">try</span>{
+  monitor.beginTask(<span class="code-quote">"Working"</span>, 8);
+  monitor.work(1);
+
+  SubProgressMonitor sub=<span class="code-keyword">new</span> SubProgressMonitor(monitor, 3);
+  doSomeWork(sub);
+  sub.done();  <span class="code-comment">// don't forget to make sure the sub monitor is done
+</span>
+  sub=<span class="code-keyword">new</span> SubProgressMonitor(monitor, 3);
+  doSomeMoreWork(sub);
+  sub.done();  <span class="code-comment">// don't forget to make sure the sub monitor is done (callee might not use it)
+</span>
+}<span class="code-keyword">finally</span>{
+  monitor.done();
+}</pre>
+</div></div></li>
+</ul>
+
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=6540">[wiki]</a>
+</small>
+    </body>
+</html>

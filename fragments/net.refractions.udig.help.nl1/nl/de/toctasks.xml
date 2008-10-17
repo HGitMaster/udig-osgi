@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Tasks" link_to="toc.xml#toctasks" href="html/Tasks.html">
+<topic label="Erzeugen ..." href="html/Tasks.html">
+<topic label="Ein neues Projekt erzeugen" href="html/Creating a new Project.html" />
+<topic label="Eine neue Karte erzeugen" href="html/Creating a new Map.html" />
+<topic label="Eine neue Druckseite erzeugen" href="html/Printing the current map.html" />
+</topic>
+<topic label="Working with data" href="html/Working with data.html">
+<topic label="Adding features from a Shapefile" href="html/Adding features from a Shapefile.html" />
+<topic label="Adding features from DB2" href="html/Adding features from DB2.html" />
+<topic label="Adding layers from WMS" href="html/Adding layers from WMS.html" />
+<topic label="Adding features from WFS" href="html/Adding features from WFS.html" />
+<topic label="Adding features from PostGIS" href="html/Adding features from PostGIS.html" />
+<topic label="Adding features from ArcSDE" href="html/Adding features from ArcSDE.html" />
+<topic label="Adding an image to a map" href="html/Adding an image to a map.html" />
+</topic>
+<topic label="Das Layer-Fenster verwenden" href="html/Using the Layers view.html">
+<topic label="Zooming to a layer" href="html/Zooming to a layer.html" />
+<topic label="Deleting a layer" href="html/Deleting a layer.html" />
+<topic label="Den Stil eines Layers ändern" href="html/Change a Layers Style.html" />
+</topic>
+<topic label="Importing" href="html/Importing.html">
+<topic label="Importing data" href="html/Importing data.html" />
+</topic>
+<topic label="Performing simple analysis" href="html/Performing simple analysis.html">
+<topic label="Summary" href="html/Summary of resource.html" />
+<topic label="Count" href="html/Feature count.html" />
+</topic>
+<topic label="Drucken" href="html/Tasks.html">
+<topic label="Die aktuelle Karte drucken" href="html/Printing the current Map.html" />
+</topic>
+<topic label="Die Hilfe verwenden" href="html/Using the help system.html">
+<topic label="Die Kontexthilfe aufrufen" href="html/Accessing context sensitive help.html" />
+</topic>
+<topic label="Udig aktualisieren/Plugins installieren" href="html/Using the help system.html">
+<topic label="Den Update-Manager verwenden" href="html/Working with the Update Manager.html" />
+</topic>
+</toc>

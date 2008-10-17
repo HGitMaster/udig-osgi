@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : Using the UDIGWorkbenchAdvisor</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : Using the UDIGWorkbenchAdvisor -->
+       <h1>Using the UDIGWorkbenchAdvisor</h1>
+
+       <p>The UDIGWorkbenchAdvisor is a stratagy objected used to configure the application workbench. As such it defines how the menu and tool bars are structured, provides a default perspective to layout the views and so on.</p>
+
+<p>You may wish to override the <a href="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.ui/src/net/refractions/udig/internal/ui/UDIGWorkbenchAdvisor.java">UDIGWorkbenchAdvisor</a>  (link to source code) when creating your own application.</p>
+
+<p>The menus scene in the uDig are a combination of:</p>
+<ul>
+	<li>The UDIGWorkbenchAdvistor providing the general layout</li>
+	<li>Plugins adding additional menus using <b>org.eclipse.ui.menus</b> extentions</li>
+	<li>Note the perspectives may set menus visibility, often using "ActionSets" to toggle of a category of contributions in one go</li>
+</ul>
+
+
+<p>For uDig 1.0.1 the straight up use of a WorkbenchAdvisor was hacked out of the way and replaced with <b>UDIGMenuBuilder</b>; the functionality is similar - UDIGMenuBuilder can be used to:</p>
+<ul>
+	<li>Set up the uDig menus from scratch (like a workbench advisor)</li>
+	<li>Add the uDig menus to an existing RCP application</li>
+</ul>
+
+
+<h1><a name="UsingtheUDIGWorkbenchAdvisor-UDIGWorkbnechAdvisorAdditionsandGroupMarkers"></a>UDIGWorkbnechAdvisor Additions and Group Markers</h1>
+
+<p>When defining menu bar structure "Additions" is used to register a "target" which other contributions can insert additional menu actions.</p>
+
+<p>Here is an example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">private</span> void fillMenuBar( IWorkbenchWindow window, IActionBarConfigurer configurer ) {
+    IMenuManager menuBar = configurer.getMenuManager();
+    menuBar.add(createFileMenu(window));
+    menuBar.add(createEditMenu(window));
+    menuBar.add(createNavigationMenu(window));
+    menuBar.add(<span class="code-keyword">new</span> GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+
+    menuBar.add(createLayerMenu());
+    menuBar.add(createMapMenu());
+    menuBar.add(createDataMenu());    
+    menuBar.add(createWindowMenu(window));
+    menuBar.add(createHelpMenu(window));
+}</pre>
+</div></div>
+<p>You can see that IWorkbenchActionConstants.MB_ADDITIONS is placed between the Navigation menu and the Layer menu. Any additional "top level" menus (for example the top level menu "Road" in road editing application) would appear here.</p>
+
+<p>For the complete list either use the source as shown below or review <br/>
+this page:</p>
+<ul>
+	<li><a href="06 Traditional Menus using Actions and ActionSets.html" title="06 Traditional Menus using Actions and ActionSets">06 Traditional Menus using Actions and ActionSets</a></li>
+</ul>
+
+
+<h1><a name="UsingtheUDIGWorkbenchAdvisor-UsetheSourceLuke"></a>Use the Source Luke</h1>
+
+<p>While the above list of Additions is great for uDIG 1.1.0 you may be extending a different version of uDig; or a project based on uDig. Have a look at the source code and check where the group markers in your application:</p>
+
+<p>Example using the Layer menu from uDig 1.0:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">private</span> MenuManager createLayerMenu() {
+   MenuManager menu = <span class="code-keyword">new</span> MenuManager(Policy.bind(<span class="code-quote">"UDIGWorkbenchAdvisor.layerMenu"</span>), <span class="code-quote">"layer"</span>);
+   menu.add(<span class="code-keyword">new</span> GroupMarker(<span class="code-quote">"add.ext"</span>)); <span class="code-comment">//$NON-NLS-1$
+</span>   menu.add(<span class="code-keyword">new</span> Separator());
+   menu.add(<span class="code-keyword">new</span> GroupMarker(<span class="code-quote">"edit.ext"</span>)); <span class="code-comment">//$NON-NLS-1$
+</span>
+   menu.add(<span class="code-keyword">new</span> Separator());
+   menu.add(<span class="code-keyword">new</span> GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+
+   <span class="code-keyword">return</span> menu;
+}</pre>
+</div></div>
+<p>So for the Layer menu there are three group markers:</p>
+<ul>
+	<li>add.ext</li>
+	<li>edit.ext</li>
+	<li>additions</li>
+</ul>
+
+
+<p>By convention, "additions" is created in the correct spot (before Window and Help for the menu bar, or before Exit in the file menu, or at the end of the menu most everywhere else.</p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=11116">[wiki]</a>
+</small>
+    </body>
+</html>

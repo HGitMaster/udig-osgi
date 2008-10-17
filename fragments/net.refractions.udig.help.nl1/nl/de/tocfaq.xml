@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="FAQ" link_to="toc.xml#tocfaq">
+<topic label="Was sollte ich zuerst tun?" href="html/Getting Started.html">
+<anchor id="gettingstarted"/>
+</topic>
+<topic label="How do I submit the error log?" href="html/Submit Error Log.html" />
+</toc>

@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : net.refractions.udig.project.selection</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : net.refractions.udig.project.selection -->
+       <h1>net.refractions.udig.project.selection</h1>
+
+       <p>Maintains Selection state for a Map, used in conjunction with the LayerManager by the renderer to determine screen appearance.</p>
+
+<h5><a name="net.refractions.udig.project.selection-FunctionalRequirements"></a>Functional Requirements</h5>
+<ul>
+	<li>selection by map interaction</li>
+	<li>selection by table interaction</li>
+	<li>selection by "Query" ui</li>
+	<li>scalable</li>
+	<li>programmatic access for operative plug-ins</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.project.selection-NonFunctionalRequirements"></a>Non Functional Requirements</h5>
+<ul>
+	<li>sub-second notification of selection activity</li>
+	<li>selection should take less then 5 to 10 seconds for alpha</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.project.selection-DesignNotes%3A"></a>Design Notes:</h5>
+<ul>
+	<li>maintain a Filter associated with each Layer</li>
+	<li>Filter can be Fid based to capture individual selections</li>
+	<li>Filter can be BBox based to capture spatial selection on Map</li>
+	<li>Filter can be be constructed via a "Query ui"</li>
+	<li>Selection inverts can be formed quickly with the use of "not( filter )"</li>
+	<li>receives events from Visualization Stack and transforms Bbox into the "Layer" coordinate system.</li>
+</ul>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=255">[wiki]</a>
+</small>
+    </body>
+</html>

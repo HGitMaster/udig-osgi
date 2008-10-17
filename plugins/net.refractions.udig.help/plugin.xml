@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+         id="net.refractions.udig.project.ui.mapEditor"
+         name="%context.name"
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="context/mapEditor.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            extradir="html"
+            file="toc.xml"
+            primary="true">
+      </toc>
+      <toc
+            extradir="html"
+            file="tocconcepts.xml">
+      </toc>
+      <toc
+            extradir="html"
+            file="tocgettingstarted.xml">
+      </toc>
+      <toc
+            extradir="html"
+            file="tocreference.xml">
+      </toc>
+      <toc
+            extradir="html"
+            file="toctasks.xml">
+      </toc>
+      <toc
+            primary="false"
+            file="tocfaq.xml"
+            extradir="html"/>
+   </extension>
+
+</plugin>

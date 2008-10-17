@@ -1,0 +1,126 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : Development Environment on Debian linux</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : Development Environment on Debian linux -->
+       <h1>Development Environment on Debian linux</h1>
+
+       <p>This is a guide to setting up a uDig development environment for the Debian linux testing (etch) distribution.</p>
+
+<ul>
+	<li><a href="#DevelopmentEnvironmentonDebianlinux-InstallingSubversion">Installing Subversion</a></li>
+	<li><a href="#DevelopmentEnvironmentonDebianlinux-InstallingJava">Installing Java</a></li>
+	<li><a href="#DevelopmentEnvironmentonDebianlinux-InstallingEclipse">Installing Eclipse</a></li>
+</ul>
+
+
+<p>Where possible tools have been installed from scratch as I'm hoping that one day this can form the basis of a Debian GIS HOW-TO for uDig development.</p>
+
+<h2><a name="DevelopmentEnvironmentonDebianlinux-InstallingSubversion"></a>Installing Subversion</h2>
+
+<ol>
+	<li>Install Subversion:<br/>
+<tt>apt-get install subversion</tt></li>
+	<li>Configure Subversion.</li>
+	<li>Create a directory and checkout trunk:
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>/usr/src/sis$ mkdir udig
+/usr/src/sis$ cd udig
+/usr/src/sis/udig$ svn co http://svn.geotools.org/udig/trunk
+</pre>
+</div></div></li>
+</ol>
+
+
+<h2><a name="DevelopmentEnvironmentonDebianlinux-InstallingJava"></a>Installing Java</h2>
+<ol>
+	<li>Debian provides the java-package utility to create a Debian installation package from supported Java(TM) 2 RE or SDK self-extracting archives (see the make-jpkg man page for details):
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>/pkgs/java$ apt-get install java-package
+</pre>
+</div></div></li>
+	<li>Download the appropriate Java self -extracting archive (.bin, not the .rpm)</li>
+	<li>Create the Debian package
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>/pkgs/java$ fakeroot make-jpkg jdk-1_5_0_06-linux-i586.bin
+</pre>
+</div></div></li>
+	<li>Install the package
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>/pkgs/java# dpkg -i sun-j2sdk1.5_1.5.0+update06_i386.deb
+</pre>
+</div></div></li>
+</ol>
+
+
+<p>Unfortunately no method exists yet for packaging Java Advanced Imaging (JAI) or Java Image IO (ImageIO) so we have to install these manually</p>
+
+<h2><a name="DevelopmentEnvironmentonDebianlinux-InstallingEclipse"></a>Installing Eclipse</h2>
+
+<ol>
+	<li>Download Eclipse and unzip into a directory, in my case /opt</li>
+</ol>
+
+
+<ol>
+	<li>Create a shell script to launch eclipse:
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>/opt/eclipse# echo '#!/bin/sh' &gt;/usr/local/bin/eclipse
+/opt/eclipse# echo '/opt/eclipse/eclipse -startup /opt/eclipse/startup.jar' &gt;&gt;/usr/local/bin/eclipse
+/opt/eclipse# chmod a+x /usr/local/bin/eclipse
+</pre>
+</div></div></li>
+	<li>Configure the Eclipse Update Manager:
+	<ul>
+		<li>Choose <b>Help &gt; Software Updates &gt; Find and Install...</b></li>
+		<li>Select <b>Search for new features to install</b></li>
+		<li>Click on <b>Import sites</b></li>
+		<li>Import the attached bookmarks <span class="error">&#91;file|^EclipseUpdateSitesBookmarks.xml&#93;</span></li>
+	</ul>
+	</li>
+	<li>Install the following minimal set of extras (of course you can just select whole packages - however you might run into problems with dependencies):
+	<ul>
+		<li>EMF/SDO/XSD Secondary Update Site
+		<ul>
+			<li>EMF SDK</li>
+		</ul>
+		</li>
+		<li>GEF Update Site
+		<ul>
+			<li>Graphical Editing Framework</li>
+		</ul>
+		</li>
+		<li>Subclipse Update Site
+		<ul>
+			<li>Subclipse</li>
+		</ul>
+		</li>
+		<li>TPTP Update Site
+		<ul>
+			<li>TPTP Features
+			<ul>
+				<li>TPTP ProbeKit</li>
+				<li>TPTP Test Tools</li>
+				<li>TPTP Core</li>
+				<li>TPTP Charting Service</li>
+				<li>TPTP Platform Trace</li>
+				<li>TPTP Test</li>
+			</ul>
+			</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li>Configure Eclipse</li>
+</ol>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=11759">[wiki]</a>
+</small>
+    </body>
+</html>

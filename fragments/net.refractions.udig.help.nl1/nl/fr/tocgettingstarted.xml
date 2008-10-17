@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Pour commencer" link_to="toc.xml#tocgettingstarted" href="html/Getting Started.html">
+<topic label="Tutoriel de base" href="html/Basic Tutorial.html">
+<topic label="Le Workbench" href="html/The Workbench.html" />
+<topic label="Un simple projet" href="html/A simple project.html">
+<topic label="Utiliser le menu fichier" href="html/Using the File menu.html" />
+<topic label="Utiliser le bouton Nouveau" href="html/Using the New button.html" />
+<topic label="Utiliser le menu Contextuel" href="html/Using the Context menu.html"/>
+</topic>
+<topic label="Les editeurs et les vues" href="html/Editors and views.html" >
+<topic label="Les editeurs" href="html/Editors.html" />
+<topic label="Les vues" href="html/Views.html" />
+</topic>
+<topic label="Fermer un editeur" href="html/Closing an editor.html" />
+<topic label="Naviguer les ressources" href="html/Navigating resources.html" />
+<topic label="Les outils" href="html/Tools.html" >
+<topic label="Le zoom" href="html/Zoom.html"/>
+<topic label="La fonction panoramique" href="html/Pan.html"/>
+<topic label="L'edition" href="html/Edit.html"/>
+</topic>
+<topic label="Restructurer les vues et les editeurs" href="html/Rearranging views and editors.html" >
+<topic label="Les curseurs d'emplacement" href="html/Drop cursors.html"/>
+<topic label="Restructurer les vues" href="html/Rearranging views.html"/>
+<topic label="Disposer en mosaique les editeurs" href="html/Tiling editors.html"/>
+<topic label="Restructurer les vues en languettes" href="html/Rearranging tabbed views.html"/>
+<topic label="Agrandir" href="html/Maximizing.html"/>
+</topic>
+<topic label="Les vues rapides" href="html/Fast views.html">
+<topic label="Creer les vues rapides" href="html/Creating fast views.html"/>
+<topic label="Travailler avec les vues rapides" href="html/Working with fast views.html"/>
+</topic>
+<topic label="Quitter le Workbench" href="html/Exiting the workbench.html" />
+</topic>
+</toc>

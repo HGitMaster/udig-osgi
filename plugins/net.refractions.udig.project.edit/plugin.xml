@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+/**
+ * <copyright>
+ * </copyright>
+ *
+ * $Id: plugin.xml 15082 2005-08-03 23:07:09Z jgarnett $
+ */
+-->
+
+<plugin>
+
+    <extension
+            point="net.refractions.udig.project.ui.itemProviderAdapterFactories">
+         <itemProviderAdapterFactory class="net.refractions.udig.project.internal.provider.ProjectItemProviderAdapterFactory"/>
+         <itemProviderAdapterFactory class="org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory"/>
+         <itemProviderAdapterFactory class="net.refractions.udig.project.internal.render.provider.RenderItemProviderAdapterFactory"/>
+      </extension>
+</plugin>
+

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.refractions.udig_unstable"
+      label="%feature.name"
+      version="1.2.0"
+      provider-name="Refractions Research"
+      plugin="net.refractions.udig_unstable">
+
+   <description>
+      %feature.description
+   </description>
+
+   <license>
+      %license
+   </license>
+
+   <url>
+      <update label="User-friendly Desktop Internet GIS Updates" url="http://udig.refractions.net/update/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="net.refractions.udig.catalog"/>
+      <import plugin="net.refractions.udig.catalog.ui"/>
+      <import plugin="net.refractions.udig.libs"/>
+   </requires>
+
+   <plugin
+         id="net.refractions.udig.catalog.arcsde"
+         download-size="0"
+         install-size="0"
+         version="1.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="net.refractions.udig.catalog.arcsde.nl1"
+         download-size="0"
+         install-size="0"
+         version="1.0.1"
+         fragment="true"/>
+
+   <plugin
+         id="net.refractions.udig.catalog.gml"
+         download-size="0"
+         install-size="0"
+         version="1.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="net.refractions.udig.catalog.gml.nl1"
+         download-size="0"
+         install-size="0"
+         version="1.1.0"
+         fragment="true"/>
+
+   <plugin
+         id="net.refractions.udig.catalog.oracle"
+         download-size="0"
+         install-size="0"
+         version="1.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="net.refractions.udig.catalog.oracle.nl1"
+         download-size="0"
+         install-size="0"
+         version="1.0.1"
+         fragment="true"/>
+
+</feature>

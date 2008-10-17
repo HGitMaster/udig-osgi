@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 4 Plugin Internationalization with ResourceBundles</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 4 Plugin Internationalization with ResourceBundles -->
+       <h1>4 Plugin Internationalization with ResourceBundles</h1>
+
+       <h1><a name="4PluginInternationalizationwithResourceBundles-SourceCodeInternationalization"></a>Source Code Internationalization</h1>
+<p>uDig recently made a change regarding how it externalizes its strings so that they may be internationalized. The new method brings several new advantages, including better type-checking. If you are internationalizing your plug-in for the first time, please use the new, Eclipse NLS class based method to externalize the strings in your plug-in. </p>
+
+<h2><a name="4PluginInternationalizationwithResourceBundles-Policyclassbased%28Oldmethod%2Cdeprecated%29"></a>Policy class based (Old method, deprecated)</h2>
+<p>This method relied on one Policy class, present in every plug-in. It followed the plug-in's lifecycle, so it was loaded when the plug-in was loaded, and unloaded when the plug-in was unloaded. Strings were stored in a messages.properties file, and they were referenced using Policy.bind, which took the key as a parameter. </p>
+
+<h2><a name="4PluginInternationalizationwithResourceBundles-EclipseNLSclassbased%28Newmethod%2Crecommended%29"></a>Eclipse NLS class based (New method, recommended)</h2>
+
+<h3><a name="4PluginInternationalizationwithResourceBundles-Overview"></a>Overview</h3>
+<p>In this method, each plug-in maintains one Messages class, which extends the NLS class provided by Eclipse. This class loads each of keys from a messages.properties file into static Strings, which are referenced by the source code. This provides for compile-time checking, and eliminates the need for NON-NLS comments, as no hard-coded Strings are involved. </p>
+
+<h3><a name="4PluginInternationalizationwithResourceBundles-Structure"></a>Structure</h3>
+
+<p>The messages.properties file and accompanying Messages class should be placed in the internal package of your plug-in:</p>
+
+<p>$PLUGIN/src/$PLUGIN-AS-PACKAGE/internal/messages.properties<br/>
+$PLUGIN/src/$PLUGIN-AS-PACKAGE/internal/Messages.java</p>
+
+<p>For example, if your plug-in is net.refractions.udig.catalog.ui, it would look like:</p>
+
+<p>net.refractions.udig.catalog.ui/src/net/refractions/udig/catalog/ui/internal/messages.properties<br/>
+net.refractions.udig.catalog.ui/src/net/refractions/udig/catalog/ui/internal/Messages.java</p>
+
+<h3><a name="4PluginInternationalizationwithResourceBundles-Externalizingforthefirsttime"></a>Externalizing for the first time</h3>
+
+<p>Eclipse provides an Externalize Strings Wizard that can be used to automate this process very nicely. </p>
+
+<ul>
+	<li>Right click on a plug-in or source code file and select <b>Source--&gt;Externalize Strings...</b></li>
+</ul>
+
+
+<p>Once inside the wizard, make sure you check <b>"Use Eclipse's string externalization mechanism"</b>. If this is already checked and greyed out, then the plug-in is already configured to use it. </p>
+
+<p>You are then presented with a list of values and keys. The keys are given numerical suffixes. Please change them to something more meaningful. </p>
+
+<ul>
+	<li>If a value should <b>not</b> be externalized, press <b>Ignore</b></li>
+</ul>
+
+
+<ul>
+	<li>If you wish to do nothing, press <b>Internalize</b></li>
+</ul>
+
+
+<ul>
+	<li>Press the <b>Configure...</b> button and make sure that the Messages class and messages.properties file are created in the proper directory (see above under "Structure")</li>
+</ul>
+
+
+<h3><a name="4PluginInternationalizationwithResourceBundles-SwitchingfromPolicybasedtoEclipseNLSbased"></a>Switching from Policy based to Eclipse NLS based</h3>
+<p>Switching from Policy based support to Eclipse NLS based support is rather tedious:</p>
+
+<ul>
+	<li>Delete Policy.java</li>
+	<li>Remove references to it in your Plug-in classe's start and stop methods</li>
+	<li>Remove references to Policy in import files</li>
+	<li>Change all periods (".") in messages.properties to underscore ("_"). This must be done to all keys in the source code as well.</li>
+	<li>Create Messages.java, with static String fields for each key</li>
+	<li>Change all calls from Policy.bind("$key") to Messages.$key</li>
+	<li>Calls that use parameters will need to be changed.<br/>
+Ex: Policy.bind("$key", object1, object2) will become MessageFormat.format(Messages.$key, object1, object2)</li>
+</ul>
+
+
+<p>There are some bash and perl scripts in trunk/scripts/i18n that were used to convert uDig over to this new system. They did not completely make the conversion, but did save a tremendous amount of time. Please see the README file in that directory before you use them.</p>
+
+<p>To internationalize your plugin.properties files, see <a href="Plugin Internationalization.html" title="Plugin Internationalization">Plugin Internationalization</a></p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=130">[wiki]</a>
+</small>
+    </body>
+</html>

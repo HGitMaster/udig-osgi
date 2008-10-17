@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : net.refractions.udig.printing</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : net.refractions.udig.printing -->
+       <h1>net.refractions.udig.printing</h1>
+
+       <p>The printing engine takes a <a href="net.refractions.udig.printing.page.html" title="net.refractions.udig.printing.page">net.refractions.udig.printing.page</a> (that is a <a href="net.refractions.udig.printing.context.html" title="net.refractions.udig.printing.context">net.refractions.udig.printing.context</a> and <a href="net.refractions.udig.render.decorator.html" title="net.refractions.udig.render.decorator">net.refractions.udig.render.decorator</a> ) and a<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/print/PrinterJob.html">Printer</a> and begins a specific rendering pipeline.</p>
+
+<h5><a name="net.refractions.udig.printing-FunctionalRequirements"></a>Functional Requirements</h5>
+<ul>
+	<li>Maintains a cache</li>
+	<li>Process Page + <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/print/PrinterJob.html">Printer</a></li>
+	<li>Constructs what is to be printed from a <a href="net.refractions.udig.printing.context.html" title="net.refractions.udig.printing.context">net.refractions.udig.printing.context</a> with additional Metadata and Connection info from Data Manager</li>
+	<li>Passes each layer off to its appropriate Renderer along with the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Graphics2D.html">Graphics2D</a> from the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/print/PrinterJob.html">Printer</a></li>
+	<li>Print Progress/Cancel</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.printing-NonfunctionalRequirements"></a>Non-functional Requirements</h5>
+
+<h5><a name="net.refractions.udig.printing-DesignNotes"></a>Design Notes</h5>
+<ul>
+	<li>Pringing Engine is "smart" - determines whether a given WMS and WFS share the same source and can use either to retrieve the same data. For printing, this will allow it use WFS when available, as that will be much faster in response time.</li>
+	<li>May need to separate out WMS requests into separate calls tiled together on the client side at native printer resolution</li>
+</ul>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=248">[wiki]</a>
+</small>
+    </body>
+</html>

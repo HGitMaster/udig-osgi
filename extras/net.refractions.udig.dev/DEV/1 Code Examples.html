@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 1 Code Examples</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 1 Code Examples -->
+       <h1>1 Code Examples</h1>
+
+       <p>We have gathered up the code examples used in the developers guide into a single plug-in:</p>
+<ul>
+	<li>net.refractions.udig.tutorials.examples</li>
+</ul>
+
+
+<h2><a name="1CodeExamples-ReadingtheCodeExamples"></a>Reading the Code Examples</h2>
+
+<p>You can view the code examples directly from svn:</p>
+<ul>
+	<li><a href="http://svn.geotools.org/udig/branches/1.1.x/udig/tutorials/net.refractions.udig.tutorials.examples/src/net/refractions/udig/tutorials/examples">1.1.x examples</a></li>
+</ul>
+
+
+<h2><a name="1CodeExamples-ImportExamplesfromtheSDK"></a>Import Examples from the SDK</h2>
+
+<p>You can import the examples as they were when your SDK was produced:</p>
+<ol>
+	<li>File &gt; Import from the menu bar</li>
+	<li>Plug-in Development &gt; Plug-ins and Fragments as the input source</li>
+	<li>On the Import Plug-ins and Fragments page
+	<ul>
+		<li>The sdk directory will be listed as your target platform</li>
+		<li>Import As: Porjects with source folders</li>
+	</ul>
+	</li>
+	<li>On the Selection page</li>
+	<li>select net.refractions.udig.tutorials.examples from the list and press the Add button</li>
+	<li>Press Finish</li>
+</ol>
+
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>
+<p>For the UDIG 1.1-RC14 release you will need to import the projects as <b>binary</b>; the src folder will still be there - it was just packaged up strangely.</p></td></tr></table></div>
+
+<h2><a name="1CodeExamples-CheckingoutExamplesfromSVN"></a>Checking out Examples from SVN</h2>
+
+<p>You can use svn to check out the examples into workspace:</p>
+<ol>
+	<li>Use the command line svn tool:
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>C:\java\sdk&gt;
+svn co http://svn.geotools.org/udig/branches/1.1.x/udig/tutorials/net.refractions.udig.tutorials.examples examples
+</pre>
+</div></div></li>
+	<li>Select <b>File &gt; Import</b></li>
+	<li>Choose <b>General &gt; Existing Projects into Workspace</b></li>
+	<li>From the <b>Import Projects</b> page browse to: <b>C:\java\sdk\examples</b></li>
+	<li>Choose <b>net.refractions.udig.code.examples</b> from the list<br/>
+<img src="download/attachments/11803/ImportExamples.PNG" align="absmiddle" border="0"/></li>
+	<li>Press <b>Finish</b></li>
+</ol>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=11803">[wiki]</a>
+</small>
+    </body>
+</html>

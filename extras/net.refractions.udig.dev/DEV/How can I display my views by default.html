@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : How can I display my views by default</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : How can I display my views by default -->
+       <h1>How can I display my views by default</h1>
+
+       <p><b>Q:</b> I would like a configuration option outside of changing code to display my panels by default<br/>
+<b>A:</b> You can either extend the current Map Perspective (that is an extension point) or create your own perspective.  An example of extending a perspective is in the net.refractions.udig.feature.editor/plugin.xml file.  (Hacking the Perspective class is wrong and the example you see there is wrong too.  I'm going to change it). If you define a new perspective and you want it to be loaded by default you have to create a fragment for net.refractions.udig.ui and in the fragment override the UDIGWorkbenchAdvisor class to return your perspective ID in the getInitialWindowPerspectiveId method. </p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=6369">[wiki]</a>
+</small>
+    </body>
+</html>

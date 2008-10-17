@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="net.refractions.udig.style.sld.editor">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="net.refractions.udig.style.sld.editor" id="StyleEditorPage" name="%StyleEditor.name"/>
+      </appInfo>
+      <documentation>
+         An extension point for Style Layer Desriptor (SLD) style content.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            An extension point for adding ui components used to edit a component of an SLD.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="StyleEditorPage"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="StyleEditorPage">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for internal use
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human readable label used to identify the sld extension in the ui. For example, &quot;Line&quot;, &quot;Point&quot;, etc.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A subclass of SLDEditorPage to instantiate
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="net.refractions.udig.style.sld.editor.StyleEditorPage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="contentType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class of style component of interest (SLD, Style, FeatureTypeStyle, Rule, Symbolizer, etc).
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="java.lang.Class"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  if defined, this attribute will specify this element&apos;s parent id in the tree.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="requires" type="string">
+            <annotation>
+               <documentation>
+                  if defined, the selected layer must resolve this class in order for this page to be displayed
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="java.lang.Class"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : How to get geometries from layer</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : How to get geometries from layer -->
+       <h1>How to get geometries from layer</h1>
+
+       <h3><a name="Howtogetgeometriesfromlayer-Q%3AHowtogetgeometriesfromlayer"></a>Q: How to get geometries from layer</h3>
+
+<p>To get geometries from a layer you need to ask for a FeatureSource object from the layer:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">FeatureSource source=layer.getResource( FeatureSource.class, progressMonitor);</pre>
+</div></div>
+<p>(You need the org.geotools.feature.FeatureSource class). Once you have a feature source you can get all the features from the source by:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">FeatureCollection collection=source.getFeatures();</pre>
+</div></div>
+
+<p>It is a feature collect and has all the normal collection methods.</p>
+
+<p><b>WARNING:</b> don't forget to close your iterator after using one:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">collections.close(iterator);</pre>
+</div></div>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=8368">[wiki]</a>
+</small>
+    </body>
+</html>

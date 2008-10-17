@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="uDig User's Guide">
+<topic label="Pour commencer" href="html/Getting Started.html" link_to="tocfaq.xml#gettingstarted">
+<anchor id="tocgettingstarted"/>
+</topic>
+<topic label="Concepts" href="html/Concepts.html">
+<anchor id="tocconcepts"/>
+</topic>
+<topic label="Tasks" href="html/Tasks.html">
+<anchor id="toctasks"/>
+</topic>
+<topic label="Reference" href="html/Reference.html">
+<anchor id="tocreference"/>
+</topic>
+<topic label="What's new" href="html/What's new.html"/>
+<topic label="FAQ" href="html/FAQ.html">
+<anchor id="tocfaq"/>
+</topic>
+</toc>

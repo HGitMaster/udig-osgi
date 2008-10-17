@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : net.refractions.udig.render.stack</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : net.refractions.udig.render.stack -->
+       <h1>net.refractions.udig.render.stack</h1>
+
+       <p>Visualization Stack merges all the rasters(Image Buffers) created by the rendering pipelines with JAI and updates the viewing area.</p>
+
+<h5><a name="net.refractions.udig.render.stack-FunctionalRequirements%3A"></a>Functional Requirements:</h5>
+<ul>
+	<li>Merges context rasters</li>
+	<li>Merges selection rasters</li>
+	<li>Merges decorators</li>
+	<li>Outputs a final raster that will be displayed on screen</li>
+	<li>Manages cached rasters</li>
+	<li>Notifies <a href="net.refractions.udig.project.selection.html" title="net.refractions.udig.project.selection">net.refractions.udig.project.selection</a> which layers are modified and the bbox (in screen coords) of the selection</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.render.stack-NonfunctionalRequirements%3A"></a>Non-functional Requirements:</h5>
+<ul>
+	<li>Allows <a href="net.refractions.udig.project.selection.html" title="net.refractions.udig.project.selection">net.refractions.udig.project.selection</a> to perform a "quick" selection on the cached rasters</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.render.stack-Designnotes%3A"></a>Design notes:</h5>
+<ul>
+	<li>Takes the rasters from the renderers, their selection equivalents and merges them into one final raster.</li>
+	<li>Quick notification of selection activity can be done by applying the selection style to the portion of the features within the selected rubber-band.</li>
+</ul>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=262">[wiki]</a>
+</small>
+    </body>
+</html>

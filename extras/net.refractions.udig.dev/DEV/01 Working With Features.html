@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 01 Working With Features</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 01 Working With Features -->
+       <h1>01 Working With Features</h1>
+
+       <h3><a name="01WorkingWithFeatures-HowtocreateaFeature"></a>How to create a Feature</h3>
+
+<p>This page explains how to create a Feature for one or more of your Plug-ins.  A Feature is a bundle of Plug-ins.  The main reasons for creating a Feature are:</p>
+<ol>
+	<li>Logically group together a number of plug-ins for distribution together</li>
+	<li>Group Plug-ins together for use with an update site</li>
+	<li>A Feature has (optional) Branding information associated with it, for example <em>About</em> information and <em>Icons</em> that appear in the Help&gt;About ... Dialog</li>
+</ol>
+
+
+<p>Products can be created from Plug-ins or Features, but if they are created from Features then an update site can be used to keep the product up-to-date.  This cannot be done with out a Feature based product.  </p>
+
+<p>New Features can also be installed by the Eclipse update framework.  If a Feature is added to an update site then any Eclipse based application can install the Feature using the Software Updater (usually under the Help menu).  </p>
+
+<h3><a name="01WorkingWithFeatures-CreatingaFeature"></a>Creating a Feature</h3>
+<ol>
+	<li>Create a Feature Project. <b>New-&gt;Project</b>.</li>
+	<li>Select <b>Feature Project</b> in the <b>Plug-in Development</b> category</li>
+	<li>The naming convention is:
+	<ol>
+		<li><b>Feature ID</b> - An ID usually URI.featureName for example net.refractions.community.jody.visual</li>
+		<li><b>Feature Project</b> - the Feature ID with _feature appended to the end.</li>
+		<li><b>Feature Name</b> - Unimportant but should usually be translatable (%feature.name in the feature.xml and the key/value pair in the plugin.properties)<br/>
+<img src="download/attachments/9336/NewFeatureWizard.png" align="absmiddle" border="0"/></li>
+	</ol>
+	</li>
+	<li>Press Finish</li>
+	<li>A nice editor for the Feature.xml is opened.  In the Branding Plug-in Field enter the Branding plug-in you created for this feature (or enter the name of the Branding plug-in you are going to create).</li>
+	<li>Switch to the <b>Plug-ins</b> tab of the editor (tabs are across the bottom)</li>
+	<li>Press <b>Add ...</b></li>
+	<li>Select the Plug-ins that will be part of the Feature<br/>
+<img src="download/attachments/9336/PluginsAndFragments.png" align="absmiddle" border="0"/></li>
+</ol>
+
+
+<p>There is numerous other options for specifying what Features and Plug-ins the Feature depends on as well as what versions and how to install the Feature.  This is all that is really required to make a Feature.</p>
+
+<h3><a name="01WorkingWithFeatures-ExportingaFeature"></a>Exporting a Feature</h3>
+
+<ol>
+	<li>Open the <b>feature.xml</b> file</li>
+	<li>Switch to the <b>Overview</b> tab</li>
+	<li>Press <b>Export Wizard</b></li>
+	<li>Follow wizard's instructions</li>
+</ol>
+
+
+
+<p>Here is a good link:</p>
+<ul class="alternate" type="square">
+	<li><a href="http://eclipse.pookzilla.net/2006/01/how-can-i-give-my-eclipse-blob-icon-in.php">how can i give my eclipse blob icon in</a></li>
+</ul>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=9336">[wiki]</a>
+</small>
+    </body>
+</html>

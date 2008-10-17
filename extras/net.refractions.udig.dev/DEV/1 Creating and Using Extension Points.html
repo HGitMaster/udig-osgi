@@ -1,0 +1,108 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 1 Creating and Using Extension Points</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 1 Creating and Using Extension Points -->
+       <h1>1 Creating and Using Extension Points</h1>
+
+       <h2><a name="1CreatingandUsingExtensionPoints-CreatingandusingExtensionPoints"></a>Creating and using Extension Points</h2>
+
+<p><a href="http://www.eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html">Eclipse notes on plugins</a> has a great deal of very useful information on plugin including how to create and use plugin extensions.</p>
+
+<h3><a name="1CreatingandUsingExtensionPoints-CreatingExtensionPoints"></a>Creating Extension Points</h3>
+
+<p>In the Plug-in Manifest Editor's Extension Point tab, new extension points can be declared.  In addition the plugin.xml file can be edited by hand to declare new extension points.  </p>
+
+<h4><a name="1CreatingandUsingExtensionPoints-PluginManifestEditor"></a>Plug-in Manifest Editor</h4>
+<p>(Assumes eclipse is being used)</p>
+
+<ul>
+	<li>Open Plug-in Manifest Editor (double click on plugin.xml)</li>
+	<li>Click Extension Point tab</li>
+	<li>Click Add button</li>
+	<li>Enter ID <br clear="all" /> <img class="emoticon" src="images/icons/emoticons/warning.gif" height="16" width="16" align="absmiddle" alt="" border="0"/> This is appended to your plugin id to form a fully qualified identification for the extension point</li>
+	<li>Enter Name (human reading purposes)</li>
+	<li>Click Finish</li>
+</ul>
+
+
+<p>The extension-point schema defines how to parameterize extensions.</p>
+
+<h3><a name="1CreatingandUsingExtensionPoints-ExtensionpointSchema"></a>Extension-point Schema</h3>
+
+<p>The extension-point schema defines how to parameterize extensions.  An extension-point schema can be edited by hand or using eclipse's extension-point schema editor.</p>
+
+<p>See <a href="http://help.eclipse.org/help21/index.jsp?topic=/org.eclipse.pde.doc.user/guide/pde_schema_editor.htm">Eclipse help guide</a> for detailed instructions on editing extension-point schemas.</p>
+
+<p>To create a extension-point schema that requires a extension to implement an interface:</p>
+<ul>
+	<li>Create an extension-point as described above.</li>
+	<li>If extension-point schema editor does not open.  Open it. (double click on the new .exsd file)</li>
+	<li>Click new Element button</li>
+	<li>In the properties view click on the Name property and enter a name for the element.  It should be logical.  Parser is a good example.</li>
+	<li>Ensure Parser is selected in editor and click the New Attribute button</li>
+	<li>In properties view change Name to class.</li>
+	<li>In properties view change Kind to java</li>
+	<li>In properties view change Based On to "name of Interface".  Remember to include package name.</li>
+	<li>(Not required) In properties view change Name to id.</li>
+	<li>(Not required) Create a Name attribute</li>
+	<li>Select extension in Editor</li>
+	<li>Right click on Sequence under <b>Element Grammar</b> Heading</li>
+	<li>Select New-&gt;Reference-&gt;"Name of Created Element"</li>
+</ul>
+
+
+<p>Done.</p>
+
+<h3><a name="1CreatingandUsingExtensionPoints-FindingExtensions"></a>Finding Extensions</h3>
+
+<p>The following classes demonstrates how to find registered extensions:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">import</span> org.eclipse.core.runtime.IConfigurationElement;
+<span class="code-keyword">import</span> org.eclipse.core.runtime.IExtension;
+
+<span class="code-keyword">public</span> <span class="code-keyword">interface</span> IProcessMember {
+    <span class="code-keyword">public</span> <span class="code-object">Object</span> process(IExtension extension, 
+      IConfigurationElement member);
+}</pre>
+</div></div>
+<p>This class is a visitor.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">import</span> org.eclipse.core.runtime.IConfigurationElement;
+<span class="code-keyword">import</span> org.eclipse.core.runtime.IExtension;
+<span class="code-keyword">import</span> org.eclipse.core.runtime.IExtensionPoint;
+<span class="code-keyword">import</span> org.eclipse.core.runtime.IExtensionRegistry;
+<span class="code-keyword">import</span> org.eclipse.core.runtime.Platform;
+
+<span class="code-keyword">public</span> class ProcessExtensions {
+ <span class="code-keyword">public</span> <span class="code-keyword">static</span> void process(<span class="code-object">String</span> xpid, IProcessMember processor) {
+        IExtensionRegistry registry = Platform.getExtensionRegistry();
+        IExtensionPoint extensionPoint =
+            registry.getExtensionPoint(xpid);
+        IExtension[] extensions = extensionPoint.getExtensions();
+        <span class="code-comment">// For each extension ...
+</span>     <span class="code-keyword">for</span> (<span class="code-object">int</span> i = 0; i &lt; extensions.length; i++) {           
+            IExtension extension = extensions[i];
+         IConfigurationElement[] elements = 
+              extension.getConfigurationElements();
+            <span class="code-comment">// For each member of the extension ...
+</span>         <span class="code-keyword">for</span> (<span class="code-object">int</span> j = 0; j &lt; elements.length; j++) {
+                IConfigurationElement element = elements[j];
+             processor.process(extension, element);               
+            }
+        }
+    }
+}</pre>
+</div></div>
+<p>This class is used to process extensions as identified by an id.  An id and a visitor are passed to the process method.  The visitor knows the class that uses the extension.</p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=27">[wiki]</a>
+</small>
+    </body>
+</html>

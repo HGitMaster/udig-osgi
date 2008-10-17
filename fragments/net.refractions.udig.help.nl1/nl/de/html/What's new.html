@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>Benutzerhandbuch : What's new</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- Benutzerhandbuch : What's new -->
+       <h1><a name="What%27snew-WasistneuinuDig1.1">Was ist neu in uDig 1.1</a></h1>
+
+<p>Im Folgenden erfahren Sie einige der Änderungens seit uDig 1.0.5:</p>
+
+<h3><a name="What%27snew-KompletterneuerteBearbeitungswerkzeuge">Komplett erneuerte Bearbeitungswerkzeuge</a></h3>
+
+<table class='confluenceTable'>
+<tr>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/add_vertext_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/remove_vertext_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/edit_vertex_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/hole_vertex_mode.gif" align="absmiddle" border="0" /> </td>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/delete_feature_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/difference_feature_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/split_feature_mode.gif" align="absmiddle" border="0" /> </td>
+</tr>
+</table>
+
+<p>Die alten Bearbeitungswerkzeuge wurden verworfen und neue Werkzeuge mit besserem Nutzer-Feeedback wurden hinzugefügt. Neben besserer Benutzerführung existiert nun auch ein neues Werkzeug-Framework, mit dem das Erstellen neuer Werkzeuge in wenigen Minuten möglich ist.</p>
+
+<table class='confluenceTable'>
+<tr>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/new_point_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/new_line_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/new_polygon_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/new_rectangle_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/new_circle_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.tool.edit/icons/etool16/new_freehand_mode.gif" align="absmiddle" border="0" /> </td>
+</tr>
+</table>
+
+<p>Dahingehend existiert ein öffentliches Tutorial auf <a href="/confluence/display/DEV/4+Edit+Tool+Tutorial" title="4 Edit Tool Tutorial">Edit Tool Tutorial</a>.</p>
+
+<h3><a name="What%27snew-ErzeugenleererLayer">Erzeugen leerer Layer</a></h3>
+<p>Es ist nun möglich, einen neuen Kartenlayer zu erzeugen, indem man den Menüpunkt <b>Layer &gt; Erzeugen</b> auswählt. Dieser Layer befindet sich allerdings nur im Hauptspeicher und wird nicht automatisch gespeichert.</p>
+
+<h3><a name="What%27snew-ErzeugenneuerFeaturetypen">Erzeugen neuer Featuretypen</a></h3>
+
+<p>Wurde ein Service in den Katalog importiert, kann man diesen Service anwählen und "Operationen &gt; Bearbeiten &gt; Featuretyp erzugen" wählen, um so einen neuen Featuretyp in diesem Service zu defininieren.<br/>
+Beispiel: Importieren Sie einen Shapefile. Wählen Sie den Service im Katalog. Wählen Sie anschließend "Operationen &gt; Bearbeiten &gt; Featuretyp erzugen" und definieren Sie den Featuretyp. Nach dem Anklicken von "OK" wird ein neuer Shapefile-Kartenlayer erstellt, in den Sie nun aus anderen Layern kopierte Feature einfügen oder neue Feautures dieses Typs mittels der Bearbeitunswerkzeuge erzeugen können.</p>
+
+<h3><a name="What%27snew-ThematischeStile">Thematische Stile</a></h3>
+<p>Die Stilauswahl geschieht nun über einen Dialog, der es u.a. erlaubt, ein Thema nach den Werten eines Attributs einzufärben. Der ColorBrewer der Pennsylvania State University wurde dabei integriert.</p>
+
+<p><img src="What's new_attachments/themed_pop_density.gif" align="absmiddle" border="0" /></p>
+
+<h3><a name="What%27snew-Mylar">Mylar</a></h3>
+
+<p>Der Mylar-Effekt entstammt ursprünglich der GIS-Community. UDig erlaubt es damit, den aktiven Kartenlayer hervorzuheben und alle anderen Informationen auf der Karte in den Hintergrund treten zu lassen.</p>
+
+<table class='confluenceTable'>
+<tr>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.project.ui/icons/elcl16/mylar_mode.gif" align="absmiddle" border="0" /> </td>
+<td class='confluenceTd'> <img src="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig.project.ui/icons/elcl16/mylar_focus_co.gif" align="absmiddle" border="0" />  </td>
+</tr>
+</table>
+<h3><a name="What%27snew-Tabellenfenster">Tabellenfenster</a></h3>
+
+<p>Ein Tabellenfenster wurde hinzugefügt, um damit die Features der aktuellen Auswahl zu betrachten. In der Standardperspektive versteckt sich das Tabellenfenster hinter dem Katalog.</p>
+
+<p><img src="What's new_attachments/selection_view.jpg" align="absmiddle" border="0" /></p>
+
+<h3><a name="What%27snew-Validierung">Validierung</a></h3>
+
+<p>Es ist nun möglich, verschiedene Validierungen an einem Layer durchzuführen. Diese Testserie kann angepaßt werden, und nicht bestandene Test werden in einer Problemliste verwaltet.</p>
+
+<h3><a name="What%27snew-VerbesserteDragundDropF%C3%A4higkeiten">Verbesserte Drag-und-Drop-Fähigkeiten</a></h3>
+
+<p>An mehreren neuen Stellen steht nun Drag und Drop zur Verfügung. Versuchen Sie einmal folgende Tricks:</p>
+<ul>
+	<li>Wählen Sie einige Features mit Hilfe des alten Auswahlbox-Werkzeugs. Wählen Sie nun das Werkzeug "Featureauswahl" und ziehen Sie die Auswahl in den Textbereich.</li>
+	<li>Erzeugen Sie einen neuen Kartenlayer. Ziehen Sie einfach bestehende Features auf den neuen Kartenlayer.</li>
+</ul>
+
+
+<h3><a name="What%27snew-KopierenundEinf%C3%BCgen%28CopyundPaste%29wurdenhinzugef%C3%BCgt.">Kopieren und Einfügen (Copy und Paste) wurden hinzugefügt.</a></h3>
+
+<p>Hier dazu einige Ideen zm Probieren:</p>
+<ul>
+	<li>Wählen Sie einige Features mittels der Auswahlbox. Kopieren Sie die Auswahl und fügen Sie sie in einen Texteditor ein.<br/>
+Wählen Sie ein Feature mit der "Featureauswahl" und kopieren Sie es in einen Texteditor.</li>
+</ul>
+
+
+<h3><a name="What%27snew-ImportundExportvon%22OpenWebServicesContext%22">Import und Export von "Open Web Services Context"</a></h3>
+
+<p>Es ist nun möglich OWS context documents zu importieren und auch, bestehende Karten als OSW-Kontext zu exportieren.</p>
+
+<h3><a name="What%27snew-Browserfenster">Browserfenster</a></h3>
+
+<p>Ein neues Fenster mit einem Browser darun wurde hinzugefügt.</p>
+
+<h3><a name="What%27snew-Suchfenster">Suchfenster</a></h3>
+
+<p>Ebenfalls neu ist das Suchfenster. Dieses Fenster erlaubt die Eingabe einer Adresse und zeigt eine Liste der entsprechenden Funde an. Ein Klick auf eines dieser Ergebnisse zeigt das Element im Kartenausschnitt und läßt es blinken,</p>
+
+<h3><a name="What%27snew-NeuePerspektive">Neue Perspektive </a></h3>
+
+<p>Für all dienjenigen, die schon immer etwas anders waren und/oder dachten gibt es nun eine alternative Kartenperspektive, zu erreichen im Menü unter "Fenster &gt; Perspektive öffnen &gt; Alternative Kartenperspektive.</p>
+
+<h3><a name="What%27snew-GespeicherteOrte">Gespeicherte Orte</a></h3>
+
+<p>Ein weiteres neues Fenster ermöglocht es nun, geographische Orte (also Koordinaten) als Lesezeichen abzuspeichern und später auf Knopfdruck zu diesen Orten zurückzukehren. (Dank, Cole!)</p>
+
+<h3><a name="What%27snew-BeseitigteFehlerf%C3%BCrdenMac">Beseitigte Fehler für den Mac</a></h3>
+
+<p>Einige der größeren Fehler für den Macintosh wurden beseitigt. Am auffallendsten waren dabei die Probleme beim Neustarten von uDig und Probleme mit Drag und Drop. Weiterhin bleiben aber einige Einschränkungen am Mac: Ist keine Karte offen, kann man keine Objekte in den Editorbereich ziehen. Das Ziehen auf Karten ist jedoch möglich, genauso wie das Ziehen auf das Kartenlayerfenster (was den gleichen Effekt hat).</p>
+
+<h3><a name="What%27snew-NeueBenutzervorgaben">Neue Benutzervorgaben</a></h3>
+
+<p>Einige neue Optionen, u.a. für die Erstellung von Karten, wurden hinzugefügt. Gehen Sie dazu unter <b>Fenster &gt; Benutzervorgaben</b>. Einige der neuen Optionen sind:</p>
+<ul>
+	<li>Kartenhintergrundfarbe</li>
+	<li>Transparenzen (langsamer, aber gutaussehend)</li>
+	<li>Anti-aliasing (langsamer, aber gutaussehend)</li>
+	<li>Ein Standard-Koordinatenreferenzsystem (CRS) für neue Karten</li>
+</ul>
+
+
+<h3><a name="What%27snew-NeueDruckAPI">Neue Druck-API</a></h3>
+
+<p>Die API für die Druckfunktionen wurde überarbeitet, und das Programmieren von Erweiterungen verlangt nicht länger die Kenntnis von Details von EMF. Des weiteren kam ein Erweiterungspunkt für Druckrahmen hinzu.</p>
+
+<h3><a name="What%27snew-Weitere%C3%84nderungen">Weitere Änderungen</a></h3>
+
+<ul>
+	<li>Distanzmeßwerkzeug</li>
+	<li>Selbstdefinierte CRS werden nun für die spätere Wiederverwendung gespeichert.</li>
+	<li>Nutzerdefinierte Stichworte können zu einem CRS hinzugefügt werden und erlauben das leichtere Wiederfinden.</li>
+	<li>Ein neuer Dialog ermöglicht es, bei Fehlern einen Fehlerbericht an das uDig-Entwicklungsteam zu senden.</li>
+</ul>
+
+
+<small>(c) Copyright (c) 2004,2005 Refractions Research Inc. and others.</small>
+<!--Content from <a href="http://udig.refractions.net/">udig.refractions.net</a> -->
+    </body>
+</html>

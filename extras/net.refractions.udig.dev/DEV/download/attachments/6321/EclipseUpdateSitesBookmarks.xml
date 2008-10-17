@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bookmarks>
+   <site name="GEF Update Site" url="http://download.eclipse.org/tools/gef/update-site/releases/" web="false" selected="true" local="false"/>
+   <site name="EMF/SDO/XSD Secondary Update Site" url="http://download.eclipse.org/tools/emf/updates/" web="true" selected="true" local="false"/>
+   <site name="Subclipse update site" url="http://subclipse.tigris.org/update_1.0.x" web="false" selected="true" local="false"/>
+   <site name="TPTP Update Site" url="http://eclipse.org/tptp/updates/" web="false" selected="true" local="false"/>
+</bookmarks>

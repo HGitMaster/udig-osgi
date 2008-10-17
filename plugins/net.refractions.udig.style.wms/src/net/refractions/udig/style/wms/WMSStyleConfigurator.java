@@ -1,0 +1,221 @@
+package net.refractions.udig.style.wms;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.project.internal.Layer;
+import net.refractions.udig.project.internal.StyleBlackboard;
+import net.refractions.udig.style.IStyleConfigurator;
+import net.refractions.udig.style.wms.internal.Messages;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.geotools.data.ows.StyleImpl;
+import org.geotools.data.wms.WebMapServer;
+import org.opengis.layer.Style;
+import org.opengis.sld.FeatureStyle;
+
+public class WMSStyleConfigurator extends IStyleConfigurator {
+
+	Combo styleCombo;
+    private List<Object> styles=new ArrayList<Object>();
+    private Text text;
+    private SashForm sashForm;
+    private Composite root;
+    private Layer layer;
+	
+	public WMSStyleConfigurator() {
+		super();
+	}
+
+	@Override
+	public boolean canStyle(Layer aLayer) {
+		return aLayer.hasResource(WebMapServer.class);
+	}
+
+	@Override
+	protected void refresh() {
+        if( layer==getLayer() )
+            return;
+		layer = getLayer();
+		
+		List<Object> allStyles = getStyles(layer.findGeoResource(org.geotools.data.ows.Layer.class));	
+        styles.clear();
+        styleCombo.setItems(new String[0]);
+        for (Object s : allStyles) {
+            org.opengis.layer.Style wmsStyle = 
+                (org.opengis.layer.Style) s;
+            
+            String name = getDisplayName(wmsStyle);
+            if (styleCombo.indexOf(name) == -1){
+                styleCombo.add(name);
+                styles.add(s);
+            }
+        }
+		//look for a value to set the combo to on the blackboard
+		StyleImpl style = 
+			(StyleImpl) layer.getStyleBlackboard().get(WMSStyleContent.WMSSTYLE);
+		boolean set=false;
+        if (style != null) {
+            for( int i=0; i<styles.size(); i++) {
+                org.opengis.layer.Style wmsStyle = 
+                    (org.opengis.layer.Style) styles.get(i);
+                if( style.equals(wmsStyle) ){
+                    set=true;
+                    styleCombo.select(i);
+                    setDetails(wmsStyle);
+                    break;
+                }
+            }
+		}
+        if(!set && styles.size()>0){
+            styleCombo.select(0);
+            setDetails((Style) styles.get(0));
+        }
+        
+	}
+
+    /**
+     * Returns all the style in the resource if the resource can resolve to an {@link org.geotools.data.ows.Layer}.
+     *
+     * @param wmsResource resource to search.
+     * @return all named styles.
+     */
+    @SuppressWarnings("unchecked")
+    static List<Object> getStyles(IGeoResource wmsResource) {
+        org.geotools.data.ows.Layer wmsLayer = null;
+		try {
+			wmsLayer = wmsResource.resolve(org.geotools.data.ows.Layer.class, null);
+		} 
+		catch (IOException e) {
+			IStatus status = 
+				new Status(IStatus.ERROR, WMSStylePlugin.ID, -1, e.getLocalizedMessage(), e);
+			WMSStylePlugin.getDefault().getLog().log(status);
+		}
+		
+		if (wmsLayer != null) {
+		    return wmsLayer.getStyles();
+		}
+        return Collections.emptyList();
+    }
+
+	private String getDisplayName( Style wmsStyle ) {
+        String name=wmsStyle.getName();
+        if( wmsStyle.getTitle()!=null )
+            name=wmsStyle.getTitle().toString(Locale.getDefault());
+        return name;
+    }
+
+    @Override
+	public void createControl(Composite parent) {
+        root=parent;
+        GridLayout gridLayout = new GridLayout(1,false);
+        gridLayout.marginBottom=0;
+        gridLayout.marginHeight=0;
+        gridLayout.marginLeft=0;
+        gridLayout.marginRight=0;
+        gridLayout.marginTop=0;
+        gridLayout.marginWidth=0;
+        parent.setLayout(gridLayout);
+		createChooser(parent);
+		createDetails(parent);
+	}
+
+    private void createDetails( Composite sashForm ) {
+        text=new Text(sashForm, SWT.READ_ONLY|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
+        text.setBackground(sashForm.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        text.setLayoutData(gridData);
+    }
+
+    private void createChooser( Composite sashForm ) {
+        Composite chooserComposite = new Composite(sashForm, SWT.NONE);
+		chooserComposite.setLayout(new GridLayout(2,false));
+        chooserComposite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        
+		Label styleLabel = new Label(chooserComposite, SWT.HORIZONTAL);
+		styleLabel.setText(Messages.WMSStyleConfigurator_style_label);
+        
+		styleCombo = new Combo(chooserComposite, SWT.DROP_DOWN|SWT.BORDER|SWT.READ_ONLY);
+		styleCombo.addSelectionListener(
+			new SelectionListener() {
+
+				public void widgetSelected(SelectionEvent e) {
+					int i = styleCombo.getSelectionIndex();
+					if (i > -1) {
+                        org.opengis.layer.Style wmsStyle = 
+                            (org.opengis.layer.Style) styles.get(i);
+						StyleBlackboard bb = getLayer().getStyleBlackboard();
+						bb.put(WMSStyleContent.WMSSTYLE, wmsStyle);
+                        bb.setSelected(new String[]{WMSStyleContent.WMSSTYLE});
+                        setDetails(wmsStyle);
+					}
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetDefaultSelected(e);
+				}	
+			}
+		);
+		
+		GridData gridData = new GridData();
+        gridData.verticalAlignment=SWT.BEGINNING;
+        styleLabel.setLayoutData(gridData);
+        gridData=new GridData(SWT.FILL, SWT.NONE, true, false);
+        gridData.verticalAlignment=SWT.BEGINNING;
+        styleCombo.setLayoutData(gridData);
+    }
+
+    protected void setDetails( Style wmsStyle ) {
+        boolean detailsSet=false;
+        if( wmsStyle.getAbstract()!=null ){
+            text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_abstract_format, new Object[] {
+            		wmsStyle.getAbstract().toString(Locale.getDefault())
+            }));
+            detailsSet=true;
+        }
+        if( wmsStyle.getStyleURL()!=null ){
+            String styleURL = wmsStyle.getStyleURL().toString(); 
+            text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_styleURL_format, new Object[] { styleURL}));
+            detailsSet=true;
+        }
+        if( wmsStyle.getStyleSheetURL()!=null ){
+            String styleURL = wmsStyle.getStyleURL().toString(); 
+            text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_styleURL_format, new Object[] { styleURL}));
+            detailsSet=true;
+        }
+        if( wmsStyle.getFeatureStyles()!=null ){
+        	StringBuffer buff = new StringBuffer();
+            List<FeatureStyle> fts = wmsStyle.getFeatureStyles();
+            for( FeatureStyle style : fts ) {
+                String name = style.getName();
+                if( style.getTitle()!=null )
+                    name=style.getTitle().toString(Locale.getDefault());
+                buff.append( name );
+                buff.append("\n"); //$NON-NLS-1$
+            }
+            
+            text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_featureStyles_format, new Object[] {buff}));
+            detailsSet=true;
+        }
+        
+        if (!detailsSet ){
+            text.setText(Messages.WMSStyleConfigurator_no_info);
+        }
+    }
+}

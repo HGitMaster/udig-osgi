@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Maven Ant Tasks
+Bundle-SymbolicName: org.apache.maven_ant_tasks;singleton:=true
+Bundle-Version: 2.0.9
+Bundle-Vendor: maven.org
+Require-Bundle: org.eclipse.ant.core

@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : How do I add a layer progammatically</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : How do I add a layer progammatically -->
+       <h1>How do I add a layer progammatically</h1>
+
+       <h2><a name="HowdoIaddalayerprogammatically-uDig1.1"></a>uDig 1.1</h2>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">ApplicationGIS.addLayersToMap(map, layers, startposition, project);</pre>
+</div></div>
+
+<h2><a name="HowdoIaddalayerprogammatically-uDig1.0"></a>uDig 1.0</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">IMap map;
+map.sendCommandASync(<span class="code-keyword">new</span> AddLayerCommand(layer) );</pre>
+</div></div>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=8474">[wiki]</a>
+</small>
+    </body>
+</html>

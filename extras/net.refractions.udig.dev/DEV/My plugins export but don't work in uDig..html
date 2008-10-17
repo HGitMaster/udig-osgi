@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : My plugins export but don't work in uDig.</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : My plugins export but don't work in uDig. -->
+       <h1>My plugins export but don't work in uDig.</h1>
+
+       <p>Q: My plugins export but don't work in uDig.  What is going on?</p>
+
+<p>A:<br/>
+The common suspects are:</p>
+
+<ol>
+	<li>The plugin depends on another plugin that is not part of the uDig your plugin is installed in.  If a plugin depends on a missing plugin then that plugin will be deactivated</li>
+	<li>Make sure that all the required resources are checked off in th build.properties editor.  The build is the important one for running and exporting</li>
+	<li>If you made a plugin that contains code as well as other jars then on the runtime tab of the Manifest.MF editor you must make sure that the all the extra jars <b>and</b> a . are in the Classpath list.  (The period is intensional as it indicates the code of this plugin).
+	<ul>
+		<li>This last point is important only if the build.properties Runtime Information maps . to your source directory.  If the mapping is to a jar then make sure that jar is in the classpath of the manifest.</li>
+	</ul>
+	</li>
+	<li>The exported plugin and the current udig build were compiled with different jdk. -debug -consoleLog as program arguments help to keep track of such errors.</li>
+</ol>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=9936">[wiki]</a>
+</small>
+    </body>
+</html>

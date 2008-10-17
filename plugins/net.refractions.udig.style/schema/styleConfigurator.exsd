@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="net.refractions.udig.style.net.refractions.udig">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="net.refractions.udig.style.net.refractions.udig" id="style" name="net.refractions.udig.style"/>
+      </appInfo>
+      <documentation>
+         The extension point for a UI element for editing a style on a layer&apos;s style blackboard.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="styleConfigurator" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="styleConfigurator">
+      <annotation>
+         <documentation>
+            Configures a style object. Responsibilities include:
+&lt;ul&gt;
+&lt;li&gt;Creating a ui to allow user configuration of a style object.
+&lt;li&gt;Placing style object information onto the style blackboard of a layer.
+&lt;li&gt;Determining if a style configurator can be used to configure the style
+of a particular layer.
+&lt;/ul&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This should be a human readable label which can be used to identify the style configurator in the ui.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="requires" type="string">
+            <annotation>
+               <documentation>
+                  if defined, the selected layer must resolve this class in order for this configurator to be displayed
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="java.lang.Class"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This is the class that manages the configuration of the Style class. It is an instance of IStyleConfigurator.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="net.refractions.udig.style.IStyleConfigurator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="styleId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the style extension that the configurator is intended to work with. This extension point works in conjunction with the net.refractions.udig.project.style extension point. The &quot;id&quot; attribute of an extension of that type should match the &quot;styleId&quot; attribute of an extension of this type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : net.refractions.udig.project.context</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : net.refractions.udig.project.context -->
+       <h1>net.refractions.udig.project.context</h1>
+
+       
+<p>The context is used to manage the layer data inside the LayerManager. It retains information about each layer to be displayed and other information pertaining to all of the layers, such as SRS, BoundingBox and abstract. </p>
+
+<h5><a name="net.refractions.udig.project.context-FunctionalRequirements%3A"></a>Functional Requirements:</h5>
+<ul class="alternate" type="square">
+	<li>BBox and SRS</li>
+	<li>Models <a href="net.refractions.udig.project.layer.html" title="net.refractions.udig.project.layer">net.refractions.udig.project.layer</a>/<a href="net.refractions.udig.render.decorator.html" title="net.refractions.udig.render.decorator">net.refractions.udig.render.decorator</a> state, maintains Z order</li>
+	<li>Metadata (abstract, title, etc. from WMS Context Document)</li>
+	<li><a href="net.refractions.udig.project.ui.layerManager.html" title="net.refractions.udig.project.ui.layerManager">net.refractions.udig.project.ui.layerManager</a> "controls" the Context in a MVC sense</li>
+	<li>Captures all the information for Rendering (contrast w/ <a href="net.refractions.udig.printing.context.html" title="net.refractions.udig.printing.context">net.refractions.udig.printing.context</a>)</li>
+	<li>Throws events when modified (like every good view should)</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.project.context-NonfunctionalRequirements%3A"></a>Non-functional Requirements:</h5>
+<ul class="alternate" type="square">
+	<li>export/import a WMS Context Document</li>
+</ul>
+
+
+<h5><a name="net.refractions.udig.project.context-DesignNotes"></a>Design Notes</h5>
+
+<ul class="alternate" type="square">
+	<li>This represents a strong separation between user's request and how we fulfill that request (allows <a href="net.refractions.udig.project.ui.layerManager.html" title="net.refractions.udig.project.ui.layerManager">net.refractions.udig.project.ui.layerManager</a> to use alternate services, or cache for the response).</li>
+	<li>Context will keep track of decorators, such as a legend, scale bar or compass. This would allow it to be passed down to either the printer or the screen renderer.</li>
+	<li>Communicates with the <a href="net.refractions.udig.project.ui.layerManager.html" title="net.refractions.udig.project.ui.layerManager">net.refractions.udig.project.ui.layerManager</a> regarding Layer information</li>
+</ul>
+
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=253">[wiki]</a>
+</small>
+    </body>
+</html>

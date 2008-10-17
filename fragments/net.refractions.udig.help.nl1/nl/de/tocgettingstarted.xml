@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Erste Schritte" link_to="toc.xml#tocgettingstarted" href="html/Getting Started.html">
+<topic label="Basistutorial" href="html/Basic tutorial.html">
+<topic label="Der Arbeitsplatz" href="html/The Workbench.html" />
+<topic label="Ein einfaches Projekt" href="html/A simple project.html"/>
+<topic label="Editoren und weitere Fenster" href="html/Views and editors.html"/>
+<topic label="Projekte und Ressourcen" href="html/Navigating resources.html" />
+<topic label="Daten hinzufügen" href="html/Adding data.html" />
+<topic label="Werkzeuge" href="html/Tools.html" >
+<topic label="Zoomen" href="html/Zoom.html"/>
+<topic label="Ausschnitt verschieben" href="html/Pan.html"/>
+<topic label="Bearbeiten" href="html/Edit.html"/>
+</topic>
+<topic label="Fenster und Editoren anordnen" href="html/Rearranging views and editors.html" >
+<topic label="Mauszeiger bei Drag und Drop" href="html/Drop cursors.html"/>
+<topic label="Fenster anordnen" href="html/Rearranging views.html"/>
+<topic label="Editoren anordnen" href="html/Tiling editors.html"/>
+<topic label="Gestapelte Fenster anordnen" href="html/Rearranging tabbed views.html"/>
+<topic label="Maximieren" href="html/Maximizing.html"/>
+</topic>
+<topic label="Schnellsichten" href="html/Working with fast views.html"/>
+<topic label="Den Arbeitsplatz verlassen" href="html/Exiting the workbench.html" />
+</topic>
+</toc>

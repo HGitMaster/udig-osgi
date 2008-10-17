@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 7 GISPlatform Utility Classes</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 7 GISPlatform Utility Classes -->
+       <h1>7 GISPlatform Utility Classes</h1>
+
+       <p>There are a host of utility classes provided to make your life as an RCP developer easier. </p>
+<div>
+<ul>
+    <li><a href='#7GISPlatformUtilityClasses-net.refractions.udig.ui'>net.refractions.udig.ui</a></li>
+<ul>
+    <li><a href='#7GISPlatformUtilityClasses-PlatformGIS'>PlatformGIS</a></li>
+<ul>
+    <li><a href='#7GISPlatformUtilityClasses-RunningsomethingintheDisplayThread'>Running something in the Display Thread</a></li>
+    <li><a href='#7GISPlatformUtilityClasses-WaitingforsomethingfromtheDisplayThread'>Waiting for something from the Display Thread</a></li>
+</ul>
+</ul>
+    <li><a href='#7GISPlatformUtilityClasses-net.refractions.udig.core'>net.refractions.udig.core</a></li>
+<ul>
+    <li><a href='#7GISPlatformUtilityClasses-Pair'>Pair</a></li>
+    <li><a href='#7GISPlatformUtilityClasses-Option'>Option</a></li>
+</ul>
+    <li><a href='#7GISPlatformUtilityClasses-net.refractions.udig.libs'>net.refractions.udig.libs</a></li>
+</ul></div>
+
+<h1><a name="7GISPlatformUtilityClasses-net.refractions.udig.ui"></a>net.refractions.udig.ui</h1>
+
+<p>The <b>net.refractions.udig.ui</b> plugin contains all manner of code and utilities that help with user interface development. You will find some of our basic drag and drop and operation support code here.</p>
+
+<h2><a name="7GISPlatformUtilityClasses-PlatformGIS"></a>PlatformGIS</h2>
+
+<p>The <b>PlatformGIS</b> class contains helper code that is useful when scheduling work from a user interface. The trick here is you want to make sure you do no work in a Display thread (no talking to disk, or external services for example). Every time you do it looks like your application has crashed; it won't respond to the user and they think it is broken.</p>
+
+<p>Out of the box Eclipse RCP provides some facilities:</p>
+<ul>
+	<li>Display.getCurrent(); will get the Display for the current thread - but <b>only if</b> an event thread</li>
+	<li>Display.getDefault(); a good default Display (usually the one associated with the application)</li>
+</ul>
+
+
+<p>Once you have a Display you can call:</p>
+<ul>
+	<li>Display.asyncExec( Runnable ); will schedule this Runnable to run on the event thread</li>
+	<li>Display.syncExec( Runnable ); will block your current thread until this has been scheduled and run</li>
+</ul>
+
+
+<p>The tricks involved in making this code work and work well go something like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">Display display = Display.getCurrent();
+<span class="code-keyword">if</span>( display==<span class="code-keyword">null</span> ){
+   display = Display.getDefault();
+}
+display.asyncExec( <span class="code-keyword">new</span> <span class="code-object">Runnable</span>(){
+    <span class="code-keyword">public</span> void run(){
+       ... <span class="code-keyword">do</span> some work that needs to talk to a user <span class="code-keyword">interface</span> widget ...
+    }
+});</pre>
+</div></div>
+
+<p>But getting this perfect every time is boring (and figuring out how to make asyncExec work at all is a challenge); please use ...</p>
+
+<h3><a name="7GISPlatformUtilityClasses-RunningsomethingintheDisplayThread"></a>Running something in the Display Thread</h3>
+
+<p>To run something in a display thread (it will check if the current thread is a display thread) try the following:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-object">Runnable</span> enableButton = <span class="code-keyword">new</span> <span class="code-object">Runnable</span>(){
+    <span class="code-keyword">public</span> void run(){
+       button.setEnable( <span class="code-keyword">true</span> );
+    }
+}
+PlatformGIS.asyncInDisplay( enableButton, <span class="code-keyword">true</span>); <span class="code-comment">// use the thread now <span class="code-keyword">if</span> possible</span></pre>
+</div></div>
+
+<p>To schedule the runnable to go on the display thread later:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-object">Runnable</span> enableButton = <span class="code-keyword">new</span> <span class="code-object">Runnable</span>(){
+    <span class="code-keyword">public</span> void run(){
+       button.setEnable( <span class="code-keyword">true</span> );
+    }
+}
+PlatformGIS.asyncInDisplay( enableButton, <span class="code-keyword">false</span> );</pre>
+</div></div>
+
+<h3><a name="7GISPlatformUtilityClasses-WaitingforsomethingfromtheDisplayThread"></a>Waiting for something from the Display Thread</h3>
+
+<p>To ask for a value from a display widget you need to <b>wait</b> for the work in the Display thread to complete.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-keyword">final</span> <span class="code-object">String</span> textPointer[] = <span class="code-keyword">new</span> <span class="code-object">String</span>[1]; <span class="code-comment">// pointer to output
+</span><span class="code-object">Runnable</span> queryText = 
+PlatformGIS.syncInDisplay( <span class="code-keyword">new</span> <span class="code-object">Runnable</span>(){
+    <span class="code-keyword">public</span> void run(){
+       textPointer[0] = inputField.getText(); <span class="code-comment">// <span class="code-keyword">this</span> is the users input
+</span>    }
+});
+<span class="code-object">String</span> inputText = textPointer[0];</pre>
+</div></div>
+<p>The above code example uses a final array to "hold" the value between the runnable and your code; you could also do this using a Class field.</p>
+
+<h1><a name="7GISPlatformUtilityClasses-net.refractions.udig.core"></a>net.refractions.udig.core</h1>
+
+<p>This plug-in contains adapters and wrapper between Eclipse RCP concepts (like IAdaptable) and open source concepts like Features; Filters and so on.</p>
+
+<h2><a name="7GISPlatformUtilityClasses-Pair"></a>Pair</h2>
+
+<p>The Pair class is used to return two results out of a method; It is basically a pointer or a type safe replacement for Object2.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">Pair&lt;<span class="code-object">String</span>,<span class="code-object">Integer</span>&gt; mapGrid = <span class="code-keyword">new</span> Pair&lt;<span class="code-object">String</span>,<span class="code-object">Integer</span>&gt;( <span class="code-quote">"A"</span>, 1 );
+<span class="code-object">System</span>.out.println(<span class="code-quote">"You sunk my battleship: "</span>+ mapGrid );</pre>
+</div></div>
+
+<h2><a name="7GISPlatformUtilityClasses-Option"></a>Option</h2>
+
+<p>An alternative to returning <b>null</b>.</p>
+
+<p>The Option class is used to return a single result; and communicate if the result is available. It is a type safe replacement for returning <b>null</b>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">Option&lt;<span class="code-object">String</span>&gt; value = someFunction();
+<span class="code-keyword">if</span>( value <span class="code-keyword">instanceof</span> Option.Some ){
+  <span class="code-comment">// we actually got an answer
+</span>  <span class="code-object">String</span> text = ((Some&lt;<span class="code-object">String</span>&gt;)value).value();
+}</pre>
+</div></div>
+
+<p>This replaces code such as the following:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java"><span class="code-object">String</span> value = someFunction();
+<span class="code-keyword">if</span>( value != <span class="code-keyword">null</span> ){
+  <span class="code-comment">// we actually got an answer
+</span>}</pre>
+</div></div>
+
+<h1><a name="7GISPlatformUtilityClasses-net.refractions.udig.libs"></a>net.refractions.udig.libs</h1>
+
+<p>This plug-in rounds up all the open source libraries we use.</p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=2425083">[wiki]</a>
+</small>
+    </body>
+</html>

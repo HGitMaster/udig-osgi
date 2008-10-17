@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../book.css" type="text/css" />
+        <title>UDIG Developer Guide : 03 Making a Product and Executable</title>
+    </head>
+    <body BGCOLOR="#FFFFFF">
+       <!-- UDIG Developer Guide : 03 Making a Product and Executable -->
+       <h1>03 Making a Product and Executable</h1>
+
+       <h1><a name="03MakingaProductandExecutable-AProductforyourApplication"></a>A Product for your Application</h1>
+
+<p>A product is a main entry point into your uDig (or Eclipse) based application. It is used within the Eclipse SDK to package your application for release, and to launch it from within Eclipse. The file is XML-based, but Eclipse provides a very nice GUI editor. </p>
+
+<p>uDig's application lives in the net.refractions.udig plug-in:<br/>
+<a href="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig/udig.product">http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig/udig.product</a></p>
+
+<h2><a name="03MakingaProductandExecutable-Creatingthe.productFile"></a>Creating the .product File</h2>
+
+<p>To create a product for your application, you will need to create a product file and place it in your branding plug-in. </p>
+
+<p>In your Eclipse SDK:</p>
+<ol>
+	<li>Select <b>File</b>&#45;&gt;<b>New</b>&#45;&gt;<b>Other...</b></li>
+	<li>In the <b>Plug-in Development</b> folder, select <b>Product Configuration</b> and press <b>Next</b></li>
+	<li>Select your <b>branding plug-in</b> for the parent folder. (eg: "<b>net.refractions.udig.community.jody.visual</b>")</li>
+	<li>Under <b>File name</b>, enter a file name (eg: "<b>visual.product"</b>)</li>
+	<li>If you are basing your application off of uDig, under <b>Use an existing product</b>, select <b>net.refractions.udig.product</b> (Recommended)</li>
+	<li>Press <b>Finish</b></li>
+</ol>
+
+
+<p>This screenshot shows a newly created visual.product file based on udig.product:<br/>
+<a href='http://udig.refractions.net/confluence//download/attachments/9358/newProduct.jpg' target='newProduct.jpg' onClick='window.open("http://udig.refractions.net/confluence//download/attachments/9358/newProduct.jpg", "newProduct.jpg", "height=506,width=698,menubar=no,status=no,toolbar=no"); return false;'><img src="download/thumbnails/9358/newProduct.jpg" align="absmiddle" border="0" title="Creating a new product based on uDig"/></a></p>
+
+<h2><a name="03MakingaProductandExecutable-ConfiguringyourProduct"></a>Configuring your Product</h2>
+
+<h3><a name="03MakingaProductandExecutable-ProductName"></a>Product Name</h3>
+
+<p>Note that <b>product name</b> is set to "%product.name". You should either create a plugin.properties file and provide a value, or change it to an appropriate product name (eg: "Visual Application"). For an example properties file, see <a href="http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig/plugin.properties">http://svn.geotools.org/udig/trunk/plugins/net.refractions.udig/plugin.properties</a></p>
+
+<h3><a name="03MakingaProductandExecutable-FeatureBasedProduct"></a>Feature-Based Product</h3>
+
+<p>You can base your product on plug-ins or features. Features are generally preferable as they enable the use of an update-site. This is what uDig uses. If you change it to features, you will have to add the two features uDig depends on, on the <b>Configuration</b> page. These two features are <b>net.refractions.udig</b> and <b>org.eclipse.rcp</b>. You should also add in your own feature for plug-ins you want to include (ex: <b>net.refractions.udig.community.jody.visual_feature</b>)</p>
+
+<p>The following screenshot shows the <b>Configuration</b> page of a product based on features:<br/>
+<a href='http://udig.refractions.net/confluence//download/attachments/9358/featureBasedProduct.jpg' target='featureBasedProduct.jpg' onClick='window.open("http://udig.refractions.net/confluence//download/attachments/9358/featureBasedProduct.jpg", "featureBasedProduct.jpg", "height=504,width=695,menubar=no,status=no,toolbar=no"); return false;'><img src="download/thumbnails/9358/featureBasedProduct.jpg" align="absmiddle" border="0"/></a></p>
+
+<h3><a name="03MakingaProductandExecutable-Branding"></a>Branding</h3>
+
+<p>The <b>Launcher</b> and <b>Branding</b> pages can be used to configure the branding of your application. This includes items such as the launching executable's name and icon, and the splash screen that is shown during start-up.</p>
+
+<p>You probably also want to give your product a <b>launcher</b> name. On the <b>Launcher</b> page, enter a value under Launcher name. (eg: "visual")</p>
+
+<h2><a name="03MakingaProductandExecutable-UsingtheProducttoRunyourApplication"></a>Using the Product to Run your Application</h2>
+
+<p>A product file can be used to run your application within Eclipse. On the <b>Overview</b> page, under <b>Testing</b>, there are a couple buttons. <b>Synchronize</b> creates (or updates) the Eclipse run-time configuration (What you see under Run-&gt;Run History), and <b>Launch the Product</b> or <b>Launch the Product in Debug mode</b>. </p>
+
+<p>To use the product file to run your application:</p>
+<ol>
+	<li>Press <b>Synchronize</b> (this isn't always necessary, but can help fix problems sometimes)</li>
+	<li>Press on of the <b>Launch</b> buttons.</li>
+</ol>
+
+
+<h2><a name="03MakingaProductandExecutable-UsingtheProducttobuildaRelease"></a>Using the Product to build a Release</h2>
+
+<p>The product file can be used to build an archive containing an executable release of your application. On the <b>Overview</b> page, click <b>Eclipse product export wizard</b>. The wizard will appear and you will be prompted to enter configuration details, such as root directory and destination location.</p>
+
+<p>Change <b>Root directory</b> to something suitable for your application (eg: "visual"). Select <b>Archive file</b> and point it to a location where you want the zip file saved (eg: c:\visual.zip). Press Finish and then wait for it to build. </p>
+
+<p>The following screenshot shows the Eclipse export wizard:<br/>
+<a href='http://udig.refractions.net/confluence//download/attachments/9358/export.jpg' target='export.jpg' onClick='window.open("http://udig.refractions.net/confluence//download/attachments/9358/export.jpg", "export.jpg", "height=516,width=532,menubar=no,status=no,toolbar=no"); return false;'><img src="download/thumbnails/9358/export.jpg" align="absmiddle" border="0" title="Eclipse export wizard"/></a></p>
+
+<p>Note that if you wish to export for multiple platforms, you will need to install the Eclispe RCP Delta Pack.</p>
+
+<small>
+  (c) Copyright (c) 2004-2008 Refractions Research Inc. and others.<br>
+  <a href="http://udig.refractions.net/confluence/pages/viewpage.action?pageId=9358">[wiki]</a>
+</small>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Concepts" link_to="toc.xml#tocconcepts" href="html/Concepts.html">
+<topic label="Workbench" href="html/Workbench.html"/>
+<topic label="Editor" href="html/Editor.html">
+<topic label="Map Editor" href="html/Map editor.html" />
+<topic label="Page Editor" href="html/Page editor.html" />
+<topic label="Selection" href="html/Selection.html" />
+</topic>
+<topic label="View" href="html/View.html">
+<topic label="Fast views" href="html/Fast views.html" />
+</topic>
+<topic label="Toolbar" href="html/Toolbar.html" />
+<topic label="Help system" href="html/Help system.html" />
+<topic label="Project" href="html/Project.html" />
+<topic label="Map" href="html/Map.html">
+<topic label="Viewport" href="html/Viewport.html"/>
+<topic label="Projection" href="html/Projection.html"/>
+<topic label="Layer" href="html/Layer.html"/>
+<topic label="Decorator" href="html/Map Graphic.html"/>
+</topic>
+<topic label="Page" href="html/Page.html">
+<topic label="Template" href="html/Template.html" />
+</topic>
+<topic label="Feature" href="html/Feature.html">
+<topic label="Feature Type" href="html/Feature Type.html" />
+<topic label="Feature Collection" href="html/Feature Collection.html" />
+</topic>
+<topic label="Service" href="html/Service.html">
+<topic label="Data Store" href="html/Data Store.html"/>
+<topic label="Web Feature Server" href="html/Web Feature Server.html"/>
+<topic label="Web Map Server" href="html/Web Map Server.html"/>
+</topic>
+<topic label="File Formats" href="html/File Formats.html">
+<topic label="Shapefile" href="html/Shapefile.html" />
+</topic>
+</toc>
