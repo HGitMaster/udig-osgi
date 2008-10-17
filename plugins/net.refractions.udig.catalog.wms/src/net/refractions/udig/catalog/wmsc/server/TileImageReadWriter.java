@@ -9,9 +9,6 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.preferences.PreferenceConstants;
-
 /**
  * Class to help read and write for Tile images to disk in a structured
  * format that can be tested and loaded each time the program is run.
@@ -21,13 +18,13 @@ import net.refractions.udig.project.preferences.PreferenceConstants;
  */
 public class TileImageReadWriter {
 	
-	private String baseTileFolder = ""; //$NON-NLS-1
-	private static final String baseSubTileFolder = "tilecache"; //$NON-NLS-1
+	private String baseTileFolder = ""; //$NON-NLS-1$
+	private static final String baseSubTileFolder = "tilecache"; //$NON-NLS-1$
 	private TiledWebMapServer server;
 	
 	public TileImageReadWriter(TiledWebMapServer server, String baseDir) {
 		this.server = server;
-		this.baseTileFolder = baseDir+"\\"+this.baseSubTileFolder; //$NON-NLS-1
+		this.baseTileFolder = baseDir+"\\"+ baseSubTileFolder; //$NON-NLS-1$
 	}
 
 	/** 
@@ -61,7 +58,7 @@ public class TileImageReadWriter {
 	 * @return
 	 */
 	public String getTileFileName(Tile tile, String filetype) {
-		return getTileDirectoryPath(tile)+tile.getPosition()+"."+filetype; //$NON-NLS-1
+		return getTileDirectoryPath(tile)+tile.getPosition()+"."+filetype; //$NON-NLS-1$
 	}
 	
 	/**
@@ -74,20 +71,20 @@ public class TileImageReadWriter {
 	 */
 	public String getTileDirectoryPath(Tile tile) {
 		URL service = this.server.getService();
-		String serverURL = service.getHost()+"_"+service.getPath(); //$NON-NLS-1
-		serverURL = serverURL.replace('\\', '_'); //$NON-NLS-1 //$NON-NLS-2
-		serverURL = serverURL.replace('/', '_'); //$NON-NLS-1 //$NON-NLS-2
-		String layers = tile.getTileSet().getLayers();//$NON-NLS-1
-		layers += "_"+tile.getTileSet().getEPSGCode();//$NON-NLS-1
-		layers += "_"+tile.getTileSet().getFormat();
-		layers = layers.replace(',', '_'); //$NON-NLS-1 //$NON-NLS-2
-		layers = layers.replace(':', '_'); //$NON-NLS-1 //$NON-NLS-2
-		layers = layers.replace('\\', '_'); //$NON-NLS-1 //$NON-NLS-2
-		layers = layers.replace('/', '_'); //$NON-NLS-1 //$NON-NLS-2
+		String serverURL = service.getHost()+"_"+service.getPath(); //$NON-NLS-1$
+		serverURL = serverURL.replace('\\', '_'); 
+		serverURL = serverURL.replace('/', '_'); 
+		String layers = tile.getTileSet().getLayers();
+		layers += "_"+tile.getTileSet().getEPSGCode();//$NON-NLS-1$
+		layers += "_"+tile.getTileSet().getFormat(); //$NON-NLS-1$
+		layers = layers.replace(',', '_'); 
+		layers = layers.replace(':', '_'); 
+		layers = layers.replace('\\', '_');
+		layers = layers.replace('/', '_'); 
 		Double scale = tile.getScale();
 		String scaleStr = scale.toString();
-		scaleStr = scaleStr.replace('.', '_'); //$NON-NLS-1 //$NON-NLS-2
-		return baseTileFolder+"\\"+serverURL+"\\"+layers+"\\"+scaleStr+"\\"; //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3 //$NON-NLS-4
+		scaleStr = scaleStr.replace('.', '_'); 
+		return baseTileFolder+"\\"+serverURL+"\\"+layers+"\\"+scaleStr+"\\"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}	
 
 	/**

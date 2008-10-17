@@ -3,29 +3,17 @@ package net.refractions.udig.catalog.wmsc.server;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.imageio.ImageIO;
-
-import net.refractions.udig.catalog.internal.wms.WmsPlugin;
-
 import org.apache.commons.collections.MapUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.geotools.data.ows.AbstractRequest;
-import org.geotools.data.ows.Response;
-import org.geotools.ows.ServiceException;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -294,7 +282,7 @@ public abstract class AbstractTileRange implements TileRange {
      * @param monitor
      */
     private void internalLoadTile(final Tile tile, final IProgressMonitor monitor) {
-    	boolean success = tile.loadTile(monitor);
+    	tile.loadTile(monitor);
 
         // now that the tile lock is unlocked, notify any listeners and
         // update the not loaded list (we want to do this whether we got

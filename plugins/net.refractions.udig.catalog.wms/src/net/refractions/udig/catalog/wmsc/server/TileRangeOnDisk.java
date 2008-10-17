@@ -135,7 +135,7 @@ public class TileRangeOnDisk extends AbstractTileRange {
             if (tile.getBufferedImage() != null) {
             	String filetype = getFileType();
             	try {
-            		boolean success = tileReadWriter.writeTile(tile, filetype);
+            		tileReadWriter.writeTile(tile, filetype);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -156,9 +156,9 @@ public class TileRangeOnDisk extends AbstractTileRange {
     protected String getFileType() {
     	// format is like "image\png" so strip out the beginning
     	String format = tileset.getFormat();
-    	int indexOf = format.indexOf("\\");
+    	int indexOf = format.indexOf("\\"); //$NON-NLS-1$
     	if (indexOf < 0) {
-    		indexOf = format.indexOf("/");
+    		indexOf = format.indexOf("/"); //$NON-NLS-1$
     		if (indexOf < 0) {
     			return format;
     		}

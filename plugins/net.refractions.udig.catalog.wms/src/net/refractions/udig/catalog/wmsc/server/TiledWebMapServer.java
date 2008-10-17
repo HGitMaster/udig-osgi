@@ -108,7 +108,7 @@ public class TiledWebMapServer {
      * @author Emily Gouge (Refractions Research, Inc)
      * @since 1.1.0
      */
-    class CapabilitiesRequest extends AbstractGetCapabilitiesRequest {
+    static class CapabilitiesRequest extends AbstractGetCapabilitiesRequest {
 
         public CapabilitiesRequest( URL serverURL ) {
             super(serverURL);
@@ -162,7 +162,7 @@ public class TiledWebMapServer {
 
             PrintStream stream = new PrintStream(outputStream);
 
-            String postText = new String();
+            String postText = ""; //$NON-NLS-1$
 
             while( reader.ready() ) {
                 String input = reader.readLine();
@@ -177,6 +177,8 @@ public class TiledWebMapServer {
 
             outputStream.flush();
             outputStream.close();
+            stream.flush();
+            stream.close();
         } else {
             connection.setRequestMethod("GET"); //$NON-NLS-1$
         }

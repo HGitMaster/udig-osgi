@@ -14,6 +14,7 @@
  */
 package net.refractions.udig.catalog.wmsc.server;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -293,7 +294,7 @@ public class WMSTileSet implements TileSet {
                     int posx = (int)Math.round(spacex/xscale);
                     int posy = (int)Math.round(spacey/yscale);
                     
-                    String position = new String(posx+"_"+posy);
+                    String position = posx + "_" + posy; //$NON-NLS-1$
                     tile.setPosition(position);
                     viewportTiles.put(tileid, tile);
                 }
@@ -357,8 +358,11 @@ public class WMSTileSet implements TileSet {
     /* (non-Javadoc)
 	 * @see net.refractions.udig.catalog.wmsc.server.TileSet#getResolutions()
 	 */
+    /**
+     * @returns a copy of the resolutions array
+     */
     public double[] getResolutions(){
-        return this.dresolutions;
+        return Arrays.copyOf(this.dresolutions, this.dresolutions.length);
     }
     
     /**

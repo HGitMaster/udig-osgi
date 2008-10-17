@@ -44,7 +44,6 @@ import com.vividsolutions.jts.geom.Envelope;
 public class WMSTile implements Tile {
 	
 	private final static boolean testing = false;  // for testing output
-	private Random rand; // for testing with random latency
 	
     public static final int INERROR = 1;
     public static final int OK = 0;
@@ -87,8 +86,8 @@ public class WMSTile implements Tile {
         if (bbox == null) {
             return null;
         }
-        return new String(scale+ID_DIVIDER+bbox.getMinX()+ID_DIVIDER+bbox.getMaxY()
-                +ID_DIVIDER+bbox.getMaxY()+ID_DIVIDER+bbox.getMinY()); 
+        return scale+ID_DIVIDER+bbox.getMinX()+ID_DIVIDER+bbox.getMaxY()
+                +ID_DIVIDER+bbox.getMaxY()+ID_DIVIDER+bbox.getMinY(); 
     }
     
     /* (non-Javadoc)
@@ -220,7 +219,7 @@ public class WMSTile implements Tile {
                 inputStream = server.issueRequest(request).getInputStream();
                 // simulate latency if testing
                 if (testing) {
-                	rand = new Random();	
+                	Random rand = new Random();	
                     long delay = rand.nextInt(5000); // delay 1-5 secs
                     System.out.println("request delaying for: "+delay); //$NON-NLS-1$
                     Thread.sleep(delay);  // simulate latency

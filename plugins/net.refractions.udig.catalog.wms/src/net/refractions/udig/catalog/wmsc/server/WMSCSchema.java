@@ -53,7 +53,7 @@ public class WMSCSchema implements Schema {
 
     private static Schema instance = new WMSCSchema();
 
-    public static URI NAMESPACE = null;// makeURI();
+    public static final URI NAMESPACE = null;// makeURI();
 
     static final Element[] elements = new Element[]{
 
@@ -275,9 +275,7 @@ public class WMSCSchema implements Schema {
             return (this.name != null && this.name.equals(name)) ? this : null;
         }
         public Element findChildElement( String localName, URI namespaceURI ) {
-            return (this.name != null && this.name.equals(name)) ? this : null;
-            // return (this.name != null && this.name.equals(name) && getNamespace().equals(
-            // namespaceURI)) ? this : null;
+            return (this.name != null && this.name.equals(localName)) ? this : null;
         }
     }
 
