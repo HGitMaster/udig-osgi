@@ -18,7 +18,7 @@ import java.util.LinkedList;
  * @author GDavis
  *
  */
-public final class TileWorkerQueue {
+public class TileWorkerQueue {
     private final int nThreads;
     private final PoolWorker[] threads;
     private final LinkedList<Runnable> queue;
@@ -41,6 +41,12 @@ public final class TileWorkerQueue {
         synchronized(queue) {
             queue.addLast(r);
             queue.notify();
+        }
+    }
+    
+    public boolean isQueueEmpty() {
+        synchronized(queue) {
+            return queue.isEmpty();
         }
     }
 

@@ -1,5 +1,6 @@
 package net.refractions.udig.catalog.wmsc.server;
 
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.ows.CRSEnvelope;
@@ -109,6 +110,12 @@ public interface TileSet {
 	 */
 	public abstract Map<String, Tile> getTilesFromZoom(Envelope bounds,
 			double zoom);	
+	
+    /**
+     *  Break up the bounds for this zoom level into a list of bounds so that no single
+     *  bounds has more than 1024 tiles in it.
+	 */
+	public List<Envelope> getBoundsListForZoom( Envelope bounds, double zoom );
 
 	/**
 	 * Get the list of layers as a string that this tileset belong to

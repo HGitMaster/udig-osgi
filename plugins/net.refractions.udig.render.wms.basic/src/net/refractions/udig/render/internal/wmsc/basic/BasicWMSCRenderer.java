@@ -30,6 +30,7 @@ import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 import net.refractions.udig.catalog.wmsc.server.Tile;
 import net.refractions.udig.catalog.wmsc.server.TileSet;
+import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
 import net.refractions.udig.catalog.wmsc.server.WMSTile;
 import net.refractions.udig.catalog.wmsc.server.TileListener;
 import net.refractions.udig.catalog.wmsc.server.TileRange;
@@ -82,6 +83,12 @@ public class BasicWMSCRenderer extends RendererImpl implements IRenderer {
     private static int staticid = 0; // for debugging
     
     /**
+     * Static thread pools that will be reused for each renderer that gets created
+     */
+    private static TileWorkerQueue requestTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
+    private static TileWorkerQueue writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
+    
+    /**
      * Use a blocking queue to keep track of and notice when tiles are ready to draw
      */
     private BlockingQueue<Tile> tilesToDraw_queue = new PriorityBlockingQueue<Tile>();
@@ -131,10 +138,10 @@ public class BasicWMSCRenderer extends RendererImpl implements IRenderer {
             TileRange range = null;
             String value = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_CACHING);
             if (value.equals(WMSCTileCaching.ONDISK.toString())) {
-            	range = new TileRangeOnDisk(server, tileset, bnds, tilesInRange, null, null);
+            	range = new TileRangeOnDisk(server, tileset, bnds, tilesInRange, requestTileWorkQueue, writeTileWorkQueue);
             }
             else {
-            	range = new TileRangeInMemory(server, tileset, bnds, tilesInRange, null);
+            	range = new TileRangeInMemory(server, tileset, bnds, tilesInRange, requestTileWorkQueue);
             }
             
             // create an empty raster symbolizer for rendering 

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -40,7 +41,7 @@ public class WMSCTileUtils {
 	/**
 	 * Given a TileSet, use it's bounds to request every tile in it and store it
 	 * on disk.  This is run in a blocking dialog since the thousands of continuous
-	 * requests otherwise bog down udig.  It can be cancelled and does provide progress
+	 * requests otherwise bog down udig.  It can be canceled and does provide progress
 	 * feedback.
 	 * 
 	 * @param tileset
@@ -79,48 +80,58 @@ public class WMSCTileUtils {
     		requestTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
     		writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
     		int resCount = 0;
-    		for (double resolution : resolutions) {
-    			resCount++;
-    			Map<String, Tile> tilesInZoom = tileset.getTilesFromZoom(tileset.getBounds(), resolution);
-    			String subname = MessageFormat.format(Messages.WMSCTileUtils_preloadtasksub, tilesInZoom.size(), resCount, resolutions.length);
-    			this.monitor.setTaskName(subname);      		
-    			requestCount = 0;
-        		Iterator<Entry<String, Tile>> iterator = tilesInZoom.entrySet().iterator();
-        		// set the percent value for tiles in this resolution
-        		percentPerTile = percentPerResolution/tilesInZoom.size();
-        		tileRangeBounds = new Envelope();
-        		tileRangeTiles.clear();
-        		while (iterator.hasNext()) {
-        			if (monitor.isCanceled()) {
-        				cleanup();
-        				return;
-        			}
-        			requestCount++;
-        			Entry<String, Tile> next = iterator.next();
-        			tileRangeBounds.expandToInclude(next.getValue().getBounds());
-        			tileRangeTiles.put(next.getKey(), next.getValue());
-        			
-        			// if we have 16 ready to go tiles, send them off
-        			if (requestCount == maxTileRequestsPerGroup) {
-        				doRequestAndResetVars();
-        			}
-        		}
-            	// if the requests is no reset at 0 then there are remaining tiles to fetch
-            	if (requestCount != 0) {
-            		doRequestAndResetVars();
-            	}
-            	// if the percent per tile is 0, then update the monitor now with the
-            	// value for a complete resolution
-            	if ((int)percentPerTile < 1) {
-            		this.monitor.worked((int)percentPerResolution);
-            	}
-            	if ((int)percentPerResolution < 1) {
-            		this.monitor.worked(1);
-            	}
-        	}
-        	
-    		cleanup();
-        	return;
+    		
+    		try {
+	    		for (double resolution : resolutions) {
+	    			resCount++;
+	    			// cut up the bounds of the whole resolution into smaller pieces so that we
+	    			// don't get a hashmap of tiles that is huge (eg: 100K+) and run out of
+	    			// memory.
+	    			//List<Envelope> boundsList = tileset.getBoundsListForZoom(tileset.getBounds(), resolution);
+	    			Map<String, Tile> tilesInZoom = tileset.getTilesFromZoom(tileset.getBounds(), resolution);
+	    			String subname = MessageFormat.format(Messages.WMSCTileUtils_preloadtasksub, tilesInZoom.size(), resCount, resolutions.length);
+	    			this.monitor.setTaskName(subname);      		
+	    			requestCount = 0;
+	        		Iterator<Entry<String, Tile>> iterator = tilesInZoom.entrySet().iterator();
+	        		// set the percent value for tiles in this resolution
+	        		percentPerTile = percentPerResolution/tilesInZoom.size();
+	        		tileRangeBounds = new Envelope();
+	        		tileRangeTiles.clear();
+	        		while (iterator.hasNext()) {
+	        			if (monitor.isCanceled()) {
+	        				cleanup();
+	        				return;
+	        			}
+	        			requestCount++;
+	        			Entry<String, Tile> next = iterator.next();
+	        			tileRangeBounds.expandToInclude(next.getValue().getBounds());
+	        			tileRangeTiles.put(next.getKey(), next.getValue());
+	        			
+	        			// if we have 16 ready to go tiles, send them off
+	        			if (requestCount == maxTileRequestsPerGroup) {
+	        				doRequestAndResetVars();
+	        			}
+	        		}
+	            	// if the requests is not reset to 0 then there are remaining tiles to fetch
+	            	if (requestCount != 0) {
+	            		doRequestAndResetVars();
+	            	}
+	            	// if the percent per tile is 0, then update the monitor now with the
+	            	// value for a complete resolution
+	            	if ((int)percentPerTile < 1) {
+	            		this.monitor.worked((int)percentPerResolution);
+	            	}
+	            	if ((int)percentPerResolution < 1) {
+	            		this.monitor.worked(1);
+	            	}
+	        	}
+	    	
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		} finally {
+	    		cleanup();  // cleanup the thread pool on exit
+    		}
+    		return;
 		}
 		
 		/**
@@ -128,6 +139,20 @@ public class WMSCTileUtils {
 		 * 
 		 */
 		private void doRequestAndResetVars() {
+//			// Since we can run into the problem of too many requests completing faster
+//			// than the HD can save them, we need to block and wait for the writing
+//			// thread pool to clear before we send off another group of requests.  This
+//			// ensures the HD doesn't lag behind and grow an enormous queue of write
+//			// requests.
+//			while (!writeTileWorkQueue.isQueueEmpty()) {
+//				try {
+//					Thread.sleep(400); // sleep 400 ms and try again
+//				} catch (InterruptedException e) {
+//					// preloading canceled?
+//					e.printStackTrace();
+//					return;
+//				}  
+//			}
 			TileRangeOnDisk tileRangeOnDisk = new TileRangeOnDisk(tileset.getServer(), tileset, tileRangeBounds, tileRangeTiles, requestTileWorkQueue, writeTileWorkQueue);
 			tileRangeOnDisk.loadTiles(new NullProgressMonitor()); // blocks until all tiles are loaded
 			
@@ -141,7 +166,7 @@ public class WMSCTileUtils {
 		}
 		
 		/**
-		 * Task is complete or cancelled, so cleanup the threads and other objects
+		 * Task is complete or canceled, so cleanup the threads and other objects
 		 */
 		private void cleanup() {
 			requestTileWorkQueue.dispose();
