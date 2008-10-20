@@ -120,7 +120,7 @@ public interface TileSet {
     /**
      *  Return the number of tiles that are within the given bounds at the zoom
 	 */
-	public int getTileCount( Envelope bounds, double zoom );
+	public long getTileCount( Envelope bounds, double zoom );
 
 	/**
 	 * Get the list of layers as a string that this tileset belong to

@@ -88,7 +88,7 @@ public class WMSCTileUtils {
 	    			// don't get a hashmap of tiles that is huge (eg: 100K+) and run out of
 	    			// memory.
 	    			List<Envelope> boundsList = tileset.getBoundsListForZoom(tileset.getBounds(), resolution);
-	    			int totalTilesForZoom = tileset.getTileCount(tileset.getBounds(), resolution);
+	    			long totalTilesForZoom = tileset.getTileCount(tileset.getBounds(), resolution);
 	    			Iterator<Envelope> boundsIter = boundsList.iterator();
 	    			while (boundsIter.hasNext()) {
 	        			if (monitor.isCanceled()) {

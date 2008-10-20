@@ -315,7 +315,7 @@ public class WMSTileSet implements TileSet {
 
     	int maxTilesPerBound = 1024;
     	List<Envelope> boundsList = new ArrayList<Envelope>();
-    	
+
         double xscale = width * zoom;
         double value = bounds.getMinX() - bboxSrs.getMinX();
         
@@ -328,12 +328,12 @@ public class WMSTileSet implements TileSet {
         double miny = Math.floor(value / yscale) * yscale + bboxSrs.getMinY();
         value = bounds.getMaxY() - bboxSrs.getMinY();
         double maxy = Math.ceil(value / yscale) * yscale + bboxSrs.getMinY();
-        
-    	// if there are not enough tiles to make 1024 for this zoom and bounds, then
-    	// return the single bounds
-        int tilesPerRow = (int) Math.ceil(maxx / xscale);
-        int tilesPerCol = (int) Math.ceil(maxy / yscale);
-        int totalTiles = tilesPerRow * tilesPerCol;
+        long tilesPerRow = Math.round((maxx-minx) / xscale);
+        long tilesPerCol = Math.round((maxy-miny) / yscale);
+        long totalTiles = tilesPerCol * tilesPerRow;
+    	
+         // if there are not enough tiles to make 1024 for this zoom and bounds, then
+        // return the single bounds
     	if ( totalTiles <=  maxTilesPerBound ) {
     		boundsList.add(bounds);
     		return boundsList;
@@ -365,20 +365,22 @@ public class WMSTileSet implements TileSet {
     /* (non-Javadoc)
 	 * @see net.refractions.udig.catalog.wmsc.server.TileSet#getTileCount((com.vividsolutions.jts.geom.Envelope, double))
 	 */
-    public int getTileCount( Envelope bounds, double zoom ) {
+    public long getTileCount( Envelope bounds, double zoom ) {
         double xscale = width * zoom;
-        double value = bounds.getMaxX() - bboxSrs.getMinX();
+        double value = bounds.getMinX() - bboxSrs.getMinX();
+        
+        double minx = Math.floor(value / xscale) * xscale + bboxSrs.getMinX();
+        value = bounds.getMaxX() - bboxSrs.getMinX();
         double maxx = Math.ceil(value / xscale) * xscale + bboxSrs.getMinX();
 
         double yscale = height * zoom;
+        value = bounds.getMinY() - bboxSrs.getMinY();
+        double miny = Math.floor(value / yscale) * yscale + bboxSrs.getMinY();
         value = bounds.getMaxY() - bboxSrs.getMinY();
         double maxy = Math.ceil(value / yscale) * yscale + bboxSrs.getMinY();
-        
-        int tilesPerRow = (int) Math.ceil(maxx / xscale);
-        int tilesPerCol = (int) Math.ceil(maxy / yscale);
-        int totalTiles = tilesPerRow * tilesPerCol;     
-        
-        return totalTiles;
+        long tilesPerRow = Math.round((maxx-minx) / xscale);
+        long tilesPerCol = Math.round((maxy-miny) / yscale);
+        return tilesPerCol * tilesPerRow;
     }
 
     /* (non-Javadoc)
