@@ -116,6 +116,11 @@ public interface TileSet {
      *  bounds has more than 1024 tiles in it.
 	 */
 	public List<Envelope> getBoundsListForZoom( Envelope bounds, double zoom );
+	
+    /**
+     *  Return the number of tiles that are within the given bounds at the zoom
+	 */
+	public int getTileCount( Envelope bounds, double zoom );
 
 	/**
 	 * Get the list of layers as a string that this tileset belong to

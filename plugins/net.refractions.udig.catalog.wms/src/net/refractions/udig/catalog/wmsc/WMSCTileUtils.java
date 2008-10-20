@@ -87,44 +87,57 @@ public class WMSCTileUtils {
 	    			// cut up the bounds of the whole resolution into smaller pieces so that we
 	    			// don't get a hashmap of tiles that is huge (eg: 100K+) and run out of
 	    			// memory.
-	    			//List<Envelope> boundsList = tileset.getBoundsListForZoom(tileset.getBounds(), resolution);
-	    			Map<String, Tile> tilesInZoom = tileset.getTilesFromZoom(tileset.getBounds(), resolution);
-	    			String subname = MessageFormat.format(Messages.WMSCTileUtils_preloadtasksub, tilesInZoom.size(), resCount, resolutions.length);
-	    			this.monitor.setTaskName(subname);      		
-	    			requestCount = 0;
-	        		Iterator<Entry<String, Tile>> iterator = tilesInZoom.entrySet().iterator();
-	        		// set the percent value for tiles in this resolution
-	        		percentPerTile = percentPerResolution/tilesInZoom.size();
-	        		tileRangeBounds = new Envelope();
-	        		tileRangeTiles.clear();
-	        		while (iterator.hasNext()) {
+	    			List<Envelope> boundsList = tileset.getBoundsListForZoom(tileset.getBounds(), resolution);
+	    			int totalTilesForZoom = tileset.getTileCount(tileset.getBounds(), resolution);
+	    			Iterator<Envelope> boundsIter = boundsList.iterator();
+	    			while (boundsIter.hasNext()) {
 	        			if (monitor.isCanceled()) {
 	        				cleanup();
 	        				return;
-	        			}
-	        			requestCount++;
-	        			Entry<String, Tile> next = iterator.next();
-	        			tileRangeBounds.expandToInclude(next.getValue().getBounds());
-	        			tileRangeTiles.put(next.getKey(), next.getValue());
-	        			
-	        			// if we have 16 ready to go tiles, send them off
-	        			if (requestCount == maxTileRequestsPerGroup) {
-	        				doRequestAndResetVars();
-	        			}
-	        		}
-	            	// if the requests is not reset to 0 then there are remaining tiles to fetch
-	            	if (requestCount != 0) {
-	            		doRequestAndResetVars();
-	            	}
-	            	// if the percent per tile is 0, then update the monitor now with the
-	            	// value for a complete resolution
-	            	if ((int)percentPerTile < 1) {
-	            		this.monitor.worked((int)percentPerResolution);
-	            	}
-	            	if ((int)percentPerResolution < 1) {
-	            		this.monitor.worked(1);
-	            	}
-	        	}
+	        			}	    				
+	    				Envelope env = boundsIter.next();
+		    			Map<String, Tile> tilesInZoom = tileset.getTilesFromZoom(env, resolution);
+		    			String subname = MessageFormat.format(Messages.WMSCTileUtils_preloadtasksub, totalTilesForZoom, resCount, resolutions.length);
+		    			this.monitor.setTaskName(subname);      		
+		    			requestCount = 0;
+		        		Iterator<Entry<String, Tile>> iterator = tilesInZoom.entrySet().iterator();
+		        		// set the percent value for tiles in this resolution
+		        		percentPerTile = percentPerResolution/totalTilesForZoom;
+		        		tileRangeBounds = new Envelope();
+		        		tileRangeTiles.clear();
+		        		while (iterator.hasNext()) {
+		        			if (monitor.isCanceled()) {
+		        				cleanup();
+		        				return;
+		        			}
+		        			requestCount++;
+		        			Entry<String, Tile> next = iterator.next();
+		        			tileRangeBounds.expandToInclude(next.getValue().getBounds());
+		        			tileRangeTiles.put(next.getKey(), next.getValue());
+		        			
+		        			// if we have 16 ready to go tiles, send them off
+		        			if (requestCount == maxTileRequestsPerGroup) {
+		        				doRequestAndResetVars();
+		        			}
+		        		}
+		        		
+			            // if the requests is not reset to 0 then there are remaining tiles to fetch
+			            if (requestCount != 0) {
+			            	doRequestAndResetVars();
+			            }
+		        		
+	    			} // end bounds iteration
+	    			
+		            // if the percent per tile is 0, then update the monitor now with the
+		            // value for a complete resolution
+		            if ((int)percentPerTile < 1) {
+		            	this.monitor.worked((int)percentPerResolution);
+		            }
+		            if ((int)percentPerResolution < 1) {
+		            	this.monitor.worked(1);
+		            }
+		            	
+	        	} // end resolutions loop
 	    	
     		} catch (Exception e) {
     			e.printStackTrace();

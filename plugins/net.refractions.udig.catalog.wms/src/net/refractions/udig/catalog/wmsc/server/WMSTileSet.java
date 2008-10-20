@@ -313,7 +313,7 @@ public class WMSTileSet implements TileSet {
 	 */
     public List<Envelope> getBoundsListForZoom( Envelope bounds, double zoom ) {
 
-    	int tilerowlength = 32; // 32 * 32 = 1024 tiles
+    	int maxTilesPerBound = 1024;
     	List<Envelope> boundsList = new ArrayList<Envelope>();
     	
         double xscale = width * zoom;
@@ -329,32 +329,56 @@ public class WMSTileSet implements TileSet {
         value = bounds.getMaxY() - bboxSrs.getMinY();
         double maxy = Math.ceil(value / yscale) * yscale + bboxSrs.getMinY();
         
-    	// if there is not enough tiles to make 1024 for this zoom and bounds, then
+    	// if there are not enough tiles to make 1024 for this zoom and bounds, then
     	// return the single bounds
-    	System.out.println((tilerowlength*width) +", "+ maxx);
-    	System.out.println((tilerowlength*height) +", "+ maxy);
-    	if ( (tilerowlength*width) >= maxx &&
-    			(tilerowlength*height) >= maxy ) {
+        int tilesPerRow = (int) Math.ceil(maxx / xscale);
+        int tilesPerCol = (int) Math.ceil(maxy / yscale);
+        int totalTiles = tilesPerRow * tilesPerCol;
+    	if ( totalTiles <=  maxTilesPerBound ) {
     		boundsList.add(bounds);
     		return boundsList;
     	}
     	
     	// create the size of each bounds
-    	double boundsWidth = (tilerowlength*width);
-    	double boundsHeight = (tilerowlength*height);
+    	double scaleDownFactor = Math.ceil(totalTiles / maxTilesPerBound);
+    	double boundsWidth = Math.ceil(tilesPerRow / scaleDownFactor) * xscale;
+    	double boundsHeight = Math.ceil(tilesPerCol / scaleDownFactor) * yscale;
     	
     	// create each bounds
     	double x = minx;
     	while (x <= maxx) {
     		double y = miny;
     		while (y <= maxy) {
-    			boundsList.add(new Envelope(x, x+boundsWidth, y, y+boundsHeight));
+    			double x2 = x + boundsWidth;
+    			if (x2 > maxx) x2 = maxx;
+    			double y2 = y + boundsHeight;
+    			if (y2 > maxy) y2 = maxy;
+    			boundsList.add(new Envelope(x, x2, y, y2));
     			y += boundsHeight;
     		}
     		x += boundsWidth;
     	}
         
         return boundsList;
+    }
+    
+    /* (non-Javadoc)
+	 * @see net.refractions.udig.catalog.wmsc.server.TileSet#getTileCount((com.vividsolutions.jts.geom.Envelope, double))
+	 */
+    public int getTileCount( Envelope bounds, double zoom ) {
+        double xscale = width * zoom;
+        double value = bounds.getMaxX() - bboxSrs.getMinX();
+        double maxx = Math.ceil(value / xscale) * xscale + bboxSrs.getMinX();
+
+        double yscale = height * zoom;
+        value = bounds.getMaxY() - bboxSrs.getMinY();
+        double maxy = Math.ceil(value / yscale) * yscale + bboxSrs.getMinY();
+        
+        int tilesPerRow = (int) Math.ceil(maxx / xscale);
+        int tilesPerCol = (int) Math.ceil(maxy / yscale);
+        int totalTiles = tilesPerRow * tilesPerCol;     
+        
+        return totalTiles;
     }
 
     /* (non-Javadoc)
