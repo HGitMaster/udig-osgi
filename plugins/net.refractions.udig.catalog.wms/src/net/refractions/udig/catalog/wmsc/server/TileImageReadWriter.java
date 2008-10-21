@@ -44,6 +44,7 @@ public class TileImageReadWriter {
 				file.createNewFile();
 			} catch (Exception e) {
 				e.printStackTrace();
+				return null;
 			}
     	}
     	//System.out.println("file: "+file.getAbsolutePath());
@@ -96,7 +97,11 @@ public class TileImageReadWriter {
 	 */
 	public boolean writeTile(Tile tile, String filetype) {
 		try {
-			ImageIO.write(tile.getBufferedImage(), filetype, getTileFile(tile, filetype));
+			// lock on the tile so we aren't trying to read it as it is being written to
+			Object lock = tile.getTileLock();
+			synchronized (lock) {
+				ImageIO.write(tile.getBufferedImage(), filetype, getTileFile(tile, filetype));
+			}
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -128,8 +133,12 @@ public class TileImageReadWriter {
 		BufferedInputStream bis = null;
 		BufferedImage image = null; 
 		try {
-			bis = new BufferedInputStream(new FileInputStream(getTileFile(tile, filetype)));
-			image = ImageIO.read(bis);
+			// lock on the tile so we aren't trying to write to it as it is being read
+			Object lock = tile.getTileLock();
+			synchronized (lock) {
+				bis = new BufferedInputStream(new FileInputStream(getTileFile(tile, filetype)));
+				image = ImageIO.read(bis);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
