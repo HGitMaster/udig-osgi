@@ -37,7 +37,6 @@ import org.geotools.data.ows.FeatureSetDescription;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.data.wfs.WFSDataStore;
-import org.geotools.data.wfs.WFSFeatureSource;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -152,7 +151,7 @@ public class WFSGeoResourceImpl extends IGeoResource {
         CoordinateReferenceSystem crs = null;
         IGeoResourceWFSInfo() throws IOException{
             WFSDataStore ds = parent.getDS(null);
-            WFSFeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(typename);
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(typename);
             ResourceInfo resourceInfo = featureSource.getInfo();
 			SimpleFeatureType ft = ds.getSchema(typename);
             bounds = resourceInfo.getBounds();
