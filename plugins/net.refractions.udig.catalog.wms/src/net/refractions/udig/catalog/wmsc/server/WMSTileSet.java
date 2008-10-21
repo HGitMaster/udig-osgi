@@ -26,6 +26,8 @@ import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 import org.geotools.data.ows.CRSEnvelope;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.geotools.util.ObjectCache;
+import org.geotools.util.ObjectCaches;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -92,7 +94,8 @@ public class WMSTileSet implements TileSet {
      * memory storing all the tiles.  The garbage collector should clean
      * up less-used keys and their objects as necessary. 
      **/
-    private Map<String, Tile> tiles = new WeakHashMap<String, Tile>();
+    ObjectCache tiles = ObjectCaches.create("soft", 50); //Tiles that are on the screen //$NON-NLS-1$
+    
 
     public WMSTileSet() {
         updateID();
@@ -264,9 +267,16 @@ public class WMSTileSet implements TileSet {
         double maxy = Math.ceil(value / yscale) * yscale + bboxSrs.getMinY();
         Map<String, Tile> viewportTiles = new HashMap<String, Tile>();
       
-        for (int x = 0; x < (maxx-minx)/xscale; x++){
-            for (int y = 0; y < (maxy-miny) / yscale; y ++){
-                Envelope e = new Envelope(x*xscale+minx, (x+1) * xscale+minx, y * yscale+miny, (y +1)* yscale + miny);
+        int xNum = (int)Math.round((maxx- minx) / xscale);
+        int yNum = (int)Math.round((maxy - miny) / yscale);
+        for (int x = 0; x < xNum; x++){
+            double xmin = roundDouble(x * xscale + minx);
+            double xmax = roundDouble((x+1) * xscale + minx);
+            for (int y = 0; y < yNum; y ++){
+                double ymin = roundDouble(y * yscale + miny);
+                double ymax = roundDouble((y+1) * yscale + miny);
+                //Envelope e = new Envelope(x*xscale+minx, (x+1) * xscale+minx, y * yscale+miny, (y +1)* yscale + miny);
+                Envelope e = new Envelope(xmin, xmax, ymin, ymax);
                 if (e.getMaxX() <= bboxSrs.getMinX() || e.getMinX() >= bboxSrs.getMaxX()
                         || e.getMaxY() <= bboxSrs.getMinY() || e.getMinY() >= bboxSrs.getMaxY()) {
                     // outside of bounds ignore
@@ -275,35 +285,50 @@ public class WMSTileSet implements TileSet {
                     // add it to the map
                     String tileid = WMSTile.buildId(e, zoom);
                     Tile tile;
-                    synchronized (tiles) {
-                        if (!tiles.containsKey(tileid) || tiles.get(tileid) == null) {
-                            tile = new WMSTile(server, this, e, zoom);
-                            tiles.put(tileid, tile);
-                        } else {
-                            tile = tiles.get(tileid);
-                        }    
+                    if (tiles.peek(tileid) == null || tiles.get(tileid) == null) {
+                        tile = new WMSTile(server, this, e, zoom);
+                        tiles.put(tileid, tile);
+                        // create the tile position within the tilerange grid for this scale
+                        double topleft_x = bboxSrs.getMinX();
+                        double topleft_y = bboxSrs.getMaxY();
+                        double tileleft_x = e.getMinX();
+                        double tileleft_y = e.getMaxY();
+
+                        double spacex = tileleft_x - topleft_x; // x is left to right
+                        double spacey = topleft_y - tileleft_y; // y is top to bottom
+
+                        int posx = (int) Math.round(spacex / xscale);
+                        int posy = (int) Math.round(spacey / yscale);
+
+                        String position = posx + "_" + posy; //$NON-NLS-1$
+                        tile.setPosition(position);
+                    } else {
+                        tile = (Tile) tiles.get(tileid);
                     }
-                    
-                    // create the tile position within the tilerange grid for this scale
-                    double topleft_x = bboxSrs.getMinX();
-                    double topleft_y = bboxSrs.getMaxY();
-                    double tileleft_x = e.getMinX();
-                    double tileleft_y = e.getMaxY();
-
-                    double spacex = tileleft_x - topleft_x;  // x is  left to right
-                    double spacey = topleft_y - tileleft_y;  // y is top to bottom
-
-                    int posx = (int)Math.round(spacex/xscale); 
-                    int posy = (int)Math.round(spacey/yscale);
-
-                    String position = posx + "_" + posy; //$NON-NLS-1$
-                    tile.setPosition(position);
                     viewportTiles.put(tileid, tile);
                 }
             }
         }
         return viewportTiles;
     }    
+    
+    
+    /**
+     * This function takes the last two digits (8 bits) of a double and 0's them. 
+     * 
+     *
+     * @param number
+     * @return
+     */
+    private static double roundDouble(double number){
+        Long xBits = Double.doubleToLongBits(number);
+        //zeroLowerBits
+        int nBits = 8;
+        long invMask = (1L << nBits) - 1L;
+        long mask =~ invMask;
+        xBits &= mask;   
+        return Double.longBitsToDouble(xBits);
+    }
     
     /**
      *  Break up the bounds for this zoom level into a list of bounds so that no single
