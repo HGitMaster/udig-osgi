@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,6 +20,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import com.vividsolutions.jts.geom.Envelope;
 
 import net.refractions.udig.catalog.wmsc.server.Tile;
+import net.refractions.udig.catalog.wmsc.server.TileListener;
 import net.refractions.udig.catalog.wmsc.server.TileRangeOnDisk;
 import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
 import net.refractions.udig.catalog.wmsc.server.TileSet;
@@ -63,6 +66,14 @@ public class WMSCTileUtils {
 		private TileWorkerQueue requestTileWorkQueue;
 		private TileWorkerQueue writeTileWorkQueue;
 		
+	    /**
+	     * Use a blocking queue to keep track of and notice when tiles done so we can
+	     * wait for chunks to complete without creating too many requests all at once
+	     */
+	    private BlockingQueue<Tile> tilesCompleted_queue = new PriorityBlockingQueue<Tile>();		
+	    private TileListenerImpl listener = new TileListenerImpl();
+	    
+	    
 		public PreloadTilesClass(final TileSet tileset) {
 			this.tileset = tileset;
 		}
@@ -99,10 +110,10 @@ public class WMSCTileUtils {
 		    			Map<String, Tile> tilesInZoom = tileset.getTilesFromZoom(env, resolution);
 		    			String subname = MessageFormat.format(Messages.WMSCTileUtils_preloadtasksub, totalTilesForZoom, resCount, resolutions.length);
 		    			this.monitor.setTaskName(subname);      		
-		    			requestCount = 0;
 		        		Iterator<Entry<String, Tile>> iterator = tilesInZoom.entrySet().iterator();
 		        		// set the percent value for tiles in this resolution
 		        		percentPerTile = percentPerResolution/totalTilesForZoom;
+		        		requestCount = 0;
 		        		tileRangeBounds = new Envelope();
 		        		tileRangeTiles.clear();
 		        		while (iterator.hasNext()) {
@@ -116,7 +127,7 @@ public class WMSCTileUtils {
 		        			tileRangeTiles.put(next.getKey(), next.getValue());
 		        			
 		        			// if we have 16 ready to go tiles, send them off
-		        			if (requestCount == maxTileRequestsPerGroup) {
+		        			if (requestCount >= maxTileRequestsPerGroup) {
 		        				doRequestAndResetVars();
 		        			}
 		        		}
@@ -152,24 +163,47 @@ public class WMSCTileUtils {
 		 * 
 		 */
 		private void doRequestAndResetVars() {
-//			// Since we can run into the problem of too many requests completing faster
-//			// than the HD can save them, we need to block and wait for the writing
-//			// thread pool to clear before we send off another group of requests.  This
-//			// ensures the HD doesn't lag behind and grow an enormous queue of write
-//			// requests.
-//			while (!writeTileWorkQueue.isQueueEmpty()) {
-//				try {
-//					Thread.sleep(400); // sleep 400 ms and try again
-//				} catch (InterruptedException e) {
-//					// preloading canceled?
-//					e.printStackTrace();
-//					return;
-//				}  
-//			}
 			TileRangeOnDisk tileRangeOnDisk = new TileRangeOnDisk(tileset.getServer(), tileset, tileRangeBounds, tileRangeTiles, requestTileWorkQueue, writeTileWorkQueue);
-			tileRangeOnDisk.loadTiles(new NullProgressMonitor()); // blocks until all tiles are loaded
+			// set the listener on the tile range so we can wait until all tiles are
+			// done for the range before moving on.
+			tileRangeOnDisk.addListener(listener);	
 			
-			// update monitor
+			// remove any tiles that are already loaded from disk to avoid
+			// deadlock waiting for all tiles
+			Map<String, Tile> loadedTiles = new HashMap<String, Tile>();
+			Iterator<Entry<String, Tile>> iterator = tileRangeTiles.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Tile tile = iterator.next().getValue();
+				if (tile.getBufferedImage() != null) {
+					loadedTiles.put(tile.getId(), tile);
+				}
+			}
+			Iterator<Entry<String, Tile>> iterator2 = loadedTiles.entrySet().iterator();
+			while (iterator2.hasNext()) {
+				Tile tile = iterator2.next().getValue();
+				tileRangeTiles.remove(tile.getId());
+			}			
+			
+			// now load any missing tiles and send off thread requests to fetch them
+			tileRangeOnDisk.loadTiles(new NullProgressMonitor());
+			
+			// block and wait until all unloaded tiles are loaded before moving forward
+			while (!tileRangeTiles.isEmpty()) {
+	            Tile tile = null;
+	            try {
+	                tile = (Tile) tilesCompleted_queue.take();  // blocks until a tile is done
+	            } catch (InterruptedException ex) {
+	            	// log error?
+	            	//ex.printStackTrace();
+	            } finally {
+	            	// remove the tile
+	            	if (tile != null) {
+	            		tileRangeTiles.remove(tile.getId());
+	            	}
+	            }
+			}
+			
+			// all tiles in chunk are now complete, so update monitor
 			this.monitor.worked((int)percentPerTile*tileRangeOnDisk.getTileCount());
 			
 			// reset vars
@@ -188,6 +222,29 @@ public class WMSCTileUtils {
 			writeTileWorkQueue = null;
 			this.monitor.done();
 		}
+		
+	    /**
+	     * TileListener implementation for listening when tiles are done
+	     * 
+	     * @author GDavis
+	     * @since 1.1.0
+	     */
+	    private class TileListenerImpl implements TileListener {
+
+	        public TileListenerImpl() {
+	            
+	        }
+	        public void notifyTileReady( Tile tile ) {
+	        	// queue the tile as done
+	         	try {
+	         		tilesCompleted_queue.put(tile);
+	        	} catch (InterruptedException e) {
+	            	// log error?
+	            	//e.printStackTrace();
+	            }
+	        }
+	        
+	    };		
 		
 	};	
 
