@@ -97,10 +97,12 @@ public class TileRangeOnDisk extends AbstractTileRange {
 	}
 
 	/**
-	 * Try caching the tile on disk.
+	 * Try caching the tile on disk if it is valid (ie: not in error)
 	 */
 	public void cacheTile(Tile tile) {
-		saveTileToDisk(tile, new NullProgressMonitor());
+		if (tile.getTileState() != WMSTile.INERROR) {
+			saveTileToDisk(tile, new NullProgressMonitor());
+		}
 	}
 	
     /**
@@ -151,7 +153,7 @@ public class TileRangeOnDisk extends AbstractTileRange {
                 System.out.println("got lock for disk write: "+tile.getId()); //$NON-NLS-1$
             }
             // try to write the tile's image to disk
-            if (tile.getBufferedImage() != null) {
+            if (tile.getBufferedImage() != null && tile.getTileState() != WMSTile.INERROR) {
             	String filetype = getFileType();
             	try {
             		tileReadWriter.writeTile(tile, filetype);
