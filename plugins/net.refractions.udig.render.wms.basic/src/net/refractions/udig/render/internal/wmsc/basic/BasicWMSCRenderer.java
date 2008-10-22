@@ -85,8 +85,8 @@ public class BasicWMSCRenderer extends RendererImpl implements IRenderer {
     /**
      * Static thread pools that will be reused for each renderer that gets created
      */
-    private static TileWorkerQueue requestTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
-    private static TileWorkerQueue writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
+    private static TileWorkerQueue requestTileWorkQueue = new TileWorkerQueue();
+    private static TileWorkerQueue writeTileWorkQueue = new TileWorkerQueue();
     
     /**
      * Use a blocking queue to keep track of and notice when tiles are ready to draw

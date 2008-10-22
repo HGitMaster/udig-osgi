@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String WMSCTilePreferencePage_clearcacheConfirm;
 	public static String WMSCTilePreferencePage_clearcacheError;
 	public static String WMSCTilePreferencePage_clearcacheSuccess;
+	public static String WMSCTilePreferencePage_maxConRequests;
     
 	static {
 		// initialize resource bundle

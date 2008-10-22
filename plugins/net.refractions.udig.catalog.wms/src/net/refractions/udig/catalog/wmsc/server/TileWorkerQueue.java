@@ -2,6 +2,9 @@ package net.refractions.udig.catalog.wmsc.server;
 
 import java.util.LinkedList;
 
+import net.refractions.udig.project.internal.ProjectPlugin;
+import net.refractions.udig.project.preferences.PreferenceConstants;
+
 /**
  * This is a work queue for re-using a group of threads to do Tile work.  An example use
  * is the work of saving tiles to disk.  When preloading all tiles in a tileset, the number of
@@ -22,19 +25,45 @@ public class TileWorkerQueue {
     private final int nThreads;
     private final PoolWorker[] threads;
     private final LinkedList<Runnable> queue;
-    public static final int defaultWorkingQueueSize = 16;
-    private boolean isTerminated = false;
 
-    public TileWorkerQueue(int nThreads)
-    {
+    /**
+     * Max size could be larger, but beware that larger numbers of threads
+     * could mean a much slower system.
+     */
+    public static final int maxWorkingQueueSize = 64;
+    public static final int minWorkingQueueSize = 1;
+    public static final int defaultWorkingQueueSize = 16;
+    
+    private boolean isTerminated = false;
+    
+    public TileWorkerQueue() {
+    	// check if a preference is set for the max number of threads
+    	int nThreads = ProjectPlugin.getPlugin().getPreferenceStore().getInt(PreferenceConstants.P_WMSCTILE_MAX_CON_REQUESTS);
+    	if (nThreads <= 0) nThreads = defaultWorkingQueueSize;
         this.nThreads = nThreads;
         queue = new LinkedList<Runnable>();
         threads = new PoolWorker[nThreads];
+        initThreads();
+    }    
 
+    public TileWorkerQueue(int nThreads) {
+    	if (nThreads > maxWorkingQueueSize) nThreads = maxWorkingQueueSize;
+    	if (nThreads < minWorkingQueueSize) nThreads = minWorkingQueueSize;
+        this.nThreads = nThreads;
+        queue = new LinkedList<Runnable>();
+        threads = new PoolWorker[nThreads];
+        initThreads();
+    }
+    
+    private void initThreads() {
         for (int i=0; i<this.nThreads; i++) {
             threads[i] = new PoolWorker();
             threads[i].start();
         }
+    }
+    
+    public int getThreadPoolSize() {
+    	return this.nThreads;
     }
 
     public void execute(Runnable r) {

@@ -1,6 +1,7 @@
 package net.refractions.udig.render.internal.wmsc.basic;
 
 import net.refractions.udig.catalog.wmsc.server.TileImageReadWriter;
+import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
 import net.refractions.udig.project.preferences.PreferenceConstants;
 
 import net.refractions.udig.project.internal.ProjectPlugin;
@@ -8,6 +9,7 @@ import net.refractions.udig.render.wms.basic.internal.Messages;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -42,6 +44,15 @@ public class WMSCTilePreferencesPage extends FieldEditorPreferencePage implement
 	@Override
 	protected void createFieldEditors() {
 		
+		// maximum concurrent tile requests
+		IntegerFieldEditor conRequestsFieldEditor = new IntegerFieldEditor(PreferenceConstants.P_WMSCTILE_MAX_CON_REQUESTS, 
+        		Messages.WMSCTilePreferencePage_maxConRequests,
+                getFieldEditorParent());
+		conRequestsFieldEditor.setValidRange(TileWorkerQueue.minWorkingQueueSize, TileWorkerQueue.maxWorkingQueueSize);
+		conRequestsFieldEditor.setEmptyStringAllowed(true);
+        addField(conRequestsFieldEditor);		
+		
+		// in-mem or on-disk caching?
 		cachingRadioFieldEditor = new RadioGroupFieldEditor(
                 PreferenceConstants.P_WMSCTILE_CACHING,
                 Messages.WMSCTilePreferencePage_caching_desc,

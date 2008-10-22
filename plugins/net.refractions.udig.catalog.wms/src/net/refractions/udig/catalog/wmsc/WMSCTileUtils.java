@@ -33,12 +33,6 @@ import net.refractions.udig.ui.PlatformGIS;
 public class WMSCTileUtils {
 	
 	/**
-	 * The maximum number of tile requests to send to a server at once before
-	 * waiting to send the next group of requests off (used for preloading all tiles).
-	 */
-	private static int maxTileRequestsPerGroup = 16;
-	
-	/**
 	 * Given a TileSet, use it's bounds to request every tile in it and store it
 	 * on disk.  This is run in a blocking dialog since the thousands of continuous
 	 * requests otherwise bog down udig.  It can be canceled and does provide progress
@@ -63,6 +57,13 @@ public class WMSCTileUtils {
 		private TileWorkerQueue requestTileWorkQueue;
 		private TileWorkerQueue writeTileWorkQueue;
 		
+		/**
+		 * The maximum number of tile requests to send to a server at once before
+		 * waiting to send the next group of requests off (used for preloading all tiles).
+		 */
+		private static int default_maxTileRequestsPerGroup = 16;	
+		private int maxTileRequestsPerGroup = default_maxTileRequestsPerGroup;
+		
 	    /**
 	     * Use a blocking queue to keep track of and notice when tiles done so we can
 	     * wait for chunks to complete without creating too many requests all at once
@@ -85,8 +86,9 @@ public class WMSCTileUtils {
 			double[] resolutions = tileset.getResolutions();
 			double percentPerResolution = resolutions.length/100;
     		tileRangeTiles = new HashMap<String, Tile>();
-    		requestTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
-    		writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
+    		requestTileWorkQueue = new TileWorkerQueue();
+    		writeTileWorkQueue = new TileWorkerQueue();
+    		maxTileRequestsPerGroup = requestTileWorkQueue.getThreadPoolSize();
     		int resCount = 0;
     		
     		try {

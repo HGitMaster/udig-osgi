@@ -141,7 +141,7 @@ public class TileRangeOnDisk extends AbstractTileRange {
      */
     private void internalSaveTileToDisk(final Tile tile, final IProgressMonitor monitor) {
         // get a lock on the tile and only write it to disk if it has a valid
-    	// buffered image
+    	// buffered image and it is NOT in error
         Object lock = tile.getTileLock();
         if (testing) {
             System.out.println("getting lock for disk write: "+tile.getId()); //$NON-NLS-1$
