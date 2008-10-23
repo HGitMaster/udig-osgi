@@ -219,7 +219,6 @@ public class WMSTile implements Tile {
     	URL req = null;
 		try {
 			req = new URL(baseUrl + tileset.createQueryString(env));
-			WmsPlugin.log("WMSC GetMap: "+ req.toString(), null);  //$NON-NLS-1$
 		} catch (MalformedURLException e2) {
 			WmsPlugin.log("error building request URL:", e2); //$NON-NLS-1$
 			return false;
@@ -256,6 +255,7 @@ public class WMSTile implements Tile {
                     System.out.println("request delaying for: "+delay); //$NON-NLS-1$
                     Thread.sleep(delay);  // simulate latency
                 }
+                WmsPlugin.log("WMSC GetMap: "+ req.toString(), null);  //$NON-NLS-1$
                 bufImage = ImageIO.read(inputStream);
                 if (bufImage != null) {
                     setBufferedImageInternal(bufImage);
