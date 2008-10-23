@@ -74,8 +74,6 @@ public class View extends ViewPart {
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		IToolBarManager toolbar = getViewSite().getActionBars().getToolBarManager();
-		
-		toolbar.add( new OpenViewAction(getSite().getWorkbenchWindow(), "Map ", "net.refractions.udig.tutorials.rcp.mapView" ) );
 	}
 
 	public void setFocus() {

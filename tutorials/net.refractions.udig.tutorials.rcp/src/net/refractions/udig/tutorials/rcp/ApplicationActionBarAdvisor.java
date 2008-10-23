@@ -10,6 +10,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
@@ -31,6 +32,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction aboutAction;
     private IWorkbenchAction newWindowAction;
     private OpenViewAction openViewAction;
+    private OpenViewAction openMapAction;
+    private OpenViewAction openMapOverviewAction;
     private Action messagePopupAction;
     
 
@@ -59,6 +62,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         messagePopupAction = new MessagePopupAction("Open Message", window);
         register(messagePopupAction);
+        
+        openMapAction = new OpenViewAction(window, "Open Map ", MapView.ID );
+        openMapAction.setImageDescriptor(net.refractions.udig.tutorials.rcp.Activator.getImageDescriptor("/icons/createmap.gif"));
+        register(openMapAction);
+        
+        openMapOverviewAction = new OpenViewAction(window, "Open Map With Overview", OverviewMapView.ID );
+        openMapOverviewAction.setImageDescriptor(net.refractions.udig.tutorials.rcp.Activator.getImageDescriptor("/icons/createmapoverview.gif"));
+        register(openMapOverviewAction);
+
     }
     
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -87,5 +99,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         coolBar.add(new ToolBarContributionItem(toolbar, "main"));   
         toolbar.add(openViewAction);
         toolbar.add(messagePopupAction);
+        toolbar.add(openMapAction);
+        toolbar.add(openMapOverviewAction);
     }
 }

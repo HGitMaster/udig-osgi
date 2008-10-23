@@ -68,7 +68,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  * @since 1.1.0
  */
 public class MapView extends ViewPart implements MapPart {
-
+    public static String ID = "net.refractions.udig.tutorials.rcp.mapView" ;
 	//private GISWidget widget;
     private MapViewer mapviewer;
     //private RenderManager renderManager;
