@@ -16,6 +16,7 @@ package net.refractions.udig.catalog.internal.wmsc;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,10 +29,15 @@ import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
+import net.refractions.udig.catalog.wmsc.server.WMSCCapabilities;
+import net.refractions.udig.catalog.wmsc.server.WMSCCapabilitiesResponse;
 import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.geotools.data.ows.Capabilities;
+import org.geotools.ows.ServiceException;
 
 /**
  * A WMS-C Service. See Specifications:
@@ -42,6 +48,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WMSCServiceImpl extends IService {
 
+    private static final String CAPABILITIES = "capabilities";
     /**
      * <code>WMS_URL_KEY</code> field Magic param key for Catalog WMSC persistence.
      */
@@ -163,6 +170,10 @@ public class WMSCServiceImpl extends IService {
     }
 
     /**
+     * This method will return a TiledWebMapServer
+     * based on either: connecting to the server; or
+     * a cached capabilities document.
+     * 
      * @return the link to the actual server
      */
     public TiledWebMapServer getWMSC() {
@@ -170,7 +181,32 @@ public class WMSCServiceImpl extends IService {
             dsLock.lock();
             try {
                 if (wmsc == null) {
-                    wmsc = new TiledWebMapServer(this.url);
+                    if( getPersistentProperties().containsKey(CAPABILITIES)){
+                        try {
+                            String xml = (String) getPersistentProperties().get(CAPABILITIES);                        
+                           WMSCCapabilitiesResponse response;
+
+                            response = new WMSCCapabilitiesResponse("txt/xml", /*new StringReader(xml)*/null );
+                            WMSCCapabilities capabilities = (WMSCCapabilities) response.getCapabilities();                        
+                            
+                            // TODO: grab capabiliites xml and parse it
+                            // this constructor should note that it needs to check
+                            // the updateSequence magic number thingy
+                            wmsc = new TiledWebMapServer(this.url, capabilities );    
+                        } catch (ServiceException e) {
+                            wmsc = new TiledWebMapServer(this.url);
+                        } catch (IOException e) {
+                            wmsc = new TiledWebMapServer(this.url);
+                        }
+                    }
+                    else {
+                        // this constructor will grab the capabilies when
+                        // first needed
+                        wmsc = new TiledWebMapServer(this.url);
+                        
+                        String xml = null; // figure out xml requested
+                        getPersistentProperties().put( CAPABILITIES, xml );                        
+                    }
                 }
             } finally {
                 dsLock.unlock();

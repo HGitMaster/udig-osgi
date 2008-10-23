@@ -895,7 +895,13 @@ public class CatalogImpl extends ICatalog {
     	
     	return plugin.node(name[0]);
 	}
-
+    /**
+     * Save this local catalog to the provided file.
+     *
+     * @param catalogLocation
+     * @param factory
+     * @param monitor
+     */
 	public void saveToFile(File catalogLocation, IServiceFactory factory, IProgressMonitor monitor) {
 		try{
         	Preferences toSave = Platform.getPreferencesService().getRootNode().node(CatalogPlugin.ID).node("LOCAL_CATALOG_SERVICES");  //$NON-NLS-1$

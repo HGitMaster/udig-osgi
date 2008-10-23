@@ -58,6 +58,10 @@ public class TiledWebMapServer {
     public TiledWebMapServer( URL serverURL ) {
         this.service = serverURL;
     }
+    public TiledWebMapServer( URL serverURL, WMSCCapabilities capabilities) {        
+        this.service = serverURL;
+        this.capabilities = capabilities;
+    }
 
     /**
      * Get the getCapabilities document. If there was an error parsing it
@@ -99,7 +103,7 @@ public class TiledWebMapServer {
         WMSCCapabilitiesResponse cr = (WMSCCapabilitiesResponse) issueRequest(r);
         //return the parsed document
         return (WMSCCapabilities) cr.getCapabilities();
-    }
+    }    
 
     /**
      * 

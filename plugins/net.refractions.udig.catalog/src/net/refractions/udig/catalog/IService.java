@@ -27,8 +27,10 @@ import java.util.Map;
 import net.refractions.udig.catalog.internal.Messages;
 import net.refractions.udig.ui.ErrorManager;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -134,6 +136,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @see IServiceFactory
  */
 public abstract class IService implements IResolve {
+    
+    /**
+     * Used to save persisted properties; please see ServiceParameterPersister for details.
+     */
+    private Map<String, Serializable> properties;
+
     /**
      * Will attempt to morph into the adaptee, and return that object. Harded coded to capture the
      * IService contract.
@@ -293,6 +301,14 @@ public abstract class IService implements IResolve {
      */
     public abstract Map<String, Serializable> getConnectionParams();
 
+    /**
+     * Returns a copy of the map of this resource's persistent properties. Returns an empty map if this resource has no persistent properties.
+     * @return The map containing the persistent properties where the key is the {@link QualifiedName} of the property and the value is the {@link String} value of the property.
+     */
+    public Map<String,Serializable> getPersistentProperties() {
+        return properties;
+    }
+    
     /**
      * This should represent the identifier
      * 

@@ -176,6 +176,7 @@ public class CatalogPlugin extends Plugin {
         resourceBundle = null;
     }
 
+    /** Load the getLocalCatalogFile() into the local catalog(). */
     public void restoreFromPreferences() throws BackingStoreException, MalformedURLException {
         try {
 
@@ -186,7 +187,9 @@ public class CatalogPlugin extends Plugin {
             CatalogPlugin.log(null, new Exception(t));
         }
     }
-
+    /**
+     * Go through and load the "external" catalogs ...
+     */
     private void loadCatalogs() {
         final List<ISearch> cats = new LinkedList<ISearch>();
         ExtensionPointUtil.process(getDefault(),
@@ -211,12 +214,20 @@ public class CatalogPlugin extends Plugin {
         ((CatalogImpl) getLocalCatalog()).saveToFile(getLocalCatalogFile(), getServiceFactory(),
                 monitor);
     }
-
+    /**
+     * File used to load/save the local catalog.
+     *
+     * @return
+     * @throws IOException
+     */
     private File getLocalCatalogFile() throws IOException {
+        // working directory for the application as a file
         File userLocation = new File(FileLocator.toFileURL(Platform.getInstanceLocation().getURL())
                 .getFile());
+        // will create the file if needed
         if (!userLocation.exists())
             userLocation.mkdirs();
+        // local catalog saved in working directory/.localCatalog
         File catalogLocation = new File(userLocation, ".localCatalog");
         return catalogLocation;
     }

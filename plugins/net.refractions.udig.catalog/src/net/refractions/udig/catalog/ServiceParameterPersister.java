@@ -20,7 +20,9 @@ import java.util.Map;
 
 import net.refractions.udig.core.internal.CorePlugin;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -39,12 +41,14 @@ import org.osgi.service.prefs.Preferences;
  * @author Jesse
  */
 public class ServiceParameterPersister {
-	private static final String VALUE_ID = "value"; //$NON-NLS-1$
+	private static final String PROPERTIES_KEY = "_properties";
+    private static final String VALUE_ID = "value"; //$NON-NLS-1$
 	private static final String TYPE_ID = "type"; //$NON-NLS-1$
     private static final String ENCODING = "UTF-8"; //$NON-NLS-1$
 
 	protected final ICatalog localCatalog;
 	protected final IServiceFactory serviceFactory;
+	/** reference directory to consider when making relative files? */
 	private File reference;
 
 	public ServiceParameterPersister(final ICatalog localCatalog, final IServiceFactory serviceFactory) {
@@ -68,18 +72,21 @@ public class ServiceParameterPersister {
 			for (String id : node.childrenNames()) {
 				try {
 					URL url = toURL(id);
-					Preferences service = node.node(id);
-					String[] keys = service.keys();
-
+					Preferences servicePref = node.node(id);
+					
 					// BACKWARDS COMPATIBILITY
-					Map<String, Serializable> connectionParams = backwardCompatibleRestore(
-							service, keys);
-
-					String[] nodes = service.childrenNames();
+					Map<String, Serializable> connectionParams = backwardCompatibleRestore(servicePref);
+					
+					String[] nodes = servicePref.childrenNames();
 					for (String childName : nodes) {
-						mapAsObject(service, connectionParams, childName);
+					    if( PROPERTIES_KEY.equals(childName)) continue;
+						mapAsObject(servicePref, connectionParams, childName);
 					}
-					locateService(url, connectionParams);
+					
+					Preferences propertiesPref = servicePref.node(PROPERTIES_KEY);
+                    Map<String, Serializable> properties = restoreProperties(propertiesPref);
+
+					locateService(url, connectionParams, properties);
 				} catch (Throwable t) {
 					CatalogPlugin.log(null, new Exception(t));
 				}
@@ -115,12 +122,21 @@ public class ServiceParameterPersister {
 	 * @param keys
 	 * @return Connection parameters
 	 */
-	private Map<String, Serializable> backwardCompatibleRestore(Preferences servicePreference, String[] keys) {
-		Map<String, Serializable> map = new HashMap<String, Serializable>();
-		for( int j = 0; j < keys.length; j++ ) {
-			String currentKey = keys[j];
-			map.put(currentKey, servicePreference.get(currentKey, null));
-		}
+	private Map<String, Serializable> backwardCompatibleRestore(Preferences preference ) {
+	    Map<String, Serializable> map = new HashMap<String, Serializable>();
+	    String[] keys;
+        try {
+            keys = preference.keys();
+    		for( int j = 0; j < keys.length; j++ ) {
+    			String currentKey = keys[j];
+    			if( PROPERTIES_KEY.equals( currentKey )) {
+    			    continue;
+    			}
+    			map.put(currentKey, preference.get(currentKey, null));
+    		}
+        } catch (BackingStoreException e) {
+            throw (RuntimeException) new RuntimeException( ).initCause( e );
+        }               
 		return map;
 	}
 		
@@ -131,7 +147,7 @@ public class ServiceParameterPersister {
 	 * @Param targetID In the event of a tie favour the provided targetID
 	 * @param connectionParameters Used to to ask the ServiceFactory for list of candidates 
 	 */
-	protected void locateService(URL targetID, Map<String, Serializable> connectionParameters) {
+	protected void locateService(URL targetID, Map<String, Serializable> connectionParameters,  Map<String,Serializable> properties) {
 		List<IService> newServices = serviceFactory.createService(connectionParameters);
 		if( !newServices.isEmpty() ){
 			for( IService service : newServices ) {
@@ -144,6 +160,12 @@ public class ServiceParameterPersister {
 			    else {
 			        // Service was already available
 			    }
+			    try {
+			        // restore persisted properties			        
+                    service.getPersistentProperties().putAll( properties );
+                } catch (CoreException e) {
+                    // could not restore propreties
+                }
 		    }
 		} else {
 			CatalogPlugin.log("Nothing was able to be loaded from saved preferences: "+connectionParameters, null); //$NON-NLS-1$
@@ -159,7 +181,7 @@ public class ServiceParameterPersister {
 	 * @throws MalformedURLException
 	 */
 	@SuppressWarnings("unchecked")
-    private void mapAsObject(Preferences servicePreferenceNode, Map<String, Serializable> connectionParams, String currentKey) throws MalformedURLException {
+    private void mapAsObject(Preferences servicePreferenceNode, Map<String, Serializable> connectionParams, String currentKey) {
 		Preferences paramNode = servicePreferenceNode.node(currentKey);
 		String value=paramNode.get(VALUE_ID, null);
 		try {
@@ -167,7 +189,12 @@ public class ServiceParameterPersister {
 		} catch (UnsupportedEncodingException e) {
 			CatalogPlugin.log("error decoding value, using undecoded value", e); //$NON-NLS-1$
 		}
-		String type=paramNode.get(TYPE_ID, null);
+		String type=paramNode.get(TYPE_ID, null);		
+		Serializable obj = toObject( value, type );
+		connectionParams.put(currentKey, obj);
+	}
+	
+	private Serializable toObject( String txt, String type ){
 		try{
 			Class clazz=Class.forName(type);
 			
@@ -175,19 +202,24 @@ public class ServiceParameterPersister {
 			// ie assume the URL/File is absolute if reference is null
 			if( reference !=null && (URL.class.isAssignableFrom(clazz) 
 					|| File.class.isAssignableFrom(clazz) )){
-				URL result = URLUtils.constructURL(this.reference, value);
-				if( URL.class.isAssignableFrom(clazz) )
-					connectionParams.put(currentKey, (Serializable) result);
-				else
-					connectionParams.put(currentKey, new File( result.getFile()));
-				return;
+				URL result;
+                try {
+                    result = URLUtils.constructURL(this.reference, txt);
+                    if( URL.class.isAssignableFrom(clazz) )
+                        return (Serializable) result;
+                    else
+                        return new File( result.getFile());                    
+                } catch (MalformedURLException e) {
+                    CatalogPlugin.log(type+" was not able to use as a URL so we're putting it in to the parameters as a String", null); //$NON-NLS-1$                    
+                    return txt;
+                }							
 			}
 			
 			try{
 				// try finding the constructor that takes a string
 				Constructor constructor = clazz.getConstructor(new Class[]{String.class});
-				Object object = constructor.newInstance(new Object[]{value});
-				connectionParams.put(currentKey, (Serializable) object);
+				Object object = constructor.newInstance(new Object[]{txt});
+				return (Serializable) object;
 			}catch(Throwable t){
 				//failed lets try a setter
 				try{
@@ -196,19 +228,19 @@ public class ServiceParameterPersister {
 					
 					if( bestMatch!=null ){
 						Object obj = clazz.newInstance();
-						bestMatch.invoke(obj, new Object[]{value});
-						connectionParams.put(currentKey, (Serializable) obj);
+						bestMatch.invoke(obj, new Object[]{txt});
+						return (Serializable) obj;
 					}
 				}catch (Throwable t2) {
-					CatalogPlugin.log("error that occurred when trying use construction with string: "+type+" value= "+value, t ); //$NON-NLS-1$ //$NON-NLS-2$
-					CatalogPlugin.log("error that occurred when use a setter: "+type+" value= "+value, t2 );  //$NON-NLS-1$//$NON-NLS-2$
+					CatalogPlugin.log("error that occurred when trying use construction with string: "+type+" value= "+txt, t ); //$NON-NLS-1$ //$NON-NLS-2$
+					CatalogPlugin.log("error that occurred when use a setter: "+type+" value= "+txt, t2 );  //$NON-NLS-1$//$NON-NLS-2$
 				}
 			}
 			
-		}catch(ClassNotFoundException cnfe){
-			CatalogPlugin.log(type+" was not able find declared type so we're putting it in to the parameters as a String", null); //$NON-NLS-1$
-			connectionParams.put(currentKey, value);
+		} catch(ClassNotFoundException cnfe){
+			CatalogPlugin.log(type+" was not able find declared type so we're putting it in to the parameters as a String", null); //$NON-NLS-1$			
 		}
+		return txt;
 	}
 
 	private Method findBestMatch(Method[] methods) {
@@ -297,6 +329,15 @@ public class ServiceParameterPersister {
                         paramNode.put(TYPE_ID, object.getClass().getName());
                     }
                 }
+                try {
+                    Map<String, Serializable> persistentProperties = service.getPersistentProperties();
+                    
+                    Preferences propertiesNode = serviceNode.node(PROPERTIES_KEY);                    
+                    storeProperties( propertiesNode, persistentProperties );
+                } catch (CoreException e) {
+                    throw (RuntimeException) new RuntimeException( ).initCause( e );
+                }
+                
                 if (serviceNode.keys().length > 0)
                     serviceNode.flush();
                 monitor.worked(1);
@@ -307,6 +348,62 @@ public class ServiceParameterPersister {
         node.flush();
 	}
 
+    private void storeProperties( Preferences prefs,
+            Map<String, Serializable> properties ) {
+        
+        for ( Map.Entry<String, Serializable> entry : properties.entrySet()) {
+            
+            final String KEY = entry.getKey().toString();            
+            Serializable object = entry.getValue();
+            
+            String txt;
+            if( object == null ){
+                txt = null;
+            }
+            else {
+                txt =  object.toString();            
+            }
+
+            if (txt != null){
+                try {
+                    txt= URLEncoder.encode( txt, ENCODING );
+                    Preferences paramNode = prefs.node(KEY);
+                    
+                    paramNode.put(VALUE_ID, txt);
+                    paramNode.put(TYPE_ID, object.getClass().getName());
+                    
+                } catch (UnsupportedEncodingException e) {
+                    System.out.println("Could not encode "+KEY+" - "+e);
+                }
+            }
+        }
+    }
+    /**
+     * Helper method that will unpack a Preference node into a map of properties.
+     * @param service
+     * @param keys
+     * @return Connection parameters
+     */
+    private Map<String, Serializable> restoreProperties(Preferences preference ) {
+        Map<String, Serializable> map = new HashMap<String, Serializable>();
+        String[] keys;
+        try {
+            keys = preference.keys();
+            for( int j = 0; j < keys.length; j++ ) {
+                final String KEY = keys[j];
+                Preferences paramNode = preference.node(KEY);                
+                String txt = paramNode.get(VALUE_ID,null);
+                String type = paramNode.get(TYPE_ID,null);
+                
+                Serializable value = toObject( txt, type );
+                map.put(KEY, value );
+            }
+        } catch (BackingStoreException e) {
+            throw (RuntimeException) new RuntimeException( ).initCause( e );
+        }               
+        return map;
+    }
+    
     private void clearPreferences( Preferences node ) throws BackingStoreException {
         for( String name : node.childrenNames() ) {
             Preferences child = node.node(name);
