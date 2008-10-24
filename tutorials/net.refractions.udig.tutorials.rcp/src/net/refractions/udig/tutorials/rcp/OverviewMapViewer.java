@@ -9,6 +9,8 @@ import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.render.IViewportModelListener;
 import net.refractions.udig.project.render.ViewportModelEvent;
 import net.refractions.udig.project.render.ViewportModelEvent.EventType;
+import net.refractions.udig.project.render.displayAdapter.IMapDisplayListener;
+import net.refractions.udig.project.render.displayAdapter.MapDisplayEvent;
 import net.refractions.udig.project.ui.commands.AbstractDrawCommand;
 import net.refractions.udig.project.ui.commands.IDrawCommand;
 import net.refractions.udig.project.ui.viewers.MapViewer;
@@ -42,7 +44,10 @@ public class OverviewMapViewer {
 
     private IViewportModelListener viewportListener = null;
     private ContextModelListenerAdapter contextListener = null;
+    private IMapDisplayListener mapDisplayListener = null;
+    
     private IDrawCommand rectDrawCommand = null;
+    
     
     public OverviewMapViewer( Composite parent, int style, Map mainMap) {
         mapviewer = new MapViewer(parent, style);
@@ -63,6 +68,7 @@ public class OverviewMapViewer {
         mapviewer.setMap(map);
         addContextListener();
         addViewportModelListener();
+        addMapDisplayListener();
     }
     
     public Control getControl(){
@@ -187,8 +193,31 @@ public class OverviewMapViewer {
             }
 
         };
-        mainmap.getViewportModelInternal().addViewportModelListener(viewportListener);  
+        mainmap.getViewportModelInternal().addViewportModelListener(viewportListener);
+        
+        mapviewer.getViewport().addPaneListener(new IMapDisplayListener(){
+
+            public void sizeChanged( MapDisplayEvent event ) {
+                //update the bounds
+                mapviewer.getMap().getViewportModelInternal().setBounds(mainmap.getBounds(new NullProgressMonitor()));
+            }});
     }
+    
+    /**
+     * Adds a map display listener that listens to map resize events.
+     */
+    private void addMapDisplayListener() {
+        mapDisplayListener = new IMapDisplayListener(){
+            public void sizeChanged( MapDisplayEvent event ) {
+                // update the bounds
+                mapviewer.getMap().getViewportModelInternal().setBounds(
+                        mainmap.getBounds(new NullProgressMonitor()));
+            }
+        };
+
+        mapviewer.getViewport().addPaneListener(mapDisplayListener);
+    }
+    
     
     public void dispose(){
         mapviewer.dispose();
@@ -197,6 +226,9 @@ public class OverviewMapViewer {
         }
         if (contextListener != null){
             mainmap.getContextModel().eAdapters().remove(contextListener);
+        }
+        if (mapDisplayListener != null){
+            mapviewer.getViewport().removePaneListener(mapDisplayListener);
         }
         removeLocationBox();
     }
