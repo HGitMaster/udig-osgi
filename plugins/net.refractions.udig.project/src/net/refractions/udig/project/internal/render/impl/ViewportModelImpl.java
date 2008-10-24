@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ViewportModelImpl.java 30890 2008-10-14 19:02:29Z egouge $
+ * <copyright></copyright> $Id: ViewportModelImpl.java 30919 2008-10-24 17:52:28Z egouge $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -245,7 +245,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
                 cRS = oldCRS;
 
                 setCRSGen(newCRS);
-                notifyListeners(new ViewportModelEvent(this, EventType.CRS, oldCRS, newCRS));
+                notifyListeners(new ViewportModelEvent(this, EventType.CRS, newCRS, oldCRS));
             }
         }
     }
