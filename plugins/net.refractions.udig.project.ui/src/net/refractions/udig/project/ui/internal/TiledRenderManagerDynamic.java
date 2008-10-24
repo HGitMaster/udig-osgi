@@ -41,6 +41,7 @@ import net.refractions.udig.project.internal.render.ExecutorVisitor;
 import net.refractions.udig.project.internal.render.RenderExecutor;
 import net.refractions.udig.project.internal.render.RenderFactory;
 import net.refractions.udig.project.internal.render.RenderPackage;
+import net.refractions.udig.project.internal.render.RendererCreator;
 import net.refractions.udig.project.internal.render.SelectionLayer;
 import net.refractions.udig.project.internal.render.impl.CompositeRenderContextImpl;
 import net.refractions.udig.project.internal.render.impl.CompositeRendererImpl;
@@ -206,6 +207,14 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
         this.rendererCreator = null;
         eAdapters().add(viewportModelChangeListener);
     }
+    
+    public RendererCreator getRendererCreator() {
+        checkState();
+        if (rendererCreator == null){
+            initRenderCreator();
+        }
+        return rendererCreator;
+    } 
 
     /**
      * Creates a new render creator and initializes it with the current layers on the map.
@@ -396,7 +405,9 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
         }
         ReferencedEnvelope viewportbounds = getMap().getViewportModel().getBounds();
         double resolution = viewportbounds.getWidth() / getMapDisplay().getWidth();
-                
+        
+        //we need to re-render all tiles
+        invalidateAllTilesRenderState();
         
         //get only the tile in the bounds in the area of interest 
         Collection<ReferencedEnvelope> tileBounds = computeTileBounds(areaOfInterest, resolution);
