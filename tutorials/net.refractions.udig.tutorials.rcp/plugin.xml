@@ -38,9 +38,17 @@
       <view
             allowMultiple="true"
             class="net.refractions.udig.tutorials.rcp.MapView"
-            icon="icons/sample2.gif"
+            icon="icons/createmap.gif"
             id="net.refractions.udig.tutorials.rcp.mapView"
             name="Map View"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            class="net.refractions.udig.tutorials.rcp.OverviewMapView"
+            icon="icons/createmapoverview.gif"
+            id="net.refractions.udig.tutorials.rcp.mapViewOverview"
+            name="Overview Map View"
             restorable="true">
       </view>
    </extension>
