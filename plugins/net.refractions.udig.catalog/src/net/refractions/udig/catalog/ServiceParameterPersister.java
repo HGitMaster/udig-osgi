@@ -163,7 +163,7 @@ public class ServiceParameterPersister {
 			    try {
 			        // restore persisted properties			        
                     service.getPersistentProperties().putAll( properties );
-                } catch (CoreException e) {
+                } catch (Exception e) {
                     // could not restore propreties
                 }
 		    }
@@ -334,7 +334,7 @@ public class ServiceParameterPersister {
                     
                     Preferences propertiesNode = serviceNode.node(PROPERTIES_KEY);                    
                     storeProperties( propertiesNode, persistentProperties );
-                } catch (CoreException e) {
+                } catch (Exception e) {
                     throw (RuntimeException) new RuntimeException( ).initCause( e );
                 }
                 

@@ -21,12 +21,15 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.internal.Messages;
 import net.refractions.udig.ui.ErrorManager;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -140,7 +143,7 @@ public abstract class IService implements IResolve {
     /**
      * Used to save persisted properties; please see ServiceParameterPersister for details.
      */
-    private Map<String, Serializable> properties;
+    private Map<String, Serializable> properties = Collections.synchronizedMap(new HashMap<String, Serializable>());
 
     /**
      * Will attempt to morph into the adaptee, and return that object. Harded coded to capture the

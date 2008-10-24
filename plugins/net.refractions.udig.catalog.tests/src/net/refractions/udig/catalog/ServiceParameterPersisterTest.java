@@ -90,9 +90,9 @@ public class ServiceParameterPersisterTest extends TestCase {
 			super(CatalogPlugin.getDefault().getLocalCatalog(), CatalogPlugin.getDefault().getServiceFactory());
 		}
 		@Override
-		protected void locateService(URL url, Map<String, Serializable> map) {
+		protected void locateService(URL url, Map<String, Serializable> map, Map<String, Serializable> properties) {
 			this.url = url;
-			this.map=map;
+			this.map=map;			
 		}
 	}
 	class TestService extends IService{

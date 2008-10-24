@@ -400,7 +400,7 @@ public class CatalogRef {
         }
 
         @Override
-        protected void locateService( URL url, Map<String, Serializable> map ) {
+        protected void locateService( URL url, Map<String, Serializable> map, Map<String, Serializable> properties  ) {
             if (allParams.containsKey(url))
                 ProjectPlugin
                         .log("LayerCatalogRefPersister#locateService: duplicate resource ids when loading paramers"); //$NON-NLS-1$

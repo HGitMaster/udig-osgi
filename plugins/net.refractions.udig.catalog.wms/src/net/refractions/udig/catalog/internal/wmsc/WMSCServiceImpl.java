@@ -28,6 +28,7 @@ import java.util.concurrent.locks.Lock;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
+import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
 import net.refractions.udig.catalog.wmsc.server.WMSCCapabilities;
 import net.refractions.udig.catalog.wmsc.server.WMSCCapabilitiesResponse;
@@ -193,13 +194,13 @@ public class WMSCServiceImpl extends IService {
                             // this constructor should note that it needs to check
                             // the updateSequence magic number thingy
                             wmsc = new TiledWebMapServer(this.url, capabilities );    
-                        } catch (ServiceException e) {
-                            wmsc = new TiledWebMapServer(this.url);
-                        } catch (IOException e) {
-                            wmsc = new TiledWebMapServer(this.url);
+                        } catch (Exception e) {                            
+                            WmsPlugin.log("Restore from cached capabilities failed", e);
                         }
                     }
-                    else {
+                    if( wmsc == null){
+                        // we could not reconstruct from our cached capabilities?
+                        
                         // this constructor will grab the capabilies when
                         // first needed
                         wmsc = new TiledWebMapServer(this.url);
