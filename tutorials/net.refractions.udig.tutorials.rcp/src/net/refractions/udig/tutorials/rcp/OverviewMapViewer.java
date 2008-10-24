@@ -8,6 +8,7 @@ import net.refractions.udig.project.internal.ContextModelListenerAdapter;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.render.IViewportModelListener;
 import net.refractions.udig.project.render.ViewportModelEvent;
+import net.refractions.udig.project.render.ViewportModelEvent.EventType;
 import net.refractions.udig.project.ui.commands.AbstractDrawCommand;
 import net.refractions.udig.project.ui.commands.IDrawCommand;
 import net.refractions.udig.project.ui.viewers.MapViewer;
@@ -18,6 +19,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -174,12 +176,18 @@ public class OverviewMapViewer {
     private void addViewportModelListener() {
         viewportListener = new IViewportModelListener(){
             public void changed( ViewportModelEvent event ) {
-                // repaint to update the box representing the location
-                mapviewer.getViewport().repaint();
+                if (event.getType() == EventType.CRS){
+                    //need to update the overview map crs
+                    CoordinateReferenceSystem newcrs = (CoordinateReferenceSystem)event.getNewValue();
+                    mapviewer.getMap().getViewportModelInternal().setCRS(newcrs);
+                }else{
+                    // repaint to update the box representing the location
+                    mapviewer.getViewport().repaint();
+                }
             }
 
         };
-        mainmap.getViewportModelInternal().addViewportModelListener(viewportListener);
+        mainmap.getViewportModelInternal().addViewportModelListener(viewportListener);  
     }
     
     public void dispose(){
