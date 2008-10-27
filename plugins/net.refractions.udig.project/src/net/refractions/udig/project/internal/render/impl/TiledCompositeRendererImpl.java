@@ -407,6 +407,21 @@ public class TiledCompositeRendererImpl extends CompositeRendererImpl implements
     }
     
     /**
+     * Removes all children
+     */
+    public void removeAllChildren(){
+        ArrayList<RenderInfo> toRemove = new ArrayList<RenderInfo>();
+        synchronized (childrenRenderers) {
+            for( RenderInfo child : childrenRenderers ) {
+                    child.getExecutor().dispose();
+                    toRemove.add(child);
+            }    
+            
+        }   
+        childrenRenderers.removeAll(toRemove);
+    }
+    
+    /**
      * Adds a child and creates a render and render executor for the child.
      *
      * @param metrics
