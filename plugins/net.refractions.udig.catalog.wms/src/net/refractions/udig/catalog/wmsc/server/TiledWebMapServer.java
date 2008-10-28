@@ -47,6 +47,7 @@ public class TiledWebMapServer {
 
     /** Capabilities document */
     private WMSCCapabilities capabilities = null;
+    private String getCaps_xml;
 
     /** URL of WMSC Service */
     private URL service;
@@ -84,7 +85,7 @@ public class TiledWebMapServer {
 
     /**
      * Makes a getCapabilities request and parses the response into a WMSCCapabilities 
-     * object.
+     * object.  Also stores the resulting getcaps xml.
      *
      * @return a WMSCCapabilities object
      * @throws ServiceException
@@ -101,8 +102,24 @@ public class TiledWebMapServer {
         WmsPlugin.log("WMSC GetCapabilities: " + r.getFinalURL(), null);  //$NON-NLS-1$
         //issues the request
         WMSCCapabilitiesResponse cr = (WMSCCapabilitiesResponse) issueRequest(r);
+        // store the getcaps response xml
+        getCaps_xml = cr.getCapabilitiesXml();
         //return the parsed document
         return (WMSCCapabilities) cr.getCapabilities();
+    }   
+    
+    /**
+     * Get the getCapabilities xml string. If there was an error parsing it
+     * during creation, it will return null (and it should have thrown an
+     * exception during creation).
+     * 
+     * @return a String of xml, representing the Capabilities of the server
+     */
+    public String getCapabilitiesXml() {
+        if (getCaps_xml == null) {
+            getCapabilities();
+        }
+        return getCaps_xml;
     }    
 
     /**
