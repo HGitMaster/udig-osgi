@@ -183,19 +183,13 @@ public class WMSCServiceImpl extends IService {
                     if( serializable != null){
                         try {
                             String xml = (String) serializable;
-                            InputStream is = new ByteArrayInputStream(xml.getBytes());
-                            WMSCCapabilitiesResponse response;
 
-                            response = new WMSCCapabilitiesResponse("txt/xml", is);  //$NON-NLS-1$
-                            WMSCCapabilities capabilities = (WMSCCapabilities) response.getCapabilities();                        
-                            
-                            // TODO: grab capabilities xml and parse it
-                            // this constructor should note that it needs to check
+                            // NOTE: this constructor will check
                             // the updateSequence number and compare it to any
                             // capabilities it can fetch from the server
-                            wmsc = new TiledWebMapServer(this.url, capabilities );    
+                            wmsc = new TiledWebMapServer(this.url, xml, true );    
                         } catch (Exception e) {                            
-                            WmsPlugin.log("Restore from cached capabilities failed", e);
+                            WmsPlugin.log("Restore from cached capabilities failed", e); //$NON-NLS-1$
                         }
                     }
                     if( wmsc == null){

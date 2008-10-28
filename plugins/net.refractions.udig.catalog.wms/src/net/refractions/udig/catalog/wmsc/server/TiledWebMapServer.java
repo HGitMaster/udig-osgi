@@ -59,8 +59,51 @@ public class TiledWebMapServer {
     public TiledWebMapServer( URL serverURL ) {
         this.service = serverURL;
     }
-    public TiledWebMapServer( URL serverURL, WMSCCapabilities capabilities) {        
-        this.service = serverURL;
+    
+    /**
+     * Creates a new service with the given capabilities xml.  If checkForUpdate is true,
+     * then it also tries to request a new capabilities document to see if there is 
+     * any update it needs (if it can't connect it just continues with the given caps).
+     * 
+     * @param serverURL
+     * @param caps_xml
+     * @param checkForUpdate
+     */
+    public TiledWebMapServer( URL serverURL, String caps_xml, boolean checkForUpdate) {        
+    	this.service = serverURL;
+    	this.getCaps_xml = caps_xml;
+    	
+    	// build a capabilities object from the given xml
+    	WMSCCapabilities capabilities = null;
+    	try {
+	        InputStream is = new ByteArrayInputStream(caps_xml.getBytes());
+	        WMSCCapabilitiesResponse response;
+	
+	        response = new WMSCCapabilitiesResponse("txt/xml", is);  //$NON-NLS-1$
+	        capabilities = (WMSCCapabilities) response.getCapabilities(); 
+    	} catch (Exception e) {
+    		WmsPlugin.log("Restore from cached capabilities failed", e);  //$NON-NLS-1$
+    	}
+    	
+    	// try getting a new capabilities and see if its updatesequence is higher
+        if (checkForUpdate) {
+        	WMSCCapabilities newCaps;
+            try {
+            	newCaps = readCapabilities();
+            	double newUpdateSeq = Double.parseDouble(newCaps.getUpdateSequence());
+            	if (capabilities == null || newUpdateSeq > Double.parseDouble(capabilities.getUpdateSequence()) ) {
+            		capabilities = newCaps;
+            	} 
+            	else {
+            		// xml would have been reset when reading caps, so set them back
+            		this.getCaps_xml = caps_xml;
+            	}
+            } catch (Exception ex) {
+                // TODO: Do something with this error
+                ex.printStackTrace();
+            }        	
+        }
+        
         this.capabilities = capabilities;
     }
 
@@ -100,10 +143,19 @@ public class TiledWebMapServer {
         //create a request
         CapabilitiesRequest r = new CapabilitiesRequest(serverURL);
         WmsPlugin.log("WMSC GetCapabilities: " + r.getFinalURL(), null);  //$NON-NLS-1$
-        //issues the request
-        WMSCCapabilitiesResponse cr = (WMSCCapabilitiesResponse) issueRequest(r);
-        // store the getcaps response xml
-        getCaps_xml = cr.getCapabilitiesXml();
+        //issue the request
+        WMSCCapabilitiesResponse cr;
+        try {
+            cr = (WMSCCapabilitiesResponse) issueRequest(r);
+            // store the getcaps response xml
+            if (cr != null) {
+            	getCaps_xml = cr.getCapabilitiesXml();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }        
+
         //return the parsed document
         return (WMSCCapabilities) cr.getCapabilities();
     }   
