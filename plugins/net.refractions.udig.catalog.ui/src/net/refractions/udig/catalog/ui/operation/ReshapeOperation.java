@@ -487,8 +487,8 @@ public class ReshapeOperation implements IOp {
         public List<String> createNameList() {
             List<String> list = new ArrayList<String>();
 
-            String definition = text.getText();
-            for( String line : definition.split("[\n\r]") ) { //$NON-NLS-1$
+            String definition = text.getText().replaceAll("\r","\n").replaceAll("[\n\r][\n\r]", "\n");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            for( String line : definition.split("\n") ) { //$NON-NLS-1$
                 int mark = line.indexOf("="); //$NON-NLS-1$
                 if (mark != -1) {
                     String name = line.substring(0, mark).trim();
@@ -505,8 +505,8 @@ public class ReshapeOperation implements IOp {
         public List<Expression> createExpressionList() {
             List<Expression> list = new ArrayList<Expression>();
 
-            String definition = text.getText();
-            for( String line : definition.split("[\n\r]") ) { //$NON-NLS-1$
+            String definition = text.getText().replaceAll("\r","\n").replaceAll("[\n\r][\n\r]", "\n");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            for( String line : definition.split("\n") ) { //$NON-NLS-1$
                 int mark = line.indexOf("="); //$NON-NLS-1$
                 if (mark != -1) {
                     String expressionDefinition = line.substring(mark + 1).trim();

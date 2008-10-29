@@ -39,6 +39,8 @@ import org.geotools.data.FeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.styling.SLD;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
@@ -135,6 +137,9 @@ public class ShpGeoResourceImpl extends IGeoResource {
         }
         if(adaptee.isAssignableFrom(FeatureSource.class)){
             return adaptee.cast( featureSource(monitor) );
+        }
+        if(adaptee.isAssignableFrom(IndexedShapefileDataStore.class)){
+            return adaptee.cast( parent.getDS(monitor) );
         }
         if(adaptee.isAssignableFrom(Style.class)){
         	Style style = style(monitor);

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: LayerImpl.java 30876 2008-10-07 20:10:26Z egouge $
+ * <copyright></copyright> $Id: LayerImpl.java 30932 2008-10-29 09:11:31Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -2037,6 +2037,9 @@ public class LayerImpl extends EObjectImpl implements Layer {
             list.add(getResource(adapter, monitor));
             return list.get(0);
         }
+        if (adapter.isAssignableFrom(CoordinateReferenceSystem.class)){
+        	return adapter.cast(getCRS(monitor));
+        }
         return null;
     }
 
@@ -2044,7 +2047,7 @@ public class LayerImpl extends EObjectImpl implements Layer {
      * @see net.refractions.udig.core.IBlockingAdaptable#canAdaptTo(java.lang.Class)
      */
     public <T> boolean canAdaptTo( Class<T> adapter ) {
-        return hasResource(adapter);
+        return hasResource(adapter) || adapter.isAssignableFrom(CoordinateReferenceSystem.class);
     }
 
     /**
@@ -2090,11 +2093,12 @@ public class LayerImpl extends EObjectImpl implements Layer {
             return;
 
         warned = false;
-        this.geoResources = null;
         if (delta.getKind() == Kind.CHANGED) {
-            // the resource has changed so this means it could have moved or parameters may have
-            // changed
-            // so set modified on the map so the new params will be saved on shutdown.
+        	
+            // the resource has changed so this means it could have moved or
+            // parameters may have changed
+            // so set modified on the map so the new params will be saved on
+            // shutdown.
             getMapInternal().eResource().setModified(true);
             if (delta.getNewValue() == null) {
                 // no change
@@ -2117,12 +2121,11 @@ public class LayerImpl extends EObjectImpl implements Layer {
                 resetGeoResources();
             }
 
+        }else if( delta.getKind() == Kind.REPLACED ){
+        	resetGeoResources();
         }
     }
 
-    /**
-     *
-     */
     private void updateBounds() {
         ProjectPlugin.trace(Trace.MODEL, getClass(), "bounds changed " + getID(), null); //$NON-NLS-1$
         refresh(null);
@@ -2132,6 +2135,12 @@ public class LayerImpl extends EObjectImpl implements Layer {
      *
      */
     private void resetGeoResources() {
+        synchronized (this) {
+            this.geoResources = null;
+            this.geoResource=null;
+        		cRS=null;
+            	unknownCRS=null;
+		}
         if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET,
                     ProjectPackage.LAYER__GEO_RESOURCES, null, null));
@@ -2162,6 +2171,10 @@ public class LayerImpl extends EObjectImpl implements Layer {
             return;
         }
 
+        if( event.getType()!=IResolveChangeEvent.Type.POST_CHANGE){
+        	return;
+        }
+        
         IResolveDelta delta = event.getDelta();
         IResolve hit = event.getResolve();
 

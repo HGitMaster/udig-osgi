@@ -36,6 +36,7 @@ public class Messages extends NLS {
     public static String CharSetFieldEditor_select;
     public static String CharsetSelectionDialog_title;
     public static String CRSChooser_unknownWKT;
+	public static String CRSChooserDialog_title;
 	public static String ErrorManager_very_informative_error;
 	public static String ExceptionDisplayer_very_informative_error;
     public static String FeatureTableContentProvider_loadedFeatures;

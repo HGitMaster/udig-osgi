@@ -701,6 +701,7 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
             assert layer==null || (layer!=null && layer.getMap()==event.getSource().getMap());
 
             switch( event.getType() ) {
+            case EditManagerEvent.POST_COMMIT:
             case EditManagerEvent.POST_ROLLBACK:
                 if( !active ){
                     reloadNeeded=true;

@@ -28,6 +28,7 @@ import net.refractions.udig.printing.model.impl.LabelBoxPrinter;
 import net.refractions.udig.printing.model.impl.MapBoxPrinter;
 import net.refractions.udig.printing.model.impl.MapGraphicBoxPrinter;
 import net.refractions.udig.printing.ui.internal.AbstractTemplate;
+import net.refractions.udig.printing.ui.internal.Messages;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
 
@@ -182,7 +183,7 @@ public class LandScaleTemplate extends AbstractTemplate {
     }
 
     public String getName() {
-        return "Basic Landscape Template";
+        return Messages.Landscape_Template_Name;
     }
 
     public Rectangle getMapBounds() throws IllegalStateException {

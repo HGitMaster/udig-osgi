@@ -194,6 +194,7 @@ class FeatureTableSelectionProvider implements ISelectionProvider {
                             updateMonitor(3);
                             
                             owner.getViewer().getTable().clearAll();
+                            notifyListeners();
                         }
 
                     });

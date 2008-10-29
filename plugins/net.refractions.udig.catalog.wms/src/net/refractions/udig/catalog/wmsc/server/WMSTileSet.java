@@ -467,7 +467,10 @@ public class WMSTileSet implements TileSet {
      * @returns a copy of the resolutions array
      */
     public double[] getResolutions(){
-        return Arrays.copyOf(this.dresolutions, this.dresolutions.length);
+        double[] d = new double[dresolutions.length];
+        System.arraycopy(dresolutions, 0, d, 0, d.length);
+        return d;
+//        return Arrays.copyOf(this.dresolutions, this.dresolutions.length);
     }
     
     /**
