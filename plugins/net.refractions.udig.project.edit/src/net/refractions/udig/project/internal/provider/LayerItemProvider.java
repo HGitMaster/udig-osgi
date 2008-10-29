@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: LayerItemProvider.java 30790 2008-09-19 20:30:55Z egouge $
+ * $Id: LayerItemProvider.java 30940 2008-10-29 13:04:17Z jeichar $
  */
 package net.refractions.udig.project.internal.provider;
 
@@ -681,8 +681,10 @@ public class LayerItemProvider extends ItemProviderAdapter
         boolean mylarIsOn = mylar!=null && ((Boolean)mylar).booleanValue();
         
         if( mylarIsOn ){
-            
             ILayer selectedLayer = map.getEditManager().getSelectedLayer();
+            if( map.getRenderManager()==null){
+                return false;
+            }
             return !map.getRenderManager().areLayersRelatedByContext(layer, selectedLayer);
         }
         return mylarIsOn;
