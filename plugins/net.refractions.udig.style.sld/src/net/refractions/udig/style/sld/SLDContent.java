@@ -58,6 +58,7 @@ import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.TextSymbolizer;
 import org.geotools.styling.UserLayer;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -209,7 +210,11 @@ public final class SLDContent extends StyleContent {
         
         if( resource.canResolve(Style.class)){
             Style style = resource.resolve( Style.class, null);
-            if( style != null ) return style;
+            if( style != null ){
+                DuplicatingStyleVisitor v = new DuplicatingStyleVisitor();
+                style.accept(v);
+                return v.getCopy();
+            }
         }
         
         if( resource.canResolve(FeatureSource.class) ){

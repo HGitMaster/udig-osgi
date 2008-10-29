@@ -27,7 +27,6 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  * 
  * @author Jesse
  * @since 1.0.0
- * @model
  */
 public interface RenderContext extends AbstractContext, Comparable<RenderContext>, IRenderContext {
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.StyleBlackboard;
+import net.refractions.udig.style.sld.internal.Messages;
 import net.refractions.udig.style.sld.simple.FillViewer;
 import net.refractions.udig.style.sld.simple.GraphicViewer;
 import net.refractions.udig.style.sld.simple.LabelViewer;
@@ -119,6 +120,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
         }
 
     };
+    private Button replace;
     /**
      * Construct <code>SimpleStyleConfigurator</code>.
      */
@@ -297,23 +299,27 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 
         Style style = (Style) getStyleBlackboard().get(SLDContent.ID);
         style.setDefault(true);
-        FeatureTypeStyle[] fts = style.getFeatureTypeStyles();
-        boolean match = false;
-        for( int i = fts.length - 1; i > -1; i-- ) {
-            if (SLDs.isSemanticTypeMatch(fts[i], "simple")) { //$NON-NLS-1$
-                fts[i] = featureTypeStyle;
-                match = true;
-                break;
+        if(replace.getSelection()){
+            style.setFeatureTypeStyles(new FeatureTypeStyle[]{featureTypeStyle});
+        }else{
+            FeatureTypeStyle[] fts = style.getFeatureTypeStyles();
+            boolean match = false;
+            for( int i = fts.length - 1; i > -1; i-- ) {
+                if (SLDs.isSemanticTypeMatch(fts[i], "simple")) { //$NON-NLS-1$
+                    fts[i] = featureTypeStyle;
+                    match = true;
+                    break;
+                }
             }
-        }
-        if (match) {
-            style.setFeatureTypeStyles(fts);
-        } else {
-            // add the new entry to the array
-            FeatureTypeStyle[] fts2 = new FeatureTypeStyle[fts.length + 1];
-            System.arraycopy(fts, 0, fts2, 0, fts.length);
-            fts2[fts.length] = featureTypeStyle;
-            style.setFeatureTypeStyles(fts2);
+            if (match) {
+                style.setFeatureTypeStyles(fts);
+            } else {
+                // add the new entry to the array
+                FeatureTypeStyle[] fts2 = new FeatureTypeStyle[fts.length + 1];
+                System.arraycopy(fts, 0, fts2, 0, fts.length);
+                fts2[fts.length] = featureTypeStyle;
+                style.setFeatureTypeStyles(fts2);
+            }
         }
         // put style on blackboard
         getStyleBlackboard().put(SLDContent.ID, style);
@@ -350,6 +356,11 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
         this.label.createControl(parent, adp);
         this.minScale.createControl(parent, adp);
         this.maxScale.createControl(parent, adp);
+
+        Composite replaceComp = AbstractSimpleConfigurator.subpart(parent, Messages.SimpleStyleConfigurator_replaceButton );
+        this.replace = new Button(replaceComp, SWT.CHECK);
+        replace.addSelectionListener(synchronize);
+        replace.setSelection(true);
     }
 
 }

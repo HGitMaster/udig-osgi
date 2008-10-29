@@ -225,7 +225,6 @@ public class Identifier {
         String HOST = url.getHost();
         int PORT = url.getPort();
         String PATH = url.getPath();
-        // String QUERY = url.getQuery();
         String PROTOCOL = url.getProtocol();
 
         if (PROTOCOL == null) {

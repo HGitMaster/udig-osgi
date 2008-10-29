@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectPlugin.java 30711 2008-09-08 16:56:19Z gdavis $
+ * <copyright></copyright> $Id: ProjectPlugin.java 30934 2008-10-29 11:00:29Z jeichar $
  */
 package net.refractions.udig.project.internal;
 
@@ -112,16 +112,16 @@ public final class ProjectPlugin extends EMFPlugin {
          * Controls whether the warning message of non-undoable commands is shown.
          * @deprecated Use the getter and setter methods.
          */
-        public boolean undoableCommandWarning=true;
-        
+        public boolean undoableCommandWarning = true;
+
         public void setUndoableCommandWarning( boolean value ) {
-        	undoableCommandWarning = value;
+            undoableCommandWarning = value;
         }
-        
+
         public boolean getUndoableCommandWarning() {
-        	return undoableCommandWarning;
+            return undoableCommandWarning;
         }
-        
+
         /**
          * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
          */
@@ -130,7 +130,8 @@ public final class ProjectPlugin extends EMFPlugin {
             ShutdownTaskList.instance().addPostShutdownTask(new PostShutdownTask(){
 
                 public int getProgressMonitorSteps() {
-                    List resources = getProjectRegistry().eResource().getResourceSet().getResources();
+                    List resources = getProjectRegistry().eResource().getResourceSet()
+                            .getResources();
                     return resources.size();
                 }
 
@@ -138,28 +139,30 @@ public final class ProjectPlugin extends EMFPlugin {
                     ProjectPlugin.log("", t); //$NON-NLS-1$
                 }
 
-                public void postShutdown( IProgressMonitor monitor, IWorkbench workbench) throws Exception {
+                public void postShutdown( IProgressMonitor monitor, IWorkbench workbench )
+                        throws Exception {
                     monitor.beginTask(Messages.ProjectPlugin_saving_task_name, 0);
                     turnOffEvents();
-                    List resources = getProjectRegistry().eResource().getResourceSet().getResources();
+                    List resources = getProjectRegistry().eResource().getResourceSet()
+                            .getResources();
                     for( Iterator iter = resources.iterator(); iter.hasNext(); ) {
                         Resource resource = (Resource) iter.next();
-                        if( resource.getContents().isEmpty() )
+                        if (resource.getContents().isEmpty())
                             continue;
                         Object next = resource.getAllContents().next();
-                        if (resource.isModified() && next!=null &&!((EObject)next).eIsProxy()){
-                            try{
+                        if (resource.isModified() && next != null && !((EObject) next).eIsProxy()) {
+                            try {
                                 resource.save(saveOptions);
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 ProjectPlugin.log("Error saving", e); //$NON-NLS-1$
                             }
                         }
                         monitor.worked(1);
                     }
                 }
-                
+
             });
-            undoableCommandWarning="true".equals(getString("net.refractions.udig.project.undoableCommandWarning"));  //$NON-NLS-1$//$NON-NLS-2$
+            undoableCommandWarning = "true".equals(getString("net.refractions.udig.project.undoableCommandWarning")); //$NON-NLS-1$//$NON-NLS-2$
         }
 
         protected static final String ENCODING = "UTF-8"; //$NON-NLS-1$
@@ -171,7 +174,7 @@ public final class ProjectPlugin extends EMFPlugin {
          */
         public Map<String, String> saveOptions = new HashMap<String, String>();
 
-		private ScopedPreferenceStore preferenceStore;
+        private ScopedPreferenceStore preferenceStore;
 
         {
             saveOptions.put(XMLResource.OPTION_ENCODING, ENCODING);
@@ -197,8 +200,8 @@ public final class ProjectPlugin extends EMFPlugin {
             while( allIter.hasNext() ) {
                 Object tmp = allIter.next();
                 Notifier obj = (Notifier) tmp;
-                if( obj!=null){
-                	obj.eSetDeliver(false);
+                if (obj != null) {
+                    obj.eSetDeliver(false);
                 }
             }
         }
@@ -224,7 +227,8 @@ public final class ProjectPlugin extends EMFPlugin {
         public synchronized ScopedPreferenceStore getPreferenceStore() {
             // Create the preference store lazily.
             if (preferenceStore == null) {
-                preferenceStore = new ScopedPreferenceStore(new InstanceScope(),getBundle().getSymbolicName());
+                preferenceStore = new ScopedPreferenceStore(new InstanceScope(), getBundle()
+                        .getSymbolicName());
 
             }
             return preferenceStore;
@@ -261,7 +265,7 @@ public final class ProjectPlugin extends EMFPlugin {
     private static void trace( String message, Throwable e ) {
         if (getPlugin().isDebugging()) {
             if (message != null)
-                System.out.println(message+"\n"); //$NON-NLS-1$
+                System.out.println(message + "\n"); //$NON-NLS-1$
             if (e != null)
                 e.printStackTrace(System.out);
         }
@@ -284,9 +288,9 @@ public final class ProjectPlugin extends EMFPlugin {
      * @param e exception, may be null.
      */
     public static void trace( Class caller, String message, Throwable e ) {
-        trace("Tracing - "+caller.getSimpleName()+": "+message, e); //$NON-NLS-1$ //$NON-NLS-2$
+        trace("Tracing - " + caller.getSimpleName() + ": " + message, e); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
     /**
      * Performs the Platform.getDebugOption true check on the provided trace
      * <p>

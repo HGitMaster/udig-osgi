@@ -88,4 +88,12 @@
          </actionSet>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="net.refractions.udig.browser.externalCatalogWizard">
+      <externalCatalogue
+            id="net.refractions.udig.browser.externalCatalogue1"
+            name="net.refractions.udig.browser.externalCatalogue1">
+         <externalCatalogueURL url="http://udig.refractions.net"/>
+      </externalCatalogue>
+   </extension>
 </plugin>

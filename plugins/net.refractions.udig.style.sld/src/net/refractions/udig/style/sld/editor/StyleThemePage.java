@@ -2,6 +2,9 @@ package net.refractions.udig.style.sld.editor;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,6 +73,8 @@ import org.eclipse.ui.XMLMemento;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.PaletteSuitability;
+import org.geotools.brewer.color.PaletteType;
+import org.geotools.brewer.color.SampleScheme;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
@@ -89,6 +94,7 @@ import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
+import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyledLayerDescriptor;
@@ -1193,6 +1199,7 @@ public class StyleThemePage extends StyleEditorPage {
     }
 
     void generateTheme() {
+        customPalette=null;
         if (selectedAttributeType == null) {
             selectedAttributeType = getAttributeType(getCombo(COMBO_ATTRIBUTES).getText());
         }
@@ -1675,16 +1682,54 @@ public class StyleThemePage extends StyleEditorPage {
     }
 
     private void readCustomPalette(IMemento memento) {
-        IMemento paletteMemento = memento.getChild(CUSTOM_PALETTE);
-        if( paletteMemento!=null ){
-            List<Color> colors = new ArrayList<Color>();
-            int index = 0;
-            while(memento.getInteger(""+index)!=null){
-                int rgb = memento.getInteger(""+index);
-                colors.add(new Color(rgb));
-                index++;
+        List<Color> colors = new ArrayList<Color>();
+        int index = 1;
+        while(memento.getInteger(CUSTOM_PALETTE+index)!=null){ 
+            int rgb = memento.getInteger(CUSTOM_PALETTE+index); 
+            colors.add(new Color(rgb));
+            index++;
+        }
+        if(colors.isEmpty()){
+            return;
+        }
+        if( getBrewer().hasPalette(Messages.StyleEditor_theme_custom)){
+            customPalette = getBrewer().getPalette(Messages.StyleEditor_theme_custom);
+            customPalette.setColors(colors.toArray(new Color[0]));
+        }else{
+            customPalette = new BrewerPalette();
+            PaletteSuitability suitability = new PaletteSuitability();
+    
+            SampleScheme newScheme = new SampleScheme();
+            String unknown = "?"; //$NON-NLS-1$
+            for (int i = 0; i < colors.size(); i++) {
+                if (i > 0) { 
+                    //create a simple scheme
+                    int[] scheme = new int[i+1];
+                    for (int j = 0; j < i+1; j++) {
+                        scheme[j] = j;
+                    }
+                    newScheme.setSampleScheme(i+1, scheme);
+                    //set the suitability to unknown
+                    try {
+                        suitability.setSuitability(i+1, new String[] {unknown, unknown, unknown, unknown, unknown, unknown});
+                    } catch (IOException e) {
+                        SLDPlugin.log("setSuitability() failed", e); //$NON-NLS-1$
+                        return;
+                    }
+                }
+            }
+            customPalette.setPaletteSuitability(suitability);
+            customPalette.setColors(colors.toArray(new Color[0]));
+            customPalette.setColorScheme(newScheme);
+            customPalette.setName(Messages.StyleEditor_theme_custom); 
+            customPalette.setDescription(Messages.StyleEditor_theme_custom_desc); 
+            customPalette.setType(new PaletteType());
+            if (!getBrewer().hasPalette(Messages.StyleEditor_theme_custom)) {
+                getBrewer().registerPalette(customPalette);
             }
         }
+        paletteTable.setInput(getBrewer());
+        paletteTable.setSelection(new StructuredSelection(customPalette));
     }
 
     private void setPaletteSelection(IMemento memento) {
@@ -1800,14 +1845,15 @@ public class StyleThemePage extends StyleEditorPage {
     private void storeCustomPalette(IMemento memento) {
         if( customPalette!=null ){
             Color[] colors = customPalette.getColors();
-            IMemento paletteMemento = memento.createChild(CUSTOM_PALETTE);
-            int index = 0;
+            int index = 1;
             for (Color color : colors) {
-                paletteMemento.putInteger(""+index, color.getRGB());
+                int rgb = color.getRGB();
+                memento.putInteger(CUSTOM_PALETTE+index, rgb);
                 index++;
             }
         }
     }
+
 
     private void storePalette(IMemento memento) {
         ISelection selection = paletteTable.getSelection();

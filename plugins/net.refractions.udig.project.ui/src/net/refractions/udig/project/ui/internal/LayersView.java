@@ -141,7 +141,7 @@ public class LayersView extends ViewPart
         return currentMap;
     }
 
-    IMap placeholder = ProjectFactory.eINSTANCE.createMap();
+    IMap placeholder = ApplicationGIS.NO_MAP;
 
     class EditManagerListener implements IEditManagerListener {
         Map map;

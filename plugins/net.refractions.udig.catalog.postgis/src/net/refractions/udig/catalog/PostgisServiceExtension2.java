@@ -152,7 +152,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
     }
 
     @Override
-    public String reasonForFailure( Map<String, Serializable> params ) {
+    protected String doOtherChecks( Map<String, Serializable> params ) {
         if( !DBTYPE.sample.equals(params.get(DBTYPE.key)) ){
             return "Parameter DBTYPE is required to be \"postgis\"";
         }

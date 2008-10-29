@@ -164,8 +164,6 @@ public class ResourceSelectionPage extends WorkflowWizardPage implements IPageCh
         
         viewer = new CheckboxTreeViewer(composite);
         
-        // dont bother sorting its silly.
-        // viewer.setSorter(new ViewerSorter());
         viewer.setSorter( null );
         viewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         viewer.addPostSelectionChangedListener(new ISelectionChangedListener(){

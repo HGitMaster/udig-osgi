@@ -41,6 +41,9 @@ import net.refractions.udig.project.IProject;
 import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.IStyleBlackboard;
 import net.refractions.udig.project.ProjectBlackboardConstants;
+import net.refractions.udig.project.element.ElementFactory;
+import net.refractions.udig.project.element.IGenericProjectElement;
+import net.refractions.udig.project.element.ProjectElementAdapter;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.Project;
@@ -971,6 +974,12 @@ public class ApplicationGIS {
     public static final Map NO_MAP = ProjectFactory.eINSTANCE.createMap();
     
 
+    /**
+     * Performs a deep copy of a map.
+     *
+     * @param mapToCopy
+     * @return a new instance of the map.
+     */
     public static IMap copyMap(IMap mapToCopy){
         // Load IGeoResources using original map. The new map can't do this because it doesn't have a
     	// Resource(file) and therefore can't resolve relative URIs
@@ -992,6 +1001,27 @@ public class ApplicationGIS {
         }
         
         return copy;
+    }
+
+    /**
+     * Creates an instance of the typeToCreate and wraps it with the {@link ProjectElementAdapter}.
+     *
+     * This is part of the mechanism for adding custom items to a Project without needing to learn
+     * the EMF framework.  See the net.refractions.udig.project.element Extension Point.
+     * 
+     * If the typeToCreate is NOT the same or a superclass of the object created or if an object cannot
+     * be created a {@link IllegalArgumentException} will be thrown 
+     * @param project 
+     * 
+     * @param typeToCreate The type of object that is expected to be created.  This is provided as a
+     * check to ensure that the correct type is returned.
+     * @param extensionId the extension to use to create a new instance.
+     * 
+     * @return A {@link ProjectElementAdapter} that wraps/adapts the object created using the extension
+     */
+    public static ProjectElementAdapter createGeneralProjectElement(
+            IProject project, Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) throws IllegalArgumentException{
+        return ElementFactory.eINSTANCE.createProjectElementAdapter(project, typeToCreate, extensionId);
     }
 
 }

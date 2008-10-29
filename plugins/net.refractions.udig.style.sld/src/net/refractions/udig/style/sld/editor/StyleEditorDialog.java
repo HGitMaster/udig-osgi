@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -39,8 +40,9 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
     public final static int EXPORT_ID = 33;
     public final static int APPLY_ID = 34;
     public final static int REVERT_ID = 35;
-    public final static int OK_ID = 36;
-    public final static int CANCEL_ID = 37;
+    public final static int DEFAULTS_ID = 36;
+    public final static int OK_ID = 37;
+    public final static int CANCEL_ID = 38;
 
     StyleLayer selectedLayer;
 
@@ -99,6 +101,11 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
         super(parentShell, manager);
     }
 
+    @Override
+    protected void setShellStyle( int newShellStyle ) {
+        super.setShellStyle(SWT.SHELL_TRIM|SWT.ON_TOP|SWT.RESIZE);
+    }
+    
     public void setSelectedLayer( Layer layer ) {
         if (selectedLayer == null && layer == null) {
             return;
@@ -222,6 +229,11 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
         compRight.setLayoutData(data);
         compRight.setFont(parent.getFont());
 
+        Button defaultsButton = createButton(compRight, DEFAULTS_ID,
+                Messages.StyleEditorDialog_defaults, false); 
+        defaultsButton.setEnabled(true);
+        defaultsButton.addListener(SWT.Selection, new StyleEditorButtonListener(this));
+
         Button revertButton = createButton(compRight, REVERT_ID,
                 Messages.StyleEditor_revert, false); 
         revertButton.setEnabled(false);
@@ -231,6 +243,8 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
                 Messages.StyleEditor_apply, false); 
         applyButton.setEnabled(false);
         applyButton.addListener(SWT.Selection, new StyleEditorButtonListener(this));
+        
+        new Label(compRight, SWT.None);
         
         Button closeButton = createButton(compRight, CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, false); 
@@ -242,7 +256,7 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
         okButton.setEnabled(true);
         okButton.addListener(SWT.Selection, new StyleEditorButtonListener(this));
         
-        layout.numColumns=2;
+        layout.numColumns=3;
     }
 
     private void addImportExportButtons( Composite composite ) {

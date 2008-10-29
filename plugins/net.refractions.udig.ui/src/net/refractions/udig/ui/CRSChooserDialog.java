@@ -35,7 +35,10 @@ public class CRSChooserDialog extends Dialog {
 	        }
 	        
 	    });
-	    return chooser.createControl(parent, initialValue);
+	    
+	    Control control = chooser.createControl(parent, initialValue);
+	    chooser.setFocus();
+		return control;
 	}
 
 	@Override

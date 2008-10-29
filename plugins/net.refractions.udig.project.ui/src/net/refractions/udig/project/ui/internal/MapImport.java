@@ -95,11 +95,11 @@ public class MapImport extends CatalogImport {
 
             // add the resources to the mapa
             List<IGeoResource> resourceList = new ArrayList<IGeoResource>(resourceMap.keySet());
-            
+
             // reverse the list as ApplicationGIS.addLayersToMap add the first layer at the bottom
             // and so on
             Collections.reverse(resourceList);
-            
+
             monitor.setTaskName(Messages.MapImport_addingLayersTask); 
             ApplicationGIS.addLayersToMap(ApplicationGIS.getActiveMap(), resourceList, layerPosition, null, true);
 

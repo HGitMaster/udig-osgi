@@ -145,7 +145,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 	 * @return GridCoverage for this GeoResource
 	 * @throws IOException
 	 */
-	public Object findResource() throws IOException {
+	public synchronized Object findResource() throws IOException {
 		lock.lock();
 		try {
 			if (this.coverage == null  || this.coverage.get()==null ) {
@@ -159,6 +159,8 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 					this.coverage = new SoftReference<GridCoverage>(reader.read(values));
 				} catch (Throwable t) {
 					msg = t;
+					RasteringsPlugin.log("error reading coverage", t);
+					return null;
 				}
 			}
 			return this.coverage.get();

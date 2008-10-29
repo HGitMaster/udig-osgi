@@ -17,6 +17,9 @@ package net.refractions.udig.project.internal.interceptor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geotools.styling.Style;
+import org.opengis.coverage.grid.GridCoverage;
+
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IResourceCachingInterceptor;
@@ -34,6 +37,9 @@ public class ResourceCacheInterceptor implements IResourceCachingInterceptor {
 
     @SuppressWarnings("unchecked")
     private <T> void registerClasses( Class<T> clazz, Object obj ) {
+        if( obj instanceof Style || obj instanceof GridCoverage){
+            return;
+        }
         if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class)
             registerClasses(clazz.getSuperclass(), obj);
         for( int i = 0; i < clazz.getInterfaces().length; i++ ) {

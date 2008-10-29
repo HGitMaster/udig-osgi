@@ -66,11 +66,6 @@ public abstract class AbstractSimpleConfigurator extends IStyleConfigurator {
      */
     public abstract void synchronize();
 
-    /**
-     * TODO summary sentence for setLayout ...
-     * 
-     * @param parent
-     */
     protected void setLayout(Composite parent) {
         RowLayout layout = new RowLayout();        
         layout.pack = false;
@@ -132,7 +127,7 @@ public abstract class AbstractSimpleConfigurator extends IStyleConfigurator {
         
         subpart.setLayout( across );
         
-        Label labell = new Label( subpart, SWT.RIGHT );
+        Label labell = new Label( subpart, SWT.LEFT );
         labell.setText( label );  
         
         RowData data = new RowData();

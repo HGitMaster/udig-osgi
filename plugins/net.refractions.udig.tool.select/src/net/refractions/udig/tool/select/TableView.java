@@ -63,6 +63,9 @@ import net.refractions.udig.ui.PlatformGIS;
 import net.refractions.udig.ui.ProgressManager;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -93,6 +96,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
@@ -163,7 +167,7 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
 
     protected static final String ANY = Messages.TableView_search_any;
     protected static final String CQL = "CQL";
-    
+
     /** Used to show the current feature source */
     FeatureTableControl table;
     
@@ -172,9 +176,6 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
     
     /** Current layer under study */
     Layer layer;
-    
-    /** Used to display status messages when no content is available */
-    Text text;
     
     /** Toolbar entry used to turn on selection mode */
     private IAction select;
@@ -236,7 +237,8 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
 
 	private Button selectAllCheck;
 
-    
+	private Text searchWidget;
+
     /**
      * Construct <code>SelectView</code>.
      * <p>
@@ -260,49 +262,9 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         attributeCombo.select(0);
         attributeCombo.setEnabled(false);
         
-        
-        text = new Text(parent, SWT.BORDER );
-        text.setEnabled(false);
-        
-        
-        text.setText(INITIAL_TEXT);
-        final Color systemColor = text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
-        text.setForeground(systemColor);
-        text.setEditable(true);
-        text.addListener(SWT.MouseDown, new Listener(){
-            public void handleEvent( Event e ) {
-                    if( text.getForeground().equals(systemColor) ){
-                        text.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
-                        text.setText(""); //$NON-NLS-1$
-                    }
-                    ApplicationGIS.getToolManager().unregisterActions(TableView.this);
-            }
-        });
-        text.addListener(SWT.DefaultSelection, new Listener(){
-            public void handleEvent( Event e ) {
-                if (text.getText().trim().length()==0 ){
-                    text.setText(INITIAL_TEXT);
-                    text.setForeground(systemColor);
-                }
-                
-                String[] attsToSearch;
-                String item = attributeCombo.getItem(attributeCombo.getSelectionIndex());
-                boolean selectAll=selectAllCheck.getSelection();                
-                if( item.equals(CQL) ){
-                    table.select( text.getText().trim(), selectAll);
-                }
-                else {
-                    if( item.equals(ANY) ){
-                        attsToSearch=FeatureTableControl.ALL;
-                    }
-                    else{
-                        attsToSearch=new String[]{item};
-                    }                    
-                    table.select(text.getText().trim(), attsToSearch, selectAll);
-                }
-                ApplicationGIS.getToolManager().unregisterActions(TableView.this);
-            }
-        });
+        SearchBox search = new SearchBox();
+        searchWidget = search.createPart(parent);
+
         IProvider<IProgressMonitor> provider = new IProvider<IProgressMonitor>(){
         
             public IProgressMonitor get(Object... params) {
@@ -333,13 +295,13 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         table.addLoadingListener(new IFeatureTableLoadingListener(){
 
             public void loadingStarted( IProgressMonitor monitor ) {
-                text.setEnabled(false);
+                searchWidget.setEnabled(false);
                 selectAllCheck.setEnabled(false);
                 attributeCombo.setEnabled(false);
             }
 
             public void loadingStopped( boolean canceled ) {
-                text.setEnabled(true);
+                searchWidget.setEnabled(true);
                 selectAllCheck.setEnabled(true);
                 attributeCombo.setEnabled(true);
             }
@@ -427,19 +389,19 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         
         FormData dCombo = new FormData(); // bind to label and text
         dCombo.left = new FormAttachment(0,5);
-        dCombo.top = new FormAttachment(selectAllCheck,0,SWT.CENTER);
+        dCombo.top = new FormAttachment(0);
         dCombo.right = new FormAttachment(30, -5);
         attributeCombo.setLayoutData(dCombo);
         
         FormData dText = new FormData(); // bind to label and text
         dText.left = new FormAttachment(attributeCombo);
-        dText.top = new FormAttachment(selectAllCheck,0,SWT.CENTER);
+        dText.top = new FormAttachment(0);
         dText.right = new FormAttachment(95,-5);
-        text.setLayoutData(dText);
+        searchWidget.setLayoutData(dText);
         
         FormData dCheck = new FormData(); // bind to top, label, bbox
         dCheck.top = new FormAttachment(2);
-        dCheck.left = new FormAttachment(text, 5);
+        dCheck.left = new FormAttachment(searchWidget, 5);
         dCheck.right = new FormAttachment( 100,-5);
         selectAllCheck.setLayoutData(dCheck);
         
@@ -1110,7 +1072,7 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         table.setSelection(selection);
     }
     
-    private class PromoteSelectionAction extends Action{
+	private class PromoteSelectionAction extends Action{
         
         public PromoteSelectionAction() {
             setText(Messages.TableView_promote_text);
@@ -1259,4 +1221,78 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
     public void setContext( IToolContext newContext ) {
         this.currentContext=newContext;
     }
+    
+    private class SearchBox extends AbstractHandler implements Listener{
+		private Color systemColor;
+
+		public void handleEvent( Event e ) {
+			if( e.keyCode==SWT.CR || e.keyCode==SWT.LF ){
+				doSearch();
+			}
+		}
+		
+		
+
+		public Text createPart(Composite parent) {
+	        final Text searchWidget = new Text(parent, SWT.BORDER|SWT.SEARCH|SWT.CANCEL );
+	        searchWidget.setEnabled(false);
+	        
+	        systemColor = searchWidget.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
+	        
+	        searchWidget.setText(INITIAL_TEXT);
+	        searchWidget.setForeground(systemColor);
+	        searchWidget.setEditable(true);
+	        searchWidget.addListener(SWT.FocusIn, new Listener(){
+	            public void handleEvent( Event e ) {
+                    if( searchWidget.getForeground().equals(systemColor) ){
+                        searchWidget.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
+                        searchWidget.setText(""); //$NON-NLS-1$
+                    }
+					ApplicationGIS.getToolManager().unregisterActions(TableView.this);
+	            }
+	        });
+	        searchWidget.addListener(SWT.FocusOut, new Listener(){
+	            public void handleEvent( Event e ) {
+	                    if( !searchWidget.getForeground().equals(systemColor) && searchWidget.getText().trim().length()==0 ){
+	                        searchWidget.setForeground(systemColor);
+	                        searchWidget.setText(""); //$NON-NLS-1$
+	                    }
+	                    ApplicationGIS.getToolManager().registerActionsWithPart(TableView.this);
+	            }
+	        });
+			searchWidget.addListener(SWT.KeyUp, this);	
+			return searchWidget;
+		}
+		
+
+		public Object execute(ExecutionEvent arg0) throws ExecutionException {
+			doSearch();
+			return null;
+		}
+
+		private void doSearch() {
+			if (searchWidget.getText().trim().length()==0 ){
+		        searchWidget.setText(INITIAL_TEXT);
+		        searchWidget.setForeground(systemColor);
+		    }
+		    
+		    String[] attsToSearch;
+		    String item = attributeCombo.getItem(attributeCombo.getSelectionIndex());
+		    boolean selectAll=selectAllCheck.getSelection();                
+		    if( item.equals(CQL) ){
+		        table.select( searchWidget.getText().trim(), selectAll);
+		    }
+		    else {
+		        if( item.equals(ANY) ){
+		            attsToSearch=FeatureTableControl.ALL;
+		        }
+		        else{
+		            attsToSearch=new String[]{item};
+		        }                    
+		        table.select(searchWidget.getText().trim(), attsToSearch, selectAll);
+		    }
+		}
+    	
+    }
+    
 }

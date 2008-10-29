@@ -982,6 +982,9 @@ public class FeatureTableControl implements ISelectionProvider {
     }
 
     private boolean matches( Pattern pattern, Object attribute ) {
+    	if( attribute==null){
+    		attribute = "";
+    	}
         String stringValue = attribute.toString();
         return pattern.matcher(stringValue).matches();
     }

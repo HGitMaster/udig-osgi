@@ -17,13 +17,8 @@ package net.refractions.udig.browser.ui;
 import net.refractions.udig.browser.BrowserPlugin;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -36,41 +31,21 @@ import org.eclipse.swt.widgets.Text;
  * @author jesse
  * @since 1.1.0
  */
-public class LocationEntry extends ControlContribution implements IContributionItem {
+public class LocationEntry {
 
     private BrowserContainerView view;
     private Text entry;
 
     protected LocationEntry( BrowserContainerView view ) {
-        super("LocationEntry"); //$NON-NLS-1$
         this.view = view;
     }
 
-    @Override
     protected Control createControl( Composite parent ) {
-        
-        Composite container = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(2, false);
-        layout.horizontalSpacing = 0;
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.verticalSpacing = 0;
-        container.setLayout(layout);
-
-        entry = new Text(container, SWT.SINGLE | SWT.BORDER | SWT.SEARCH);
-        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        GC gc = new GC(entry);
-        try{
-            int averageCharWidth = gc.getFontMetrics().getAverageCharWidth();
-            data.widthHint = 40*averageCharWidth;
-        }finally{
-        gc.dispose();
-        }
-        entry.setLayoutData(data);
-
+        entry = new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.CANCEL);
         addKeyboardListener();
+        
+        return entry;
 
-        return container;
     }
 
     private void addKeyboardListener() {

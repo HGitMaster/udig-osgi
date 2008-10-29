@@ -61,7 +61,7 @@ public class SetProjection implements IOp {
 
 					if (initVal == null) {
 						initVal = allDatastores[0].getSchema()
-								.getDefaultGeometry().getCoordinateSystem();
+								.getCoordinateReferenceSystem();
 					}
 					CRSChooserDialog dialog = new CRSChooserDialog(display
 							.getActiveShell(), initVal);
@@ -72,8 +72,7 @@ public class SetProjection implements IOp {
 					CoordinateReferenceSystem result = dialog.getResult();
 					if (result != null) {
 						for (ShapefileDataStore ds : allDatastores) {
-							CoordinateReferenceSystem crs = ds.getSchema()
-									.getDefaultGeometry().getCoordinateSystem();
+							CoordinateReferenceSystem crs = ds.getSchema().getCoordinateReferenceSystem();
 							if (!CRS.equalsIgnoreMetadata(result, crs))
 								ds.forceSchemaCRS(result);
 							ICatalog catalog = CatalogPlugin.getDefault()

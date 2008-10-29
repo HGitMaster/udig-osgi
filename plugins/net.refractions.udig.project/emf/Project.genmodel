@@ -7,9 +7,15 @@
     templateDirectory="" runtimeJar="true" modelName="Project" modelPluginClass="net.refractions.udig.project.internal.ProjectPlugin"
     editPluginClass="net.refractions.udig.project.internal.provider.ProjectEditPlugin"
     editorPluginClass="" nonNLSMarkers="true" suppressEMFTypes="true" codeFormatting="true"
-    testsDirectory="" testSuiteClass="" importerID="org.eclipse.emf.importer.ecore">
-  <foreignModel>internal.ecore</foreignModel>
-  <foreignModel>render.ecore</foreignModel>
+    testsDirectory="" testSuiteClass="" importerID="org.eclipse.emf.importer.java">
+  <foreignModel>@model</foreignModel>
+  <genPackages prefix="Element" basePackage="net.refractions.udig.project" disposableProviderFactory="true"
+      ecorePackage="element.ecore#/">
+    <genDataTypes ecoreDataType="element.ecore#//IGenericProjectElement"/>
+    <genClasses ecoreClass="element.ecore#//ProjectElementAdapter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute element.ecore#//ProjectElementAdapter/backingObject"/>
+    </genClasses>
+  </genPackages>
   <genPackages prefix="Project" basePackage="net.refractions.udig.project" ecorePackage="internal.ecore#/">
     <genDataTypes ecoreDataType="internal.ecore#//Coordinate"/>
     <genDataTypes ecoreDataType="internal.ecore#//MapDisplay"/>
@@ -205,6 +211,7 @@
     <genDataTypes ecoreDataType="render.ecore#//MapDisplay"/>
     <genDataTypes ecoreDataType="render.ecore#//IProgressMonitor"/>
     <genDataTypes ecoreDataType="render.ecore#//RenderException"/>
+    <genDataTypes ecoreDataType="render.ecore#//ReferencedEnvelope"/>
     <genClasses ecoreClass="render.ecore#//IRenderManager"/>
     <genClasses ecoreClass="render.ecore#//IViewportModel"/>
     <genClasses ecoreClass="render.ecore#//IMultiLayerRenderer"/>
@@ -270,8 +277,10 @@
     <genClasses ecoreClass="render.ecore#//Renderer">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute render.ecore#//Renderer/state"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute render.ecore#//Renderer/name"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference render.ecore#//Renderer/context"/>
       <genOperations ecoreOperation="render.ecore#//Renderer/dispose"/>
     </genClasses>
     <genClasses image="false" ecoreClass="render.ecore#//IMapDisplayListener"/>
+    <genClasses image="false" ecoreClass="render.ecore#//IRenderContext"/>
   </genPackages>
 </genmodel:GenModel>

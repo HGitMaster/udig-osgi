@@ -47,6 +47,7 @@ public class Messages extends NLS {
     public static String SimpleRasterConfigurator_GreenChannelLabel;
     public static String SimpleRasterConfigurator_RedChannelLabel;
     public static String SimpleRasterConfigurator_ScaleGroup;
+    public static String SimpleStyleConfigurator_replaceButton;
 	public static String StyleEditor_error ;
 	public static String StyleEditor_import_failed ;
 	public static String StyleEditor_xml_validator_common;
@@ -166,6 +167,8 @@ public class Messages extends NLS {
 	public static String SLDMarkerEditorPart_fill_opacity_tooltip;
 	public static String SLDLineEditorPart_border_width_tooltip;
 	public static String SLDLineEditorPart_border_opacity_tooltip;
+    public static String StyleEditorDialog_defaults;
+    public static String StyleThemePage_13;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

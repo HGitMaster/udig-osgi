@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Pattern;
 
 import net.refractions.udig.browser.BrowserPlugin;
 import net.refractions.udig.browser.internal.Messages;
@@ -54,7 +55,9 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -98,7 +101,6 @@ public class BrowserContainerView extends ViewPart {
     private String forwardIconDisabled = "icons/dlcl16/forward_nav.gif"; //$NON-NLS-1$
     private String backwardIconEnabled = "icons/elcl16/backward_nav.gif"; //$NON-NLS-1$
     private String backwardIconDisabled = "icons/dlcl16/backward_nav.gif"; //$NON-NLS-1$    
-    private String refreshIconDisabled = "icons/dlcl16/refresh_co.gif"; //$NON-NLS-1$
     private String refreshIconEnabled = "icons/elcl16/refresh_co.gif"; //$NON-NLS-1$
         
     private IAction forward;
@@ -238,9 +240,24 @@ public class BrowserContainerView extends ViewPart {
 
     @Override
     public void createPartControl( Composite parent ) {
-        parent.setLayout(new FillLayout());
-        this.tabFolder = new CTabFolder(parent, SWT.TOP | SWT.CLOSE);
+        FormLayout layout = new FormLayout();
+        parent.setLayout(layout);
+
+        locationEntry = new LocationEntry(this);
+        Control control = locationEntry.createControl(parent);
+        FormData data = new FormData();
+        data.left = new FormAttachment(0, 0);
+        data.right = new FormAttachment(100, 0);
+        control.setLayoutData(data);
+
+        this.tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.TOP | SWT.CLOSE);
         this.tabFolder.addSelectionListener(getChangeListener());
+        data = new FormData();
+        data.left = new FormAttachment(0, 0);
+        data.right = new FormAttachment(100, 0);
+        data.top = new FormAttachment(control, 0);
+        data.bottom = new FormAttachment(100, 0);
+        tabFolder.setLayoutData(data);
         
         IViewSite site = getViewSite();
         IActionBars bars = site.getActionBars();
@@ -248,11 +265,7 @@ public class BrowserContainerView extends ViewPart {
         toolbarMgr.add(getBackwardAction());
         toolbarMgr.add(getForwardAction());
         toolbarMgr.add(getRefreshAction());
-        locationEntry = new LocationEntry(this);
-        toolbarMgr.add(locationEntry);
         toolbarMgr.add(locationEntry.getButton());
-        
-        toolbarMgr.update(true);
 
         if(this.browserData != null) {
             for(BrowserData bd : this.browserData) {
@@ -345,8 +358,7 @@ public class BrowserContainerView extends ViewPart {
             this.refresh.setText(Messages.BrowserContainerView_refresh); 
             this.refresh.setImageDescriptor(
                     BrowserPlugin.getImageDescriptor(this.refreshIconEnabled) );
-            this.refresh.setImageDescriptor(
-                    BrowserPlugin.getImageDescriptor(this.refreshIconDisabled) );
+            this.refresh.setImageDescriptor(BrowserPlugin.getImageDescriptor(this.refreshIconEnabled) );
             this.refresh.setToolTipText(Messages.BrowserContainerView_refresh); 
         }
         return this.refresh;
@@ -380,6 +392,10 @@ public class BrowserContainerView extends ViewPart {
                 private boolean recognizedFile( String url ) {
                     if (url.toLowerCase().indexOf("file://") != -1 ){ //$NON-NLS-1$
                         return new FileConnectionFactory().canProcess(url); 
+                    }
+                    final Pattern PATTERN = Pattern.compile("[^:/]+://?.+"); //$NON-NLS-1$
+                    if( PATTERN.matcher(url).matches()){
+                       return new FileConnectionFactory().canProcess(url);
                     }
                     return false;
                 }

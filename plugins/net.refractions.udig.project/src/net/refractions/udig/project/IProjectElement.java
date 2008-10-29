@@ -29,6 +29,4 @@ public interface IProjectElement {
      * @return the name of the element.
      */
     public String getName();
-    
-
 }

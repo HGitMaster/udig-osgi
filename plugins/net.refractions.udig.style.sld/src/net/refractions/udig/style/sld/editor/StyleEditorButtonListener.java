@@ -17,6 +17,9 @@ package net.refractions.udig.style.sld.editor;
 import java.io.File;
 import java.text.MessageFormat;
 
+import net.refractions.udig.project.internal.SetDefaultStyleProcessor;
+import net.refractions.udig.style.internal.StyleLayer;
+import net.refractions.udig.style.sld.SLDContent;
 import net.refractions.udig.style.sld.internal.Messages;
 import net.refractions.udig.ui.graphics.SLDs;
 
@@ -59,6 +62,9 @@ class StyleEditorButtonListener implements Listener {
         case StyleEditorDialog.EXPORT_ID:
             doExport();
             break;
+        case StyleEditorDialog.DEFAULTS_ID:
+            doDefaults();
+            break;
         case StyleEditorDialog.APPLY_ID:
             doApply();
             break;
@@ -87,6 +93,25 @@ class StyleEditorButtonListener implements Listener {
             return true;
         }
         return false;
+    }
+    private void doDefaults() {
+            StyleLayer layer = styleEditorDialog.selectedLayer;
+            layer.getStyleBlackboard().clear();
+            SetDefaultStyleProcessor p = new SetDefaultStyleProcessor(layer.getGeoResource(), layer);
+            p.run();
+            Style style = (Style) layer.getStyleBlackboard().get(SLDContent.ID);
+            StyledLayerDescriptor oldSLD=null;
+            if(style!=null){
+                oldSLD = this.styleEditorDialog.getSLD();
+            }
+            this.styleEditorDialog.selectedLayer.apply();
+            this.styleEditorDialog.selectedLayer.getMap().getRenderManager().refresh(this.styleEditorDialog.selectedLayer, null);
+            
+            if( oldSLD!=null ){
+                StyledLayerDescriptor newSLD = this.styleEditorDialog.getSLD();
+            }
+            this.styleEditorDialog.setExitButtonState();
+            this.styleEditorDialog.getCurrentPage().refresh();
     }
     private void doRevert() {
         //store the old sld
