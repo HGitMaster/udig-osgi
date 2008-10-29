@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: LayerImpl.java 30932 2008-10-29 09:11:31Z jeichar $
+ * <copyright></copyright> $Id: LayerImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -432,6 +432,10 @@ public class LayerImpl extends EObjectImpl implements Layer {
                     ProjectPackage.LAYER__CONTEXT_MODEL, newContextModel, newContextModel));
     }
 
+    /**
+     * Get ZOrder of layer with regards to content model
+     * @model
+     */
     public int getZorder() {
         if (getContextModel() == null)
             return Integer.MAX_VALUE;
@@ -819,7 +823,7 @@ public class LayerImpl extends EObjectImpl implements Layer {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated NOT
      */
     public int getStatus() {
         if (geoResources == NULL || status == ILayer.ERROR)
@@ -1602,7 +1606,6 @@ public class LayerImpl extends EObjectImpl implements Layer {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @uml.property name="cRS"
      * @generated NOT
      */
     public CoordinateReferenceSystem getCRS() {
@@ -1699,7 +1702,7 @@ public class LayerImpl extends EObjectImpl implements Layer {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated not
      */
     public List<FeatureEvent> getFeatureChanges() {
         if (featureChanges == null) {

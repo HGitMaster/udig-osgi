@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderManagerImpl.java 30791 2008-09-19 20:31:56Z egouge $
+ * <copyright></copyright> $Id: RenderManagerImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -141,7 +141,7 @@ public class RenderManagerImpl extends EObjectImpl implements RenderManager {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated NOT
      */
     protected RenderManagerImpl() {
         super();
@@ -354,7 +354,7 @@ public class RenderManagerImpl extends EObjectImpl implements RenderManager {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated NOT
      */
     public ViewportModel getViewportModelInternal() {
         checkState();
@@ -385,7 +385,7 @@ public class RenderManagerImpl extends EObjectImpl implements RenderManager {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated NOT
      */
     public void setViewportModelInternal( ViewportModel newViewportModelInternal ) {
         if (newViewportModelInternal != viewportModelInternal) {
@@ -420,7 +420,7 @@ public class RenderManagerImpl extends EObjectImpl implements RenderManager {
      *      public List getInfo(Point screenLocation) throws IOException { return
      *      getRenderExecutor().getInfo(screenLocation); }
      * @uml.property name="renderExecutor"
-     * @generated
+     * @generated NOT
      */
     public RenderExecutor getRenderExecutor() {
         checkState();

@@ -220,11 +220,12 @@ public class ProjectElementAdapterImpl extends EObjectImpl implements ProjectEle
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
-    public void setBackingObject( IGenericProjectElement newBackingObject ) {
+    public synchronized void setBackingObject( IGenericProjectElement newBackingObject ) {
         IGenericProjectElement oldBackingObject = backingObject;
         backingObject = newBackingObject;
+        newBackingObject.setProjectElementAdapter(this);
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET,
                     ElementPackage.PROJECT_ELEMENT_ADAPTER__BACKING_OBJECT, oldBackingObject,

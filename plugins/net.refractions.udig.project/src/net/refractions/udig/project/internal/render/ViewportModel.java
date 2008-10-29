@@ -48,18 +48,15 @@ public interface ViewportModel extends EObject, IMapDisplayListener, IViewportMo
     CoordinateReferenceSystem BAD_DEFAULT = DefaultEngineeringCRS.GENERIC_2D;
 
     /**
-     * A Default setting to use for the viewport screen size.
-     * 
-     * @model
-     */
-    public static final Envelope NIL_BBOX = new Envelope(0, 0, 0, 0);
-
-    /**
      * A Default setting to use for the viewport CRS.
-     * 
-     * @model
      */
     public static final CoordinateReferenceSystem DEFAULT_CRS = ViewportModelImpl.getDefaultCRS();
+
+    /**
+     * A Default setting to use for the viewport screen size.
+     */
+    public static final ReferencedEnvelope NIL_BBOX = new ReferencedEnvelope(0, 0, 0, 0, DEFAULT_CRS);
+
 
     /**
      * Returns the local coordinate system. The local coordinate system is the CRS that all the
@@ -135,7 +132,7 @@ public interface ViewportModel extends EObject, IMapDisplayListener, IViewportMo
      * 
      * @param value the new value of the '<em>Bounds</em>' attribute.
      * @see #getBounds()
-     * @generated
+     * @generated NOT
      */
     void setBounds( Envelope value );
 

@@ -7,7 +7,6 @@ import java.util.List;
 import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.command.Command;
 import net.refractions.udig.project.command.UndoableCommand;
-import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.ui.ApplicationGIS;
 import net.refractions.udig.project.ui.UDIGEditorInput;
 import net.refractions.udig.project.ui.internal.MapEditor;
@@ -20,15 +19,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 public class OpenProjectElementCommand implements UndoableCommand {
 
@@ -46,26 +39,22 @@ public class OpenProjectElementCommand implements UndoableCommand {
             
             monitor.beginTask(Messages.OpenMapCommand_taskName, IProgressMonitor.UNKNOWN); 
             final UDIGEditorInput input = ApplicationGIS.getInput(element);
-                if (element instanceof Map) {
-                    Map map = (Map) element;
-                    if (map.getViewportModel().getBounds().isNull()){
-                        Envelope bounds = map.getBounds(monitor);
-                        map.getViewportModelInternal().setBounds(bounds);
-                    }
-                }
+//          if (element instanceof Map) {
+//              Map map = (Map) element;
+//              if (map.getViewportModel().getBounds().isNull()) {
+//                  Envelope bounds = map.getBounds(monitor);
+//                  map.getViewportModelInternal().setBounds(bounds);
+//              }
+//          }
+            if (input == null) {
+                return;
+            }
             input.setProjectElement(element);
 
             PlatformGIS.syncInDisplayThread(new Runnable(){
                 public void run() {
-                    
-                    IWorkbench workbench = PlatformUI.getWorkbench();
-                    IIntroManager introManager = workbench.getIntroManager();
-                    IIntroPart intro = introManager.getIntro();
-                    if( intro!=null) introManager.closeIntro(intro);
-                        
-                    IWorkbenchWindow activeWorkbenchWindow = workbench
-                            .getActiveWorkbenchWindow();
-                    IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+                    IWorkbenchPage activePage = PlatformUI.getWorkbench()
+                            .getActiveWorkbenchWindow().getActivePage();
                     IEditorReference[] editors = activePage.getEditorReferences();
                     for( IEditorReference reference : editors ) {
                         try {
@@ -90,7 +79,7 @@ public class OpenProjectElementCommand implements UndoableCommand {
     private void openMap( final UDIGEditorInput input ) {
         try {
             IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input,
-                    input.getEditorId());
+                    input.getEditorId(), true, IWorkbenchPage.MATCH_NONE);
             
             ProjectExplorer explorer = ProjectExplorer.getProjectExplorer();
             explorer.setSelection(Collections.singleton(input.getProjectElement()), true);

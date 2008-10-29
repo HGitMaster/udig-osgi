@@ -11,6 +11,8 @@ package net.refractions.udig.project.element;
 import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.internal.ProjectElement;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -22,7 +24,7 @@ import org.eclipse.ui.IMemento;
  * 
  * @author jesse
  */
-public interface IGenericProjectElement {
+public interface IGenericProjectElement extends IAdaptable{
 
     /**
      * Called when an {@link IGenericProjectElement} is by uDig after being persisted this has the
@@ -47,7 +49,29 @@ public interface IGenericProjectElement {
     public String getExtensionId();
     
     /**
-     * Sets the id
+     * Sets the extension id that is required for creating the objects using the 
+     * extension mechanism.
      */
     public void setExtensionId(String extId);
+
+    /**
+     * Sets the wrapping adapter 
+     * 
+     * @param adapter the object that adapts this to a ProjectElement
+     */
+	public void setProjectElementAdapter(ProjectElementAdapter adapter);
+	
+	/**
+	 * Register a listener for change events.  If the same listener is added multiple times it will only be added
+	 * once.  The order the listeners are added will not necessarily be the order they are called when an event occurs.
+	 *   
+	 * @param listener the listener to add
+	 */
+	public void addPropertyChangeListener( IPropertyChangeListener listener);
+	/**
+	 * Remove a listener
+	 *   
+	 * @param listener the listener to remove
+	 */
+	public void removePropertyChangeListener( IPropertyChangeListener listener);
 }

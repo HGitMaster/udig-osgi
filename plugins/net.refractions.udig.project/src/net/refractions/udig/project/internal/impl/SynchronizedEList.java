@@ -39,8 +39,8 @@ import org.eclipse.emf.common.util.EList;
  * @author Jesse
  * @since 1.1.0
  */
-public class SynchronizedEList implements EList {
-    private EList wrapped;
+public class SynchronizedEList<T> implements EList<T> {
+    private EList<T> wrapped;
     Lock lock=new UDIGDisplaySafeLock();
     
     /**
@@ -54,12 +54,12 @@ public class SynchronizedEList implements EList {
         lock.unlock();
     }
     
-    public SynchronizedEList( EList list ){
+    public SynchronizedEList( EList<T> list ){
         wrapped=list;
     }
     
-    @SuppressWarnings("unchecked")
-    public void add( int arg0, Object arg1 ) {
+    
+    public void add( int arg0, T arg1 ) {
         lock.lock();
         try{
             wrapped.add(arg0, arg1);
@@ -68,8 +68,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean add( Object arg0 ) {
+    
+    public boolean add( T arg0 ) {
         lock.lock();
         try{
             return wrapped.add(arg0);
@@ -78,8 +78,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean addAll( Collection arg0 ) {
+    
+    public boolean addAll( Collection<? extends T> arg0 ) {
         lock.lock();
         try{
             return wrapped.addAll(arg0);
@@ -88,8 +88,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean addAll( int arg0, Collection arg1 ) {
+    
+    public boolean addAll( int arg0, Collection<? extends T> arg1 ) {
         lock.lock();
         try{
             return wrapped.addAll(arg0, arg1);
@@ -116,8 +116,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean containsAll( Collection arg0 ) {
+    
+    public boolean containsAll( Collection<?> arg0 ) {
         lock.lock();
         try{
             return wrapped.containsAll(arg0);
@@ -126,7 +126,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public boolean equals( Object arg0 ) {
+    @Override
+	public boolean equals( Object arg0 ) {
         lock.lock();
         try{
             return wrapped.equals(arg0);
@@ -135,7 +136,7 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public Object get( int arg0 ) {
+    public T get( int arg0 ) {
         lock.lock();
         try{
             return wrapped.get(arg0);
@@ -144,7 +145,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         lock.lock();
         try{
             return wrapped.hashCode();
@@ -171,13 +173,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public Iterator iterator() {
-        lock.lock();
-        try{
+    public Iterator<T> iterator() {
             return listIterator();
-        }finally{
-            lock.unlock();
-        }
     }
 
     public int lastIndexOf( Object arg0 ) {
@@ -189,65 +186,101 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public ListIterator listIterator() {
-        lock.lock();
-        try{
-            return listIterator(0);
-        }finally{
-            lock.unlock();
-        }
+    public ListIterator<T> listIterator() {
+        return listIterator(0);
     }
 
-    @SuppressWarnings("unchecked")
-    public ListIterator listIterator( int arg0 ) {
-        lock.lock();
-        try{
-        	final List<Object> copy = new ArrayList<Object>(wrapped);
-            return  new ListIterator<Object>(){
-            ListIterator<Object> iter=copy.listIterator();
-            public boolean hasNext() {
-                    return iter.hasNext();
-            }
+    
+    public ListIterator<T> listIterator(int arg0) {
+		return new ListIterator<T>() {
+			ListIterator<T> iter = wrapped.listIterator();
 
-            public Object next() {
-                    return iter.next();
-            }
+			public boolean hasNext() {
+				lock();
+				try {
+					return iter.hasNext();
+				} finally {
+					unlock();
+				}
 
-            public void remove() {
-                    iter.remove();
-            }
+			}
 
-            public void add( Object o ) {
-                    iter.add(o);
-            }
+			public T next() {
+				lock();
+				try {
+					return iter.next();
+				} finally {
+					unlock();
+				}
+			}
 
-            public boolean hasPrevious() {
-                    return iter.hasPrevious();
-            }
+			public void remove() {
+				lock();
+				try {
+					iter.remove();
+				} finally {
+					unlock();
+				}
+			}
 
-            public int nextIndex() {
-                    return iter.nextIndex();
-            }
+			public void add(T o) {
+				lock();
+				try {
+					iter.add(o);
+				} finally {
+					unlock();
+				}
+			}
 
-            public Object previous() {
-                    return iter.previous();
-            }
+			public boolean hasPrevious() {
+				lock();
+				try {
+					return iter.hasPrevious();
+				} finally {
+					unlock();
+				}
+			}
 
-            public int previousIndex() {
-                    return iter.previousIndex();
-            }
+			public int nextIndex() {
+				lock();
+				try {
+					return iter.nextIndex();
+				} finally {
+					unlock();
+				}
+			}
 
-            public void set( Object o ) {
-                    throw new UnsupportedOperationException("This is not an editable iterator");
-            }
-            
-        };
-        }finally{
-            lock.unlock();
-        }
-    }
+			public T previous() {
+				lock();
+				try {
+					return iter.previous();
+				} finally {
+					unlock();
+				}
+			}
 
-    public Object move( int arg0, int arg1 ) {
+			public int previousIndex() {
+				lock();
+				try {
+					return iter.previousIndex();
+				} finally {
+					unlock();
+				}
+			}
+
+			public void set(T o) {
+				lock();
+				try {
+					iter.set(o);
+				} finally {
+					unlock();
+				}
+			}
+
+		};
+	}
+
+    public T move( int arg0, int arg1 ) {
         lock.lock();
         try{
             return wrapped.move(arg0, arg1);
@@ -256,7 +289,7 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public void move( int arg0, Object arg1 ) {
+    public void move( int arg0, T arg1 ) {
         lock.lock();
         try{
             wrapped.move(arg0, arg1);
@@ -265,7 +298,7 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    public Object remove( int arg0 ) {
+    public T remove( int arg0 ) {
         lock.lock();
         try{
             return wrapped.remove(arg0);
@@ -283,8 +316,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean removeAll( Collection arg0 ) {
+    
+    public boolean removeAll( Collection<?> arg0 ) {
         lock.lock();
         try{
             return wrapped.removeAll(arg0);
@@ -293,8 +326,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean retainAll( Collection arg0 ) {
+    
+    public boolean retainAll( Collection<?> arg0 ) {
         lock.lock();
         try{
             return wrapped.retainAll(arg0);
@@ -303,8 +336,8 @@ public class SynchronizedEList implements EList {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public Object set( int arg0, Object arg1 ) {
+    
+    public T set( int arg0, T arg1 ) {
         lock.lock();
         try{
             return wrapped.set(arg0, arg1);
@@ -323,7 +356,7 @@ public class SynchronizedEList implements EList {
 
     }
 
-    public List subList( int arg0, int arg1 ) {
+    public List<T> subList( int arg0, int arg1 ) {
         lock.lock();
         try{
             return wrapped.subList(arg0, arg1);
@@ -343,8 +376,8 @@ public class SynchronizedEList implements EList {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public Object[] toArray( Object[] arg0 ) {
+    
+    public<E> E[] toArray( E[] arg0 ) {
         lock.lock();
         try{
             return wrapped.toArray(arg0);
@@ -352,4 +385,8 @@ public class SynchronizedEList implements EList {
             lock.unlock();
         }
     }
+
+	public static<T> EList<T> create(EList<T> adapters) {
+		return new SynchronizedEList<T>(adapters);
+	}
 }

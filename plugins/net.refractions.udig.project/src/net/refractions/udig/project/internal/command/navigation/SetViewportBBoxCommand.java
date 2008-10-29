@@ -91,21 +91,25 @@ public class SetViewportBBoxCommand extends AbstractNavCommand {
 	 * @see net.refractions.udig.project.internal.command.navigation.AbstractNavCommand#runImpl()
 	 */
 	protected void runImpl(IProgressMonitor monitor) {
-		try {
-			if (crs != null) {
-				MathTransform mt = CRS.findMathTransform(crs, model.getCRS(), true);
+		if (crs != null) {
+			try {
+				MathTransform mt = CRS.findMathTransform(crs, model.getCRS(),
+						true);
 				if (!mt.isIdentity()) {
-					Envelope transformedBounds = JTS.transform(newbbox, null, mt, 5);
+					Envelope transformedBounds = JTS.transform(newbbox, null,
+							mt, 5);
 					crs = null;
 					newbbox = transformedBounds;
 				}
+			} catch (Exception e) {
+				ProjectPlugin
+						.log(
+								"Error transforming from " + crs.getName() + " to " + model.getCRS().getName(), e); //$NON-NLS-1$//$NON-NLS-2$
 			}
-		} catch (Exception e) {
-			ProjectPlugin
-					.log(
-							"Error transforming from " + crs.getName() + " to " + model.getCRS().getName(), e); //$NON-NLS-1$//$NON-NLS-2$
+		}else{
+			crs = model.getCRS();
 		}
-		model.setBounds(newbbox);
+		model.setBounds(new ReferencedEnvelope(newbbox,crs));
 	}
 
 	/**

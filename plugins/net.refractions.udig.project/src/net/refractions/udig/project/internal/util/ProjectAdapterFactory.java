@@ -17,7 +17,6 @@ import net.refractions.udig.project.internal.EditManager;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.LayerFactory;
 import net.refractions.udig.project.internal.Map;
-import net.refractions.udig.project.internal.PicoBlackboard;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.internal.ProjectElement;
 import net.refractions.udig.project.internal.ProjectPackage;
@@ -163,9 +162,6 @@ public class ProjectAdapterFactory extends AdapterFactoryImpl {
         }
         public Object caseIBlockingAdaptable( IBlockingAdaptable object ) {
             return createIBlockingAdaptableAdapter();
-        }
-        public Object casePicoBlackboard( PicoBlackboard object ) {
-            return createPicoBlackboardAdapter();
         }
         public Object caseBlackboard( Blackboard object ) {
             return createBlackboardAdapter();

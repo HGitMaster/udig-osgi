@@ -131,6 +131,11 @@ public interface Layer
      */
     void setStyleBlackboard( StyleBlackboard value );
 
+    /**
+     * Returns the zorder of the layer
+     * 
+     * @model
+     */
     public int getZorder();
 
     /**
@@ -310,7 +315,7 @@ public interface Layer
      * 
      * @see resources() for type safe access
      * @return IGeoResources that can used to obtain layer data
-     * @model type="net.refractions.udig.catalog.IGeoResource" transient="true" changeable="false"
+     * @model transient="true" changeable="false"
      */
     public List<IGeoResource> getGeoResources();
 
@@ -370,7 +375,6 @@ public interface Layer
      * </p>
      * 
      * @return the CoordinateReferenceSystem of the layer or if the CRS cannot be determined.
-     * @uml.property name="cRS"
      * @model transient="true" changeable="true"
      */
     CoordinateReferenceSystem getCRS();

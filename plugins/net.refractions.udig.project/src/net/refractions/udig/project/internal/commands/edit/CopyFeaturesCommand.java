@@ -47,6 +47,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.collection.AdaptorFeatureCollection;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -78,7 +79,7 @@ public class CopyFeaturesCommand extends AbstractCommand implements UndoableMapC
     // for undo
     private Id addedFeaturesFilter;
     private Filter previousDesinationLayerFilter;
-    private Envelope previousEnvelope;
+    private ReferencedEnvelope previousEnvelope;
 
     public CopyFeaturesCommand( ILayer sourceLayer, Filter filter, ILayer destinationLayer ) {
         this.sourceLayer = sourceLayer;

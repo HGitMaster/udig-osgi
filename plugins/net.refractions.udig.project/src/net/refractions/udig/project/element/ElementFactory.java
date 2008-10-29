@@ -53,5 +53,7 @@ public interface ElementFactory extends EFactory {
 
     ProjectElementAdapter createProjectElementAdapter( IProject project,
             Class< ? extends IGenericProjectElement> typeToCreate, String extensionId );
-
-} //ElementFactory
+    
+    <T extends IGenericProjectElement> T createGenericProjectElement(
+			Class<T> typeToCreate, String extensionId);
+} // ElementFactory

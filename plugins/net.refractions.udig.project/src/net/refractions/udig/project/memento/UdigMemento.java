@@ -243,9 +243,9 @@ public class UdigMemento implements IMemento {
     /**
      * Reads the string obtained from toString and populates this memento.
      */
-    public void readString(String mementoString) throws IOException{
+    public static UdigMemento readString(String mementoString) throws IOException{
         ByteArrayInputStream in = new ByteArrayInputStream(mementoString.getBytes());
-        read(in);
+        return read(in);
     }
 
     public String[] getAttributeKeys() {

@@ -2,18 +2,20 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ProjectItemProviderAdapterFactory.java 22387 2006-10-25 18:40:20Z jeichar $
+ * $Id: ProjectItemProviderAdapterFactory.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import net.refractions.udig.project.internal.impl.SynchronizedEList;
 import net.refractions.udig.project.internal.util.ProjectAdapterFactory;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -217,27 +219,6 @@ public class ProjectItemProviderAdapterFactory extends ProjectAdapterFactory
     }
 
     /**
-     * This keeps track of the one adapter used for all {@link net.refractions.udig.project.internal.PicoBlackboard} instances.
-     * <!-- begin-user-doc
-     * --> <!-- end-user-doc -->
-     * @generated
-     */
-    protected PicoBlackboardItemProvider picoBlackboardItemProvider;
-
-    /**
-     * This creates an adapter for a {@link net.refractions.udig.project.internal.PicoBlackboard}.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public Adapter createPicoBlackboardAdapter() {
-        if (picoBlackboardItemProvider == null) {
-            picoBlackboardItemProvider = new PicoBlackboardItemProvider(this);
-        }
-
-        return picoBlackboardItemProvider;
-    }
-
-    /**
      * This keeps track of the one adapter used for all {@link net.refractions.udig.project.internal.Blackboard} instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -333,11 +314,24 @@ public class ProjectItemProviderAdapterFactory extends ProjectAdapterFactory
      * This implementation substitutes the factory itself as the key for the adapter. <!--
      * begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated NOT
      */
     public Adapter adapt( Notifier notifier, Object type ) {
-        return super.adapt(notifier, this);
-    }
+		EList<Adapter> adapters = notifier.eAdapters();
+		if (adapters instanceof SynchronizedEList) {
+			SynchronizedEList<Adapter> synchList = (SynchronizedEList<Adapter>) adapters;
+			synchList.lock();
+		}
+		try {
+			return super.adapt(notifier, this);
+		} finally {
+			if (adapters instanceof SynchronizedEList) {
+				SynchronizedEList<Adapter> synchList = (SynchronizedEList<Adapter>) adapters;
+				synchList.unlock();
+			}
+
+		}
+	}
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->

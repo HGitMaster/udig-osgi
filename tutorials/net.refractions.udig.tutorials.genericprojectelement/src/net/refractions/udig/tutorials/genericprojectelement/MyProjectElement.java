@@ -1,9 +1,9 @@
 package net.refractions.udig.tutorials.genericprojectelement;
 
-import org.eclipse.ui.IMemento;
-
 import net.refractions.udig.project.element.AbstractGenericProjectElement;
 import net.refractions.udig.project.element.IGenericProjectElement;
+
+import org.eclipse.ui.IMemento;
 
 /**
  * A silly implementation.  

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RendererImpl.java 30851 2008-09-29 18:21:52Z egouge $
+ * <copyright></copyright> $Id: RendererImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -88,7 +88,7 @@ public abstract class RendererImpl extends EObjectImpl implements Renderer {
      * begin-user-doc --> <!-- end-user-doc -->
      * 
      * @see #getContext()
-     * @generated
+     * @generated NOT
      * @ordered
      */
     protected volatile IRenderContext context = null;

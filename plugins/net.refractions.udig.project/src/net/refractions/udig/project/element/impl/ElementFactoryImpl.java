@@ -5,7 +5,6 @@
  */
 package net.refractions.udig.project.element.impl;
 
-import net.refractions.udig.project.element.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -134,11 +133,12 @@ public class ElementFactoryImpl extends EFactoryImpl implements ElementFactory {
      */
     public IGenericProjectElement createIGenericProjectElementFromString( EDataType eDataType,
             String initialValue ) {
-        UdigMemento memento = new UdigMemento();
         try {
-            memento.readString(initialValue);
-            return createProjectElementAdapter(IGenericProjectElement.class,
-                    memento.getString(EXTENSION_POINT_ID_KEY)).getBackingObject();
+        	UdigMemento memento = UdigMemento.readString(initialValue);
+            IGenericProjectElement backingObject = createGenericProjectElement(IGenericProjectElement.class,
+                    memento.getString(EXTENSION_POINT_ID_KEY));
+            backingObject.init(memento);
+			return backingObject;
         } catch (IOException e) {
             ProjectPlugin.log("Error parsing memento data for IGenericProject Element", e); //$NON-NLS-1$
             return null;
@@ -178,13 +178,18 @@ public class ElementFactoryImpl extends EFactoryImpl implements ElementFactory {
 
     public ProjectElementAdapter createProjectElementAdapter( IProject project,
             Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) {
-        ProjectElementAdapter adapter = createProjectElementAdapter(typeToCreate, extensionId);
+        ProjectElementAdapter adapter = ElementFactory.eINSTANCE
+        .createProjectElementAdapter();
+
+        IGenericProjectElement genericProjectElement = createGenericProjectElement(typeToCreate, extensionId);
+        adapter.setBackingObject(genericProjectElement);
+
         ((Project) project).getElementsInternal().add(adapter);
         return adapter;
     }
 
-    public ProjectElementAdapter createProjectElementAdapter(
-            Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) {
+    public < T extends IGenericProjectElement>T createGenericProjectElement(
+            Class<T> typeToCreate, String extensionId ) {
         List<IConfigurationElement> list = ExtensionPointList
                 .getExtensionPointList(ProjectElementAdapter.EXT_ID);
         for( IConfigurationElement configurationElement : list ) {
@@ -193,13 +198,8 @@ public class ElementFactoryImpl extends EFactoryImpl implements ElementFactory {
                 try {
                     Object obj = configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
                     if (typeToCreate.isAssignableFrom(obj.getClass())) {
-                        ProjectElementAdapter adapter = ElementFactory.eINSTANCE
-                                .createProjectElementAdapter();
-                        IGenericProjectElement genericProjectElement = typeToCreate.cast(obj);
-                        genericProjectElement.setExtensionId(extensionId);
-                        adapter.setBackingObject(genericProjectElement);
-
-                        return adapter;
+                    	((IGenericProjectElement) obj).setExtensionId(extensionId);
+                        return typeToCreate.cast(obj);
                     } else {
                         throw new IllegalArgumentException("The " + extensionId //$NON-NLS-1$
                                 + " created an object of type: " + obj.getClass() //$NON-NLS-1$

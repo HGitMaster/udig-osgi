@@ -125,10 +125,10 @@ public class MapImpl extends EObjectImpl implements Map {
      * <!-- begin-user-doc
      * --> <!-- end-user-doc -->
      * @see #getName()
-     * @generated
+     * @generated NOT
      * @ordered
      */
-    protected static final String NAME_EDEFAULT = null;
+    protected static final String NAME_EDEFAULT = "";
 
     /**
      * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -163,10 +163,10 @@ public class MapImpl extends EObjectImpl implements Map {
      * begin-user-doc --> <!-- end-user-doc -->
      *
      * @see #getAbstract()
-     * @generated
+     * @generated NOT
      * @ordered
      */
-    protected static final String ABSTRACT_EDEFAULT = null;
+    protected static final String ABSTRACT_EDEFAULT = "";
 
     /**
      * The cached value of the '{@link #getAbstract() <em>Abstract</em>}' attribute. <!--
@@ -588,7 +588,7 @@ public class MapImpl extends EObjectImpl implements Map {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public BrewerPalette getColorPalette() {
         if (colorPalette == null) {
@@ -1350,19 +1350,11 @@ public class MapImpl extends EObjectImpl implements Map {
     }
 
     /**
-     * @see org.eclipse.emf.ecore.impl.BasicEObjectImpl#eGet(org.eclipse.emf.ecore.EStructuralFeature,
-     *      boolean)
-     */
-    public Object eGet( EStructuralFeature eFeature, boolean resolve ) {
-        return eGetGen(eFeature, resolve);
-    }
-
-    /**
      * EMF will generate to this method instead of eGet
      *
      * @generated
      */
-    public Object eGetGen( EStructuralFeature eFeature, boolean resolve ) {
+    public Object eGet( EStructuralFeature eFeature, boolean resolve ) {
         switch( eDerivedStructuralFeatureID(eFeature) ) {
         case ProjectPackage.MAP__NAME:
             return getName();

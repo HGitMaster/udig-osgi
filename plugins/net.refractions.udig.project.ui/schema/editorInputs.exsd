@@ -47,7 +47,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="net.refractions.udig.project.UDIGEditorInput"/>
+                  <meta.attribute kind="java" basedOn="net.refractions.udig.project.ui.UDIGEditorInput:"/>
                </appInfo>
             </annotation>
          </attribute>

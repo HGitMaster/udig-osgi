@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectRegistryImpl.java 27261 2007-09-30 19:04:07Z jeichar $
+ * <copyright></copyright> $Id: ProjectRegistryImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -20,9 +20,11 @@ import net.refractions.udig.ui.PlatformGIS;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -501,4 +503,9 @@ public class ProjectRegistryImpl extends EObjectImpl implements ProjectRegistry 
         return projectRegistry;
     }
 
+    @Override
+    public EList<Adapter> eAdapters() {
+    	return SynchronizedEList.create(super.eAdapters());
+    }
+    
 } // ProjectRegistryImpl

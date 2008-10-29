@@ -50,8 +50,7 @@ public class CloseProject implements IWorkbenchWindowActionDelegate {
         for( Iterator iter = selection.iterator(); iter.hasNext(); ) {
             IProject project = (IProject) iter.next();
             for( IProjectElement element : project.getElements() ) {
-                for( UDIGEditorInputDescriptor desc : ApplicationGIS.getEditorInputs(element
-                        .getClass()) ) {
+                for( UDIGEditorInputDescriptor desc : ApplicationGIS.getEditorInputs(element) ) {
                     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getActivePage();
                     IEditorPart editor = page.findEditor(desc.createInput(element));

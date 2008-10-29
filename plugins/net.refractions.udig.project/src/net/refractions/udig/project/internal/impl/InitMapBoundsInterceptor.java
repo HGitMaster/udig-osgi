@@ -14,12 +14,13 @@
  */
 package net.refractions.udig.project.internal.impl;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import net.refractions.udig.project.interceptor.LayerInterceptor;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
+import net.refractions.udig.project.internal.render.ViewportModel;
+import net.refractions.udig.ui.ProgressManager;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 /**
  * If first layer it sets the viewport bounds to be the bounds of the layer.
@@ -36,8 +37,10 @@ public class InitMapBoundsInterceptor implements LayerInterceptor {
         }
         Map map = layer.getMapInternal();
 
-        if( map.getMapLayers().size()==1 ){
-            ReferencedEnvelope bounds = layer.getBounds(new NullProgressMonitor(), null);
+        ReferencedEnvelope bounds = map.getViewportModelInternal().getBounds();
+        //  If first layer or if the crs has been unchanged from the original BBox
+		if( map.getMapLayers().size()==1 || bounds==ViewportModel.NIL_BBOX){
+            bounds = map.getBounds(ProgressManager.instance().get());
             map.getViewportModelInternal().setBounds(bounds);
         }
     }

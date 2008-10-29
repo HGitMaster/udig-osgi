@@ -62,7 +62,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The implementation of the element type
+                  The implementation of the element type.  It is recommended that one extends the net.refractions.udig.project.element.AbstractGenericProjectElement class as it provides most of the boiler plate code required.  It also adapts to the ProjectElement interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":net.refractions.udig.project.element.IGenericProjectElement"/>
@@ -92,7 +92,7 @@
          <attribute name="labelProvider" type="string">
             <annotation>
                <documentation>
-                  Provides labelling for the element in JFace viewer.  If getImage returns null then icon will be used.  The labelProvider overrides options put in the label and icon attributes
+                  Provides labelling for the element in JFace viewer.  If getImage returns null then icon will be used.  The labelProvider overrides options put in the label and icon attributes.  If the labelProvider implements IColorDecorator or IFontDecorator then the font and color will be used.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.jface.viewers.IBaseLabelProvider"/>

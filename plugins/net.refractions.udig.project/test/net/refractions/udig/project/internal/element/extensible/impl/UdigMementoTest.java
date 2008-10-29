@@ -52,6 +52,17 @@ public class UdigMementoTest {
         assertMementoEquals(expected, actual,false);
     }
 
+    @Test
+    public void testAtSymbol() throws IOException{
+    	UdigMemento mem = new UdigMemento();
+    	String value = "net.refractions.udig.project.test";
+		String key = "@ElementFactoryImpl.ExtensionPointId.key@";
+		mem.putString(key, value);
+    	String persisted = mem.toString();
+    	UdigMemento mem2 = UdigMemento.readString(persisted);
+    	
+    	assertEquals(value, mem2.getString(key));
+    }
 
     // support methods
 

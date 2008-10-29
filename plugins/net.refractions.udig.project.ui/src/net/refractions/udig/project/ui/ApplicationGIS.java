@@ -34,6 +34,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.core.internal.ExtensionPointList;
 import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
@@ -111,8 +112,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  */
 public class ApplicationGIS {
 
-	private static java.util.Map<Class, List<UDIGEditorInputDescriptor>> editorInputDescriptors = new HashMap<Class, List<UDIGEditorInputDescriptor>>();
-	private static IToolManager toolManager;
+    private static IToolManager                                          toolManager;
     private static ActiveMapTracker activeMapTracker;
 
 	/**
@@ -304,48 +304,55 @@ public class ApplicationGIS {
 	 * @return an editor input for the type passed in.
 	 */
 	public static List<UDIGEditorInputDescriptor> getEditorInputs(
-			final Class<? extends IProjectElement> type) {
-		if (!editorInputDescriptors.containsKey(type)) {
-			synchronized (editorInputDescriptors) {
-				if (editorInputDescriptors.containsKey(type))
-					return editorInputDescriptors.get(type);
+            final IProjectElement projectElement) {
 
-				final List<UDIGEditorInputDescriptor> newInputs = new ArrayList<UDIGEditorInputDescriptor>();
+        final List<UDIGEditorInputDescriptor> newInputs = new ArrayList<UDIGEditorInputDescriptor>();
 
-				IExtensionRegistry registry = Platform.getExtensionRegistry();
-				IExtensionPoint extensionPoint = registry
-						.getExtensionPoint("net.refractions.udig.project.ui.editorInputs"); //$NON-NLS-1$
-				IExtension[] extensions = extensionPoint.getExtensions();
+        List<IConfigurationElement> extensions = ExtensionPointList.getExtensionPointList("net.refractions.udig.project.ui.editorInputs");
+        Class toMatch;
+        if( projectElement instanceof ProjectElementAdapter){
+            toMatch = ((ProjectElementAdapter)projectElement).getBackingObject().getClass();
+        }else{
+            toMatch = projectElement.getClass();
+        }
+        for (IConfigurationElement element : extensions) {
+            String projectElementClassName = element
+                    .getAttribute("projectElement"); //$NON-NLS-1$
+            Class match = match(toMatch, projectElementClassName);
+            if (match != null) {
+                UDIGEditorInputDescriptor input = new UDIGEditorInputDescriptor();
+                input.setEditorID(element.getAttribute("editorPartID")); //$NON-NLS-1$
+                input.setName(element.getAttribute("name")); //$NON-NLS-1$
+                input.setExtensionElement(element);
+                input.setType(match);
+                newInputs.add(input);
+            }
+        }
+        return newInputs;
+    }
 
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] elements = extensions[i]
-							.getConfigurationElements();
+    @SuppressWarnings("unchecked")
+    private static Class match(Class toMatch, String projectElementClassName) {
+        if(toMatch.getName().equals(projectElementClassName) || toMatch.getCanonicalName().equals(projectElementClassName)){
+            return toMatch;
+        }
+        Class superClass = toMatch.getSuperclass();
+        if( superClass!=Object.class && superClass!=null){
+            Class result = match(superClass,projectElementClassName);
+            if( result!=null){
+                return result;
+            }
+        }
+        Class[] interfaces = toMatch.getInterfaces();
+        for (Class iFace : interfaces) {
+            Class result = match(iFace,projectElementClassName);
+            if( result!=null){
+                return result;
+            }
+        }
+        return null;
+    }
 
-					for (int j = 0; j < elements.length; j++) {
-						try {
-							Object object = elements[j]
-									.createExecutableExtension("projectElement"); //$NON-NLS-1$
-							if (object.getClass().isAssignableFrom(type)) {
-								UDIGEditorInputDescriptor input = new UDIGEditorInputDescriptor();
-								input.setEditorID(elements[j]
-										.getAttribute("editorPartID")); //$NON-NLS-1$
-								input.setName(elements[j].getAttribute("name")); //$NON-NLS-1$
-								input.setExtensionElement(elements[j]);
-								input.setType(type);
-								newInputs.add(input);
-							}
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-
-				editorInputDescriptors.put(type, newInputs);
-			}
-		}
-
-		return editorInputDescriptors.get(type);
-	}
 
 	/**
 	 * Returns the ToolManager singleton.
@@ -353,29 +360,27 @@ public class ApplicationGIS {
 	 * @return the ToolManager singleton.
 	 */
 	public static IToolManager getToolManager() {
-		synchronized (ToolManager.class) {
-			if (toolManager == null) {
-
-				String prefConstant = IToolManager.P_TOOL_MANAGER;
-				String xpid = IToolManager.XPID;
-				String idField = IToolManager.ATTR_ID;
-				String classField = IToolManager.ATTR_CLASS;
-
-				IToolManager result = (IToolManager) UiPlugin
-						.lookupConfigurationObject(IToolManager.class,
-								ProjectUIPlugin.getDefault()
-										.getPreferenceStore(),
-								ProjectUIPlugin.ID, prefConstant, xpid,
-								idField, classField);
-				if (result != null) {
-					toolManager = result;
-				} else {
-					toolManager = new ToolManager();
-				}
-			}
-		}
-		return toolManager;
-	}
+        synchronized (ToolManager.class) {
+            if (toolManager == null) {
+                
+                String prefConstant = IToolManager.P_TOOL_MANAGER;
+                String xpid = IToolManager.XPID;
+                String idField = IToolManager.ATTR_ID;
+                String classField = IToolManager.ATTR_CLASS;
+                
+                IToolManager result = (IToolManager) UiPlugin.lookupConfigurationObject(
+                        IToolManager.class, ProjectUIPlugin.getDefault().getPreferenceStore(),
+                        ProjectUIPlugin.ID,
+                        prefConstant, xpid, idField, classField);
+                if (result != null) {
+                    toolManager = result;
+                } else {
+                    toolManager = new ToolManager();
+                }
+            }
+        }
+        return toolManager;
+   }
 
 	/**
 	 * Returns the IEditorInput instance that wraps the element argument.
@@ -383,8 +388,7 @@ public class ApplicationGIS {
 	 * @return the IEditorInput instance that wraps the element argument.
 	 */
 	public static UDIGEditorInput getInput(IProjectElement element) {
-		List<UDIGEditorInputDescriptor> descriptors = getEditorInputs(element
-				.getClass());
+		List<UDIGEditorInputDescriptor> descriptors = getEditorInputs(element);
 		for (UDIGEditorInputDescriptor descriptor : descriptors) {
 			UDIGEditorInput input = descriptor.createInput(element);
 			if (input != null) {
