@@ -3,12 +3,16 @@ package net.refractions.udig.tutorials.rcp;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
 
+import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
 import net.refractions.udig.project.internal.ContextModelListenerAdapter;
+import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.render.IViewportModelListener;
 import net.refractions.udig.project.render.ViewportModelEvent;
 import net.refractions.udig.project.render.ViewportModelEvent.EventType;
+import net.refractions.udig.project.render.displayAdapter.IMapDisplay;
 import net.refractions.udig.project.render.displayAdapter.IMapDisplayListener;
 import net.refractions.udig.project.render.displayAdapter.MapDisplayEvent;
 import net.refractions.udig.project.ui.commands.AbstractDrawCommand;
@@ -29,6 +33,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 
 
 /**
@@ -175,7 +180,8 @@ public class OverviewMapViewer {
            
             private void updateMapAndRefresh(Notification msg){
                 overviewmap.getContextModel().eNotify(msg);
-                overviewmap.getViewportModelInternal().setBounds(mainmap.getBounds(new NullProgressMonitor()));                
+                ReferencedEnvelope bnds = findNewOverviewZoom(mainmap.getViewportModel().getBounds(), mainmap.getRenderManager().getMapDisplay(), mapviewer.getMap().getViewportModel().getBounds());
+                mapviewer.getMap().getViewportModelInternal().setBounds(bnds);                
             }
         };
         mainmap.getContextModel().eAdapters().add(contextListener);
@@ -192,6 +198,14 @@ public class OverviewMapViewer {
                     //need to update the overview map crs
                     CoordinateReferenceSystem newcrs = (CoordinateReferenceSystem)event.getNewValue();
                     mapviewer.getMap().getViewportModelInternal().setCRS(newcrs);
+                }else if (event.getType() == EventType.BOUNDS){
+                    //bounds have changed change the overview box correspondingly
+                    if (!mainmap.getViewportModel().isBoundsChanging()) {
+                        ReferencedEnvelope bnds = findNewOverviewZoom(mainmap.getViewportModel().getBounds(), mainmap.getRenderManager().getMapDisplay(), mapviewer.getMap().getViewportModel().getBounds());
+                        mapviewer.getMap().getViewportModelInternal().setBounds(bnds);
+
+                    }
+                    mapviewer.getViewport().repaint();
                 }else{
                     // repaint to update the box representing the location
                     mapviewer.getViewport().repaint();
@@ -205,7 +219,8 @@ public class OverviewMapViewer {
 
             public void sizeChanged( MapDisplayEvent event ) {
                 //update the bounds
-                mapviewer.getMap().getViewportModelInternal().setBounds(mainmap.getBounds(new NullProgressMonitor()));
+                ReferencedEnvelope bnds = findNewOverviewZoom(mainmap.getViewportModel().getBounds(), mainmap.getRenderManager().getMapDisplay(), mapviewer.getMap().getViewportModel().getBounds());
+                mapviewer.getMap().getViewportModelInternal().setBounds(bnds);
             }});
     }
     
@@ -240,6 +255,77 @@ public class OverviewMapViewer {
     }
     
     
+    /**
+     * This function is called with the viewport bounds are changed or
+     * the pane size is changed.  It computes new bounds for the overview map
+     * based on the bounds (center point).  If one of the layers on the map can resolve to a 
+     * WMSTileSet it uses the resolutions associated with the tile set and finds the resolution that 
+     * is two larger than the current resolution to use for the overview.
+     *
+     * @param mainMapEnvelope
+     * @param mainMapDisplay
+     * @param overviewMapEnvelope
+     * @return
+     */
+    private ReferencedEnvelope findNewOverviewZoom(ReferencedEnvelope mainMapEnvelope, IMapDisplay  mainMapDisplay, ReferencedEnvelope overviewMapEnvelope) {
+        
+        //go through all the layers looking for a tiled resource
+        List<Layer> layers = mainmap.getLayersInternal();
+        for( Layer layer : layers ) {
+            if (layer.getGeoResource().canResolve(WMSTileSet.class)){
+                try {
+                    WMSTileSet tiles = layer.getGeoResource().resolve(WMSTileSet.class,new NullProgressMonitor());
+                    
+                    double currres = mainMapEnvelope.getWidth() / mainMapDisplay.getWidth();
+                    
+                    double[] res = tiles.getResolutions();
+                    //find the closest matching resolution
+                    double diff = Math.abs(currres - res[0]);
+                    int index = 0;
+                    for( int i = 0; i < res.length; i++ ) {
+                        if (Math.abs(currres - res[i]) < diff) {
+                            index = i;
+                            diff = Math.abs(currres - res[i]);
+                        }
+                    }
+                    //find the second lower resolution
+                    index = index - 2;
+                    if (index < 0) index = 0;
+
+                    double newres = res[index];
+
+                    // find the center of the screen
+                    double centerx = mainMapEnvelope.getMedian(0);
+                    double centery = mainMapEnvelope.getMedian(1);
+
+                    // using the next resolution, screen size, and center of the screen
+                    // compute a new bounding box
+                    double pixelwidth = mainMapDisplay.getWidth();
+                    double newunitwidth = newres * pixelwidth;
+                    double xmin = centerx - (newunitwidth / 2.0);
+                    double xmax = centerx + (newunitwidth / 2.0);
+
+                    double newunitheight = newres * mainMapDisplay.getHeight();
+                    double ymin = centery - (newunitheight / 2.0);
+                    double ymax = centery + (newunitheight / 2.0);
+
+                    // new bounding box
+                    ReferencedEnvelope re = new ReferencedEnvelope(xmin, xmax, ymin, ymax,overviewMapEnvelope.getCoordinateReferenceSystem());
+                    if (!mainMapEnvelope.contains((Envelope)re)){
+                        return re;
+                    }
+                } catch (Exception ex) {
+                }
+            }
+        }
+
+        ReferencedEnvelope bnds = new ReferencedEnvelope(mainMapEnvelope);                                    
+        bnds.expandBy(Math.max(bnds.getWidth() * 3, bnds.getHeight() * 3));
+        //this may be too slow and may need to done in a job ??
+        ReferencedEnvelope maximumExtent = mainmap.getBounds(new NullProgressMonitor());
+        ReferencedEnvelope ret = new ReferencedEnvelope(maximumExtent.intersection(bnds), bnds.getCoordinateReferenceSystem());
+        return ret;
+    }
     
     /**
      * Tool to apply to the overview map viewer to 
@@ -290,11 +376,13 @@ public class OverviewMapViewer {
                         bounds.getMaxX() + xoffset, bounds.getMinY() + yoffset, bounds.getMaxY()
                                 + yoffset, bounds.getCoordinateReferenceSystem());
 
-                mainmap.getViewportModelInternal().setBounds(newbounds);
+
 
                 //scroll
                 ((Canvas) mainMapVP).scroll(xdiff, ydiff, 0, 0, mainMapVP.getWidth(), mainMapVP.getHeight(), true);
-                startp = p;                
+                startp = p;
+                mainmap.getViewportModelInternal().setBounds(newbounds);
+                mainMapVP.repaint();
             }
                
         }

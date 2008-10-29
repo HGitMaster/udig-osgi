@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project,
  net.refractions.udig.project.ui,
  net.refractions.udig.catalog.ui,
- net.refractions.udig.tool.default
+ net.refractions.udig.tool.default,
+ net.refractions.udig.catalog.wms
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
