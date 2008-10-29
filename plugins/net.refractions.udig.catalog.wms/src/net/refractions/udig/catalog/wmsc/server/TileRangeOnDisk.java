@@ -177,6 +177,9 @@ public class TileRangeOnDisk extends AbstractTileRange {
     protected String getFileType() {
     	// format is like "image\png" so strip out the beginning
     	String format = tileset.getFormat();
+    	// remove any numbers from the format (ie: png8, remove 8)
+    	format = format.replaceAll("\\d+", "");  //$NON-NLS-1$ //$NON-NLS-2$
+    	
     	int indexOf = format.indexOf("\\"); //$NON-NLS-1$
     	if (indexOf < 0) {
     		indexOf = format.indexOf("/"); //$NON-NLS-1$
