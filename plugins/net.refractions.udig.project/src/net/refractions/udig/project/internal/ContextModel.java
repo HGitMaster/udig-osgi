@@ -19,7 +19,7 @@ import com.vividsolutions.jts.geom.Envelope;
 /**
  * Holds onto the list of layers for the IMap.
  * <p>
- * This interface has been reprecated; please may use of the IMap interface
+ * This interface has been deprecated; please may use of the IMap interface
  * directly.
  * </p>
  * 

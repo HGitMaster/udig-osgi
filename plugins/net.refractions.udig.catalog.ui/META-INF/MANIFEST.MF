@@ -23,4 +23,4 @@ Require-Bundle: org.eclipse.core.runtime,
  net.refractions.udig.ui;visibility:=reexport,
  net.refractions.udig.libs,
  org.eclipse.core.expressions
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

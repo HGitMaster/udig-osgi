@@ -68,7 +68,6 @@ public class UDIGApplication implements IApplication {
      * @param context the application context to pass to the application
      * @exception Exception if there is a problem running this application.
      */
-    @SuppressWarnings("unused")
     public Object start( IApplicationContext context ) throws Exception {
         WorkbenchAdvisor workbenchAdvisor = createWorkbenchAdvisor();
         Display display = PlatformUI.createDisplay();

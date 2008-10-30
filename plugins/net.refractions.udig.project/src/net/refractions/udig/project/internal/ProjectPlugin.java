@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectPlugin.java 30934 2008-10-29 11:00:29Z jeichar $
+ * <copyright></copyright> $Id: ProjectPlugin.java 30945 2008-10-30 20:15:17Z hbullen $
  */
 package net.refractions.udig.project.internal;
 
@@ -130,8 +130,7 @@ public final class ProjectPlugin extends EMFPlugin {
             ShutdownTaskList.instance().addPostShutdownTask(new PostShutdownTask(){
 
                 public int getProgressMonitorSteps() {
-                    List resources = getProjectRegistry().eResource().getResourceSet()
-                            .getResources();
+                    List<Resource> resources = getProjectRegistry().eResource().getResourceSet().getResources();
                     return resources.size();
                 }
 
@@ -143,9 +142,8 @@ public final class ProjectPlugin extends EMFPlugin {
                         throws Exception {
                     monitor.beginTask(Messages.ProjectPlugin_saving_task_name, 0);
                     turnOffEvents();
-                    List resources = getProjectRegistry().eResource().getResourceSet()
-                            .getResources();
-                    for( Iterator iter = resources.iterator(); iter.hasNext(); ) {
+                    List<Resource> resources = getProjectRegistry().eResource().getResourceSet().getResources();
+                    for( Iterator<Resource> iter = resources.iterator(); iter.hasNext(); ) {
                         Resource resource = (Resource) iter.next();
                         if (resource.getContents().isEmpty())
                             continue;

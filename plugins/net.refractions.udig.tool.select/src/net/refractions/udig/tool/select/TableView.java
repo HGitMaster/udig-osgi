@@ -274,6 +274,8 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
             }
             
         };
+        
+        // Select All Button
         selectAllCheck=new Button(parent, SWT.CHECK);
         selectAllCheck.setText(Messages.TableView_allCheckText);
         selectAllCheck.setToolTipText(Messages.TableView_allToolTip);
