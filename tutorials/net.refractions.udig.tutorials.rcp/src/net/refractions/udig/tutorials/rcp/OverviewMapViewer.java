@@ -288,8 +288,9 @@ public class OverviewMapViewer {
                             diff = Math.abs(currres - res[i]);
                         }
                     }
-                    //find the second lower resolution
-                    index = index - 2;
+                    //find the fourth lower resolution  (anything less than 3 and the 
+                    //overview window usually isn't big enough to actually be useful)
+                    index = index - 4;
                     if (index < 0) index = 0;
 
                     double newres = res[index];
@@ -300,12 +301,12 @@ public class OverviewMapViewer {
 
                     // using the next resolution, screen size, and center of the screen
                     // compute a new bounding box
-                    double pixelwidth = mainMapDisplay.getWidth();
+                    double pixelwidth = mapviewer.getViewport().getWidth();
                     double newunitwidth = newres * pixelwidth;
                     double xmin = centerx - (newunitwidth / 2.0);
                     double xmax = centerx + (newunitwidth / 2.0);
 
-                    double newunitheight = newres * mainMapDisplay.getHeight();
+                    double newunitheight = newres * mapviewer.getViewport().getHeight();
                     double ymin = centery - (newunitheight / 2.0);
                     double ymax = centery + (newunitheight / 2.0);
 
