@@ -241,7 +241,6 @@ public class OverviewMapViewer {
     
     
     public void dispose(){
-        mapviewer.dispose();
         if(viewportListener != null){
             mainmap.getViewportModelInternal().removeViewportModelListener(viewportListener);
         }
@@ -252,6 +251,7 @@ public class OverviewMapViewer {
             mapviewer.getViewport().removePaneListener(mapDisplayListener);
         }
         removeLocationBox();
+        mapviewer.dispose();
     }
     
     
