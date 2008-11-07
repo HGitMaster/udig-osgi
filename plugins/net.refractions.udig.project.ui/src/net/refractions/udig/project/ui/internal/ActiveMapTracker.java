@@ -90,14 +90,26 @@ public class ActiveMapTracker implements IPartListener2, IWindowListener, IPageL
     		}
     	}
     	
-    	
-    	if( activeParts.isEmpty() ){
-    		return ApplicationGIS.NO_MAP;
+    	//lets first look at activeParts
+    	MapPart mapPart = null;
+    	if ( !activeParts.isEmpty() ){
+    	    mapPart = activeParts.get(0);
     	}
-        MapPart mapPart = activeParts.get(0);
-        if( mapPart== null ){
-            return ApplicationGIS.NO_MAP;
-        }
+    	if (mapPart == null){
+    	    //not activeParts found so lets look at the open maps.
+    	    //lets see if we can find one that is open and visible
+    	    for( MapPart part : openMaps ) {
+    	        if (visibleMaps.contains(part)){
+    	            mapPart = part;
+    	            break;
+    	        }
+            }
+    	}
+    	
+    	if (mapPart == null){
+    	    //nothing found 
+    	    return ApplicationGIS.NO_MAP;
+    	}
         return mapPart.getMap();
     }
     
@@ -187,16 +199,26 @@ public class ActiveMapTracker implements IPartListener2, IWindowListener, IPageL
         page.addPartListener(this);
         IEditorReference[] editors = page.getEditorReferences();
         for( IEditorReference reference : editors ) {
+            IWorkbenchPart workpart = reference.getPart(false);
             if( reference.getPart(false) instanceof MapPart ){
                 MapPart part = (MapPart) reference.getPart(false);
                 openMaps.add(part);
+                
+                if (page.isPartVisible(workpart)){
+                    visibleMaps.add(part);
+                }
             }
         }
         IViewReference[] views = page.getViewReferences();
         for( IViewReference reference : views ) {
-            if( reference.getPart(false) instanceof MapPart ){
+            IWorkbenchPart workpart = reference.getPart(false);
+            if( workpart instanceof MapPart ){
                 MapPart part = (MapPart) reference.getPart(false);
                 openMaps.add(part);
+                
+                if (page.isPartVisible(workpart)){
+                    visibleMaps.add(part);
+                }
             }
         }
     }
