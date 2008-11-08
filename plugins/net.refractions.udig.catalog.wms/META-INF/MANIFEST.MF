@@ -15,6 +15,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
  net.refractions.udig.catalog.ui,
- net.refractions.udig.libs,
- net.refractions.udig.project;bundle-version="1.2.0"
+ net.refractions.udig.libs
 Eclipse-LazyStart: true

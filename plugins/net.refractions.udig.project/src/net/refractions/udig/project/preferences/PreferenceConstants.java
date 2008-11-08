@@ -53,17 +53,6 @@ public class PreferenceConstants {
     public static final String P_TILED_RENDERING = "P_TILED_RENDERING";  //$NON-NLS-1$
     
     /**
-     * WMS-C Tile Preference constants
-     */
-    public static final String P_WMSCTILE_CACHING = "P_WMSCTILE_CACHING"; //$NON-NLS-1$  
-    
-    public static final String P_WMSCTILE_DISKDIR = "P_WMSCTILE_DISKDIR"; //$NON-NLS-1$ 
-    
-    public static final String P_WMSCTILE_MAX_CON_REQUESTS = "P_WMSCTILE_MAX_CON_REQUESTS"; //$NON-NLS-1$
-    
-    
-    
-    /**
      * The property value for the preferred scale to ZOOM IN when extents of the layer
      * are not really correct or too small to be zoomed and displayed.
      * <p>

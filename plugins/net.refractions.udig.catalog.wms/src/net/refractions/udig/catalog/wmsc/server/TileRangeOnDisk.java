@@ -1,15 +1,11 @@
 package net.refractions.udig.catalog.wmsc.server;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.imageio.ImageIO;
-
-import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.preferences.PreferenceConstants;
+import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.internal.PreferenceConstants;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -48,7 +44,7 @@ public class TileRangeOnDisk extends AbstractTileRange {
 		} 		
 		
 		// load the disk cache location from plugin preferences
-		String dir = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
+		String dir = CatalogPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
 		tileReadWriter = new TileImageReadWriter(server, dir);
 		
 		// the super's constructor will have built the list of tiles not loaded, so
