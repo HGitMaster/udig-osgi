@@ -1,0 +1,38 @@
+<!--
+  uDig OSGi branch
+  
+  Top-level build file for batch builds with Ant, using Eclipse PDE
+  
+  Author: Harald Wellmann
+-->
+
+<project name="udig-osgi" default="compile" basedir=".">
+
+  <!-- read properties depending on the build machine from an external file -->
+  <property file="local.properties" />
+  
+  <target name="prepare">
+    <fail message="Property eclipse.home is not set in file local.properties" unless="eclipse.home"/>
+    <fail message="Property eclipse.pde.build is not set in file local.properties" unless="eclipse.pde.build"/>
+  </target>
+
+  <!-- compile uDig, invoking Eclipse in headless mode -->
+  <target name="compile" >
+    <java jar="${equinox.launcher}" fork="true" failonerror="true">
+
+      <arg value="-noupdate" />
+      <arg value="-application" />
+      <arg value="org.eclipse.ant.core.antRunner" />
+      <!--arg value="-debug" /-->
+
+      <!-- the Ant build file to be run in an Eclipse context -->
+      <arg value="-buildfile" />
+      <arg value="${eclipse.home}/plugins/${eclipse.pde.build}/scripts/productBuild/productBuild.xml" />
+
+      <!-- configuration information telling the build what to do -->
+      <arg value="-Dbuilder=${basedir}" />
+    </java>
+  </target>
+
+</project>
+

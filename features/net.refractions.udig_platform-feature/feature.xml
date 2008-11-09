@@ -26,13 +26,14 @@
          version="0.0.0"/>
 
    <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.xsd"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.emf.edit.ui"/>
-      <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.eclipse.draw2d"/>
       <import plugin="org.eclipse.update.ui"/>
-      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.apache.ant"/>
       <import plugin="org.apache.lucene"/>
@@ -40,8 +41,9 @@
       <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="org.eclipse.help.webapp"/>
-      <import plugin="org.eclipse.tomcat"/>
-      <import plugin="net.refractions.udig.catalog.oracle"/>
+      <import plugin="net.refractions.udig.core" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="net.refractions.udig.project"/>
+      <import plugin="org.eclipse.swt"/>
    </requires>
 
    <plugin
@@ -115,13 +117,6 @@
 
    <plugin
          id="net.refractions.udig.catalog.wfs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.catalog.wms"
          download-size="0"
          install-size="0"
          version="0.0.0"

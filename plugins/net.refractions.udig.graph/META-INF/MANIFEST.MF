@@ -7,8 +7,4 @@ Bundle-Vendor: Rerfractions
 Require-Bundle: net.refractions.udig.project.ui,
  net.refractions.udig.mapgraphic,
  org.eclipse.core.runtime
-Export-Package: net,
- net.refractions,
- net.refractions.udig,
- net.refractions.udig.graph,
- net.refractions.udig.graph.internal;x-internal:=true
+Export-Package: net.refractions.udig.graph.internal;x-internal:=true
