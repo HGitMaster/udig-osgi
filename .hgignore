@@ -1,5 +1,9 @@
 syntax: glob
 
+.svn
+
+
+# stuff created by PDE build
 @dot
 *temp.folder
 features/*/build.xml
