@@ -16,7 +16,6 @@
  */
 package net.refractions.udig.tools.internal;
 
-import net.refractions.udig.project.command.factory.NavigationCommandFactory;
 import net.refractions.udig.project.internal.command.navigation.ZoomExtentCommand;
 import net.refractions.udig.project.ui.tool.AbstractActionTool;
 import net.refractions.udig.project.ui.tool.AbstractTool;

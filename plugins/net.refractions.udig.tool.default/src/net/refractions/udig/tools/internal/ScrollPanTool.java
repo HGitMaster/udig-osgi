@@ -24,7 +24,7 @@ import net.refractions.udig.project.ui.tool.AbstractModalTool;
 import net.refractions.udig.project.ui.tool.ModalTool;
 
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Display; 
+import org.eclipse.swt.widgets.Display;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import com.vividsolutions.jts.geom.Coordinate;
