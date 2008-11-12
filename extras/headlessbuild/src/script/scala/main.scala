@@ -133,7 +133,7 @@ case class Sdk extends Target {
 		import scant.Ant.{Dir}
 		val sdktarget = <target name="sdk-build"  depends="pde-build">		
 			<property name="tmp" location="${buildDirectory}/${buildLabel}/tmp" />
-			<property name="archive" location="${buildDirectory}/${buildLabel}/${archiveNamePrefix}-.zip" />
+			<property name="archive" location="${buildDirectory}/${buildLabel}/${archiveNamePrefix}.zip" />
 			<copy toDir="${tmp}/${archivePrefix}" >
 				{
 					def splitTerm(term:String)={
