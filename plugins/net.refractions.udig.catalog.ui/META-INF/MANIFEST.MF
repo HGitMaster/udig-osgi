@@ -24,3 +24,4 @@ Require-Bundle: org.eclipse.core.runtime,
  net.refractions.udig.libs,
  org.eclipse.core.expressions
 Eclipse-LazyStart: true
+Import-Package: com.vividsolutions.jts.geom
