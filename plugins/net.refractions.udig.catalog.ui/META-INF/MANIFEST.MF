@@ -21,7 +21,21 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface,
  net.refractions.udig.catalog;visibility:=reexport,
  net.refractions.udig.ui;visibility:=reexport,
- net.refractions.udig.libs,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.geotools.data;bundle-version="2.6.0",
+ org.geotools.main;bundle-version="2.6.0",
+ org.geotools.cql;bundle-version="2.6.0",
+ org.geotools.referencing;bundle-version="2.6.0",
+ org.geotools.shapefile;bundle-version="2.6.0"
 Eclipse-LazyStart: true
-Import-Package: com.vividsolutions.jts.geom
+Import-Package: com.vividsolutions.jts.geom,
+ org.opengis.feature,
+ org.opengis.feature.simple,
+ org.opengis.feature.type,
+ org.opengis.filter.expression,
+ org.opengis.referencing,
+ org.opengis.referencing.crs,
+ org.opengis.referencing.cs,
+ org.opengis.referencing.operation,
+ org.opengis.util,
+ org.picocontainer;version="1.2.0"
