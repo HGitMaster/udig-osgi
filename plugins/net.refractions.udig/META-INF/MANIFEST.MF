@@ -9,5 +9,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.ui,
  org.eclipse.core.expressions,
- org.eclipse.ui.intro,
- net.refractions.udig.browser
+ org.eclipse.ui.intro
