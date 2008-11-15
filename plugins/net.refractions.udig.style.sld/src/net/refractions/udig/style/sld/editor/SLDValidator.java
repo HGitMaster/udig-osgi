@@ -10,9 +10,11 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
 import net.refractions.udig.style.sld.internal.Messages;
 
-import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -153,7 +155,9 @@ public class SLDValidator {
      * @return list of SAXExceptions (0 if the file's okay)
      */
     public List<SAXParseException> validateSLD(InputSource xml, String SchemaUrl) {
-        SAXParser parser = new SAXParser();
+    	// hwellmann: Do not use org.apache.xerces directly
+        //SAXParser parser = new SAXParser();
+    	SAXParserFactory factory = SAXParserFactory.newInstance();
 
         try {
 //     1. tell the parser to validate the XML document vs the schema
@@ -164,10 +168,11 @@ public class SLDValidator {
 //     4. tells the validator to 'override' the SLD schema that a user may
 //        			include with the one inside geoserver.
 
-            parser.setFeature("http://xml.org/sax/features/validation", true); //$NON-NLS-1$
-            parser.setFeature("http://apache.org/xml/features/validation/schema", //$NON-NLS-1$
+        	javax.xml.parsers.SAXParser parser = factory.newSAXParser();
+            parser.setProperty("http://xml.org/sax/features/validation", true); //$NON-NLS-1$
+            parser.setProperty("http://apache.org/xml/features/validation/schema", //$NON-NLS-1$
                 true);
-            parser.setFeature("http://apache.org/xml/features/validation/schema-full-checking", //$NON-NLS-1$
+            parser.setProperty("http://apache.org/xml/features/validation/schema-full-checking", //$NON-NLS-1$
                 false);
             parser.setProperty("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", //$NON-NLS-1$
                 SchemaUrl);
@@ -176,8 +181,7 @@ public class SLDValidator {
 
             //parser.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation","http://www.opengis.net/ows "+SchemaUrl);
             Validator handler = new Validator();
-            parser.setErrorHandler(handler);
-            parser.parse(xml);
+            parser.parse(xml, handler);
 
             return handler.errors;
         } catch (java.io.IOException ioe) {
@@ -190,7 +194,11 @@ public class SLDValidator {
             al.add(new SAXParseException(e.getLocalizedMessage(), null));
 
             return al;
-        }
+        } catch (ParserConfigurationException e) {
+            ArrayList<SAXParseException> al = new ArrayList<SAXParseException>();
+            al.add(new SAXParseException(e.getLocalizedMessage(), null));
+            return al;
+		}
     }
 
     // errors in the document will be put in "errors".
