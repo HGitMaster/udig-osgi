@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectFactory.java 22389 2006-10-25 22:10:46Z chorner $
+ * <copyright></copyright> $Id: ProjectFactory.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal;
 
@@ -111,15 +111,6 @@ public interface ProjectFactory extends EFactory {
      * @generated
      */
     LayerFactory createLayerFactory();
-
-    /**
-     * Returns a new object of class '<em>Pico Blackboard</em>'.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @return a new object of class '<em>Pico Blackboard</em>'.
-     * @generated
-     */
-    PicoBlackboard createPicoBlackboard();
 
     /**
      * Returns a new object of class '<em>Blackboard</em>'.

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectImpl.java 29109 2008-02-06 18:56:12Z jeichar $
+ * <copyright></copyright> $Id: ProjectImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -171,24 +171,12 @@ public class ProjectImpl extends EObjectImpl implements Project {
         }
         return lists;
     }
-	public NotificationChain eInverseAdd(InternalEObject otherEnd,
-			int featureID, Class baseClass, NotificationChain msgs) {
-
-		/*
-		 * Reason for comment:
-		 * During map creation, both this method and add seem to be called, but
-		 * the resource should only ever be created once.
-		 *
-		 * createResourceAndAddElement(this, (ProjectElement) otherEnd);
-		 */
-		return eInverseAddGen(otherEnd, featureID, baseClass, msgs);
-	}
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain eInverseAddGen(InternalEObject otherEnd,
+	public NotificationChain eInverseAdd(InternalEObject otherEnd,
 			int featureID, Class baseClass, NotificationChain msgs) {
 		if (featureID >= 0) {
 			switch (eDerivedStructuralFeatureID(featureID, baseClass)) {

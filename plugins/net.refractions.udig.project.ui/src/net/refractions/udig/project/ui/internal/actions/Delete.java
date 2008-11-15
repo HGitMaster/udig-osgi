@@ -168,7 +168,7 @@ public class Delete extends UDIGGenericAction {
     protected final void doDelete( ProjectElement element, boolean deleteFiles, int returncode ) {
         if (returncode != Window.CANCEL) {
             for( UDIGEditorInputDescriptor desc : ApplicationGIS
-                    .getEditorInputs(element.getClass()) ) {
+                    .getEditorInputs(element) ) {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                         .getActivePage();
                 IEditorPart editor = page.findEditor(desc.createInput(element));

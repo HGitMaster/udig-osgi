@@ -34,6 +34,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.core.internal.ExtensionPointList;
 import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
@@ -41,6 +42,9 @@ import net.refractions.udig.project.IProject;
 import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.IStyleBlackboard;
 import net.refractions.udig.project.ProjectBlackboardConstants;
+import net.refractions.udig.project.element.ElementFactory;
+import net.refractions.udig.project.element.IGenericProjectElement;
+import net.refractions.udig.project.element.ProjectElementAdapter;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.Project;
@@ -108,8 +112,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  */
 public class ApplicationGIS {
 
-	private static java.util.Map<Class, List<UDIGEditorInputDescriptor>> editorInputDescriptors = new HashMap<Class, List<UDIGEditorInputDescriptor>>();
-	private static IToolManager toolManager;
+    private static IToolManager                                          toolManager;
     private static ActiveMapTracker activeMapTracker;
 
 	/**
@@ -301,48 +304,55 @@ public class ApplicationGIS {
 	 * @return an editor input for the type passed in.
 	 */
 	public static List<UDIGEditorInputDescriptor> getEditorInputs(
-			final Class<? extends IProjectElement> type) {
-		if (!editorInputDescriptors.containsKey(type)) {
-			synchronized (editorInputDescriptors) {
-				if (editorInputDescriptors.containsKey(type))
-					return editorInputDescriptors.get(type);
+            final IProjectElement projectElement) {
 
-				final List<UDIGEditorInputDescriptor> newInputs = new ArrayList<UDIGEditorInputDescriptor>();
+        final List<UDIGEditorInputDescriptor> newInputs = new ArrayList<UDIGEditorInputDescriptor>();
 
-				IExtensionRegistry registry = Platform.getExtensionRegistry();
-				IExtensionPoint extensionPoint = registry
-						.getExtensionPoint("net.refractions.udig.project.ui.editorInputs"); //$NON-NLS-1$
-				IExtension[] extensions = extensionPoint.getExtensions();
+        List<IConfigurationElement> extensions = ExtensionPointList.getExtensionPointList("net.refractions.udig.project.ui.editorInputs");
+        Class toMatch;
+        if( projectElement instanceof ProjectElementAdapter){
+            toMatch = ((ProjectElementAdapter)projectElement).getBackingObject().getClass();
+        }else{
+            toMatch = projectElement.getClass();
+        }
+        for (IConfigurationElement element : extensions) {
+            String projectElementClassName = element
+                    .getAttribute("projectElement"); //$NON-NLS-1$
+            Class match = match(toMatch, projectElementClassName);
+            if (match != null) {
+                UDIGEditorInputDescriptor input = new UDIGEditorInputDescriptor();
+                input.setEditorID(element.getAttribute("editorPartID")); //$NON-NLS-1$
+                input.setName(element.getAttribute("name")); //$NON-NLS-1$
+                input.setExtensionElement(element);
+                input.setType(match);
+                newInputs.add(input);
+            }
+        }
+        return newInputs;
+    }
 
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] elements = extensions[i]
-							.getConfigurationElements();
+    @SuppressWarnings("unchecked")
+    private static Class match(Class toMatch, String projectElementClassName) {
+        if(toMatch.getName().equals(projectElementClassName) || toMatch.getCanonicalName().equals(projectElementClassName)){
+            return toMatch;
+        }
+        Class superClass = toMatch.getSuperclass();
+        if( superClass!=Object.class && superClass!=null){
+            Class result = match(superClass,projectElementClassName);
+            if( result!=null){
+                return result;
+            }
+        }
+        Class[] interfaces = toMatch.getInterfaces();
+        for (Class iFace : interfaces) {
+            Class result = match(iFace,projectElementClassName);
+            if( result!=null){
+                return result;
+            }
+        }
+        return null;
+    }
 
-					for (int j = 0; j < elements.length; j++) {
-						try {
-							Object object = elements[j]
-									.createExecutableExtension("projectElement"); //$NON-NLS-1$
-							if (object.getClass().isAssignableFrom(type)) {
-								UDIGEditorInputDescriptor input = new UDIGEditorInputDescriptor();
-								input.setEditorID(elements[j]
-										.getAttribute("editorPartID")); //$NON-NLS-1$
-								input.setName(elements[j].getAttribute("name")); //$NON-NLS-1$
-								input.setExtensionElement(elements[j]);
-								input.setType(type);
-								newInputs.add(input);
-							}
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-
-				editorInputDescriptors.put(type, newInputs);
-			}
-		}
-
-		return editorInputDescriptors.get(type);
-	}
 
 	/**
 	 * Returns the ToolManager singleton.
@@ -350,29 +360,27 @@ public class ApplicationGIS {
 	 * @return the ToolManager singleton.
 	 */
 	public static IToolManager getToolManager() {
-		synchronized (ToolManager.class) {
-			if (toolManager == null) {
-
-				String prefConstant = IToolManager.P_TOOL_MANAGER;
-				String xpid = IToolManager.XPID;
-				String idField = IToolManager.ATTR_ID;
-				String classField = IToolManager.ATTR_CLASS;
-
-				IToolManager result = (IToolManager) UiPlugin
-						.lookupConfigurationObject(IToolManager.class,
-								ProjectUIPlugin.getDefault()
-										.getPreferenceStore(),
-								ProjectUIPlugin.ID, prefConstant, xpid,
-								idField, classField);
-				if (result != null) {
-					toolManager = result;
-				} else {
-					toolManager = new ToolManager();
-				}
-			}
-		}
-		return toolManager;
-	}
+        synchronized (ToolManager.class) {
+            if (toolManager == null) {
+                
+                String prefConstant = IToolManager.P_TOOL_MANAGER;
+                String xpid = IToolManager.XPID;
+                String idField = IToolManager.ATTR_ID;
+                String classField = IToolManager.ATTR_CLASS;
+                
+                IToolManager result = (IToolManager) UiPlugin.lookupConfigurationObject(
+                        IToolManager.class, ProjectUIPlugin.getDefault().getPreferenceStore(),
+                        ProjectUIPlugin.ID,
+                        prefConstant, xpid, idField, classField);
+                if (result != null) {
+                    toolManager = result;
+                } else {
+                    toolManager = new ToolManager();
+                }
+            }
+        }
+        return toolManager;
+   }
 
 	/**
 	 * Returns the IEditorInput instance that wraps the element argument.
@@ -380,8 +388,7 @@ public class ApplicationGIS {
 	 * @return the IEditorInput instance that wraps the element argument.
 	 */
 	public static UDIGEditorInput getInput(IProjectElement element) {
-		List<UDIGEditorInputDescriptor> descriptors = getEditorInputs(element
-				.getClass());
+		List<UDIGEditorInputDescriptor> descriptors = getEditorInputs(element);
 		for (UDIGEditorInputDescriptor descriptor : descriptors) {
 			UDIGEditorInput input = descriptor.createInput(element);
 			if (input != null) {
@@ -971,6 +978,12 @@ public class ApplicationGIS {
     public static final Map NO_MAP = ProjectFactory.eINSTANCE.createMap();
     
 
+    /**
+     * Performs a deep copy of a map.
+     *
+     * @param mapToCopy
+     * @return a new instance of the map.
+     */
     public static IMap copyMap(IMap mapToCopy){
         // Load IGeoResources using original map. The new map can't do this because it doesn't have a
     	// Resource(file) and therefore can't resolve relative URIs
@@ -992,6 +1005,27 @@ public class ApplicationGIS {
         }
         
         return copy;
+    }
+
+    /**
+     * Creates an instance of the typeToCreate and wraps it with the {@link ProjectElementAdapter}.
+     *
+     * This is part of the mechanism for adding custom items to a Project without needing to learn
+     * the EMF framework.  See the net.refractions.udig.project.element Extension Point.
+     * 
+     * If the typeToCreate is NOT the same or a superclass of the object created or if an object cannot
+     * be created a {@link IllegalArgumentException} will be thrown 
+     * @param project 
+     * 
+     * @param typeToCreate The type of object that is expected to be created.  This is provided as a
+     * check to ensure that the correct type is returned.
+     * @param extensionId the extension to use to create a new instance.
+     * 
+     * @return A {@link ProjectElementAdapter} that wraps/adapts the object created using the extension
+     */
+    public static ProjectElementAdapter createGeneralProjectElement(
+            IProject project, Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) throws IllegalArgumentException{
+        return ElementFactory.eINSTANCE.createProjectElementAdapter(project, typeToCreate, extensionId);
     }
 
 }

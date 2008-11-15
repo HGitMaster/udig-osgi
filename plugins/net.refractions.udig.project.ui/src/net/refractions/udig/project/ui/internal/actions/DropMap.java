@@ -48,6 +48,9 @@ public class DropMap extends IDropAction {
     public boolean accept( ) {
 
         if (getDestination() instanceof ILayer) {
+        	if(getEvent()==null){
+        		return false;
+        	}
             Control control = ((DropTarget)getEvent().widget).getControl();
             if ( control != LayersView.getViewer().getControl() && !(control instanceof ViewportPane))
                 return false;

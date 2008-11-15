@@ -17,8 +17,11 @@
 package net.refractions.udig.project.ui;
 
 import net.refractions.udig.project.IProjectElement;
+import net.refractions.udig.project.element.IGenericProjectElement;
+import net.refractions.udig.project.element.ProjectElementAdapter;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPersistableElement;
 
 /**
  * So the project explorer could generically open any editor.
@@ -69,11 +72,27 @@ public abstract class UDIGEditorInput implements IEditorInput {
     public void setEditorId( String editorID ) {
         this.editorID = editorID;
     }
-    
-    
-    
-    
-    
-    
+
+	public boolean exists() {
+		return true;
+	}
+
+	public IPersistableElement getPersistable() {
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
+		if( adapter.isAssignableFrom(projectElement.getClass())){
+			return projectElement;
+		}
+		if( projectElement instanceof ProjectElementAdapter){
+			IGenericProjectElement genericProjectElement = ((ProjectElementAdapter) projectElement).getBackingObject();
+			if( adapter.isAssignableFrom(genericProjectElement.getClass())){
+				return genericProjectElement;
+			}
+		}
+		return null;
+	}
 
 }

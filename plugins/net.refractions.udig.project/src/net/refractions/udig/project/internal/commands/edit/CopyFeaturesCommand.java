@@ -33,6 +33,7 @@ import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Messages;
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.command.navigation.SetViewportBBoxCommand;
+import net.refractions.udig.project.internal.render.ViewportModel;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -45,6 +46,7 @@ import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.collection.AdaptorFeatureCollection;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -77,7 +79,7 @@ public class CopyFeaturesCommand extends AbstractCommand implements UndoableMapC
     // for undo
     private Id addedFeaturesFilter;
     private Filter previousDesinationLayerFilter;
-    private Envelope previousEnvelope;
+    private ReferencedEnvelope previousEnvelope;
 
     public CopyFeaturesCommand( ILayer sourceLayer, Filter filter, ILayer destinationLayer ) {
         this.sourceLayer = sourceLayer;
@@ -162,12 +164,16 @@ public class CopyFeaturesCommand extends AbstractCommand implements UndoableMapC
 
             double d = env.getHeight() / 2;
             double e = env.getWidth() / 2;
-            ReferencedEnvelope bbox = new ReferencedEnvelope(env.getMinX() - e, env.getMaxX() + e,
-                    env.getMinY() - d, env.getMaxY() + d, getMap().getViewportModel().getCRS());
-
-            NavCommand command = new SetViewportBBoxCommand(bbox);
-
-            getMap().sendCommandSync(command);
+            
+            ViewportModel viewportModel = getMap().getViewportModelInternal();
+			viewportModel.eSetDeliver(false);
+            try {
+				viewportModel.setBounds(
+						env.getMinX() - e, env.getMaxX() + e,
+						env.getMinY() - d, env.getMaxY() + d);
+			}finally{
+            	viewportModel.eSetDeliver(true);
+            }
         }
     }
 

@@ -19,7 +19,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.P_REMOVE_LAYERS, true);
         store.setDefault(PreferenceConstants.P_WARN_IRREVERSIBLE_COMMAND, true);
         store.setDefault(PreferenceConstants.P_ANTI_ALIASING, true);
-//        store.setDefault(PreferenceConstants.P_TILED_RENDERING, true);
 		store.setDefault(PreferenceConstants.P_DEFAULT_CRS, -1);
         store.setDefault(PreferenceConstants.P_TRANSPARENCY, true);
         store.setDefault(PreferenceConstants.P_TILING_RENDERER, false);

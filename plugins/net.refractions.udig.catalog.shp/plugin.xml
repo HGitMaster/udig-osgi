@@ -53,6 +53,22 @@
              name="%changeCharset"
              targetClass="net.refractions.udig.catalog.internal.shp.ShpServiceImpl">
        </operation>
+       <operation
+             categoryId="net.refractions.udig.catalog.ui.operation.resourceCategory"
+             class="net.refractions.udig.catalog.shp.op.SetProjection"
+             enablesFor="+"
+             id="net.refractions.udig.catalog.shp.prj.write"
+             menuPath="net.refractions.udig.catalog.ui.operation.resourceCategory"
+             name="%writePRJ"
+             targetClass="java.lang.Object">
+          <enablement>
+             <and>
+                <adaptsTo
+                      target="org.geotools.data.shapefile.ShapefileDataStore">
+                </adaptsTo>
+             </and>
+          </enablement>
+       </operation>
     </extension>
     <extension
           id="net.refractions.udig.catalog.shp.operations"

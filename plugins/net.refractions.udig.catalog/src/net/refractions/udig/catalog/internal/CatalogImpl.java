@@ -492,9 +492,7 @@ public class CatalogImpl extends ICatalog {
     		return type.cast(service);
     	}
     	
-    	if( IGeoResource.class.isAssignableFrom( type )){    		
-//    		String uri = ID.toExternalForm();
-    		
+    	if( IResolve.class.isAssignableFrom( type ) ){    		
             for( IService service : services ) {
             	if( URLUtils.urlEquals( ID, service.getIdentifier(), true ) ){
             		IResolve child = getChildById( service, ID, monitor2 );
@@ -519,7 +517,7 @@ public class CatalogImpl extends ICatalog {
      * <ul>
      * <li>This will only be called for Identifiers which are well known.
      * <li>The Services being checked have already been screened, and only a
-     * limited number of services (ussually 1) will be called.
+     * limited number of services (usually 1) will be called.
      *    <ol>
      *    <li>The Id was acquired from the catalog ... and this is a look-up, in which case the uri exists.
      *    <li>The Id was persisted.

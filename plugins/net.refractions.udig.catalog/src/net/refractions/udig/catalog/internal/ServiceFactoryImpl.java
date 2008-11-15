@@ -19,7 +19,6 @@ package net.refractions.udig.catalog.internal;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,34 +71,7 @@ public class ServiceFactoryImpl implements IServiceFactory {
 
     /** @deprecated use createService */    
     public List<IService> acquire( final URL id, final Map<String, Serializable> params ) {
-        final List<IService> services = new LinkedList<IService>();
-
-        // load services
-        ExtensionPointUtil.process(CatalogPlugin.getDefault(),
-                ServiceExtension.EXTENSION_ID, new ExtensionPointProcessor(){
-                    /**
-                     * Attempt to construct a service, and add to the list if available.
-                     * <p>
-                     * Note: ExtentionPointUtil will log exceptions against provided plugin.
-                     * </p>
-                     * 
-                     * @see net.refractions.udig.core.internal.ExtensionPointProcessor#process(org.eclipse.core.runtime.IExtension,
-                     *      org.eclipse.core.runtime.IConfigurationElement)
-                     * @param extension
-                     * @param element
-                     */
-                    public void process( IExtension extension, IConfigurationElement element )
-                            throws Exception {
-                        ServiceExtension se = (ServiceExtension) element
-                                .createExecutableExtension("class"); //$NON-NLS-1$                   
-                        IService service = se.createService(id, params);
-                        if (service != null) {
-                            services.add(service);
-                        }
-                    }
-                });
-
-        return services;
+    	return createService(params);
     }
     
     /**
@@ -157,7 +129,39 @@ public class ServiceFactoryImpl implements IServiceFactory {
         return candidates;
     }
 
-    public List<IService> createService( Map<String, Serializable> connectionParameters ) {
-        return acquire(null, connectionParameters );
+    public List<IService> createService( final Map<String, Serializable> connectionParameters ) {
+        final List<IService> services = new LinkedList<IService>();
+        lock.lock();
+        try {
+			// load services
+			ExtensionPointUtil.process(CatalogPlugin.getDefault(),
+					ServiceExtension.EXTENSION_ID,
+					new ExtensionPointProcessor() {
+						/**
+						 * Attempt to construct a service, and add to the list if available.
+						 * <p>
+						 * Note: ExtentionPointUtil will log exceptions against provided plugin.
+						 * </p>
+						 * 
+						 * @see net.refractions.udig.core.internal.ExtensionPointProcessor#process(org.eclipse.core.runtime.IExtension,
+						 *      org.eclipse.core.runtime.IConfigurationElement)
+						 * @param extension
+						 * @param element
+						 */
+						public void process(IExtension extension,
+								IConfigurationElement element) throws Exception {
+							ServiceExtension se = (ServiceExtension) element
+									.createExecutableExtension("class"); //$NON-NLS-1$                   
+							IService service = se.createService(null,
+									connectionParameters);
+							if (service != null) {
+								services.add(service);
+							}
+						}
+					});
+		} finally {
+            lock.unlock();
+        }
+        return services;
     }
 }

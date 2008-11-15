@@ -148,6 +148,11 @@ public class WorkflowWizard extends Wizard {
         };
         try {
             run(runnable);
+    	}catch (NullPointerException e) {
+            CatalogUIPlugin.log("", e); //$NON-NLS-1$
+    		// HACK A really bad hack because this sometimes causes a null pointer when
+    		// wizard dialog calls stopped.  it appears that sometimes the wait
+    		// cursor is null odd.  but I dn't have time to track it down.
         } catch (Exception e) {
             CatalogUIPlugin.log("", e); //$NON-NLS-1$
             return false;

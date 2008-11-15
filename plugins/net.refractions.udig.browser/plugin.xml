@@ -18,18 +18,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            allowMultiple="true"
             class="net.refractions.udig.browser.ui.BrowserContainerView"
             id="net.refractions.udig.browser.ui.browserContainerView"
             name="%view.name"/>
-   </extension>
-   <extension
-         point="net.refractions.udig.browser.externalCatalogWizard">
-      <externalCatalogue
-            id="net.refractions.udig.browser.externalCatalogue1"
-            name="net.refractions.udig.browser.externalCatalogue1">
-         <externalCatalogueURL url="http://udig.refractions.net"/>
-      </externalCatalogue>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

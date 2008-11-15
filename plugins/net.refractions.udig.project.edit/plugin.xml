@@ -6,7 +6,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: plugin.xml 15082 2005-08-03 23:07:09Z jgarnett $
+ * $Id: plugin.xml 30939 2008-10-29 12:52:51Z jeichar $
  */
 -->
 
@@ -17,6 +17,7 @@
          <itemProviderAdapterFactory class="net.refractions.udig.project.internal.provider.ProjectItemProviderAdapterFactory"/>
          <itemProviderAdapterFactory class="org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory"/>
          <itemProviderAdapterFactory class="net.refractions.udig.project.internal.render.provider.RenderItemProviderAdapterFactory"/>
+         <itemProviderAdapterFactory class="net.refractions.udig.project.element.provider.ElementItemProviderAdapterFactory"/>
       </extension>
 </plugin>
 

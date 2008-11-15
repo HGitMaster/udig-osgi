@@ -140,7 +140,6 @@ public interface Map extends ProjectElement, IMap {
      * @return The Envelope in Lat Long that indicates the maximum bounding box of the map.
      * @throws IOException
      * @model transient="true" changeable="false" unsettable='true' default=''
-     *        dataType="org.geotools.geometry.JTS.ReferencedEnvelope"
      */
     public ReferencedEnvelope getBounds( IProgressMonitor monitor );
 

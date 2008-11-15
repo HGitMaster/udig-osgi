@@ -73,18 +73,18 @@ public class TileImageReadWriter {
 	public String getTileDirectoryPath(Tile tile) {
 		URL service = this.server.getService();
 		String serverURL = service.getHost()+"_"+service.getPath(); //$NON-NLS-1$
-		serverURL = serverURL.replace('\\', '_'); 
-		serverURL = serverURL.replace('/', '_'); 
+		serverURL = serverURL.replace('\\', '_'); //$NON-NLS-1$ //$NON-NLS-2$
+		serverURL = serverURL.replace('/', '_'); //$NON-NLS-1$ //$NON-NLS-2$
 		String layers = tile.getTileSet().getLayers();
 		layers += "_"+tile.getTileSet().getEPSGCode();//$NON-NLS-1$
 		layers += "_"+tile.getTileSet().getFormat(); //$NON-NLS-1$
-		layers = layers.replace(',', '_'); 
-		layers = layers.replace(':', '_'); 
-		layers = layers.replace('\\', '_');
-		layers = layers.replace('/', '_'); 
+		layers = layers.replace(',', '_'); //$NON-NLS-1$ //$NON-NLS-2$
+		layers = layers.replace(':', '_'); //$NON-NLS-1$ //$NON-NLS-2$
+		layers = layers.replace('\\', '_');//$NON-NLS-1$ //$NON-NLS-2$
+		layers = layers.replace('/', '_'); //$NON-NLS-1$ //$NON-NLS-2$
 		Double scale = tile.getScale();
 		String scaleStr = scale.toString();
-		scaleStr = scaleStr.replace('.', '_'); 
+		scaleStr = scaleStr.replace('.', '_'); //$NON-NLS-1$ //$NON-NLS-2$
 		return baseTileFolder+"\\"+serverURL+"\\"+layers+"\\"+scaleStr+"\\"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}	
 

@@ -14,16 +14,11 @@
  */
 package net.refractions.udig.project.internal.impl;
 
+
 import net.refractions.udig.catalog.IGeoResource;
-import net.refractions.udig.core.internal.ExtensionPointProcessor;
-import net.refractions.udig.core.internal.ExtensionPointUtil;
-import net.refractions.udig.project.StyleContent;
 import net.refractions.udig.project.interceptor.LayerInterceptor;
 import net.refractions.udig.project.internal.Layer;
-import net.refractions.udig.project.internal.ProjectPlugin;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
+import net.refractions.udig.project.internal.SetDefaultStyleProcessor;
 
 /**
  * Sets the default style of the 
@@ -34,8 +29,8 @@ public class SetStyleInterceptor implements LayerInterceptor {
 
     public void run( Layer layer ) {
         if( layer.getStyleBlackboard().getContent().isEmpty()){
-            ExtensionPointProcessor scp = createDefaultStyles(layer.getGeoResource(), layer);
-            ExtensionPointUtil.process(ProjectPlugin.getPlugin(), StyleContent.XPID, scp);
+            SetDefaultStyleProcessor scp = createDefaultStyles(layer.getGeoResource(), layer);
+            scp.run();
         }
     }
 
@@ -45,19 +40,8 @@ public class SetStyleInterceptor implements LayerInterceptor {
      * @param theLayer
      * @return
      */
-    private ExtensionPointProcessor createDefaultStyles( final IGeoResource theResource, final Layer theLayer ) {
-        ExtensionPointProcessor scp = new ExtensionPointProcessor(){
-            public void process( IExtension extension, IConfigurationElement element )
-                    throws Exception {
-                StyleContent styleContent = (StyleContent) element
-                        .createExecutableExtension("class"); //$NON-NLS-1$
-                Object style = styleContent.createDefaultStyle(theResource, theLayer.getDefaultColor(), null);
-
-                if (style != null ) {
-                    theLayer.getStyleBlackboard().put(styleContent.getId(), style);
-                }
-            }
-        };
+    private SetDefaultStyleProcessor createDefaultStyles( final IGeoResource theResource, final Layer theLayer ) {
+        SetDefaultStyleProcessor scp = new SetDefaultStyleProcessor(theResource, theLayer);
         return scp;
     }
 

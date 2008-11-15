@@ -14,9 +14,10 @@
  */
 package net.refractions.udig.catalog.internal.wmsc;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,11 +35,7 @@ import net.refractions.udig.catalog.wmsc.server.WMSCCapabilities;
 import net.refractions.udig.catalog.wmsc.server.WMSCCapabilitiesResponse;
 import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.geotools.data.ows.Capabilities;
-import org.geotools.ows.ServiceException;
 
 /**
  * A WMS-C Service. See Specifications:
@@ -49,7 +46,7 @@ import org.geotools.ows.ServiceException;
  */
 public class WMSCServiceImpl extends IService {
 
-    private static final String CAPABILITIES = "capabilities";
+    private static final String CAPABILITIES_KEY = "net.refractions.udig.catalog.internal.wms.WMSCServiceImpl.capabilities"; //$NON-NLS-1$
     /**
      * <code>WMS_URL_KEY</code> field Magic param key for Catalog WMSC persistence.
      */
@@ -182,31 +179,27 @@ public class WMSCServiceImpl extends IService {
             dsLock.lock();
             try {
                 if (wmsc == null) {
-                    if( getPersistentProperties().containsKey(CAPABILITIES)){
+                	Serializable serializable = getPersistentProperties().get(CAPABILITIES_KEY);
+                    if( serializable != null){
                         try {
-                            String xml = (String) getPersistentProperties().get(CAPABILITIES);                        
-                           WMSCCapabilitiesResponse response;
+                            String xml = (String) serializable;
 
-                            response = new WMSCCapabilitiesResponse("txt/xml", /*new StringReader(xml)*/null );
-                            WMSCCapabilities capabilities = (WMSCCapabilities) response.getCapabilities();                        
-                            
-                            // TODO: grab capabiliites xml and parse it
-                            // this constructor should note that it needs to check
-                            // the updateSequence magic number thingy
-                            wmsc = new TiledWebMapServer(this.url, capabilities );    
+                            // NOTE: this constructor will check
+                            // the updateSequence number and compare it to any
+                            // capabilities it can fetch from the server
+                            wmsc = new TiledWebMapServer(this.url, xml, true );    
                         } catch (Exception e) {                            
-                            WmsPlugin.log("Restore from cached capabilities failed", e);
+                            WmsPlugin.log("Restore from cached capabilities failed", e); //$NON-NLS-1$
                         }
                     }
                     if( wmsc == null){
                         // we could not reconstruct from our cached capabilities?
                         
-                        // this constructor will grab the capabilies when
+                        // this constructor will grab the capabilities when
                         // first needed
                         wmsc = new TiledWebMapServer(this.url);
-                        
-                        String xml = null; // figure out xml requested
-                        getPersistentProperties().put( CAPABILITIES, xml );                        
+                        String xml = wmsc.getCapabilitiesXml(); 
+                        getPersistentProperties().put( CAPABILITIES_KEY, xml );
                     }
                 }
             } finally {

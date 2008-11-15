@@ -62,7 +62,7 @@ public class ServiceParameterPersister {
 		this.reference=reference;
 	}
 	/**
-	 * Using the conection parameter information in the preferences node
+	 * Using the connection parameter information in the preferences node
 	 * restore the state of the local catalog.
 	 * 
 	 * @param node
@@ -84,6 +84,7 @@ public class ServiceParameterPersister {
 					}
 					
 					Preferences propertiesPref = servicePref.node(PROPERTIES_KEY);
+					propertiesPref.flush();
                     Map<String, Serializable> properties = restoreProperties(propertiesPref);
 
 					locateService(url, connectionParams, properties);
@@ -334,6 +335,7 @@ public class ServiceParameterPersister {
                     
                     Preferences propertiesNode = serviceNode.node(PROPERTIES_KEY);                    
                     storeProperties( propertiesNode, persistentProperties );
+                    propertiesNode.flush();
                 } catch (Exception e) {
                     throw (RuntimeException) new RuntimeException( ).initCause( e );
                 }
@@ -371,8 +373,9 @@ public class ServiceParameterPersister {
                     
                     paramNode.put(VALUE_ID, txt);
                     paramNode.put(TYPE_ID, object.getClass().getName());
+                    paramNode.flush();
                     
-                } catch (UnsupportedEncodingException e) {
+                } catch (Exception e) {
                     System.out.println("Could not encode "+KEY+" - "+e);
                 }
             }
@@ -388,11 +391,16 @@ public class ServiceParameterPersister {
         Map<String, Serializable> map = new HashMap<String, Serializable>();
         String[] keys;
         try {
-            keys = preference.keys();
+            keys = preference.childrenNames(); //preference.keys();
             for( int j = 0; j < keys.length; j++ ) {
                 final String KEY = keys[j];
                 Preferences paramNode = preference.node(KEY);                
                 String txt = paramNode.get(VALUE_ID,null);
+                try {
+					txt= URLDecoder.decode( txt, ENCODING );
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
                 String type = paramNode.get(TYPE_ID,null);
                 
                 Serializable value = toObject( txt, type );

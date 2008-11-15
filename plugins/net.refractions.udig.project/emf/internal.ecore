@@ -45,6 +45,7 @@
         changeable="false" transient="true" resolveProxies="false"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="transactionType" eType="#//Class"
         changeable="false" volatile="true" transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="editLayerLocked" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="selectedLayer" eType="#//Layer"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Layer" eSuperTypes="#//ILayer #//IAdaptable #//IBlockingAdaptable #//IResolveChangeListener">
@@ -60,6 +61,7 @@
         transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="styleBlackboard" eType="#//StyleBlackboard"
         containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="zorder" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         transient="true" defaultValueLiteral="0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="selectable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
@@ -224,7 +226,7 @@
   <eClassifiers xsi:type="ecore:EDataType" name="ColourPalette" instanceClassName="net.refractions.udig.ui.palette.ColourPalette"/>
   <eClassifiers xsi:type="ecore:EDataType" name="ColourScheme" instanceClassName="net.refractions.udig.ui.palette.ColourScheme"/>
   <eClassifiers xsi:type="ecore:EDataType" name="MutablePicoContainer" instanceClassName="org.picocontainer.MutablePicoContainer"/>
-  <eClassifiers xsi:type="ecore:EDataType" name="ReferencedEnvelope" instanceClassName="org.geotools.geometry.JTS.ReferencedEnvelope"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="ReferencedEnvelope" instanceClassName="org.geotools.geometry.jts.ReferencedEnvelope"/>
   <eClassifiers xsi:type="ecore:EDataType" name="FeatureEvent" instanceClassName="org.geotools.data.FeatureEvent"/>
   <eClassifiers xsi:type="ecore:EDataType" name="Class" instanceClassName="java.lang.Class"/>
   <eClassifiers xsi:type="ecore:EDataType" name="IllegalArgumentException" instanceClassName="java.lang.IllegalArgumentException"/>

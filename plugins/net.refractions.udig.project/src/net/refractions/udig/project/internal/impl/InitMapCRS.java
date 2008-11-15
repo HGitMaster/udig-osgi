@@ -10,6 +10,8 @@ package net.refractions.udig.project.internal.impl;
 
 import java.util.List;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.interceptor.LayerInterceptor;
 import net.refractions.udig.project.internal.Layer;
@@ -35,19 +37,15 @@ public class InitMapCRS implements LayerInterceptor {
 	        // If the default CRS == -1 then the preferences declare that the CRS should be the CRS of the first layer added
 	        // If the Current CRS==ViewportModel.BAD_DEFAULT then it can also be changed.  It means that the DEFAULT_CRS was
 	        // an illegal EPSG code
-	        if( defaultCRS!=-1 && layer.getMap().getViewportModel().getCRS()==ViewportModel.BAD_DEFAULT ){
+	        CoordinateReferenceSystem crs = layer.getMap().getViewportModel().getCRS();
+			if( defaultCRS!=-1 && crs==ViewportModel.BAD_DEFAULT ){
 	            return;
 	        }
 	        List<ILayer> layers = layer.getMapInternal().getMapLayers();
-	        if( layers.size()>1){
+	        //  If first layer or if the crs has been unchanged from the original CRS
+	        if( layers.size()>1&&crs!=ViewportModel.DEFAULT_CRS){
 	            return;
 	        }
-//	        for( ILayer layer2 : layers ) {
-//                if( layer2.getCRS()!=ILayer.UNKNOWN_CRS && layer2!=layer){
-//                    // The CRS has already been set so return
-//                    return;
-//                }
-//            }
 	        
 	        layer.getMapInternal().getViewportModelInternal().setCRS(layer.getCRS());
         }

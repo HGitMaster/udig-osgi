@@ -449,7 +449,9 @@ public class TiledRendererCreatorImpl implements RendererCreator {
             layers = new ArrayList<Layer>();
             layers.add(layer);
         }
-        
+        if (renderMetricsFactories == null){
+            initRenderMetricFactories();
+        }
         for( Layer l : layers ) {    
             List<AbstractRenderMetrics> m = createRenderMetrics(renderMetricsFactories, l, manager.getViewportModelInternal().getBounds());
             layerToRenderMetrics.put(l, m);

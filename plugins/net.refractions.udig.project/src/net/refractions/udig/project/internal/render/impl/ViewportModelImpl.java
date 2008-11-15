@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ViewportModelImpl.java 30919 2008-10-24 17:52:28Z egouge $
+ * <copyright></copyright> $Id: ViewportModelImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -14,7 +14,6 @@ import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.ProjectPackage;
 import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.internal.render.RenderFactory;
 import net.refractions.udig.project.internal.render.RenderManager;
 import net.refractions.udig.project.internal.render.RenderPackage;
 import net.refractions.udig.project.internal.render.ViewportModel;
@@ -69,21 +68,11 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
     public static final String copyright = "uDig - User Friendly Desktop Internet GIS client http://udig.refractions.net (C) 2004, Refractions Research Inc. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of the License. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details."; //$NON-NLS-1$
 
     /**
-     * The default value of the '{@link #getCRS() <em>CRS</em>}' attribute. <!-- begin-user-doc
-     * --> <!-- end-user-doc -->
-     * 
-     * @see #getCRS()
-     * @generated NOT
-     * @ordered
-     */
-    public static final CoordinateReferenceSystem CRS_EDEFAULT = null;
-
-    /**
      * The cached value of the '{@link #getCRS() <em>CRS</em>}' attribute. <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * 
      * @see #getCRS()
-     * @generated
+     * @generated NOT
      * @ordered
      */
     protected CoordinateReferenceSystem cRS = DEFAULT_CRS;
@@ -101,21 +90,20 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
      * begin-user-doc --> <!-- end-user-doc -->
      * 
      * @see #getBounds()
-     * @generated
+     * @generated NOT
      * @ordered
      */
-    protected static final Envelope BOUNDS_EDEFAULT = (Envelope) RenderFactory.eINSTANCE
-            .createFromString(RenderPackage.eINSTANCE.getEnvelope(), ""); //$NON-NLS-1$
+    protected static final ReferencedEnvelope BOUNDS_EDEFAULT = NIL_BBOX; //$NON-NLS-1$
 
     /**
      * The cached value of the '{@link #getBounds() <em>Bounds</em>}' attribute. <!--
      * begin-user-doc --> <!-- end-user-doc -->
      * 
      * @see #getBounds()
-     * @generated
+     * @generated NOT
      * @ordered
      */
-    protected Envelope bounds = BOUNDS_EDEFAULT;
+    protected ReferencedEnvelope bounds = BOUNDS_EDEFAULT;
 
     /**
      * The default value of the '{@link #getCenter() <em>Center</em>}' attribute. <!--
@@ -204,10 +192,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
         return cRS;
     }
 
-    /**
-     * @see net.refractions.udig.project.internal.render.ViewportModel#setCRS(org.opengis.referencing.crs.CoordinateReferenceSystem)
-     * @uml.property name="cRS"
-     */
     public void setCRS( CoordinateReferenceSystem newCRS ) {
         double scale = getScaleDenominator();
         if (newCRS == null)
@@ -215,7 +199,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
         if (newCRS.equals(cRS))
             return;
         CoordinateReferenceSystem oldCRS = getCRS();
-        if (getBounds().isNull()) {
+        if (getBounds().isNull() || !validState() ) {
             setCRSGen(newCRS);
 
         } else {
@@ -224,6 +208,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
             try {
                 eSetDeliver(false);
                 cRS = newCRS;
+                bounds = new ReferencedEnvelope(bounds, cRS);
                 if (oldCRS != DefaultEngineeringCRS.GENERIC_2D
                         && oldCRS != DefaultEngineeringCRS.GENERIC_3D
                         && oldCRS != DefaultEngineeringCRS.CARTESIAN_2D
@@ -289,22 +274,26 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
-     * @generated
+     * @generated NOT
      */
     public ReferencedEnvelope getBounds() {
         if( bounds == null ){
             return getMapInternal().getBounds(ProgressManager.instance().get());
         }
-        if (bounds instanceof ReferencedEnvelope) {
-            ReferencedEnvelope env = (ReferencedEnvelope) bounds;
-            if (getCRS().equals(env.getCoordinateReferenceSystem())) {
-                return env;
-            }
-        }
-        bounds = new ReferencedEnvelope(bounds, getCRS());
-        return (ReferencedEnvelope) bounds;
+      
+        return bounds;
     }
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void setBounds(ReferencedEnvelope newBounds) {
+		setCRS(newBounds.getCoordinateReferenceSystem());
+		setBounds((Envelope)newBounds);
+	}
+    
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -332,7 +321,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
                 return;
             }
         }
-        bounds = newBounds;
+        bounds = new ReferencedEnvelope(newBounds,bounds.getCoordinateReferenceSystem());
         fireNotification(oldBounds);
     }
 
@@ -951,7 +940,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
         double maxy = oldBounds.getMaxY();
         double maxx = minx + (event.getSize().width * oldXscale);
         double miny = maxy - (event.getSize().height * oldYscale);
-        this.bounds = new Envelope(minx, maxx, miny, maxy);
+        this.bounds = new ReferencedEnvelope(minx, maxx, miny, maxy, getCRS());
     }
 
     private boolean oldSizeIsValid( MapDisplayEvent event ) {

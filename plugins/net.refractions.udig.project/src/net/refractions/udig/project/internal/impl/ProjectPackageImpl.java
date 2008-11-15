@@ -33,7 +33,6 @@ import net.refractions.udig.project.internal.EditManager;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.LayerFactory;
 import net.refractions.udig.project.internal.Map;
-import net.refractions.udig.project.internal.PicoBlackboard;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.internal.ProjectElement;
 import net.refractions.udig.project.internal.ProjectFactory;
@@ -2001,13 +2000,6 @@ public class ProjectPackageImpl extends EPackageImpl implements ProjectPackage {
         initEClass(iBlockingAdaptableEClass, IBlockingAdaptable.class,
                 "IBlockingAdaptable", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-        initEClass(picoBlackboardEClass, PicoBlackboard.class,
-                "PicoBlackboard", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-        initEAttribute(
-                getPicoBlackboard_PicoContainer(),
-                this.getMutablePicoContainer(),
-                "picoContainer", null, 0, 1, PicoBlackboard.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
         initEClass(blackboardEClass, Blackboard.class,
                 "Blackboard", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
         initEReference(
@@ -2100,6 +2092,9 @@ public class ProjectPackageImpl extends EPackageImpl implements ProjectPackage {
         createResource(eNS_URI);
     }
 
+    /**
+     * @generated
+     */
     private EClassifier getDefaultColor() {
         return defaultColorEDataType ;
     }

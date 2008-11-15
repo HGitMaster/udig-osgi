@@ -114,7 +114,6 @@ public interface ILayer extends Comparable<ILayer> {
      * 
      * @param clazz class of the resource that the IGeoResource claims it can adapt to.
      * @return true if a IGeoResource exists that canResolve to resourceType.
-     * @model
      */
     <T> IGeoResource findGeoResource( Class<T> clazz);
     

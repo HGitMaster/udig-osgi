@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectSwitch.java 23326 2006-12-08 02:42:32Z jeichar $
+ * <copyright></copyright> $Id: ProjectSwitch.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.util;
 
@@ -22,7 +22,6 @@ import net.refractions.udig.project.internal.EditManager;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.LayerFactory;
 import net.refractions.udig.project.internal.Map;
-import net.refractions.udig.project.internal.PicoBlackboard;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.internal.ProjectElement;
 import net.refractions.udig.project.internal.ProjectPackage;
@@ -206,15 +205,6 @@ public class ProjectSwitch {
                 result = defaultCase(theEObject);
             return result;
         }
-        case ProjectPackage.PICO_BLACKBOARD: {
-            PicoBlackboard picoBlackboard = (PicoBlackboard) theEObject;
-            Object result = casePicoBlackboard(picoBlackboard);
-            if (result == null)
-                result = caseIBlackboard(picoBlackboard);
-            if (result == null)
-                result = defaultCase(theEObject);
-            return result;
-        }
         case ProjectPackage.BLACKBOARD: {
             Blackboard blackboard = (Blackboard) theEObject;
             Object result = caseBlackboard(blackboard);
@@ -367,19 +357,6 @@ public class ProjectSwitch {
      * @generated
      */
     public Object caseIBlockingAdaptable( IBlockingAdaptable object ) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpretting the object as an instance of '<em>Pico Blackboard</em>'.
-     * <!-- begin-user-doc --> This implementation returns null; returning a non-null result will
-     * terminate the switch. <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpretting the object as an instance of '<em>Pico Blackboard</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public Object casePicoBlackboard( PicoBlackboard object ) {
         return null;
     }
 

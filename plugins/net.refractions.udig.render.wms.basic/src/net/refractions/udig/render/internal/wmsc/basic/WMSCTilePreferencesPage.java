@@ -1,9 +1,8 @@
 package net.refractions.udig.render.internal.wmsc.basic;
 
+import net.refractions.udig.catalog.internal.PreferenceConstants;
 import net.refractions.udig.catalog.wmsc.server.TileImageReadWriter;
 import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
-import net.refractions.udig.project.preferences.PreferenceConstants;
-
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.render.wms.basic.internal.Messages;
 
@@ -15,7 +14,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;

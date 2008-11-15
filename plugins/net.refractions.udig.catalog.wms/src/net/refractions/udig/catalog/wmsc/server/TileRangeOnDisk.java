@@ -1,15 +1,11 @@
 package net.refractions.udig.catalog.wmsc.server;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.imageio.ImageIO;
-
-import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.preferences.PreferenceConstants;
+import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.internal.PreferenceConstants;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -48,7 +44,7 @@ public class TileRangeOnDisk extends AbstractTileRange {
 		} 		
 		
 		// load the disk cache location from plugin preferences
-		String dir = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
+		String dir = CatalogPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
 		tileReadWriter = new TileImageReadWriter(server, dir);
 		
 		// the super's constructor will have built the list of tiles not loaded, so
@@ -177,6 +173,9 @@ public class TileRangeOnDisk extends AbstractTileRange {
     protected String getFileType() {
     	// format is like "image\png" so strip out the beginning
     	String format = tileset.getFormat();
+    	// remove any numbers from the format (ie: png8, remove 8)
+    	format = format.replaceAll("\\d+", "");  //$NON-NLS-1$ //$NON-NLS-2$
+    	
     	int indexOf = format.indexOf("\\"); //$NON-NLS-1$
     	if (indexOf < 0) {
     		indexOf = format.indexOf("/"); //$NON-NLS-1$

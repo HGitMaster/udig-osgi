@@ -654,7 +654,6 @@ public class LayerDecorator implements Layer, InternalEObject {
 
     /**
      * @see net.refractions.udig.project.ILayer#getGeoResource()
-     * @deprecated
      */
     public IGeoResource getGeoResource() {
         return layer.getGeoResource();

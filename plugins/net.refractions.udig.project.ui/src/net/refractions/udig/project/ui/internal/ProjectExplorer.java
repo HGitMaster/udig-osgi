@@ -20,6 +20,7 @@ import net.refractions.udig.internal.ui.IDropTargetProvider;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IProject;
 import net.refractions.udig.project.IProjectElement;
+import net.refractions.udig.project.element.ProjectElementAdapter;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.Project;
@@ -603,11 +604,17 @@ public class ProjectExplorer extends ViewPart implements IMenuListener, ISetSele
         }
     }
 
-    @SuppressWarnings("unchecked") List getOpenWithActions( Class type ) { 
+    @SuppressWarnings("unchecked") List getOpenWithActions( IProjectElement element ) {
+    	Class<?> type;
+		if( element instanceof ProjectElementAdapter ){
+    		type = ((ProjectElementAdapter)element).getBackingObject().getClass();
+    	}else{
+    		type = element.getClass();
+    	}
         List actions = (List) editorInputsMap.get(type);
         if (actions == null) {
             actions = new ArrayList();
-            List<UDIGEditorInputDescriptor> inputs = ApplicationGIS.getEditorInputs(type);
+            List<UDIGEditorInputDescriptor> inputs = ApplicationGIS.getEditorInputs(element);
             for( Iterator iter = inputs.iterator(); iter.hasNext(); ) {
                 UDIGEditorInputDescriptor desc = (UDIGEditorInputDescriptor) iter.next();
                 Action openWithAction = new OpenWithActions(desc);
@@ -655,8 +662,14 @@ public class ProjectExplorer extends ViewPart implements IMenuListener, ISetSele
      * @return an UDIGEditorInputDescriptor for the provided object.
      */
     public UDIGEditorInputDescriptor getEditorInput( final IProjectElement obj ) {
-        List inputs = getOpenWithActions(obj.getClass());
-        String defaultEditor = (String) defaultEditorMap.get(obj.getClass());
+        List inputs = getOpenWithActions(obj);
+    	Class<?> type;
+		if( obj instanceof ProjectElementAdapter ){
+    		type = ((ProjectElementAdapter)obj).getBackingObject().getClass();
+    	}else{
+    		type = obj.getClass();
+    	}
+        String defaultEditor = (String) defaultEditorMap.get(type);
 
         OpenWithActions action = null;
         if (defaultEditor == null) {

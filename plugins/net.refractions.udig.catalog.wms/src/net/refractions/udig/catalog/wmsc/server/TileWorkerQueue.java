@@ -2,8 +2,8 @@ package net.refractions.udig.catalog.wmsc.server;
 
 import java.util.LinkedList;
 
-import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.preferences.PreferenceConstants;
+import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.internal.PreferenceConstants;
 
 /**
  * This is a work queue for re-using a group of threads to do Tile work.  An example use
@@ -38,7 +38,7 @@ public class TileWorkerQueue {
     
     public TileWorkerQueue() {
     	// check if a preference is set for the max number of threads
-    	int nThreads = ProjectPlugin.getPlugin().getPreferenceStore().getInt(PreferenceConstants.P_WMSCTILE_MAX_CON_REQUESTS);
+    	int nThreads = CatalogPlugin.getDefault().getPreferenceStore().getInt(PreferenceConstants.P_WMSCTILE_MAX_CON_REQUESTS);
     	if (nThreads <= 0) nThreads = defaultWorkingQueueSize;
         this.nThreads = nThreads;
         queue = new LinkedList<Runnable>();

@@ -66,7 +66,7 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="cRS" eType="#//CoordinateReferenceSystem"
         unsettable="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bounds" eType="#//Envelope"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bounds" eType="#//ReferencedEnvelope"
         defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="center" eType="#//Coordinate"
         volatile="true" transient="true"/>
@@ -91,6 +91,8 @@
         defaultValueLiteral="0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="context" eType="#//IRenderContext"
+        transient="true" resolveProxies="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IMapDisplayListener" instanceClassName="net.refractions.udig.project.render.displayAdapter.IMapDisplayListener"
       abstract="true" interface="true"/>
@@ -108,4 +110,7 @@
   <eClassifiers xsi:type="ecore:EDataType" name="MapDisplay" instanceClassName="net.refractions.udig.project.render.displayAdapter.IMapDisplay"/>
   <eClassifiers xsi:type="ecore:EDataType" name="IProgressMonitor" instanceClassName="org.eclipse.core.runtime.IProgressMonitor"/>
   <eClassifiers xsi:type="ecore:EDataType" name="RenderException" instanceClassName="net.refractions.udig.project.render.RenderException"/>
+  <eClassifiers xsi:type="ecore:EClass" name="IRenderContext" instanceClassName="net.refractions.udig.project.render.IRenderContext"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="ReferencedEnvelope" instanceClassName="org.geotools.geometry.jts.ReferencedEnvelope"/>
 </ecore:EPackage>

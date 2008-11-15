@@ -42,7 +42,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  */
 public class OverviewMapView extends ViewPart implements MapPart {
 
-    public static final String ID = "net.refractions.udig.tutorials.rcp.mapViewOverview";
+    public static final String ID = "net.refractions.udig.tutorials.rcp.mapViewOverview"; //$NON-NLS-1$
 
     private MapViewer mapviewer; // main map viewer
     private OverviewMapViewer overviewmapviewer; // overview map viewer
@@ -99,7 +99,7 @@ public class OverviewMapView extends ViewPart implements MapPart {
         // must be called after the mainmap has a mapviewer otherwise
         // we cannot correctly add necessary listeners
         overviewmapviewer.setMap(overviewmap);
-        overviewmapviewer.createLocationBox();
+        overviewmapviewer.createLocationBox(mapviewer.getViewport());
 
         IMenuManager viewMenu = getViewSite().getActionBars().getMenuManager();
 

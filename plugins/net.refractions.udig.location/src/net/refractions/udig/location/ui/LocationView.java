@@ -156,7 +156,7 @@ public class LocationView extends SearchPart {
         text.setEditable(true);
         text.addSelectionListener(new SelectionListener(){
             public void widgetDefaultSelected( SelectionEvent e ) {
-                search(createQuery()); // seach according to filter
+                search(createQuery()); // search according to filter
             }
             public void widgetSelected( SelectionEvent e ) {
                 quick(text.getText());

@@ -45,8 +45,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -155,14 +157,22 @@ public class CRSChooser {
         codesLabel.setLayoutData(gridData);
 
         gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
-        searchText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        searchText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.CANCEL);
         searchText.setLayoutData(gridData);
         searchText.addModifyListener(new ModifyListener(){
             public void modifyText( ModifyEvent e ) {
                 fillCodesList();
             }
         });
+        searchText.addListener(SWT.KeyUp, new Listener(){
 
+			public void handleEvent(Event event) {
+				if( event.keyCode==SWT.ARROW_DOWN){
+					codesList.getControl().setFocus();
+				}
+			}
+        	
+        });
         gridData = new GridData(400, 300);
         codesList = new ListViewer(composite);
         codesList.setContentProvider(new ArrayContentProvider());
@@ -228,6 +238,10 @@ public class CRSChooser {
         return composite;
     }
 
+    public void setFocus(){
+    	searchText.setFocus();
+    }
+    
     /**
      * Creates the CRS PreferencePage root control with a CRS already selected
      * 

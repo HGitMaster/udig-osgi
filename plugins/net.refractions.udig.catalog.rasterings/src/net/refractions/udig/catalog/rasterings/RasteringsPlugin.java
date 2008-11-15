@@ -3,6 +3,8 @@ package net.refractions.udig.catalog.rasterings;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -93,4 +95,13 @@ public class RasteringsPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("net.refractions.udig.catalog.rasterings", path); //$NON-NLS-1$
 	}
+	
+    public static void log( String message2, Throwable t ) {
+        String message=message2;
+        if (message == null)
+            message = ""; //$NON-NLS-1$
+        int status = t instanceof Exception || message != null ? IStatus.ERROR : IStatus.WARNING;
+        getDefault().getLog().log(new Status(status, getDefault().getBundle().getSymbolicName(), IStatus.OK, message, t));
+    }
+
 }

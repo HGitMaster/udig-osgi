@@ -24,3 +24,4 @@ Require-Bundle: org.junit,
  net.refractions.udig.ui,
  net.refractions.udig.project.edit
 Bundle-ActivationPolicy: lazy
+Import-Package: org.junit

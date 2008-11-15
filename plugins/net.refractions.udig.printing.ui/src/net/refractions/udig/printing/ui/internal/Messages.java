@@ -46,6 +46,7 @@ public class Messages extends NLS {
     public static String ExportPDFWizardPage1_SELECT_TEMPLATE;
     public static String ExportPDFWizardPage1_ZOOM_TO_SELECTION;
     public static String MapPart_defaultMapTitle;
+	public static String Landscape_Template_Name;
 	public static String MapEditPolicy_label;
 	public static String MapTreePart_mapLabel;
 	public static String ConnectionCreateCommand_error_targetNull;

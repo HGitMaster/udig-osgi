@@ -168,7 +168,9 @@ public class UpdateThread implements Runnable {
             commands.add(factory.createZoomCommand(zoom));
         }
         if( commands.size()>0 ){
-            context.sendASyncCommand( new NavComposite(commands) );
+            NavComposite composite = new NavComposite(commands);
+            composite.addFinalizerCommand(new InvalidateCommand(command));
+			context.sendASyncCommand( composite );
         }
         amount=0;
         if( command!=null ){

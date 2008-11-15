@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
+import net.refractions.udig.internal.ui.UiPlugin;
+
 import org.eclipse.swt.widgets.Display;
 
 class UDIGDisplaySafeCondition implements Condition{
@@ -96,7 +98,12 @@ class UDIGDisplaySafeCondition implements Condition{
             }
             // unlock while running display events.
             owningLock.internalLock.unlock();
-            boolean readAndDispatch = current.readAndDispatch();
+            boolean readAndDispatch = true;
+            try{
+				readAndDispatch = current.readAndDispatch();
+            }catch (Throwable e) {
+            	UiPlugin.log("error occurred in a display event", e);
+			}
 
             // findbugs note:  this is correct behaviour.  It is closed outside this method
             owningLock.internalLock.lock();

@@ -203,7 +203,7 @@ public interface IAbstractContext {
      * XXX: Can we make this a ReferencedEnvelope?
      * </p>
      * 
-     * @return the size of a pixel in world units.
+     * @return the ReferencedEnvelope around the Point
      */
     ReferencedEnvelope getBoundingBox( Point screenLocation, int scalefactor );
 

@@ -48,7 +48,6 @@ import net.refractions.udig.project.internal.render.impl.CompositeRendererImpl;
 import net.refractions.udig.project.internal.render.impl.RenderContextImpl;
 import net.refractions.udig.project.internal.render.impl.RenderExecutorComposite;
 import net.refractions.udig.project.internal.render.impl.RenderExecutorMultiLayer;
-import net.refractions.udig.project.internal.render.impl.RenderJob;
 import net.refractions.udig.project.internal.render.impl.RenderManagerImpl;
 import net.refractions.udig.project.internal.render.impl.TiledCompositeRendererImpl;
 import net.refractions.udig.project.internal.render.impl.TiledRendererCreatorImpl;
@@ -647,9 +646,11 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
                     }
                 }
             }else if (rendertile){
-                //refresh all layers
-                re.setRenderBounds(referencedEnvelope);
-                re.render();
+                if (re.getState() != IRenderer.STARTING){
+                    re.setState(IRenderer.STARTING);
+                    re.setRenderBounds(referencedEnvelope);
+                    re.render();
+            }                
             }
         }
         
@@ -715,8 +716,8 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
                 re.setRenderBounds(tile.getReferencedEnvelope());
                 re.getRenderer().setState(IRenderer.RENDER_REQUEST);
             } else {
-                // kick the renderer to refresh the image
-                re.getRenderer().setState(IRenderer.DONE);
+                //kick the renderer to refresh the image
+               re.getRenderer().setState(IRenderer.DONE);
             }
             tile.setRenderState(Tile.RenderState.RENDERED);
         }
@@ -946,6 +947,12 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
        if (currentconfiguration == null){
             //get new configurations
             Collection<AbstractRenderMetrics> newconfig = ((TiledRendererCreatorImpl)getRendererCreator()).getConfiguration(t.getReferencedEnvelope());
+            // need this because this is taking place in a non-synchronized
+            // block so it is possible for
+            // this code to be executed twice. I want the second run to be
+            // accurate.
+            // might need to be thought about more.
+            renderer.removeAllChildren();
             renderer.addChildren(newconfig);
             newcontexts = null;
         }else{
@@ -1448,7 +1455,7 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
          * @param manager
          */
         public RenderTileJob( TiledRenderManagerDynamic manager ) {
-            super("Pan Tile Rendering Job");
+            super("Pan Tile Rendering Job"); //$NON-NLS-1$
             this.manager = manager;
         }
         

@@ -27,7 +27,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.geotools.cql;bundle-version="2.6.0",
  org.geotools.referencing;bundle-version="2.6.0",
  org.geotools.shapefile;bundle-version="2.6.0"
-Eclipse-LazyStart: true
 Import-Package: com.vividsolutions.jts.geom,
  org.opengis.feature,
  org.opengis.feature.simple,
@@ -39,3 +38,4 @@ Import-Package: com.vividsolutions.jts.geom,
  org.opengis.referencing.operation,
  org.opengis.util,
  org.picocontainer;version="1.2.0"
+Bundle-ActivationPolicy: lazy

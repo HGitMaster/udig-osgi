@@ -927,7 +927,9 @@ public class FeatureTableControl implements ISelectionProvider {
             builder.append(post);
             builder.append('|');
         }
-        
+        if( builder.length()>0 ){
+        	builder.deleteCharAt(builder.length()-1);
+        }
         Pattern pattern;
         try{
             pattern = Pattern.compile(builder.toString(), Pattern.CASE_INSENSITIVE);
@@ -980,6 +982,9 @@ public class FeatureTableControl implements ISelectionProvider {
     }
 
     private boolean matches( Pattern pattern, Object attribute ) {
+    	if( attribute==null){
+    		attribute = "";
+    	}
         String stringValue = attribute.toString();
         return pattern.matcher(stringValue).matches();
     }

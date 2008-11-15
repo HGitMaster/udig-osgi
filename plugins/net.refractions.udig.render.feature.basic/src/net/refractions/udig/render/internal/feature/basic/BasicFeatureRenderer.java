@@ -154,7 +154,7 @@ public class BasicFeatureRenderer extends RendererImpl {
 		IPreferenceStore store = ProjectPlugin.getPlugin().getPreferenceStore();
 		boolean transparency = store
 				.getBoolean(PreferenceConstants.P_TRANSPARENCY);
-
+		try{
         if (style != null) {
             DuplicatingStyleVisitor duplicator = new DuplicatingStyleVisitor();
             style.accept(duplicator);
@@ -162,6 +162,9 @@ public class BasicFeatureRenderer extends RendererImpl {
             if (!transparency) {
                 style = removeTransparency(style);
             }
+        }
+		}catch (Throwable e) {
+		    RendererPlugin.log("Error duplicating style for transparency setting", e); //$NON-NLS-1$
         }
 		if (style == null) {
 			style = Styling.createLineStyle(featureSource.getSchema()

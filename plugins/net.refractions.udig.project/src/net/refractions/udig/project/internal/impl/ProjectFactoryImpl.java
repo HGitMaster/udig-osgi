@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectFactoryImpl.java 30595 2008-08-13 18:38:53Z egouge $
+ * <copyright></copyright> $Id: ProjectFactoryImpl.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -30,7 +30,6 @@ import net.refractions.udig.project.internal.EditManager;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.LayerFactory;
 import net.refractions.udig.project.internal.Map;
-import net.refractions.udig.project.internal.PicoBlackboard;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.internal.ProjectFactory;
 import net.refractions.udig.project.internal.ProjectPackage;
@@ -113,8 +112,6 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
             return createStyleEntry();
         case ProjectPackage.LAYER_FACTORY:
             return createLayerFactory();
-        case ProjectPackage.PICO_BLACKBOARD:
-            return createPicoBlackboard();
         case ProjectPackage.BLACKBOARD:
             return createBlackboard();
         case ProjectPackage.BLACKBOARD_ENTRY:
@@ -332,15 +329,6 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
-    public PicoBlackboard createPicoBlackboard() {
-        PicoBlackboardImpl picoBlackboard = new PicoBlackboardImpl();
-        return picoBlackboard;
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
     public Blackboard createBlackboard() {
         BlackboardImpl blackboard = new BlackboardImpl();
         return blackboard;
@@ -380,35 +368,42 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
         return super.convertToString(eDataType, instanceValue);
     }
 
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated NOT
-     */
-    public Envelope createEnvelopeFromString( EDataType eDataType, String initialValue ) {
-        if (initialValue.equals("")) //$NON-NLS-1$
-            return new Envelope();
-        String[] coords = initialValue.substring(1, initialValue.length() - 2).split(","); //$NON-NLS-1$
-        return new Envelope(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), Integer
-                .parseInt(coords[2]), Integer.parseInt(coords[3]));
-    }
 
     /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated NOT
-     */
-    public String convertEnvelopeToString( EDataType eDataType, Object instanceValue ) {
-        Envelope env = (Envelope) instanceValue;
-        if (env.isNull())
-            return ""; //$NON-NLS-1$
-        return ((Envelope) instanceValue).toString();
-    }
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated NOT
+	 */
+	public Envelope createEnvelopeFromString(EDataType eDataType,
+			String initialValue) {
+		if (initialValue.equals("")) //$NON-NLS-1$
+			return new Envelope();
+		String[] coords = initialValue.split(","); //$NON-NLS-1$
+		return new ReferencedEnvelope(new Envelope(Double
+				.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double
+				.parseDouble(coords[2]), Double.parseDouble(coords[3])), null);
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated NOT
+	 */
+	public String convertEnvelopeToString(EDataType eDataType,
+			Object instanceValue) {
+		Envelope env = (Envelope) instanceValue;
+		if (env.isNull())
+			return ""; //$NON-NLS-1$
+
+		return env.getMinX()
+				+ "," + env.getMaxX() + "," + env.getMinY() + "," + env.getMaxY(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
     /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
     public Coordinate createCoordinateFromString( EDataType eDataType, String initialValue ) {
         return (Coordinate) super.createFromString(eDataType, initialValue);
     }
@@ -725,6 +720,24 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
         }
     }
 
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public BrewerPalette createBrewerPaletteFromString(EDataType eDataType,
+			String initialValue) {
+		return PlatformGIS.getColorBrewer().getPalette(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public String convertBrewerPaletteToString(EDataType eDataType,
+			Object instanceValue) {
+		return ((BrewerPalette) instanceValue).getName();
+	}
+
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated NOT
@@ -797,7 +810,7 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
         }
         return value;
     }
-    
+
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -820,6 +833,26 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated NOT
+     */
+    public Color createColorFromString( EDataType eDataType, String initialValue ) {
+        
+        return SLD.toColor(initialValue);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated NOT
+     */
+    public String convertColorToString( EDataType eDataType, Object instanceValue ) {
+        Color instance = (Color) instanceValue;
+        return SLD.toHTMLColor(instance);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
     public MutablePicoContainer createMutablePicoContainerFromString( EDataType eDataType,
@@ -835,22 +868,28 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
         return super.convertToString(eDataType, instanceValue);
     }
 
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public ReferencedEnvelope createReferencedEnvelopeFromString( EDataType eDataType,
-            String initialValue ) {
-        return (ReferencedEnvelope) super.createFromString(eDataType, initialValue);
-    }
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public ReferencedEnvelope createReferencedEnvelopeFromString(
+			EDataType eDataType, String initialValue) {
+		String[] parts = initialValue.split("@", 2);
+		Envelope env = createEnvelopeFromString(ProjectPackage.eINSTANCE.getEnvelope(), parts[0]);
+		CoordinateReferenceSystem crs = createCoordinateReferenceSystemFromString(ProjectPackage.eINSTANCE.getCoordinateReferenceSystem(), parts[0]);
+		return new ReferencedEnvelope(env,crs);
+	}
 
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertReferencedEnvelopeToString( EDataType eDataType, Object instanceValue ) {
-        return super.convertToString(eDataType, instanceValue);
-    }
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public String convertReferencedEnvelopeToString(EDataType eDataType,
+			Object instanceValue) {
+		String env = convertEnvelopeToString(ProjectPackage.eINSTANCE.getEnvelope(), instanceValue);
+		String crs = convertCoordinateReferenceSystemToString(ProjectPackage.eINSTANCE.getCoordinateReferenceSystem(), ((ReferencedEnvelope)instanceValue).getCoordinateReferenceSystem());
+		return env+"@"+crs;
+	}
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->

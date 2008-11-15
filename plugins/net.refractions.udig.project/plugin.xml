@@ -27,6 +27,7 @@
    <extension-point id="mapInterceptor" name="mapInterceptor" schema="schema/mapInterceptor.exsd"/>
    <extension-point id="resourceInterceptor" name="resourceInterceptor" schema="schema/resourceInterceptor.exsd"/>
    <extension-point id="layerInterceptor" name="layerInterceptor" schema="schema/layerInterceptor.exsd"/>
+   <extension-point id="element" name="element" schema="schema/element.exsd"/>
    <extension
          point="net.refractions.udig.project.projectElementFactories">
       <projectElementFactory

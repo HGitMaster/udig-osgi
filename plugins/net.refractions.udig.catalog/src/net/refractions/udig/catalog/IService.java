@@ -238,7 +238,12 @@ public abstract class IService implements IResolve {
      * Returns LocalCatalog by defaul, subclass must override iff a custom catalog is used.
      */
     public ICatalog parent( IProgressMonitor monitor ) {
-        return CatalogPlugin.getDefault().getLocalCatalog();
+    	ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
+    	if(localCatalog.getById(IService.class, getIdentifier(), monitor)!=null ) {
+			return localCatalog;
+		} else {
+			return null;
+		}
     }
     /**
      * List of concrete resources (IE with data) managed by this service.

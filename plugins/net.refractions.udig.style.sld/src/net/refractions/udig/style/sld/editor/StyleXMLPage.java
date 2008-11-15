@@ -8,6 +8,10 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.project.internal.SetDefaultStyleProcessor;
+import net.refractions.udig.style.internal.StyleLayer;
+import net.refractions.udig.style.sld.SLDContent;
 import net.refractions.udig.style.sld.SLDPlugin;
 import net.refractions.udig.style.sld.internal.Messages;
 import net.refractions.udig.ui.graphics.SLDs;
@@ -31,12 +35,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.geotools.data.FeatureSource;
+import org.geotools.renderer.style.SLDStyleFactory;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.StyledLayerDescriptor;
+import org.opengis.coverage.grid.GridCoverage;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * This is the "advanced" page that shows the raw SLD file.
@@ -231,7 +240,7 @@ public class StyleXMLPage extends StyleEditorPage {
             return true;
         } else {
             //inform the user that the SLD is invalid -- fix it or lose it
-            return MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+            return MessageDialog.openQuestion(Display.getCurrent().getActiveShell(),
                 Messages.StyleEditor_xml_lose_changes_1, 
                 Messages.StyleEditor_xml_lose_changes_2); 
         }
@@ -298,7 +307,7 @@ public class StyleXMLPage extends StyleEditorPage {
 
         //generate the SLD
         StyledLayerDescriptor sld = null;
-        Style style;
+        Style style = null;
         String xml = sldTextBox.getText();
         if (xml == null) {
             resetCursor(waitCursor);
@@ -308,15 +317,37 @@ public class StyleXMLPage extends StyleEditorPage {
             sld = XMLtoSLD(xml);
             style = SLDs.getDefaultStyle(sld);
         } catch (Exception e) {
-            SLDPlugin.log("SLD application failed", e);
             
-            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+            validSLD = false;
+
+            boolean result = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                     Messages.StyleEditor_xml_failure_1, 
                     Messages.StyleEditor_xml_failure_2);
             
-            validSLD = false;
             resetCursor(waitCursor);
-            return false; //abort
+            
+            if( result ){
+                try {
+                    StyleLayer layer = getContainer().getSelectedLayer();
+                    IGeoResource resource = layer.findGeoResource(FeatureSource.class);
+                    if( resource!=null ){
+                        style = (Style) new SLDContent().createDefaultStyle(resource, layer.getDefaultColor(), null);
+                    }else{
+                        resource = layer.findGeoResource(GridCoverage.class);
+                        if( resource!=null ){
+                            style = (Style) new SLDContent().createDefaultStyle(resource, layer.getDefaultColor(), null);
+                        }
+                    }
+                    if( style!=null ){
+                        sld = SLDContent.createDefaultStyledLayerDescriptor(style);
+                        setStyle(style);
+                        refresh();
+                    }
+                } catch (IOException e1) {
+                    throw (RuntimeException) new RuntimeException( ).initCause( e1 );
+                }
+            } else return false; // abort
+            
         }
         //update the style / SLD
         if (sld != null && style != null) {

@@ -21,6 +21,7 @@ import net.refractions.udig.catalog.IGeoResourceInfo;
 
 import org.eclipse.core.runtime.IStatus;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultEngineeringCRS;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -60,15 +61,15 @@ public class ArcGridGeoResourceInfo extends IGeoResourceInfo {
                             ptBounds.getMaximum(1));
 					
 					CoordinateReferenceSystem crs = source.getCoordinateReferenceSystem();
-					
+
+					CoordinateReferenceSystem geomcrs = 
+                        source.getCoordinateReferenceSystem();
+                    if(geomcrs == null) {
+                        geomcrs=DefaultEngineeringCRS.GENERIC_2D;
+                    }
+
 					this.bounds = new ReferencedEnvelope(env, crs);
 					
-//					if (crs != null) {
-//						if (!crs.equals(CRS.decode("EPSG:4269")))
-//							this.bounds = this.bounds.transform(CRS.decode("EPSG:4269"), true);
-//					} else {
-//						System.err.println("CRS unknown for ASCIIGrid");
-//					}
 				} catch (Exception e) {
 					System.err.println("source = exception");
 					CatalogPlugin.getDefault().getLog().log(new org.eclipse.core.runtime.Status(IStatus.WARNING, 

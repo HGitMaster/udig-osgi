@@ -58,6 +58,7 @@ public interface IEditManager {
      * Indicates whether the editlayer can be changed.
      * 
      * @return true if the current editlayer is locked and cannot be changed.
+     * @model 
      */
     public boolean isEditLayerLocked();
 

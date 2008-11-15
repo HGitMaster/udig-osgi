@@ -32,7 +32,6 @@ import net.refractions.udig.project.IProject;
 import net.refractions.udig.project.LayerEvent;
 import net.refractions.udig.project.MapCompositionEvent;
 import net.refractions.udig.project.MapEvent;
-import net.refractions.udig.project.ProjectBlackboardConstants;
 import net.refractions.udig.project.MapEvent.MapEventType;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;

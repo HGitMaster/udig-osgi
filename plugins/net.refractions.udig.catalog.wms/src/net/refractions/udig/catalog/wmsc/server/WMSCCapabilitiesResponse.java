@@ -14,8 +14,11 @@
  */
 package net.refractions.udig.catalog.wmsc.server;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -34,10 +37,12 @@ import org.xml.sax.SAXException;
  *<p>
  * http://wiki.osgeo.org/wiki/WMS_Tiling_Client_Recommendation#GetCapabilities_Responses
  * </p>
- * @author Emily Gouge (Refractions Research, Inc)
+ * @author Emily Gouge, Graham Davis (Refractions Research, Inc)
  * @since 1.1.0
  */
 public class WMSCCapabilitiesResponse extends GetCapabilitiesResponse {
+	
+	private String getCaps_xml;
 
     /**
      * Creates a new response for a given content type and input.
@@ -49,7 +54,11 @@ public class WMSCCapabilitiesResponse extends GetCapabilitiesResponse {
     public WMSCCapabilitiesResponse( String contentType, InputStream inputStream )
             throws ServiceException, IOException {
         super(contentType, inputStream);
-
+        
+        // first store the getcaps as a string so we can persist it, then create a 
+        // new inpuststream from it to convert into a getCaps object.
+        getCaps_xml = convertStreamToString(inputStream);
+        inputStream = new ByteArrayInputStream(getCaps_xml.getBytes());
         
         try {
             Map<String, Object> hints = new HashMap<String, Object>();
@@ -72,4 +81,36 @@ public class WMSCCapabilitiesResponse extends GetCapabilitiesResponse {
             inputStream.close();
         }
     }
+    
+    private String convertStreamToString(InputStream is) {
+        /*
+         * To convert the InputStream to String we use the BufferedReader.readLine()
+         * method. We iterate until the BufferedReader return null which means
+         * there's no more data to read. Each line will appended to a StringBuilder
+         * and returned as String.
+         */
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+ 
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n"); //$NON-NLS-1$
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+ 
+        return sb.toString();
+    }
+
+	public String getCapabilitiesXml() {
+		return getCaps_xml;
+	}
 }

@@ -188,10 +188,6 @@ public class FeatureUtils {
                     binding)) {
                 queryAttributes.put(defaultGeometry.getName().getLocalPart(), sourceSchema.getGeometryDescriptor()
                         .getName().getLocalPart());
-            } else if (binding.isAssignableFrom(
-                    GeometryCollection.class)
-                    && !defaultGeometry.getType().getBinding().isAssignableFrom(GeometryCollection.class)) {
-
             } else {
                 // we have to look through all the source attributes looking for a geometry that
                 // matches.

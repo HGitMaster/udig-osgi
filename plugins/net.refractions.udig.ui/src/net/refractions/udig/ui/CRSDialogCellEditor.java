@@ -14,9 +14,7 @@
  */
 package net.refractions.udig.ui;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DialogCellEditor;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,37 +40,14 @@ public class CRSDialogCellEditor extends DialogCellEditor {
 		
         @Override
         protected Object openDialogBox( Control cellEditorWindow ) {
-            final CoordinateReferenceSystem[] result=new CoordinateReferenceSystem[1];
             
-            final Dialog d=new Dialog(cellEditorWindow.getDisplay().getActiveShell()){
-                final CRSChooser chooser=new CRSChooser();
-                
-                @Override
-                protected Control createDialogArea( Composite parent ) {
-                    chooser.setController(new Controller(){
-
-                        public void handleClose() {
-                            close();
-                        }
-
-                        public void handleOk() {
-                            result[0]=chooser.getCRS();
-                        }
-                        
-                    });
-                    return chooser.createControl(parent, (CoordinateReferenceSystem) getValue());
-                }
-                
-                @Override
-                public boolean close() {
-                    result[0]=chooser.getCRS();
-                    return super.close();
-                }
-            };
-            d.setBlockOnOpen(true);
-            d.open( );
-            if( result[0]==null || result[0].equals(getValue()) )
+            final CRSChooserDialog d = new CRSChooserDialog(cellEditorWindow
+				.getDisplay().getActiveShell(),
+				(CoordinateReferenceSystem) getValue());
+		d.setBlockOnOpen(true);
+		d.open( );
+            if( d.getResult()==null || d.getResult().equals(getValue()) )
                 return null;
-            return result[0];
+            return d.getResult();
         }
 }

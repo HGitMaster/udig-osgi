@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectPackage.java 27342 2007-10-03 03:41:01Z jeichar $
+ * <copyright></copyright> $Id: ProjectPackage.java 30939 2008-10-29 12:52:51Z jeichar $
  */
 package net.refractions.udig.project.internal;
 
@@ -2542,7 +2542,7 @@ public interface ProjectPackage extends EPackage {
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for data type '<em>Referenced Envelope</em>'.
      * @see org.geotools.geometry.jts.ReferencedEnvelope
-     * @model instanceClass="org.geotools.geometry.JTS.ReferencedEnvelope"
+     * @model instanceClass="org.geotools.geometry.jts.ReferencedEnvelope"
      * @generated
      */
     EDataType getReferencedEnvelope();

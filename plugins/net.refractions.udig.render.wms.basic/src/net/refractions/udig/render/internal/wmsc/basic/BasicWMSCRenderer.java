@@ -26,21 +26,21 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.internal.PreferenceConstants;
 import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 import net.refractions.udig.catalog.wmsc.server.Tile;
-import net.refractions.udig.catalog.wmsc.server.TileSet;
-import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
-import net.refractions.udig.catalog.wmsc.server.WMSTile;
 import net.refractions.udig.catalog.wmsc.server.TileListener;
 import net.refractions.udig.catalog.wmsc.server.TileRange;
 import net.refractions.udig.catalog.wmsc.server.TileRangeInMemory;
 import net.refractions.udig.catalog.wmsc.server.TileRangeOnDisk;
+import net.refractions.udig.catalog.wmsc.server.TileSet;
+import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
 import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
+import net.refractions.udig.catalog.wmsc.server.WMSTile;
 import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
-import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.render.impl.RendererImpl;
-import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.render.IRenderer;
 import net.refractions.udig.project.render.RenderException;
 import net.refractions.udig.render.wms.basic.WMSPlugin;
@@ -136,7 +136,7 @@ public class BasicWMSCRenderer extends RendererImpl implements IRenderer {
             // look up the preference for caching tiles on-disk or in 
             // memory and use the proper tilerange for that.
             TileRange range = null;
-            String value = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_CACHING);
+            String value = CatalogPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_CACHING);
             if (value.equals(WMSCTileCaching.ONDISK.toString())) {
             	range = new TileRangeOnDisk(server, tileset, bnds, tilesInRange, requestTileWorkQueue, writeTileWorkQueue);
             }

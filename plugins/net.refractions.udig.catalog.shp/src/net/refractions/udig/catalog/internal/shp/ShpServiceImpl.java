@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveDelta;
@@ -190,11 +191,6 @@ public class ShpServiceImpl extends IService {
 			}finally{
 			    rLock.unlock();
             }
-			IResolveDelta delta = new ResolveDelta(this,
-					IResolveDelta.Kind.CHANGED);
-			((CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog())
-					.fire(new ResolveChangeEvent(this,
-							IResolveChangeEvent.Type.POST_CHANGE, delta));
 		}
 		return info;
 	}
@@ -257,11 +253,19 @@ public class ShpServiceImpl extends IService {
             }
 			IResolveDelta delta = new ResolveDelta(this,
 					IResolveDelta.Kind.CHANGED);
-			((CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog())
-					.fire(new ResolveChangeEvent(this,
-							IResolveChangeEvent.Type.POST_CHANGE, delta));
+			ResolveChangeEvent event = new ResolveChangeEvent(this,
+					IResolveChangeEvent.Type.POST_CHANGE, delta);
+			fire(event);
 		}
 		return ds;
+	}
+
+	private void fire(ResolveChangeEvent event) {
+		ICatalog catalog = parent(new NullProgressMonitor());
+		if( catalog instanceof CatalogImpl){
+			((CatalogImpl)catalog)
+					.fire(event);
+		}
 	}
 
 	private void openIndexGenerationDialog(final ShapefileDataStore ds) {
