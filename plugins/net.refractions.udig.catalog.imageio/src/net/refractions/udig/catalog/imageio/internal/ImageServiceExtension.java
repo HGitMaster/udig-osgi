@@ -30,8 +30,6 @@ import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.coverageio.gdal.dted.DTEDFormatFactory;
 import org.geotools.coverageio.gdal.ecw.ECWFormatFactory;
 import org.geotools.coverageio.gdal.erdasimg.ErdasImgFormatFactory;
-import org.geotools.coverageio.gdal.jp2ecw.JP2ECWFormatFactory;
-import org.geotools.coverageio.gdal.jp2mrsid.JP2MrSIDFormatFactory;
 import org.geotools.coverageio.gdal.mrsid.MrSIDFormatFactory;
 import org.geotools.coverageio.gdal.nitf.NITFFormatFactory;
 
