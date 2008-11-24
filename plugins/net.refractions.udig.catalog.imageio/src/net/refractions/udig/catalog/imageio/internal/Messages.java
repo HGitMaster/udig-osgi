@@ -14,7 +14,7 @@
  *    Lesser General Public License for more details.
  *
  */
-package net.refractions.udig.catalog.imageio;
+package net.refractions.udig.catalog.imageio.internal;
 
 import org.eclipse.osgi.util.NLS;
 
