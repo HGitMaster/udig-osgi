@@ -7,7 +7,7 @@
            name="ImageIO Services"
            point="net.refractions.udig.catalog.ServiceExtension">
       <service
-            class="net.refractions.udig.catalog.imageio.internal.ImageServiceExtension"
+            class="net.refractions.udig.catalog.imageio.ImageServiceExtension"
             id="imageio"
             name="Image IO"/>
    </extension>

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.refractions.udig.catalog.imageio.internal;
+package net.refractions.udig.catalog.imageio;
 
 import net.refractions.udig.catalog.IServiceInfo;
 

@@ -14,7 +14,7 @@
  *    Lesser General Public License for more details.
  *
  */
-package net.refractions.udig.catalog.imageio.internal;
+package net.refractions.udig.catalog.imageio;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 

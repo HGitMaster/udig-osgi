@@ -6,7 +6,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  */
-package net.refractions.udig.catalog.imageio.internal;
+package net.refractions.udig.catalog.imageio;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension2;
 import net.refractions.udig.catalog.URLUtils;
-import net.refractions.udig.catalog.imageio.Messages;
+import net.refractions.udig.catalog.imageio.internal.Messages;
 
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;

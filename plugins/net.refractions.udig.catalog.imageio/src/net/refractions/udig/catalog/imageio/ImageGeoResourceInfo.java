@@ -1,4 +1,4 @@
-package net.refractions.udig.catalog.imageio.internal;
+package net.refractions.udig.catalog.imageio;
 
 import java.io.File;
 
