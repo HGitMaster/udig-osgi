@@ -107,7 +107,7 @@ public class ResolveManager implements IResolveManager {
     	for( IResolveAdapterFactory factory : registeredFactories ) {
     		try {
 	    		Set<Class> ignoreSet = exceptions.get(factory);
-	    		if( ignoreSet != null || ignoreSet.contains(adapter) ){
+	    		if( ignoreSet != null && ignoreSet.contains(adapter) ){
 	    			continue; // skip this as it is listed as an exception
 	    		}
 	    		if( factory.canAdapt( resolve, adapter)){

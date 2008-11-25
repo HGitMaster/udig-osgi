@@ -172,7 +172,6 @@ public class GeoToolsAdapters {
         };
     }
 	
-    @SuppressWarnings("deprecation")
     static public IProgressMonitor progress(final ProgressListener monitor) {
         if( monitor == null ) return null;
         return new IProgressMonitor(){

@@ -339,7 +339,7 @@ public class LegendGraphic implements MapGraphic {
             x += imageWidth;
         }
         
-        if (text != null || text.length() != 0) {
+        if (text != null && text.length() != 0) {
             graphics.drawString(text, 
                     x+horizontalMargin, 
                     y+graphics.getFontAscent()+textVerticalOffset,
