@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderManagerImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: RenderManagerImpl.java 30965 2008-11-25 01:29:51Z hbullen $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;

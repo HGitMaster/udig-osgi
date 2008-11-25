@@ -14,7 +14,6 @@
  */
 package net.refractions.udig.catalog.internal.ui.actions;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import junit.framework.TestCase;

@@ -15,4 +15,4 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.style,
  net.refractions.udig.catalog,
  net.refractions.udig.ui
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

@@ -17,7 +17,6 @@ import net.refractions.udig.catalog.ui.workflow.State;
 import net.refractions.udig.catalog.ui.workflow.Workflow;
 import net.refractions.udig.catalog.ui.workflow.WorkflowWizard;
 import net.refractions.udig.catalog.ui.workflow.WorkflowWizardDialog;
-import net.refractions.udig.catalog.ui.workflow.WorkflowWizardPage;
 import net.refractions.udig.catalog.ui.workflow.WorkflowWizardPageProvider;
 
 import org.eclipse.jface.dialogs.IDialogConstants;

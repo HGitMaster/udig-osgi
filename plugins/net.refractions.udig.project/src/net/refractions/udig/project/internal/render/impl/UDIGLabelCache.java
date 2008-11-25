@@ -19,8 +19,6 @@ import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.render.ILabelPainter;
 
 import org.geotools.renderer.lite.LabelCacheDefault;

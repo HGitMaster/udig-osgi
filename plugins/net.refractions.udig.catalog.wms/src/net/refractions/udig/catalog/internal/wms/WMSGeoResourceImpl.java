@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,6 @@ import org.geotools.data.wms.request.GetLegendGraphicRequest;
 import org.geotools.data.wms.response.GetLegendGraphicResponse;
 import org.geotools.data.wms.xml.WMSSchema;
 import org.geotools.geometry.GeneralEnvelope;
-import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.ows.ServiceException;
 import org.geotools.referencing.CRS;
@@ -55,7 +53,6 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Envelope;
 

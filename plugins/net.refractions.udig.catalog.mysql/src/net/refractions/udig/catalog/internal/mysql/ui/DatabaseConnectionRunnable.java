@@ -25,7 +25,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 /**

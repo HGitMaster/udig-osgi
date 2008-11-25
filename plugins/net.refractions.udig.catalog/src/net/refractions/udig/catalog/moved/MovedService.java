@@ -10,13 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import net.refractions.udig.catalog.IForward;
 import net.refractions.udig.catalog.IGeoResource;
-import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class represents a service that has been moved to a new location.

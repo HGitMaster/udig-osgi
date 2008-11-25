@@ -10,19 +10,19 @@ import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import net.refractions.udig.catalog.wms.internal.Messages;
+import net.refractions.udig.catalog.wmsc.server.Tile;
+import net.refractions.udig.catalog.wmsc.server.TileListener;
+import net.refractions.udig.catalog.wmsc.server.TileRangeOnDisk;
+import net.refractions.udig.catalog.wmsc.server.TileSet;
+import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
+import net.refractions.udig.ui.PlatformGIS;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import com.vividsolutions.jts.geom.Envelope;
-
-import net.refractions.udig.catalog.wmsc.server.Tile;
-import net.refractions.udig.catalog.wmsc.server.TileListener;
-import net.refractions.udig.catalog.wmsc.server.TileRangeOnDisk;
-import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
-import net.refractions.udig.catalog.wmsc.server.TileSet;
-import net.refractions.udig.catalog.wms.internal.Messages;
-import net.refractions.udig.ui.PlatformGIS;
 
 /**
  * A collection of utility methods for managing WMS-C Tiles

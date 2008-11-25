@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  net.refractions.udig.ui;visibility:=reexport,
  net.refractions.udig.project.ui,
  net.refractions.udig.issues
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.validation

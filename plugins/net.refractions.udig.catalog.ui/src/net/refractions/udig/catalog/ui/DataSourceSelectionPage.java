@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.refractions.udig.catalog.ui.internal.Messages;
 import net.refractions.udig.catalog.ui.workflow.DataSourceSelectionState;
-import net.refractions.udig.catalog.ui.workflow.State;
 import net.refractions.udig.catalog.ui.workflow.WorkflowWizardPage;
 import net.refractions.udig.internal.ui.UiPlugin;
 

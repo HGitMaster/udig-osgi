@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderFactoryImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: RenderFactoryImpl.java 30965 2008-11-25 01:29:51Z hbullen $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -19,7 +19,6 @@ import net.refractions.udig.core.internal.ExtensionPointList;
 import net.refractions.udig.project.internal.ProjectFactory;
 import net.refractions.udig.project.internal.ProjectPackage;
 import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.internal.impl.ProjectFactoryImpl;
 import net.refractions.udig.project.internal.render.MultiLayerRenderer;
 import net.refractions.udig.project.internal.render.RenderExecutor;
 import net.refractions.udig.project.internal.render.RenderFactory;

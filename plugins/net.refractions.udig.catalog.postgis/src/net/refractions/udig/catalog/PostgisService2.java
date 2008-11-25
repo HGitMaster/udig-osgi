@@ -14,11 +14,11 @@
  */
 package net.refractions.udig.catalog;
 
-import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.DATABASE;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.HOST;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.PASSWD;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.PORT;
+import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.USER;
 
 import java.io.IOException;

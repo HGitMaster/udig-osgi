@@ -2,12 +2,6 @@ package net.refractions.udig.render.gridcoverage.tool.info;
 
 import java.awt.Rectangle;
 
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import net.refractions.udig.project.ui.ApplicationGIS;
 import net.refractions.udig.project.ui.commands.SelectionBoxCommand;
 import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
@@ -15,6 +9,12 @@ import net.refractions.udig.project.ui.tool.AbstractModalTool;
 import net.refractions.udig.project.ui.tool.ModalTool;
 import net.refractions.udig.render.gridcoverage.tool.info.internal.MosaicInfoView;
 import net.refractions.udig.render.internal.gridcoverage.basic.RendererPlugin;
+
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 public class MoasicInfoTool extends AbstractModalTool implements ModalTool {
 

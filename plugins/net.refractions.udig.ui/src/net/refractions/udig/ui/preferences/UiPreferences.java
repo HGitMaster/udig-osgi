@@ -3,7 +3,6 @@ package net.refractions.udig.ui.preferences;
 import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.ui.internal.Messages;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;

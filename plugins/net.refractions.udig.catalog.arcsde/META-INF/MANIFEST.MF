@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.catalog,
  net.refractions.udig.catalog.ui,
  net.refractions.udig.libs
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/jsde_sdk-XX.jar,
  lib/jsde-jpe-XX.jar

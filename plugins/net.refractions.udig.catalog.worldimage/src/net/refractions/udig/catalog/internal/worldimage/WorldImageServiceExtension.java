@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension2;

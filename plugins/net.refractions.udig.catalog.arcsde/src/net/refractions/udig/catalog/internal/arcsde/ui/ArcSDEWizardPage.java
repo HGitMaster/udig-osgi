@@ -34,7 +34,6 @@ import net.refractions.udig.catalog.ui.wizard.DataBaseConnInfo;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.geotools.arcsde.ArcSDEDataStoreFactory;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DataAccessFactory.Param;

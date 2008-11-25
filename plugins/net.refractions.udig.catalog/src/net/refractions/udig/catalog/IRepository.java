@@ -17,7 +17,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -26,8 +25,6 @@ import net.refractions.udig.ui.ErrorManager;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Interface to capture both the Local Catalog resources and Web Registry Service.

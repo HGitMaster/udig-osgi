@@ -2,13 +2,12 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ProjectItemProvider.java 29109 2008-02-06 18:56:12Z jeichar $
+ * $Id: ProjectItemProvider.java 30965 2008-11-25 01:29:51Z hbullen $
  */
 package net.refractions.udig.project.internal.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import net.refractions.udig.project.IProject;
@@ -19,8 +18,6 @@ import net.refractions.udig.project.internal.ProjectPackage;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
-import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;

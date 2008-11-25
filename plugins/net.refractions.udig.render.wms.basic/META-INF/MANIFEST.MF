@@ -19,4 +19,4 @@ Require-Bundle: net.refractions.udig.project,
  net.refractions.udig.render.gridcoverage.basic,
  net.refractions.udig.style.wms,
  net.refractions.udig.catalog.wms
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

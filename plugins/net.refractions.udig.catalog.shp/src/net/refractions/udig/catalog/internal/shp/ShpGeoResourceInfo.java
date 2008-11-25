@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.shp.internal.Messages;
-import net.refractions.udig.ui.graphics.Glyph;
 
 import org.eclipse.core.runtime.IStatus;
 import org.geotools.data.FeatureSource;

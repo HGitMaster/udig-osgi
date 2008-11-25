@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
@@ -33,6 +31,8 @@ import net.refractions.udig.catalog.internal.wmsc.WMSCServiceExtension;
 import net.refractions.udig.catalog.internal.wmsc.WMSCServiceImpl;
 import net.refractions.udig.catalog.ui.UDIGConnectionFactory;
 import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
+
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Connection factory for a wmsc service.

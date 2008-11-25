@@ -22,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.util.Arrays;
 import java.util.List;
 
 import net.refractions.udig.project.internal.Layer;

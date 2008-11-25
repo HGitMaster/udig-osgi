@@ -6,13 +6,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import javax.xml.transform.TransformerException;
-
 import net.refractions.udig.catalog.IGeoResource;
-import net.refractions.udig.project.internal.SetDefaultStyleProcessor;
 import net.refractions.udig.style.internal.StyleLayer;
 import net.refractions.udig.style.sld.SLDContent;
-import net.refractions.udig.style.sld.SLDPlugin;
 import net.refractions.udig.style.sld.internal.Messages;
 import net.refractions.udig.ui.graphics.SLDs;
 
@@ -36,16 +32,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.geotools.data.FeatureSource;
-import org.geotools.renderer.style.SLDStyleFactory;
 import org.geotools.styling.SLDParser;
-import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.opengis.coverage.grid.GridCoverage;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * This is the "advanced" page that shows the raw SLD file.

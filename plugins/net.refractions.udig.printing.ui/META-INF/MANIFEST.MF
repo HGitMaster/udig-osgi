@@ -30,5 +30,5 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.legend,
  net.refractions.udig.style.sld,
  com.lowagie.itext
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Import-Package: net.refractions.udig.ui.dialogs

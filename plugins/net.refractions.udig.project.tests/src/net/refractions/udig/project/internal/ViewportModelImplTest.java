@@ -4,15 +4,11 @@ import java.awt.Dimension;
 
 import junit.framework.TestCase;
 import net.refractions.udig.project.internal.render.ViewportModel;
-import net.refractions.udig.project.internal.render.impl.ScaleUtils;
-import net.refractions.udig.project.render.displayAdapter.IMapDisplay;
 import net.refractions.udig.project.tests.support.MapTests;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;

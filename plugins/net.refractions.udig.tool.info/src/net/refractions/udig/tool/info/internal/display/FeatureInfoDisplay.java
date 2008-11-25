@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureReader;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.collection.DecoratingFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

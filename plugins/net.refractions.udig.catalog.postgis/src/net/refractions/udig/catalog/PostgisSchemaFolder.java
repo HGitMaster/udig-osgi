@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import net.refractions.udig.catalog.IResolveFolder;
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.core.internal.CorePlugin;
 

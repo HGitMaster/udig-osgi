@@ -2,7 +2,6 @@ package net.refractions.udig.printing.ui.pdf;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.PageAttributes.OriginType;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
@@ -31,17 +30,12 @@ import net.refractions.udig.printing.ui.internal.PrintingPlugin;
 import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
-import net.refractions.udig.project.internal.Project;
-import net.refractions.udig.project.internal.ProjectFactory;
 import net.refractions.udig.project.internal.command.navigation.SetViewportBBoxCommand;
-import net.refractions.udig.project.internal.commands.SetScaleCommand;
-import net.refractions.udig.project.internal.render.SelectionStyleContent;
 import net.refractions.udig.project.ui.ApplicationGIS;
 import net.refractions.udig.project.ui.BoundsStrategy;
 import net.refractions.udig.project.ui.SelectionStyle;
 import net.refractions.udig.project.ui.ApplicationGIS.DrawMapParameter;
 import net.refractions.udig.project.ui.internal.MapEditorInput;
-import net.refractions.udig.style.sld.SLDContent;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -52,10 +46,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.geotools.styling.Style;
 import org.opengis.coverage.grid.GridCoverageReader;
 
-import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;

@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import net.refractions.udig.core.internal.ExtensionPointProcessor;
-import net.refractions.udig.core.internal.ExtensionPointUtil;
 import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IStyleBlackboard;
@@ -15,8 +13,6 @@ import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.render.MultiLayerRenderer;
 import net.refractions.udig.project.internal.render.impl.InternalRenderMetricsFactory.InternalRenderMetrics;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.geotools.util.Range;
 
 /**

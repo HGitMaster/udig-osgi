@@ -24,7 +24,6 @@ import java.util.List;
 import net.refractions.udig.printing.model.Box;
 import net.refractions.udig.printing.model.impl.MapBoxPrinter;
 import net.refractions.udig.printing.ui.Template;
-import net.refractions.udig.project.internal.Map;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;

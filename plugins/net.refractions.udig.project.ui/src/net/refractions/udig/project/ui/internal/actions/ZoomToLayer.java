@@ -18,7 +18,6 @@ package net.refractions.udig.project.ui.internal.actions;
 
 import java.util.Iterator;
 
-import net.refractions.udig.project.command.factory.NavigationCommandFactory;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.command.navigation.SetViewportBBoxCommand;
@@ -39,7 +38,6 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * An action that sets the zoom to include all the data in the layer.

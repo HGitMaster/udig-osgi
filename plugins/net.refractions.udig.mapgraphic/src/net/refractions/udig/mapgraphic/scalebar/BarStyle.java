@@ -16,12 +16,12 @@ package net.refractions.udig.mapgraphic.scalebar;
 
 import java.awt.Color;
 
-import org.eclipse.swt.graphics.Image;
-
 import net.refractions.udig.mapgraphic.MapGraphicPlugin;
 import net.refractions.udig.mapgraphic.internal.Messages;
 import net.refractions.udig.mapgraphic.internal.ui.ImageConstants;
 import net.refractions.udig.project.internal.StyleBlackboard;
+
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A style that representing the type of bar to draw, the color, and the number of intervals to

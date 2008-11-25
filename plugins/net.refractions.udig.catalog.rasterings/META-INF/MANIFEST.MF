@@ -4,12 +4,11 @@ Bundle-Name: uDig Rasterings Plug-in
 Bundle-SymbolicName: net.refractions.udig.catalog.rasterings;singleton:=true
 Bundle-Version: 1.2.0
 Bundle-Activator: net.refractions.udig.catalog.rasterings.RasteringsPlugin
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
  net.refractions.udig.libs,
  net.refractions.udig.ui,
  net.refractions.udig.catalog.shp;resolution:=optional
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.catalog.rasterings

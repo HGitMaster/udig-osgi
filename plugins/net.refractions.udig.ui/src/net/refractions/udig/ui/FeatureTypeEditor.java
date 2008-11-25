@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.refractions.udig.internal.ui.ImageConstants;
 import net.refractions.udig.internal.ui.Images;
 import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.ui.internal.Messages;

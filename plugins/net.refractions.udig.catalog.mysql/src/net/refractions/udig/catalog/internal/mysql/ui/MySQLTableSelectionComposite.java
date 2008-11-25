@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;

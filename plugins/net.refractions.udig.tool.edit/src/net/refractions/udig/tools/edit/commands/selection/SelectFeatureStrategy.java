@@ -22,7 +22,6 @@ import net.refractions.udig.tools.edit.commands.SelectFeatureAsEditFeatureComman
 import net.refractions.udig.tools.edit.commands.SelectFeatureCommand;
 import net.refractions.udig.tools.edit.commands.SelectionParameter;
 import net.refractions.udig.tools.edit.commands.SelectionStrategy;
-import net.refractions.udig.tools.edit.commands.SetEditFeatureCommand;
 import net.refractions.udig.tools.edit.support.EditBlackboard;
 import net.refractions.udig.tools.edit.support.Point;
 

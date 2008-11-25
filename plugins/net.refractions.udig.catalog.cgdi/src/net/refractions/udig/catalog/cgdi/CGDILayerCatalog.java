@@ -12,9 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.ICatalogInfo;
-import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;

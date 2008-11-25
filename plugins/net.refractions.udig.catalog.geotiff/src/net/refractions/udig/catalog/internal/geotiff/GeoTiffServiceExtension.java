@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 

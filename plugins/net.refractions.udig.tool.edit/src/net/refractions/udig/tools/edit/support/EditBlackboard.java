@@ -16,7 +16,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import net.refractions.udig.core.WeakHashSet;
 import net.refractions.udig.tools.edit.EditPlugin;
 import net.refractions.udig.tools.edit.preferences.PreferenceUtil;
 import net.refractions.udig.tools.edit.support.EditBlackboardEvent.EventType;

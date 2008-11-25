@@ -41,7 +41,6 @@ import net.refractions.udig.ui.PlatformGIS;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DataAccessFactory.Param;
 import org.geotools.data.db2.DB2ConnectionFactory;

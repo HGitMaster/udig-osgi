@@ -26,6 +26,7 @@ import net.refractions.udig.core.Pair;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 /**

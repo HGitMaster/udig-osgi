@@ -15,8 +15,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;

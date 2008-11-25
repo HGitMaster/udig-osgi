@@ -1,27 +1,6 @@
 package net.refractions.udig.style.sld;
-import net.refractions.udig.project.internal.StyleBlackboard;
-import net.refractions.udig.style.sld.simple.RasterViewer;
-import net.refractions.udig.style.sld.simple.ScaleViewer;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.geotools.data.wms.WebMapServer;
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.RasterSymbolizer;
-import org.geotools.styling.Rule;
-import org.geotools.styling.SLD;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleBuilder;
-import org.geotools.styling.StyleFactory;
-import org.geotools.styling.Symbolizer;
-import org.opengis.coverage.grid.GridCoverage;
-
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.StyleBlackboard;
-import net.refractions.udig.style.sld.simple.RasterViewer;
 import net.refractions.udig.style.sld.simple.ScaleViewer;
 import net.refractions.udig.ui.graphics.SLDs;
 
@@ -39,6 +18,8 @@ import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
 import org.geotools.styling.Symbolizer;
 import org.opengis.coverage.grid.GridCoverage;
 

@@ -17,8 +17,8 @@ import net.refractions.udig.catalog.internal.wfs.WFSServiceExtension;
 import net.refractions.udig.catalog.internal.wfs.WFSServiceImpl;
 import net.refractions.udig.catalog.ui.UDIGConnectionFactory;
 
-import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.data.wfs.WFSDataStore;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 
 public class WFSConnectionFactory extends UDIGConnectionFactory {
 

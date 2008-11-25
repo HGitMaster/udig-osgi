@@ -17,6 +17,7 @@
 package net.refractions.udig.catalog.wmsc.server;
 
 import java.util.Map;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**

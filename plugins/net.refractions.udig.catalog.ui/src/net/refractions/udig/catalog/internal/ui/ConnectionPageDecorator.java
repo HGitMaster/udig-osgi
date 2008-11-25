@@ -1,7 +1,6 @@
 package net.refractions.udig.catalog.internal.ui;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Collection;
@@ -21,8 +20,6 @@ import net.refractions.udig.catalog.ui.workflow.WorkflowWizardDialog;
 import net.refractions.udig.catalog.ui.workflow.WorkflowWizardPage;
 import net.refractions.udig.ui.PlatformGIS;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.graphics.Image;

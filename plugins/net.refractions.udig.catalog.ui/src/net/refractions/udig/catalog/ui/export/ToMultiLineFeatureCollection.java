@@ -16,7 +16,6 @@ package net.refractions.udig.catalog.ui.export;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.collection.DecoratingFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;

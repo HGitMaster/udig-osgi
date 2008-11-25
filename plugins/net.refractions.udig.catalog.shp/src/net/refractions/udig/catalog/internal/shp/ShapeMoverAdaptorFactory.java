@@ -2,10 +2,10 @@ package net.refractions.udig.catalog.internal.shp;
 
 import java.io.IOException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveAdapterFactory;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class has the responsibility of looking at the provided

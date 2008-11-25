@@ -29,8 +29,6 @@ import java.util.Map;
 import net.refractions.udig.catalog.internal.Messages;
 import net.refractions.udig.ui.ErrorManager;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;

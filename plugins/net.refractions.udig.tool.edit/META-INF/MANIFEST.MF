@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.ui,
  net.refractions.udig.mapgraphic,
  net.refractions.udig.style
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.tool.edit,
  net.refractions.udig.tool.edit.internal,
  net.refractions.udig.tools.edit,

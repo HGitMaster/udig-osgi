@@ -17,4 +17,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  net.refractions.udig.style.wms,
  net.refractions.udig.render.wms.basic
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

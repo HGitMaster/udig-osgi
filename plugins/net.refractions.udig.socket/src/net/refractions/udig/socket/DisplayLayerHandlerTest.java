@@ -1,6 +1,6 @@
 package net.refractions.udig.socket;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.Serializable;

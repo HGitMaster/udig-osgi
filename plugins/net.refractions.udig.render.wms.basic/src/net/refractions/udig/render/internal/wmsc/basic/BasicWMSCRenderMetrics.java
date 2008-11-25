@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotools.util.Range;
-
 import net.refractions.udig.catalog.wmsc.server.TileSet;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.render.Renderer;
 import net.refractions.udig.project.render.AbstractRenderMetrics;
 import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.IRenderMetricsFactory;
+
+import org.geotools.util.Range;
 
 /**
  * Used to describe the rendering abilities of

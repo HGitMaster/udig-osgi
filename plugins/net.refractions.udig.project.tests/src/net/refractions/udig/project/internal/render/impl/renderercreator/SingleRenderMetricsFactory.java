@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotools.util.Range;
-
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.render.Renderer;
 import net.refractions.udig.project.render.AbstractRenderMetrics;
 import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.IRenderMetricsFactory;
 import net.refractions.udig.project.render.IRenderer;
+
+import org.geotools.util.Range;
 
 /**
  * For testing.  Creates a normal Renderer.  Accepts resources that resolve to RendererCreatorTestObjForSingleRenderer objects.

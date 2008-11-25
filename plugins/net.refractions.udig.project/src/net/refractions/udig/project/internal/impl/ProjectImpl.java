@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: ProjectImpl.java 30965 2008-11-25 01:29:51Z hbullen $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -26,7 +26,6 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;

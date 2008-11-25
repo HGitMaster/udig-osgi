@@ -1,6 +1,6 @@
 package net.refractions.udig.mapgraphic.scalebar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

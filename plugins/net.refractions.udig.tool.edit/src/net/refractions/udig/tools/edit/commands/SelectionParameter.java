@@ -3,10 +3,10 @@ package net.refractions.udig.tools.edit.commands;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.opengis.filter.Filter;
-
 import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
 import net.refractions.udig.tools.edit.EditToolHandler;
+
+import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
 

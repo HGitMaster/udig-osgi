@@ -1,7 +1,6 @@
 package net.refractions.udig.project.internal.render.impl;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import net.refractions.udig.project.ILayer;

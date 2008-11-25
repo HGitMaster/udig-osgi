@@ -19,12 +19,12 @@ import java.awt.Font;
 import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IMemento;
-
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.mapgraphic.MapGraphicPlugin;
 import net.refractions.udig.project.StyleContent;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IMemento;
 
 /**
  * This content 

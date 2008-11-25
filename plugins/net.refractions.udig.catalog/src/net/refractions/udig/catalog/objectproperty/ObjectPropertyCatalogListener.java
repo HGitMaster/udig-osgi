@@ -15,14 +15,12 @@
 package net.refractions.udig.catalog.objectproperty;
 
 import java.net.URL;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;
 import net.refractions.udig.catalog.IResolveDelta;
-import net.refractions.udig.catalog.IResolveChangeEvent.Type;
 import net.refractions.udig.catalog.util.SearchIDDeltaVisitor;
 import net.refractions.udig.ui.operations.AbstractPropertyValue;
 

@@ -17,11 +17,8 @@
 package net.refractions.udig.style.sld;
 
 import java.awt.Color;
-import java.awt.image.renderable.ParameterBlock;
 
 import javax.media.jai.Histogram;
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
 
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.StyleBlackboard;

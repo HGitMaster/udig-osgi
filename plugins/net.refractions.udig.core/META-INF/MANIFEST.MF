@@ -15,4 +15,4 @@ Export-Package: net.refractions.udig.core,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  net.refractions.udig.libs;visibility:=reexport
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

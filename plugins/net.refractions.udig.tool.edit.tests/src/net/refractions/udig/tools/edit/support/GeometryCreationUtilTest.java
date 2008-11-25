@@ -20,9 +20,6 @@ import junit.framework.TestCase;
 import net.refractions.udig.tools.edit.support.GeometryCreationUtil.Bag;
 
 import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.feature.type.GeometryDescriptorImpl;
-import org.geotools.feature.type.GeometryTypeImpl;
 import org.opengis.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Geometry;

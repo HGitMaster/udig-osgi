@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: EditManagerImpl.java 29499 2008-02-28 01:06:55Z groldan $
+ * <copyright></copyright> $Id: EditManagerImpl.java 30965 2008-11-25 01:29:51Z hbullen $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -50,7 +50,6 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.collection.DecoratingFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;

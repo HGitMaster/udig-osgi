@@ -21,8 +21,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
-import net.refractions.udig.core.internal.CorePlugin;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 

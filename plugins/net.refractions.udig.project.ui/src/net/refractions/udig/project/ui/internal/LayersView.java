@@ -32,7 +32,6 @@ import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.internal.ContextModel;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
-import net.refractions.udig.project.internal.ProjectFactory;
 import net.refractions.udig.project.internal.ProjectPackage;
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.render.IViewportModelListener;

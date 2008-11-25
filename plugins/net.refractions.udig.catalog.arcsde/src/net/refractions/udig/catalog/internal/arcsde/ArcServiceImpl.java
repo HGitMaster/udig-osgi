@@ -43,7 +43,6 @@ import org.geotools.arcsde.ArcSDEDataStoreFactory;
 import org.geotools.arcsde.data.ArcSDEDataStore;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.DataStore;
-import org.geotools.data.wfs.WFSDataStore;
 
 /**
  * Connect to ArcSDE.

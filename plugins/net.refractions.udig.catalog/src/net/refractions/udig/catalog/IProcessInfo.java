@@ -29,11 +29,7 @@ import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.geotools.data.Parameter;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.process.ProcessFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Represents a bean style metadata ancestor for metadata about a process.

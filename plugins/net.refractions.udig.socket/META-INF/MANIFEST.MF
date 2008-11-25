@@ -8,4 +8,4 @@ Bundle-Vendor: Camptocamp SA
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.project.ui
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

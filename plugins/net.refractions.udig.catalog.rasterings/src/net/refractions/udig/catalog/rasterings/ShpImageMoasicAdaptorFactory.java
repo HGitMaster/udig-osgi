@@ -2,21 +2,16 @@ package net.refractions.udig.catalog.rasterings;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveAdapterFactory;
-import net.refractions.udig.catalog.IResolve.Status;
 import net.refractions.udig.catalog.internal.shp.ShpGeoResourceImpl;
 import net.refractions.udig.catalog.internal.shp.ShpServiceImpl;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.gce.imagemosaic.ImageMosaicFormat;
 import org.geotools.gce.imagemosaic.ImageMosaicReader;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.type.FeatureType;
 
 /**
  * This class teaches ShpGeoResource a new trick - how to be a GridCoverage.

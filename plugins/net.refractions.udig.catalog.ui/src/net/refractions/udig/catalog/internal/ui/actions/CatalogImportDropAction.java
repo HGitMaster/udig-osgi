@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IResolve;
-import net.refractions.udig.catalog.URLUtils;
 import net.refractions.udig.catalog.internal.ui.CatalogImport;
 import net.refractions.udig.catalog.ui.CatalogUIPlugin;
 import net.refractions.udig.catalog.ui.UDIGConnectionFactory;

@@ -30,9 +30,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import net.refractions.udig.catalog.CatalogPlugin;
-import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.ICatalogInfo;
-import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;

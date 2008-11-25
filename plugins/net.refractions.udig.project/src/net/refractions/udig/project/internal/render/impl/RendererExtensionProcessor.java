@@ -10,7 +10,6 @@ import net.refractions.udig.project.internal.render.RenderContext;
 import net.refractions.udig.project.internal.render.RenderManager;
 import net.refractions.udig.project.internal.render.SelectionLayer;
 import net.refractions.udig.project.internal.render.impl.InternalRenderMetricsFactory.InternalRenderMetrics;
-import net.refractions.udig.project.render.AbstractRenderMetrics;
 import net.refractions.udig.project.render.IMultiLayerRenderer;
 import net.refractions.udig.project.render.IRenderMetricsFactory;
 

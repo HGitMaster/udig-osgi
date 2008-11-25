@@ -18,7 +18,6 @@ import java.util.List;
 
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.ProjectBlackboardConstants;
-import net.refractions.udig.project.render.IRenderManager;
 import net.refractions.udig.project.ui.tool.AbstractActionTool;
 
 /**

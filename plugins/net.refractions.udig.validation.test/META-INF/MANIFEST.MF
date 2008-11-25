@@ -16,4 +16,4 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project,
  net.refractions.udig.ui,
  net.refractions.udig.ui.tests
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

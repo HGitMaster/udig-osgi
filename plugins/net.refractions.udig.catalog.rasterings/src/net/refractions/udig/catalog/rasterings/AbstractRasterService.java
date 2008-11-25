@@ -19,11 +19,8 @@ package net.refractions.udig.catalog.rasterings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
@@ -34,7 +31,6 @@ import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.data.DataUtilities;
-import org.opengis.coverage.grid.GridCoverageReader;
 
 /**
  * Provides a handle to a raster service allowing the service to be lazily loaded.

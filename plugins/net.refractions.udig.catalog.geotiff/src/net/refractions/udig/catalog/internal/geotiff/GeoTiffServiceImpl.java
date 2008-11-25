@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.gce.geotiff.GeoTiffFormat;
-import org.opengis.coverage.grid.GridCoverageReader;
 
 /**
  * Provides a handle to a geotiff service allowing the service to be lazily 

@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project.ui;visibility:=reexport,
  net.refractions.udig.style;visibility:=reexport,
  net.refractions.udig.style.sld
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.mapgraphic,
  net.refractions.udig.mapgraphic.grid,
  net.refractions.udig.mapgraphic.internal,

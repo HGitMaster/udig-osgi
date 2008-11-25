@@ -14,9 +14,7 @@
  */
 package net.refractions.udig.catalog.internal.wmsc;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,10 +29,9 @@ import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
-import net.refractions.udig.catalog.wmsc.server.WMSCCapabilities;
-import net.refractions.udig.catalog.wmsc.server.WMSCCapabilitiesResponse;
 import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**

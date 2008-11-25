@@ -14,7 +14,10 @@
  */
 package net.refractions.udig.mapgraphic.scalebar;
 
-import static net.refractions.udig.mapgraphic.scalebar.Unit.*;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.CENTIMETER;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.KILOMETER;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.METER;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;

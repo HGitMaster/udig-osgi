@@ -28,7 +28,6 @@ import net.refractions.udig.catalog.IResolveManager;
 import net.refractions.udig.core.internal.ExtensionPointList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;

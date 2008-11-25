@@ -10,14 +10,14 @@ package net.refractions.udig.project.internal.impl;
 
 import java.util.List;
 
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.interceptor.LayerInterceptor;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.render.ViewportModel;
 import net.refractions.udig.project.preferences.PreferenceConstants;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * This class sets the initial CRS of a map.  

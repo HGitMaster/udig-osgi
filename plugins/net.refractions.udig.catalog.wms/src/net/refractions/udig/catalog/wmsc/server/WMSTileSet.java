@@ -15,11 +15,9 @@
 package net.refractions.udig.catalog.wmsc.server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 

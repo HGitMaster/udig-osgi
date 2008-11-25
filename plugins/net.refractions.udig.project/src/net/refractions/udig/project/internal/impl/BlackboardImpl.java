@@ -2,17 +2,10 @@
  * <copyright>
  * </copyright>
  *
- * $Id: BlackboardImpl.java 30898 2008-10-16 16:01:34Z egouge $
+ * $Id: BlackboardImpl.java 30965 2008-11-25 01:29:51Z hbullen $
  */
 package net.refractions.udig.project.internal.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -36,7 +29,6 @@ import net.refractions.udig.project.internal.Blackboard;
 import net.refractions.udig.project.internal.BlackboardEntry;
 import net.refractions.udig.project.internal.ProjectPackage;
 import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.internal.StyleEntry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;

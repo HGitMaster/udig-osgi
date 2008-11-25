@@ -12,6 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  net.refractions.udig.project,
  net.refractions.udig.project.ui
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.location,
  net.refractions.udig.location.ui

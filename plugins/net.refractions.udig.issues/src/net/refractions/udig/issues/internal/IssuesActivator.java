@@ -1,9 +1,6 @@
 package net.refractions.udig.issues.internal;
 
-import java.net.URL;
-
 import net.refractions.udig.issues.IIssuesManager;
-import net.refractions.udig.ui.PlatformGIS;
 import net.refractions.udig.ui.ProgressManager;
 
 import org.eclipse.core.runtime.IStatus;
