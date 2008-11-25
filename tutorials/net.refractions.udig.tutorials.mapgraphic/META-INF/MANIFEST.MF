@@ -10,4 +10,4 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project.ui,
  net.refractions.udig.mapgraphic,
  net.refractions.udig.tutorials.tool.coordinate
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
