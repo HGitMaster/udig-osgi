@@ -14,10 +14,10 @@
  */
 package net.refractions.udig.tutorials.examples;
 
-import org.opengis.filter.Filter;
-
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.internal.commands.edit.CopyFeaturesCommand;
+
+import org.opengis.filter.Filter;
 
 /**
  * This example shows how to copy features from one layer to another.  It assumes there are two layers

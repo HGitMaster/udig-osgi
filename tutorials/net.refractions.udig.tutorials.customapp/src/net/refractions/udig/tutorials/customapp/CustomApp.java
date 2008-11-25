@@ -4,7 +4,6 @@ import net.refractions.udig.internal.ui.UDIGApplication;
 import net.refractions.udig.internal.ui.UDIGWorkbenchAdvisor;
 
 import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 
 public class CustomApp extends UDIGApplication implements IApplication {

@@ -1,29 +1,7 @@
 package net.refractions.udig.tutorials.examples;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
-import javax.swing.ProgressMonitor;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.IMapCompositionListener;
@@ -36,6 +14,22 @@ import net.refractions.udig.project.ui.BoundsStrategy;
 import net.refractions.udig.project.ui.SelectionStyle;
 import net.refractions.udig.project.ui.ApplicationGIS.DrawMapParameter;
 import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 /**
  * Canvas that uses ApplicationGIS to draw a Map onto an background image (use MapViewer). 

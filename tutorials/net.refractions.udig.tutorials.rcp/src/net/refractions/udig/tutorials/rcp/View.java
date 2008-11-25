@@ -1,6 +1,5 @@
 package net.refractions.udig.tutorials.rcp;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;

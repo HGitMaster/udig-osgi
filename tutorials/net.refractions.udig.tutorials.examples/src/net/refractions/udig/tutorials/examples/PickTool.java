@@ -14,18 +14,17 @@
  */
 package net.refractions.udig.tutorials.examples;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import net.refractions.udig.project.ILayer;
+import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
+import net.refractions.udig.project.ui.tool.SimpleTool;
+import net.refractions.udig.ui.ProgressManager;
+
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.referencing.operation.MathTransform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
-
-import net.refractions.udig.project.ILayer;
-import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
-import net.refractions.udig.project.ui.tool.SimpleTool;
-import net.refractions.udig.ui.ProgressManager;
 
 /**
  * This example is a tool that does a "Pick" from a click on the ViewportPane.  It retrieves all the features

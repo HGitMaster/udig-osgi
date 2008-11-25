@@ -16,12 +16,12 @@ package net.refractions.udig.tutorials.examples;
 
 import java.io.IOException;
 
+import net.refractions.udig.project.internal.Layer;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.data.FeatureEvent;
 import org.geotools.data.FeatureListener;
 import org.geotools.data.FeatureSource;
-
-import net.refractions.udig.project.internal.Layer;
 
 /**
  * In this example an FeatureEvent listener is created and added to a FeatureSource in order to receive

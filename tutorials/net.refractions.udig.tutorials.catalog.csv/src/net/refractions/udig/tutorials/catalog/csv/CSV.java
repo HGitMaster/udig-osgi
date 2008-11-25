@@ -6,9 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.csvreader.CsvReader;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
