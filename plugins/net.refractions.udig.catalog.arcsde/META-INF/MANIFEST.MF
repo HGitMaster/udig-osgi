@@ -16,3 +16,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/jsde_sdk-XX.jar,
  lib/jsde-jpe-XX.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
