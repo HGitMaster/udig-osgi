@@ -17,7 +17,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import net.refractions.udig.catalog.internal.Messages;
@@ -88,7 +87,7 @@ public abstract class IRepository extends ISearch {
      * @param replacement Replacement IService handle; indicating where the service has moved to
      * @throws UnsupportedOperationException
      */
-    public abstract void replace( URL id, IService replacement ) throws UnsupportedOperationException;
+    public abstract void replace( ID id, IService replacement ) throws UnsupportedOperationException;
 
     /**
      * Will attempt to morph into the adaptee, and return that object. Required adaptions:
@@ -131,7 +130,7 @@ public abstract class IRepository extends ISearch {
      * @param monitor used to show the progress of the find.
      * @return List (possibly empty) of matching Resolves
      */
-    public abstract List<IResolve> find( URL resourceId, IProgressMonitor monitor );
+    public abstract List<IResolve> find( ID resourceId, IProgressMonitor monitor );
     
     /**
      * Add a listener to notice when the a resource changes.

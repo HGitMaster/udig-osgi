@@ -31,6 +31,7 @@ import java.util.zip.GZIPInputStream;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalogInfo;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;
@@ -131,7 +132,7 @@ public class GoogleCatalog extends ISearch {
     /*
      * @see net.refractions.udig.catalog.ICatalog#find(java.net.URL)
      */
-    public List<IResolve> find( URI id, IProgressMonitor monitor ) {
+    public List<IResolve> find( ID id, IProgressMonitor monitor ) {
         return new LinkedList<IResolve>();
     }
 
@@ -292,7 +293,7 @@ public class GoogleCatalog extends ISearch {
         catalogListeners.remove(listener);
     }
 	@Override
-	public <T extends IResolve> T getById(Class<T> type, URI id, IProgressMonitor monitor) {
+	public <T extends IResolve> T getById(Class<T> type, ID id, IProgressMonitor monitor) {
 		return null;
 	}
         

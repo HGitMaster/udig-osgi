@@ -41,6 +41,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.ICatalogInfo;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
@@ -171,6 +172,10 @@ public class CatalogImpl extends ICatalog {
                 deltaRemoved));
     }
 
+    @Override
+    public void replace( ID id, IService replacement ) throws UnsupportedOperationException {
+        replace( id.toURL(), replacement );
+    }
     /**
      * This implementation will store a IForward handle
      * at the indicated *id*, recording the fact that entry
@@ -237,12 +242,8 @@ public class CatalogImpl extends ICatalog {
         fire(event);
     }
 
-    public List<IResolve> find( URI id, IProgressMonitor monitor ) {
-        try {
-            return find( id.toURL(), monitor );
-        } catch (MalformedURLException e) {
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
-        }
+    public List<IResolve> find( ID id, IProgressMonitor monitor ) {
+        return find( id.toURL(), monitor );        
     }
     
     /**
@@ -470,12 +471,8 @@ public class CatalogImpl extends ICatalog {
         return null;
     }
     
-    public <T extends IResolve> T getById(Class<T> type, final URI id, IProgressMonitor monitor) {
-        try {
-            return getById( type, id.toURL(), monitor );
-        } catch (MalformedURLException e) {
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
-        }        
+    public <T extends IResolve> T getById(Class<T> type, final ID id, IProgressMonitor monitor) {
+        return getById( type, id.toURL(), monitor );                
     }
     
     @Override

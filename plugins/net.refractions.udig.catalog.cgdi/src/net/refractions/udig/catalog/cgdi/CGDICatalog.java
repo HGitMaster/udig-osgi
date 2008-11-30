@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.refractions.udig.catalog.ICatalogInfo;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;
@@ -151,7 +152,7 @@ public class CGDICatalog extends ISearch {
     /**
      * Returns the empty list ... not georesources here
      */
-    public List<IResolve> find( URI id, IProgressMonitor monitor ) {
+    public List<IResolve> find( ID id, IProgressMonitor monitor ) {
         return new LinkedList<IResolve>(); // this does not find geoResources
     }
 
@@ -393,7 +394,7 @@ public class CGDICatalog extends ISearch {
         catalogListeners.clear();
     }
     @Override
-    public <T extends IResolve> T getById(Class<T> type, URI id, IProgressMonitor monitor) {
+    public <T extends IResolve> T getById(Class<T> type, ID id, IProgressMonitor monitor) {
         return null;
     }
 }

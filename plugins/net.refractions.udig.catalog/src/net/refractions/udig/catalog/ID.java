@@ -12,10 +12,10 @@ import net.refractions.udig.core.internal.CorePlugin;
 /**
  * Identifier used to lookup entries in an local IRespository or remote ISearch.
  * <p>
- * While this identifier is often a URL or URI this class has constructors to 
+ * While an identifier is often defined by URL or URI this class has constructors to 
  * help remove any possibility ambiguity.
  * </p>
- * @author Jody
+ * @author Jody Garnett
  * @since pending
  */
 public class ID {
@@ -49,7 +49,7 @@ public class ID {
             this.uri = url.toURI();
         } catch (URISyntaxException e) {            
         }
-        if( uri.isAbsolute() && "file".equals( uri.getScheme())){
+        if( uri.isAbsolute() && "file".equals( uri.getScheme())){ //$NON-NLS-1$
             file = new File(uri);
         }
         if( file != null ){
@@ -78,7 +78,7 @@ public class ID {
                 url = new URL( null, url.toExternalForm(), CorePlugin.RELAXED_HANDLER );
             }
         }
-        if( uri.isAbsolute() && "file".equals( uri.getScheme())){
+        if( uri.isAbsolute() && "file".equals( uri.getScheme())){ //$NON-NLS-1$
             file = new File(uri);
         }
         else {
@@ -92,13 +92,13 @@ public class ID {
         }
     }
     public ID( ID parent, String child ) {
-        this.id = parent.id+"#"+child;
+        this.id = parent.id+"#"+child; //$NON-NLS-1$
         try {
-            this.url = new URL( null, parent.id.toString()+"#"+child, CorePlugin.RELAXED_HANDLER );
+            this.url = new URL( null, parent.id.toString()+"#"+child, CorePlugin.RELAXED_HANDLER ); //$NON-NLS-1$
         } catch (MalformedURLException e1) {
         }
         try {
-            this.uri = new URI( parent.uri.toString()+"#"+child );
+            this.uri = new URI( parent.uri.toString()+"#"+child ); //$NON-NLS-1$
         } catch (URISyntaxException e) {
         }
         this.file = parent.file;              
@@ -110,6 +110,7 @@ public class ID {
     public URL toURL(){
         return url;
     }
+    
     public URI toURI(){
         return uri;
     }
@@ -119,10 +120,13 @@ public class ID {
 
     @Override
     public int hashCode() {
+        return (id == null) ? 0 : id.hashCode();
+        /*
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
+        */
     }
 
     @Override
@@ -141,4 +145,20 @@ public class ID {
             return false;
         return true;
     }    
+    
+    //
+    // URL Handling
+    //
+    /**
+     * Produce a relative URL for the provided file baseDirectory; if the 
+     * ID is not a file URL (and not contained by the baseDirectory) it
+     * will be returned as provided by toURL().
+     *
+     * @see URLUtils.toRelativePath
+     * @param baseDirectory
+     * @return relative file url if possible; or the same as toURL()
+     */
+    public URL toURL( File baseDirectory ){
+        return URLUtils.toRelativePath( baseDirectory, toURL() );
+    }
 }
