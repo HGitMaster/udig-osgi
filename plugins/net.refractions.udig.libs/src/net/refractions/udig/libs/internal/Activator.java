@@ -17,7 +17,6 @@ import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.resources.image.ImageUtilities;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.osgi.framework.BundleActivator;
@@ -41,7 +40,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
-	    System.setProperty("org.geotools.referencing.forceXY", "true");
+	    System.setProperty("org.geotools.referencing.forceXY", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if( Platform.getOS().equals(Platform.OS_WIN32) ){
 		    try {
@@ -57,7 +56,7 @@ public class Activator implements BundleActivator {
 		//           but they cause epsg-wkt not to work because the
 		//           various wrapper classes trip up over a CRSAuthorityFactory
 		//           that is not also a OperationAuthorityFactory (I think)
-        CoordinateReferenceSystem wgs84 = CRS.decode("EPSG:4326"); // prime the pump - ensure EPSG factory is found
+        CoordinateReferenceSystem wgs84 = CRS.decode("EPSG:4326"); // prime the pump - ensure EPSG factory is found //$NON-NLS-1$
         if( wgs84 == null){
         	String msg = "Unable to locate EPSG authority for EPSG:4326; consider removing temporary geotools/epsg directory and trying again.";
         	System.out.println( msg );
@@ -71,7 +70,7 @@ public class Activator implements BundleActivator {
 		Hints global = new Hints(map);
 		GeoTools.init( global );
 		if( false ){ // how to do debug check with OSGi bundles?
-		    CRS.main(new String[]{"-dependencies"});
+		    CRS.main(new String[]{"-dependencies"}); //$NON-NLS-1$
 		}
 		ReferencingFactoryFinder.scanForPlugins();
 		verifyReferencingEpsg();
@@ -87,8 +86,8 @@ public class Activator implements BundleActivator {
      * @throws Exception if we cannot even get that far
      */
 	private void verifyReferencingEpsg() throws Exception {
-        CoordinateReferenceSystem WGS84 = CRS.decode("EPSG:4326"); // latlong
-        CoordinateReferenceSystem BC_ALBERS = CRS.decode("EPSG:3005");
+        CoordinateReferenceSystem WGS84 = CRS.decode("EPSG:4326"); // latlong //$NON-NLS-1$
+        CoordinateReferenceSystem BC_ALBERS = CRS.decode("EPSG:3005"); //$NON-NLS-1$
         
         MathTransform transform = CRS.findMathTransform(BC_ALBERS, WGS84 );
         DirectPosition here  = new DirectPosition2D( BC_ALBERS, 1187128, 395268 );
@@ -103,7 +102,7 @@ public class Activator implements BundleActivator {
 //        }
         double delta = Math.abs(check.getOrdinate(0) - there.getOrdinate(0))+Math.abs(check.getOrdinate(1) - there.getOrdinate(1));
 		if( delta > 0.0001){
-			String msg = "Referencing failed to transformation with expected accuracy: Off by "+delta + "\n"+check+"\n"+there;
+			String msg = "Referencing failed to transformation with expected accuracy: Off by "+delta + "\n"+check+"\n"+there;  //$NON-NLS-2$//$NON-NLS-3$
 			System.out.println( msg );
         	//throw new FactoryException(msg);
         }	
@@ -119,7 +118,7 @@ public class Activator implements BundleActivator {
 	private void verifyReferencingOperation() throws Exception {
 	       // ReferencedEnvelope[-0.24291497975705742 : 0.24291497975711265, -0.5056179775280899 : -0.0]
         // ReferencedEnvelope[-0.24291497975705742 : 0.24291497975711265, -0.5056179775280899 : -0.0]
-        CoordinateReferenceSystem EPSG4326 = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem EPSG4326 = CRS.decode("EPSG:4326"); //$NON-NLS-1$
         ReferencedEnvelope pixelBounds = new ReferencedEnvelope( -0.24291497975705742, 0.24291497975711265, -0.5056179775280899, 0.0, EPSG4326 );
         CoordinateReferenceSystem WGS84 = DefaultGeographicCRS.WGS84;
         
