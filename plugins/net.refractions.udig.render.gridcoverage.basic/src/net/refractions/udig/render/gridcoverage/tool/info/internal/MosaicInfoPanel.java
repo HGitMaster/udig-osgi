@@ -17,10 +17,13 @@
 package net.refractions.udig.render.gridcoverage.tool.info.internal;
 
 
+import java.awt.image.RenderedImage;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 
@@ -219,8 +222,19 @@ public class MosaicInfoPanel {
                 String colorEnhancementAttribute = imageReader.getColorCorrectionAttributeName();
 
                 //here I am going to need to read in the file to get the possible bands
-                PlanarImage image =
-                    JAI.create("fileload", file.toString()); //$NON-NLS-1$
+                //PlanarImage image = JAI.create("fileload", file.toString()); //$NON-NLS-1$
+                final ParameterBlock pb = new ParameterBlock();
+                pb.add(ImageIO.createImageInputStream(file));
+                pb.add(0);
+                pb.add(new Boolean(false));
+                pb.add(new Boolean(false));
+                pb.add(new Boolean(false));
+                pb.add(null);
+                pb.add(null);
+                pb.add(null);
+                pb.add(null);
+                RenderedImage tmp = JAI.create("ImageRead", pb); //$NON-NLS-1$
+                PlanarImage image = PlanarImage.wrapRenderedImage(tmp);
                             
                 String[] bands = new String[image.getNumBands()];
                 for( int i = 0; i < image.getNumBands(); i++ ) {
