@@ -22,9 +22,14 @@ import net.refractions.udig.project.ILayer;
 import net.refractions.udig.render.gridcoverage.basic.internal.Messages;
 import net.refractions.udig.render.internal.gridcoverage.basic.RendererPlugin;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
@@ -54,6 +59,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  */
 public class MosaicInfoView extends ViewPart {
 
+    private static final String ICONS_DTOOL16_UNDO_EDIT = "icons/dtool16/undo_edit.gif"; //$NON-NLS-1$
+
+    private static final String ICONS_ETOOL16_UNDO_EDIT = "icons/etool16/undo_edit.gif"; //$NON-NLS-1$
+
     /**
      * Identifier
      */
@@ -63,6 +72,11 @@ public class MosaicInfoView extends ViewPart {
     private MosaicInfoPanel infoPanel;
     private Composite ctr;
     private PageBook book;
+    
+    /**
+     * Undo action to allow you to undo the changes
+     */
+    private Action undoAction;
 
     public MosaicInfoView() {
         super();
@@ -77,7 +91,36 @@ public class MosaicInfoView extends ViewPart {
         book.showPage(information);
 
         infoPanel = new MosaicInfoPanel();
+        //add a listeners to deal with undo button
+        infoPanel.addFeatureSelectedListener(new MosaicInfoPanel.FeatureSelectedListener(){
+            public void fireFeatureSelected(SimpleFeature feature){
+                enableUndoAction();
+            }
+        });
+        infoPanel.addFeatureUpdatedListener(new MosaicInfoPanel.FeatureUpdatedListener(){
+            public void fireFeatureUpdated(SimpleFeature feature){
+                enableUndoAction();
+            }
+        });
+        
         ctr = infoPanel.createControl(book);
+        
+        createActions();
+        createToolBar();
+       
+    }
+    
+    /**
+     * Sets the enabled/disabled status of the
+     * undo action based on the information in the infoPanel
+     */
+    private void enableUndoAction(){
+        Display.getDefault().asyncExec(new Runnable(){
+            public void run(){
+                undoAction.setEnabled(infoPanel.canUndo());
+            }
+        });
+        
     }
 
     @Override
@@ -170,6 +213,33 @@ public class MosaicInfoView extends ViewPart {
             reader.close();
         }
         return null;
+    }
+    
+    
+    /**
+     * Create the actions associated with the view.
+     */
+    private void createActions(){
+        undoAction = new Action(Messages.MosaicInfoView_UndoAction){
+            public void run(){
+                if (infoPanel.canUndo()){
+                    infoPanel.undo();
+                }
+            }
+        };
+        undoAction.setDisabledImageDescriptor(RendererPlugin.getImageDescriptor(ICONS_DTOOL16_UNDO_EDIT));
+        undoAction.setImageDescriptor(RendererPlugin.getImageDescriptor(ICONS_ETOOL16_UNDO_EDIT));
+        
+        undoAction.setToolTipText(Messages.MosaicInfoView_UndoActionToolTip);
+        undoAction.setEnabled(false);
+    }
+    
+    /**
+     * Create the view tool bar and add undo action.
+     */
+    private void createToolBar(){
+        IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+        mgr.add(undoAction);
     }
 
     /**

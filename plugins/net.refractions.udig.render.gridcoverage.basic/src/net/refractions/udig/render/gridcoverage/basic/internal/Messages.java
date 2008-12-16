@@ -38,6 +38,8 @@ public class Messages extends NLS {
     public static String MosaicInfoPanel_NoDataText;
     public static String MosaicInfoPanel_RedBandLabel;
     public static String MosaicInfoView_DefaultViewText;
+    public static String MosaicInfoView_UndoAction;
+    public static String MosaicInfoView_UndoActionToolTip;
     static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
