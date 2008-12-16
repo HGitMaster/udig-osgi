@@ -218,7 +218,7 @@ public class OracleSpatialWizardPage extends AbstractProprietaryDatastoreWizardP
         params.put(dbParams[3].key, currentDBCI.getUserString() );
         params.put(dbParams[4].key, currentDBCI.getPassString() );
         params.put(dbParams[5].key, currentDBCI.getDbString() );
-        params.put(dbParams[6].key, currentDBCI.getSchemaString() );
+        params.put(dbParams[9].key, currentDBCI.getSchemaString() );
 
         // not sureabout this line
         // params.put(dbParams[7].key,"MAPINFO"); //$NON-NLS-1$
