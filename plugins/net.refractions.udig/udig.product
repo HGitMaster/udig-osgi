@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="%product.name" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" useFeatures="true">
+<product name="%product.name" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" version="trunk" useFeatures="true">
 
    <aboutInfo>
       <image path="/net.refractions.udig/icons/about.gif"/>
@@ -34,6 +34,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
