@@ -106,12 +106,11 @@ public class ScalebarMapGraphic implements MapGraphic {
     private void drawScaleDenom( MapGraphicContext context ) {
         double scaleDenom = context.getViewportModel().getScaleDenominator();
         IMapDisplay display = context.getMapDisplay();
-        int dpi = display.getDPI();
+        int dpi = display.getDPI(); // pixels per inch
         int displayHeight = display.getHeight();
 
-        double i = 1 / (double) dpi;
-        double d = i * 25.4;
-        double pixelInMeters = d / 1000;
+        double i = 1 / (double) dpi; // invert to get in per pixel
+        double pixelInMeters = i * .0254; // to meters per pixel 
 
         double inMeters = scaleDenom * pixelInMeters;
 
