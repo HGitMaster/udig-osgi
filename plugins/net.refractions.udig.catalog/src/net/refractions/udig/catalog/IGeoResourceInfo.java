@@ -18,6 +18,7 @@ package net.refractions.udig.catalog;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,6 +100,9 @@ public class IGeoResourceInfo {
      * @return Keywords for use with search, or <code>null</code> unavailable.
      */
     public Set<String> getKeywords() { // aka Subject
+        if( keywords == null ){
+            return Collections.emptySet();
+        }
         List<String> asList = Arrays.asList(keywords);
         Set<String> set = new HashSet<String>(asList);
         return set;

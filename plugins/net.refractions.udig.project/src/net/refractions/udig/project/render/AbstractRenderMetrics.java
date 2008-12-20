@@ -327,11 +327,10 @@ public abstract class AbstractRenderMetrics {
             }
         }
         
-        double renderMetric = 1;
+        double renderMetric = 1.0;
         if (expectedStyleIDs.size() > 0){
-            renderMetric = numberStylesICanUse / expectedStyleIDs.size();
+            renderMetric = (double) numberStylesICanUse / (double) expectedStyleIDs.size();
         }
-        
        
         return renderMetric;
     }
@@ -364,9 +363,8 @@ public abstract class AbstractRenderMetrics {
         
         double userMetric = 1;
         if (blackboard.keySet().size() > 0){
-            userMetric = numberStylesICanUse / blackboard.keySet().size();
-        }
-        
+            userMetric = (double) numberStylesICanUse / (double) blackboard.keySet().size();
+        }        
         return userMetric;
     }
     /**

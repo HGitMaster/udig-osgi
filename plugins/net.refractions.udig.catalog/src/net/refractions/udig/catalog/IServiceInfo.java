@@ -18,6 +18,7 @@ package net.refractions.udig.catalog;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,6 +94,9 @@ public class IServiceInfo {
      * @return
      */
     public Set<String> getKeywords() { // aka Subject
+        if( keywords == null ){
+            return Collections.emptySet();
+        }
         return new HashSet<String>(Arrays.asList(keywords));
 
     }
