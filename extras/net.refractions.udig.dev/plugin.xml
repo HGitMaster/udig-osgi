@@ -4,8 +4,7 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            extradir="DEV"
-            file="DEV/index.html"
+            file="toc.xml"
             primary="true"/>
    </extension>
 
