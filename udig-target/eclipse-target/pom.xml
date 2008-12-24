@@ -1,0 +1,377 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.refractions.udig.platform</groupId>
+	<artifactId>eclipse-target</artifactId>
+	<packaging>pom</packaging>
+	<name>UDIG Platform Eclipse Target</name>
+	<version>1.7.0</version>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-brewer</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-coverage</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-cql</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-data</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-wkt</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geotiff</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-metadata</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-render</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-wms</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-xml</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process</artifactId>
+			<version>2.6-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Thirdparty OSGI dependencies -->
+		<dependency>
+			<groupId>org.opengis.osgi</groupId>
+			<artifactId>geoapi</artifactId>
+			<version>2.2-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.java.dev.osgi</groupId>
+			<artifactId>jsr-275</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.media.jai</groupId>
+			<artifactId>com.springsource.javax.media.jai.core</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.media.jai</groupId>
+			<artifactId>com.springsource.javax.media.jai.codec</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.media.jai.osgi</groupId>
+			<artifactId>jai_imageio</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>java3d.osgi</groupId>
+			<artifactId>vecmath</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.batik</groupId>
+			<artifactId>com.springsource.org.apache.batik.dom</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.batik</groupId>
+			<artifactId>com.springsource.org.apache.batik.util</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>com.springsource.org.jdom</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.collections</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.pool</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<dependency>
+    			<groupId>org.apache.log4j</groupId>
+    			<artifactId>com.springsource.org.apache.log4j</artifactId>
+    			<version>1.2.15</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.picocontainer</groupId>
+			<artifactId>com.springsource.org.picocontainer</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.lowagie.text</groupId>
+			<artifactId>com.springsource.com.lowagie.text</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.vividsolutions.osgi</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.batik.osgi</groupId>
+			<artifactId>transcoder</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+   		 	<groupId>org.apache.batik</groupId>
+   		 	<artifactId>com.springsource.org.apache.batik.svggen</artifactId>
+   		 	<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+   			 <groupId>org.apache.batik</groupId>
+    			 <artifactId>com.springsource.org.apache.batik.bridge</artifactId>
+   			 <version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+    			<groupId>org.apache.batik</groupId>
+    			<artifactId>com.springsource.org.apache.batik.gvt</artifactId>
+    			<version>1.7.0</version>
+		</dependency>
+
+
+		<dependency>
+    			<groupId>org.apache.batik</groupId>
+    			<artifactId>com.springsource.org.apache.batik.dom.svg</artifactId>
+    			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+    			<groupId>org.apache.batik</groupId>
+    			<artifactId>com.springsource.org.apache.batik.ext.awt</artifactId>
+    			<version>1.7.0</version>
+		</dependency>
+		<!-- Thirdparty non OSGI -->
+
+
+		<dependency>
+			<groupId>org.wkb4j</groupId>
+			<artifactId>wkb4j</artifactId>
+			<version>1.0-RC1</version>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-bundles</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${output.dir}</outputDirectory>
+
+
+						</configuration>
+					</execution>
+					<execution>
+						<id>unpack</id>
+						<phase>package</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${output.dir}</outputDirectory>
+							<includeArtifactIds>gridgain.deps</includeArtifactIds>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/platform.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net repository</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+
+		<repository>
+			<id>refractions</id>
+			<name>Refractions Research Maven 2 Repository</name>
+			<url>http://lists.refractions.net/m2</url>
+		</repository>
+
+		<repository>
+			<id>com.springsource.repository.bundles.release</id>
+			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+		</repository>
+
+		<repository>
+			<id>com.springsource.repository.bundles.external</id>
+			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/external</url>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>geotools</id>
+			<name>Geotools repository</name>
+			<url>http://maven.geotools.fr/repository</url>
+		</repository>
+
+		<repository>
+			<id>berlios</id>
+			<name>Berlios Temp Repository</name>
+			<url>http://geotools-osgi.berlios.de/repository</url>
+		</repository>
+
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>codehaus-snapshot-plugins</id>
+			<name>codehaus-shapshot-plugins</name>
+			<url>http://snapshots.repository.codehaus.org/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
+			<id>refractions</id>
+			<name>Refractions Research Maven 2 Repository</name>
+			<url>http://lists.refractions.net/m2</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+
+
+	</pluginRepositories>
+
+
+</project>
