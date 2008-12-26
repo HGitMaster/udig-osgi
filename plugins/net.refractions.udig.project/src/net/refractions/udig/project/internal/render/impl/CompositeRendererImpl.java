@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: CompositeRendererImpl.java 30791 2008-09-19 20:31:56Z egouge $
+ * <copyright></copyright> $Id: CompositeRendererImpl.java 31019 2008-12-26 20:29:15Z jeichar $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -364,6 +364,8 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
                     g.drawRenderedImage(executor.getContext().getImage(), IDENTITY);
                 }
                 if(paintLabels){
+                    RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setRenderingHints(hints);
                     ILabelPainter cache = getContext().getLabelPainter();
                     Dimension displaySize = getContext().getMapDisplay().getDisplaySize();
                     cache.end(g, new Rectangle(displaySize));
