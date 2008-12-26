@@ -759,14 +759,16 @@ public class ProjectExplorer extends ViewPart implements IMenuListener, ISetSele
         if ( treeViewer==null )
             return;
         Display d=Display.getCurrent();
+        Runnable runnable = new Runnable(){
+            public void run() {
+                inDisplaySelect(element, reveal);
+            }
+        };
         if( d==null ){
-            Display.getDefault().asyncExec(new Runnable(){
-                public void run() {
-                        inDisplaySelect(element, reveal);
-                }
-            });
-        }else
-            inDisplaySelect(element, reveal);
+            Display.getDefault().asyncExec(runnable);
+        }else{
+            d.asyncExec(runnable);
+        }
 
     }
     AtomicReference<SetSelectionListener> inputChangedListener=
@@ -786,7 +788,8 @@ public class ProjectExplorer extends ViewPart implements IMenuListener, ISetSele
                 contentProvider.addListener(inputChangedListener.get());
             }
             for( IProjectElement element2 : element ) {
-                treeViewer.setExpandedState(element2.getProject(), true);
+                IProject project = element2.getProject();
+                treeViewer.setExpandedState(project, true);
             }
         }
     }
@@ -820,7 +823,7 @@ public class ProjectExplorer extends ViewPart implements IMenuListener, ISetSele
      * @param elementChild the element to select.
      */
     public void setSelection( IProjectElement element, Object elementChild ){
-        
+        throw new UnsupportedOperationException("This method has not been implemented yet");
     }
 
     private class SetSelectionListener implements InputChangedListener{

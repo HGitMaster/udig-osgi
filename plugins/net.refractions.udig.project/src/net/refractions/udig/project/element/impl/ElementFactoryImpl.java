@@ -178,8 +178,7 @@ public class ElementFactoryImpl extends EFactoryImpl implements ElementFactory {
 
     public ProjectElementAdapter createProjectElementAdapter( IProject project,
             Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) {
-        ProjectElementAdapter adapter = ElementFactory.eINSTANCE
-        .createProjectElementAdapter();
+        ProjectElementAdapter adapter = createProjectElementAdapter();
 
         IGenericProjectElement genericProjectElement = createGenericProjectElement(typeToCreate, extensionId);
         adapter.setBackingObject(genericProjectElement);
@@ -188,7 +187,19 @@ public class ElementFactoryImpl extends EFactoryImpl implements ElementFactory {
         return adapter;
     }
 
-    public < T extends IGenericProjectElement>T createGenericProjectElement(
+    public ProjectElementAdapter createProjectElementAdapter( IProject project, String elemName,
+            Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) {
+        ProjectElementAdapter adapter = createProjectElementAdapter();
+        adapter.setName(elemName);
+
+        IGenericProjectElement genericProjectElement = createGenericProjectElement(typeToCreate, extensionId);
+        adapter.setBackingObject(genericProjectElement);
+
+        ((Project) project).getElementsInternal().add(adapter);
+        return adapter;
+    }
+
+    private < T extends IGenericProjectElement>T createGenericProjectElement(
             Class<T> typeToCreate, String extensionId ) {
         List<IConfigurationElement> list = ExtensionPointList
                 .getExtensionPointList(ProjectElementAdapter.EXT_ID);

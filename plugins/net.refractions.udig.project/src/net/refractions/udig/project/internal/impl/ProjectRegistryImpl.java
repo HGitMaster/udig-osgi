@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectRegistryImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: ProjectRegistryImpl.java 31015 2008-12-26 06:44:25Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -285,7 +285,7 @@ public class ProjectRegistryImpl extends EObjectImpl implements ProjectRegistry 
 
     public Project getProject( String projectPath ) {
         // HACK
-        if (!projectPath.startsWith("file://")) { //$NON-NLS-1$
+        if (!projectPath.startsWith("file:")) { //$NON-NLS-1$
             projectPath = "file://" + projectPath; //$NON-NLS-1$
         }
         // DONE HACK

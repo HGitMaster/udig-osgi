@@ -1020,4 +1020,25 @@ public class ApplicationGIS {
         return ElementFactory.eINSTANCE.createProjectElementAdapter(project, typeToCreate, extensionId);
     }
 
+    /**
+     * Creates an instance of the typeToCreate and wraps it with the {@link ProjectElementAdapter}.
+     *
+     * This is part of the mechanism for adding custom items to a Project without needing to learn
+     * the EMF framework.  See the net.refractions.udig.project.element Extension Point.
+     * 
+     * If the typeToCreate is NOT the same or a superclass of the object created or if an object cannot
+     * be created a {@link IllegalArgumentException} will be thrown 
+     * @param project the project to add the newly created adapter to
+     * @param elementName the name of the project to create
+     * @param typeToCreate The type of object that is expected to be created.  This is provided as a
+     * check to ensure that the correct type is returned.
+     * @param extensionId the extension to use to create a new instance.
+     * 
+     * @return A {@link ProjectElementAdapter} that wraps/adapts the object created using the extension
+     */
+    public static ProjectElementAdapter createGeneralProjectElement(
+            IProject project, String elementName, Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) throws IllegalArgumentException{
+        return ElementFactory.eINSTANCE.createProjectElementAdapter(project, elementName, typeToCreate, extensionId);
+    }
+
 }

@@ -144,6 +144,9 @@ public class ProjectElementAdapterItemProvider extends ItemProviderAdapter
 		ProjectElementAdapter projectElementAdapter = ((ProjectElementAdapter) object);
 		IGenericProjectElement backingObject = projectElementAdapter
 				.getBackingObject();
+        if( backingObject ==null ){
+            return null;
+        }
 		String extensionId = backingObject.getExtensionId();
 		IConfigurationElement extension = findExtension(extensionId);
 		String labelProviderAtt = extension.getAttribute(LABEL_PROVIDER_ATT);
@@ -175,6 +178,9 @@ public class ProjectElementAdapterItemProvider extends ItemProviderAdapter
 		ProjectElementAdapter projectElementAdapter = ((ProjectElementAdapter) object);
 		IGenericProjectElement backingObject = projectElementAdapter
 				.getBackingObject();
+        if( backingObject ==null ){
+            return null;
+        }
 		String extensionId = backingObject.getExtensionId();
 		IConfigurationElement extension = findExtension(extensionId);
 		String labelProviderAtt = extension.getAttribute(LABEL_PROVIDER_ATT);
@@ -206,6 +212,9 @@ public class ProjectElementAdapterItemProvider extends ItemProviderAdapter
 		ProjectElementAdapter projectElementAdapter = ((ProjectElementAdapter) object);
 		IGenericProjectElement backingObject = projectElementAdapter
 				.getBackingObject();
+        if( backingObject ==null ){
+            return null;
+        }
 		String extensionId = backingObject.getExtensionId();
 		IConfigurationElement extension = findExtension(extensionId);
 		String labelProviderAtt = extension.getAttribute(LABEL_PROVIDER_ATT);
@@ -240,6 +249,9 @@ public class ProjectElementAdapterItemProvider extends ItemProviderAdapter
 		ProjectElementAdapter projectElementAdapter = ((ProjectElementAdapter) object);
 		IGenericProjectElement backingObject = projectElementAdapter
 				.getBackingObject();
+	      if( backingObject ==null ){
+	            return null;
+	        }
 		String extensionId = backingObject.getExtensionId();
 		IConfigurationElement extension = findExtension(extensionId);
 		String labelProviderAtt = extension.getAttribute(LABEL_PROVIDER_ATT);
@@ -279,6 +291,9 @@ public class ProjectElementAdapterItemProvider extends ItemProviderAdapter
 		ProjectElementAdapter projectElementAdapter = ((ProjectElementAdapter) object);
 		IGenericProjectElement backingObject = projectElementAdapter
 				.getBackingObject();
+		if( backingObject ==null ){
+		    return projectElementAdapter.getName()+"- No backing object";
+		}
 		String extensionId = backingObject.getExtensionId();
 		IConfigurationElement extension = findExtension(extensionId);
 		String labelProviderAtt = extension.getAttribute(LABEL_PROVIDER_ATT);

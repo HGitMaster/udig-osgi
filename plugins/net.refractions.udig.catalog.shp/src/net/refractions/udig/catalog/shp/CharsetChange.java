@@ -51,6 +51,7 @@ public class CharsetChange implements IOp {
 
     public void op( final Display display, Object target, IProgressMonitor monitor )
             throws Exception {
+        
         final IService[] services = toService((Object[]) target);
 
         display.asyncExec(new Runnable(){
