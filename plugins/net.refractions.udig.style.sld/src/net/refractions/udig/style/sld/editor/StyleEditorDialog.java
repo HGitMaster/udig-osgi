@@ -101,7 +101,7 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
 
     @Override
     protected void setShellStyle( int newShellStyle ) {
-        super.setShellStyle(SWT.SHELL_TRIM|SWT.ON_TOP|SWT.RESIZE);
+        super.setShellStyle(SWT.SHELL_TRIM|SWT.APPLICATION_MODAL|SWT.RESIZE);
     }
     
     public void setSelectedLayer( Layer layer ) {
