@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.project.internal.Layer;
@@ -57,14 +60,37 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
 		List<Object> allStyles = getStyles(layer.findGeoResource(org.geotools.data.ows.Layer.class));	
         styles.clear();
         styleCombo.setItems(new String[0]);
+        // Map<DisplayName,wmsStyle>
+        Map<String,org.opengis.layer.Style> nameMap = new HashMap<String, org.opengis.layer.Style>();
+
+        // calculate display names for all styles
+        // If there are duplicate titles then a combo title(name) is displayed
         for (Object s : allStyles) {
             org.opengis.layer.Style wmsStyle = 
                 (org.opengis.layer.Style) s;
-            
             String name = getDisplayName(wmsStyle);
-            if (styleCombo.indexOf(name) == -1){
-                styleCombo.add(name);
-                styles.add(s);
+            if( nameMap.containsKey(name) ){
+                // rename the old one and mark it as deleted
+                Style oldStyle = nameMap.get(name);
+                if( oldStyle!=null){
+                    nameMap.put(name, null);
+                    String oldStyleName = name + " ("+oldStyle.getName()+")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    nameMap.put(oldStyleName, oldStyle);
+                }
+                name = name + " ("+wmsStyle.getName()+")"; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            // if the key is still used then we will use the first instance only.  If
+            // there are two definitions of the same name and title then there isn't any
+            // more we can be expected to do
+            if( !nameMap.containsKey(name) ){
+                nameMap.put(name, wmsStyle);
+            }
+        }
+        
+        for( Entry<String, Style> entry : nameMap.entrySet() ) {
+            if( entry.getValue()!=null) {
+                styleCombo.add(entry.getKey());
+                styles.add(entry.getValue());
             }
         }
 		//look for a value to set the combo to on the blackboard
