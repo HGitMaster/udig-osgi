@@ -164,7 +164,7 @@ public class CSVRenderer extends RendererImpl {
             Coordinate worldLocation = new Coordinate();
             while( reader.readRecord() ) {
                 Point point = CSV.getPoint(reader);
-                Coordinate dataLocation = point.getCoordinate();
+                worldLocation = point.getCoordinate();
                 if (bounds != null && !bounds.contains(worldLocation)) {
                     continue; // optimize!
                 }
