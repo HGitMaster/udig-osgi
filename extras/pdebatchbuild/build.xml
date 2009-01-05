@@ -23,11 +23,11 @@
       <arg value="-noupdate" />
       <arg value="-application" />
       <arg value="org.eclipse.ant.core.antRunner" />
-      <arg value="-debug" />
+      <!--<arg value="-debug" /> -->
      
       <!-- the Ant build file to be run in an Eclipse context -->
       <arg value="-buildfile" />
-      <arg value="D:/eclipse/eclipse/plugins/${eclipse.pde.build}/scripts/productBuild/productBuild.xml" />
+      <arg value="${eclipse.home}/plugins/${eclipse.pde.build}/scripts/productBuild/productBuild.xml" />
 
       <!-- configuration information telling the build what to do -->
       <arg value="-Dbuilder=${basedir}" />
