@@ -36,7 +36,10 @@ public class ImageBoxPrinter extends AbstractBoxPrinter {
         return "net.refractions.udig.tutorials.template.image"; //$NON-NLS-1$
     }
     
-    public Object getAdapter( Class adapter ) {
+    public  Object getAdapter( Class adapter ) {
+        if( adapter.isAssignableFrom( BufferedImage.class )){
+            return image;
+        }
         return null;
     }
 

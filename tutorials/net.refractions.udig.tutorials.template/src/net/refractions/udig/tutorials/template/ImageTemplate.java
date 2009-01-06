@@ -29,7 +29,12 @@ import org.eclipse.draw2d.geometry.Point;
 
 public class ImageTemplate extends AbstractTemplate {
 
-    public void init( Page page, Map map ) {
+    public void init( Page page, Map map ) {        
+        page.setName(map.getName());
+
+        Dimension a4 = new Dimension( 842, 595 ); // assume 72 pixels per inch
+        page.setSize( a4 );        
+
         Box labelBox = ModelFactory.eINSTANCE.createBox();
         Box mapBox = ModelFactory.eINSTANCE.createBox();
         Box imageBox = ModelFactory.eINSTANCE.createBox();
@@ -57,7 +62,6 @@ public class ImageTemplate extends AbstractTemplate {
         labelBox.setBoxPrinter(lbPrinter);
         imageBox.setBoxPrinter(ibPrinter);
         
-        page.setName(map.getName());
     }
 
     public String getName() {

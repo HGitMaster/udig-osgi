@@ -38,6 +38,9 @@
          <actionSet
                id="net.refractions.udig.style.sld.editor.layerAction">
          </actionSet>
+         <actionSet
+               id="net.refractions.udig.project.ui.layerStyleSet">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension

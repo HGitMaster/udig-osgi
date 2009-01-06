@@ -16,6 +16,9 @@ import org.geotools.util.Range;
 public class ColorCSVRenderMetrics extends AbstractRenderMetrics {
     public ColorCSVRenderMetrics( IRenderContext context, IRenderMetricsFactory factory ) {
         super(context, factory, Arrays.asList(new String[]{ColorStyle.ID}));
+        this.resolutionMetric = RES_PIXEL;
+        this.latencyMetric = LATENCY_LOCAL;
+        this.timeToDrawMetric = DRAW_DATA_RAW;
     }
     public boolean canAddLayer( ILayer layer ) {
         return false;
@@ -25,8 +28,5 @@ public class ColorCSVRenderMetrics extends AbstractRenderMetrics {
     }
     public Renderer createRenderer() {
         return new ColorCSVRenderer();
-    }
-    public Set<Range<Double>> getValidScaleRanges() {
-        return new HashSet<Range<Double>>();
     }
 }
