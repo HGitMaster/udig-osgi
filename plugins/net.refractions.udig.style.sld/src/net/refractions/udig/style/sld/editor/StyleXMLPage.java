@@ -46,7 +46,7 @@ public class StyleXMLPage extends StyleEditorPage {
 
     SashForm sash;
     Text sldTextBox;
-    Text errorsTextBox;
+    Text errTextBox;
     SLDValidator validator;
     Label validateStatus;
     Button validateButton;
@@ -90,9 +90,9 @@ public class StyleXMLPage extends StyleEditorPage {
             }
         });
         
-        errorsTextBox = new Text(sash, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        errorsTextBox.setVisible(false);
-        errorsTextBox.setEditable(false);
+        errTextBox = new Text(sash, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        errTextBox.setVisible(false);
+        errTextBox.setEditable(false);
 
         validateStatus = new Label(comp, SWT.LEFT);
         validateStatus.setText(Messages.StyleEditor_xml_validation_needed); 
@@ -151,6 +151,7 @@ public class StyleXMLPage extends StyleEditorPage {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public void validateSLD() {
         Cursor waitCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
         setDisplayCursor(waitCursor);
@@ -171,19 +172,19 @@ public class StyleXMLPage extends StyleEditorPage {
         Object result = validator.validateSLD(is, "http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"); //$NON-NLS-1$
         
         if (result instanceof List) {
-            List errors = (List) result; 
-            if (errors.size() == 0) {
+            List errorList = (List) result; 
+            if (errorList.size() == 0) {
             	validSLD = true;
-                this.errorsTextBox.setText("");  //$NON-NLS-1$
+                this.errTextBox.setText("");  //$NON-NLS-1$
                 this.validateStatus.setText(Messages.StyleEditor_xml_validation_success); 
-                this.errorsTextBox.setVisible(false);
+                this.errTextBox.setVisible(false);
             } else {
             	validSLD = false;
-                this.errorsTextBox.setText(SLDValidator.getErrorMessage(is, errors));
+                this.errTextBox.setText(SLDValidator.getErrorMessage(is, errorList));
                 this.validateStatus.setText(Messages.StyleEditor_xml_validation_failure); 
-                this.errorsTextBox.setVisible(true);
+                this.errTextBox.setVisible(true);
             }
-            this.errorsTextBox.getParent().layout();
+            this.errTextBox.getParent().layout();
             getContainer().updateMessage();
         }
         try {

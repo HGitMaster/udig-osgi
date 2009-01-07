@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/batik-script-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-awt-util-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-bridge-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-css-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-ext-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-gvt-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-parser-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-svg-dom-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-xml-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-dom-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-transcoder-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-util-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/beam-1.0.jar"/>

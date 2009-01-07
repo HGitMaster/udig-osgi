@@ -63,6 +63,18 @@
 			<dependency groupId="org.geotools" artifactId="gt-process" version="${geotools.version}" />
 			<dependency groupId="org.geotools" artifactId="gt-wps" version="${geotools.version}" />
 
+			<!-- batik jars - used by geotools renderer -->
+		    <dependency groupId="batik" artifactId="batik-dom" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-svg-dom" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-css" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-bridge" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-gvt" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-ext" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-xml" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-script" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-awt-util" version="1.6" />
+			<dependency groupId="batik" artifactId="batik-parser" version="1.6" />
+			
 			<!-- these may already be accounted for by the above plug-ins -->
 			<!--
 		<dependency groupId="org.geotools.xsd" artifactId="gt-gml2" version="${geotools.version}" />
