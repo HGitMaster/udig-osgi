@@ -32,7 +32,7 @@ import org.geotools.resources.Utilities;
  * @version $Id: Viewer.java 13129 2005-04-15 03:07:06Z desruisseaux $
  * @author Martin Desruisseaux
  */
-public class Viewer extends JPanel {
+public class ViewerOld extends JPanel {
     /**
      * The image to display.
      */
@@ -60,7 +60,7 @@ public class Viewer extends JPanel {
      *
      * @param coverage The image to display.
      */
-    public Viewer(RenderedImage image) {
+    public ViewerOld(RenderedImage image) {
         image = this.image = PlanarImage.wrapRenderedImage(image);
         gridToCoordinateSystem.translate(-image.getMinX(), -image.getMinY());
         setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
@@ -71,7 +71,7 @@ public class Viewer extends JPanel {
      *
      * @param coverage The coverage to display.
      */
-    public Viewer(final GridCoverage2D coverage) {
+    public ViewerOld(final GridCoverage2D coverage) {
         this(coverage.getRenderedImage());
         categories = (GridSampleDimension) coverage.getSampleDimension(0);
     }
@@ -92,8 +92,8 @@ public class Viewer extends JPanel {
      * @param  coverage The coverage to display.
      * @return The viewer, for information.
      */
-    public static Viewer show(final RenderedImage image) {
-        return show(new Viewer(image), null);
+    public static ViewerOld show(final RenderedImage image) {
+        return show(new ViewerOld(image), null);
     }
 
     /**
@@ -103,7 +103,7 @@ public class Viewer extends JPanel {
      * @param  coverage The coverage to display.
      * @return The viewer, for information.
      */
-    public static Viewer show(final GridCoverage2D coverage) {
+    public static ViewerOld show(final GridCoverage2D coverage) {
         return show(coverage, null);
     }
 
@@ -115,7 +115,7 @@ public class Viewer extends JPanel {
      * @param  title The window title.
      * @return The viewer, for information.
      */
-    public static Viewer show(final GridCoverage2D coverage, final String title) {
+    public static ViewerOld show(final GridCoverage2D coverage, final String title) {
         final StringBuffer buffer = new StringBuffer();
         if (title != null) {
             buffer.append(title);
@@ -127,7 +127,7 @@ public class Viewer extends JPanel {
         } else if (coverage != coverage.geophysics(false)) {
             buffer.append(" (geophysics)");
         }
-        return show(new Viewer(coverage), buffer.toString());
+        return show(new ViewerOld(coverage), buffer.toString());
     }
 
     /**
@@ -138,7 +138,7 @@ public class Viewer extends JPanel {
      * @param  title  The frame title, or {@code null} if none.
      * @return The viewer, for convenience.
      */
-    private static Viewer show(final Viewer viewer, final String title) {
+    private static ViewerOld show(final ViewerOld viewer, final String title) {
         final JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocation(location, location);

@@ -15,9 +15,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 public class CoordinateTool extends AbstractModalTool  {
     
-    public static final String BLACKBOARD_KEY = 
-        "net.refractions.udig.tutorials.tool.coordinate"; //$NON-NLS-1$
-    
     public CoordinateTool() {
         super(MOUSE);
     }
@@ -33,10 +30,10 @@ public class CoordinateTool extends AbstractModalTool  {
         
         IBlackboard blackboard = map.getBlackboard();
         List<Coordinate> points = 
-            (List<Coordinate>) blackboard.get(BLACKBOARD_KEY);
+            (List<Coordinate>) blackboard.get("locations");
         if (points == null) {
             points = new ArrayList<Coordinate>();
-            blackboard.put(BLACKBOARD_KEY,points);
+            blackboard.put("locations",points);
         }
         
         points.add(new Coordinate(e.x,e.y));

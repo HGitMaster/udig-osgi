@@ -54,7 +54,7 @@ public class RasterTutorial {
         
         reprojected = reprojected.view(ViewType.RENDERED);
         
-        Viewer.show(gridCoverage, "Normal Grid Coverage");
-        Viewer.show(reprojected, "Reprojected Grid Coverage");
+        ViewerOld.show(gridCoverage, "Normal Grid Coverage");
+        ViewerOld.show(reprojected, "Reprojected Grid Coverage");
     }    
 }
