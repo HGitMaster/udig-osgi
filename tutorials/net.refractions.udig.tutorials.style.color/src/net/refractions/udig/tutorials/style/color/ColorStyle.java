@@ -44,10 +44,11 @@ public class ColorStyle extends StyleContent {
     }
     public void save( IMemento memento, Object value ) {
         Color color = (Color) value;
-        
-        memento.putInteger("r", color.getRed());
-        memento.putInteger("g", color.getGreen());
-        memento.putInteger("b", color.getBlue());
-        memento.putInteger("a", color.getAlpha());        
+        if (color != null){
+            memento.putInteger("r", color.getRed());
+            memento.putInteger("g", color.getGreen());
+            memento.putInteger("b", color.getBlue());
+            memento.putInteger("a", color.getAlpha());
+        }
     }
 }
