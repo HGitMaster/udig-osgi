@@ -20,7 +20,7 @@ public abstract class StyleContent {
     /** <code>XPID</code> field */
     public static final String XPID = "net.refractions.udig.project.style"; //$NON-NLS-1$
 
-    private String id;
+    private final String id;
 
     /**
      * Unique identifier of the style. This id must be the same as the id declared by the extension
@@ -44,6 +44,9 @@ public abstract class StyleContent {
      * @param id
      */
     public StyleContent( String id ) {
+        if( id == null ) {
+            throw new NullPointerException("You MUST supply an ID when creating a Style Content. It is used as the 'key' when storing things on the blackboard");
+        }
         this.id = id;
     }
 

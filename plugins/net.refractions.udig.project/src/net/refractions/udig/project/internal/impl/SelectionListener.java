@@ -38,6 +38,7 @@ import org.opengis.filter.Filter;
  *
  * @author Jesse
  * @since 1.0.0
+ * @deprecated This class is not used and conflicts with the SWT SlectionListener name
  */
 public class SelectionListener extends AdapterImpl {
 

@@ -65,7 +65,18 @@ public class SimpleBlackboard implements IBlackboard {
             }
         }
     }
-
+    public Object remove( String key ) {
+        Object oldValue = map.remove(key);
+        BlackboardEvent event=new BlackboardEvent(this, key, oldValue, null);
+        for( IBlackboardListener l : listeners ) {
+            try{
+            l.blackBoardChanged(event);
+            } catch (Exception e) {
+                ProjectPlugin.log("", e); //$NON-NLS-1$
+            }
+        }
+        return oldValue;
+    }
     /**
      * @see net.refractions.udig.project.IBlackboard#getFloat(java.lang.String)
      */

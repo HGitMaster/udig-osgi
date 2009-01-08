@@ -4,5 +4,4 @@ Bundle-Name: Source Plug-in
 Bundle-SymbolicName: net.refractions.udig.libs.source;singleton:=true
 Bundle-Version: 1.2.0
 Bundle-Vendor: Refractions Research Inc.
-Eclipse-LazyStart: false
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
