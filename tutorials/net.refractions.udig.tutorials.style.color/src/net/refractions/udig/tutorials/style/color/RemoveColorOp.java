@@ -11,7 +11,6 @@ public class RemoveColorOp implements IOp {
     public void op( Display display, Object target, IProgressMonitor monitor ) throws Exception {
         ILayer layer = (ILayer) target;
         
-        layer.getStyleBlackboard().put( ColorStyle.ID, null );
         layer.getStyleBlackboard().remove( ColorStyle.ID );
         layer.refresh(null);
     }
