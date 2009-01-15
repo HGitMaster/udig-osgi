@@ -249,7 +249,7 @@ public class CatalogImpl extends ICatalog {
      * Quick search by url match.
      * @param query
      * 
-     * @see net.refractions.udig.catalog.ICatalog#search(org.opengis.filter.Filter)
+     * @see net.refractions.udig.catalog.ICatalog#search
      * @return List<IResolve>
      * @throws IOException
      */
@@ -436,7 +436,7 @@ public class CatalogImpl extends ICatalog {
     /**
      * Quick search by url match.
      * 
-     * @see net.refractions.udig.catalog.ICatalog#search(org.opengis.filter.Filter)
+     * @see net.refractions.udig.catalog.ICatalog#search
      * @param query
      * @return List<IResolve>
      * @throws IOException
