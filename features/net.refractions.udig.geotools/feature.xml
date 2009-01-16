@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.refractions.udig.geotools"
+      label="Geotools Feature"
+      version="1.0.0">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="org.opengis.geoapi"
+         version="0.0.0"/>
+
+   <includes
+         id="net.refractions.udig.geotools.deps"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.geotools.metadata" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.geotools.referencing" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="com.vividsolutions.osgi.jts"/>
+      <import plugin="org.opengis.geoapi"/>
+      <import plugin="org.geotools.api" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.geotools.main" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="javax.media.jai.osgi.jai_imageio"/>
+      <import plugin="com.springsource.javax.media.jai.core"/>
+      <import plugin="net.java.dev.osgi.jsr-275"/>
+      <import plugin="java3d.osgi.vecmath"/>
+      <import plugin="com.springsource.org.apache.commons.beanutils"/>
+      <import plugin="org.geotools.coverage" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="com.springsource.org.jdom"/>
+      <import plugin="org.junit4"/>
+      <import plugin="com.springsource.org.apache.commons.logging"/>
+      <import plugin="com.springsource.org.apache.log4j"/>
+      <import plugin="com.springsource.org.apache.commons.pool"/>
+      <import plugin="org.geotools.cql" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="com.springsource.org.apache.batik.dom.svg"/>
+      <import plugin="com.springsource.org.apache.batik.dom"/>
+      <import plugin="org.apache.batik.osgi.transcoder"/>
+      <import plugin="com.springsource.org.apache.batik.util"/>
+      <import plugin="org.geotools.data" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.geotools.xml" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="com.springsource.org.apache.commons.lang"/>
+   </requires>
+
+   <plugin
+         id="org.geotools.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.brewer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.coverage"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.cql"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.data"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.epsg.wkt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.geotiff"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.main"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.metadata"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.process"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.referencing"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.render"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.shapefile"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.wms"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
