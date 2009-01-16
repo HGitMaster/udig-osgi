@@ -29,7 +29,7 @@ import net.refractions.udig.catalog.ui.CatalogUIPlugin;
 import net.refractions.udig.catalog.ui.internal.Messages;
 import net.refractions.udig.ui.FeatureTypeEditorDialog;
 import net.refractions.udig.ui.PlatformGIS;
-import net.refractions.udig.ui.FeatureTypeEditorDialog.ValidateFeatureTypeBuilder;
+import net.refractions.udig.ui.FeatureTypeEditorDialog.ValidateFeatureType;
 import net.refractions.udig.ui.operations.IOp;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -92,9 +92,9 @@ public class NewFeatureTypeOp implements IOp {
             PlatformGIS.syncInDisplayThread(new Runnable(){
                 public void run() {
                     dialog[0] = new FeatureTypeEditorDialog(display
-                            .getActiveShell(), new ValidateFeatureTypeBuilder(){
+                            .getActiveShell(), new ValidateFeatureType(){
 
-                                public boolean validate( SimpleFeatureTypeBuilder featureBuilder ) {
+                                public boolean validate( SimpleFeatureType featureBuilder ) {
                                     return true;
                                 }
                         

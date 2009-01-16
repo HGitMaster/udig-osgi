@@ -166,7 +166,7 @@ public final class NorthArrowMapGraphic implements MapGraphic{
 	}
 
 	private double theta(Coordinate ground, Coordinate north) {
-		return Math.atan2( north.y - ground.y, north.x - ground.x );
+	    return Math.atan2(Math.abs(north.y - ground.y), Math.abs(north.x - ground.x));
 	}
 
 	/** A coordinate that is slightly north please */

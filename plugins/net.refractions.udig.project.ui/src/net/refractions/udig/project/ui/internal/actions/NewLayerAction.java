@@ -29,7 +29,7 @@ import net.refractions.udig.project.ui.internal.Messages;
 import net.refractions.udig.ui.FeatureTypeEditor;
 import net.refractions.udig.ui.FeatureTypeEditorDialog;
 import net.refractions.udig.ui.ProgressManager;
-import net.refractions.udig.ui.FeatureTypeEditorDialog.ValidateFeatureTypeBuilder;
+import net.refractions.udig.ui.FeatureTypeEditorDialog.ValidateFeatureType;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -54,17 +54,25 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class NewLayerAction extends ActionDelegate implements IWorkbenchWindowActionDelegate {
     private IGeoResource resource=null;
 
-    private final ValidateFeatureTypeBuilder performOK=new ValidateFeatureTypeBuilder(){
+    private final ValidateFeatureType performOK=new ValidateFeatureType(){
 
-        public boolean validate( SimpleFeatureTypeBuilder featureBuilder ) {
+        public boolean validate( SimpleFeatureType featureType ) {
             try {
                 resource = CatalogPlugin.getDefault().getLocalCatalog().
-                    createTemporaryResource(featureBuilder.buildFeatureType());
+                    createTemporaryResource(featureType);
                 return true;
             } catch (Exception e) {
-                resource = null;
-                featureBuilder.setName(Messages.NewLayerAction_duplicate_type_name); 
-                return false;
+                SimpleFeatureTypeBuilder ftB = new SimpleFeatureTypeBuilder();
+                ftB.init(featureType);
+                ftB.setName(Messages.NewLayerAction_duplicate_type_name);
+                try {
+                    resource = CatalogPlugin.getDefault().getLocalCatalog().createTemporaryResource(
+                        ftB.buildFeatureType());
+                    return true;
+                } catch (Exception e2) {
+                    resource = null;
+                    return false;
+                }
             }            
         }
         
@@ -128,7 +136,8 @@ public class NewLayerAction extends ActionDelegate implements IWorkbenchWindowAc
 		    geom = schema.getGeometryDescriptor();		    
 		}		
 		FeatureTypeEditor editor = dialog.getEditor();
-        SimpleFeatureTypeBuilder builder = editor.createDefaultFeatureType();
+        SimpleFeatureType ft = editor.createDefaultFeatureType();
+        SimpleFeatureTypeBuilder builder = editor.builderFromFeatureType(ft);
         String defaultGeometry = builder.getDefaultGeometry();
         if( defaultGeometry == null ){
             return;
@@ -136,7 +145,7 @@ public class NewLayerAction extends ActionDelegate implements IWorkbenchWindowAc
         builder.remove(defaultGeometry);
         builder.add(geom);
         builder.setDefaultGeometry(geom.getLocalName());
-        dialog.setDefaultBuilder(builder);
+        dialog.setDefaultFeatureType(builder.buildFeatureType());
 	}
 
     @SuppressWarnings("unchecked")

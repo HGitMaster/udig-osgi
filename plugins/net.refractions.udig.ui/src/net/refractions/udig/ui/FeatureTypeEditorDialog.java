@@ -41,6 +41,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -48,19 +49,20 @@ import com.vividsolutions.jts.geom.Geometry;
  * Opens a dialog that allows a SimpleFeatureType to be defined.
  * 
  * @author Jesse
+ * @author Andrea Antonello (www.hydrologis.com)
  * @since 1.1.0
  */
 public class FeatureTypeEditorDialog extends Dialog {
     final FeatureTypeEditor editor;
-    private SimpleFeatureTypeBuilder defaultBuilder;
+    private SimpleFeatureType defaultFeatureType;
     private DataStore dataStore;
-    private SimpleFeatureTypeBuilder result;
-    private ValidateFeatureTypeBuilder validateFeatureType;
+    private SimpleFeatureType result;
+    private ValidateFeatureType validateFeatureType;
 
-    public FeatureTypeEditorDialog( Shell parentShell, ValidateFeatureTypeBuilder strategy ) {
+    public FeatureTypeEditorDialog( Shell parentShell, ValidateFeatureType strategy ) {
         super(parentShell);
         editor = new FeatureTypeEditor();
-        defaultBuilder=editor.createDefaultFeatureType(); 
+        defaultFeatureType=editor.createDefaultFeatureType(); 
         this.validateFeatureType=strategy;
         setShellStyle(SWT.RESIZE|SWT.DIALOG_TRIM|SWT.CLOSE);
     }
@@ -92,7 +94,7 @@ public class FeatureTypeEditorDialog extends Dialog {
         createButton(buttons, editor.getDeleteAction());
         
         editor.createTable(composite, new GridData(SWT.FILL, SWT.FILL, true,true, 7,1),
-                defaultBuilder, true);
+                defaultFeatureType, true);
         editor.createContextMenu();
         
         return composite;
@@ -143,7 +145,7 @@ public class FeatureTypeEditorDialog extends Dialog {
     
     @Override
     public boolean close() {
-        result=editor.getFeatureTypeBuilder();
+        result = editor.getFeatureType();
         editor.getControl().setFocus();
         return super.close();
     }
@@ -164,7 +166,7 @@ public class FeatureTypeEditorDialog extends Dialog {
     
     @Override
     protected void okPressed() {
-        boolean ok=validateFeatureType.validate(editor.getFeatureTypeBuilder());
+        boolean ok = validateFeatureType.validate(editor.getFeatureType());
         editor.builderChanged();
         
         if( ok )
@@ -183,18 +185,22 @@ public class FeatureTypeEditorDialog extends Dialog {
     
     /**
      * Returns the feature type defined by user or null if it is not a legal feature type for the setDataStore.  
-     * If setDataStore has previously been called then the feature typename will be checked to determine if the
-     * typename already exists.  If it does then null is returned and the dialog should be opened a second time.
-     * @param checkForDuplicateFeatureType If true null will be returned if the datastore has a feature type with the same
-     * feature type name.
-     *
-     * @return
+     * 
+     * <p>If setDataStore has previously been called then the feature typename
+     * will be checked to determine if the typename already exists.  
+     * If it does then null is returned and the dialog should be opened a 
+     * second time.</p>
+     * 
+     * @param checkForDuplicateFeatureType If true null will be returned if 
+     *                  the datastore has a feature type with the same
+     *                  feature type name.
+     * @return the feature type defined by user
      */
     public SimpleFeatureType getFeatureType(boolean checkForDuplicateFeatureType) {
         if (result!=null) {
             try {
                 if (!checkForDuplicateFeatureType || isFeatureTypeOK()) {
-                    return result.buildFeatureType();
+                    return result;
                 }
             } catch (SchemaException e) {
                 UiPlugin.log("Error creating feature type", e); //$NON-NLS-1$
@@ -210,9 +216,16 @@ public class FeatureTypeEditorDialog extends Dialog {
         try {
             // verify that the typename does not already exist. if it doesn't
             // getSchema throws an exception
-            dataStore.getSchema(defaultBuilder.getName());
-            defaultBuilder
-                    .setName(Messages.NewFeatureTypeOp_duplicateTypeName); 
+            dataStore.getSchema(defaultFeatureType.getName());
+            
+            /*
+             * FIXME not sure if it is enough to recreate the featureType, or if
+             * somewhere the reference to the old object is needed. 
+             */
+            SimpleFeatureTypeBuilder ftB = new SimpleFeatureTypeBuilder();
+            ftB.setName(Messages.NewFeatureTypeOp_duplicateTypeName);
+            ftB.init(defaultFeatureType);
+            defaultFeatureType = ftB.buildFeatureType();
             return false;
         } catch (IOException e) {
             return true;
@@ -220,28 +233,34 @@ public class FeatureTypeEditorDialog extends Dialog {
     }
 
     /**
-     * Validates the feature type to determine whether it is acceptable and can be created.  This is used to determine if the 
-     * dialog can close.
+     * Validates the feature type to determine whether it is acceptable and can be created.
+     * 
+     * <p>This is used to determine if the dialog can close.</p>
      * 
      * @author Jesse
-     * @since 1.1.0
+     * @author Andrea Antonello (www.hydrologis.com)
+     * @since 1.2
      */
-    public interface ValidateFeatureTypeBuilder {
+    public interface ValidateFeatureType {
         /**
-         * Returns true if the feature type builder is ok and the dialog may close.  Changes to the builder will be reflected in
-         * the dialog.
+         * Returns true if the feature type builder is ok and the dialog may close. 
+         * 
+         * <p>Changes to the builder will be reflected in the dialog.</p>
          *
-         * @param featureBuilder builder to validate.
-         * @return  true if the feature type builder is ok and the dialog may close
+         * @param featureType the {@link FeatureType} to validate.
+         * @return  true if the feature type is ok and the dialog may close.
          */
-        boolean validate(SimpleFeatureTypeBuilder builder);
+        boolean validate(SimpleFeatureType featureType);
     }
 
 	public SimpleFeatureTypeBuilder getDefaultBuilder() {
-		return defaultBuilder;
+	    SimpleFeatureTypeBuilder ftB = new SimpleFeatureTypeBuilder();
+	    ftB.setName(defaultFeatureType.getName());
+	    ftB.init(defaultFeatureType);
+		return  ftB;
 	}
 
-	public void setDefaultBuilder(SimpleFeatureTypeBuilder defaultBuilder) {
-		this.defaultBuilder = defaultBuilder;
+	public void setDefaultFeatureType(SimpleFeatureType defaultFeatureType) {
+		this.defaultFeatureType = defaultFeatureType;
 	}
 }

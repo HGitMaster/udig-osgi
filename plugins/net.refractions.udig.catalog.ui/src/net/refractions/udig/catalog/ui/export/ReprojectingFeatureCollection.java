@@ -21,6 +21,7 @@ import net.refractions.udig.ui.ProgressFeatureCollection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -60,10 +61,9 @@ public class ReprojectingFeatureCollection extends ProgressFeatureCollection
         this.featureType=SimplefeatureType;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     protected Iterator<SimpleFeature> openIterator() {
-        final Iterator<SimpleFeature> iterator = delegate.iterator();
+        final FeatureIterator<SimpleFeature> iterator = delegate.features();
         return new Iterator<SimpleFeature>(){
 
             private FeatureWrapper feature;
@@ -72,7 +72,7 @@ public class ReprojectingFeatureCollection extends ProgressFeatureCollection
                 while( feature == null ) {
                     if( !iterator.hasNext() )
                         return false;
-                    SimpleFeature next = (SimpleFeature) iterator.next();
+                    SimpleFeature next = iterator.next();
                     if( next==null )
                         continue;
                     Geometry geometry = (Geometry) next.getDefaultGeometry();
