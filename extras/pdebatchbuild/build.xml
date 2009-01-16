@@ -12,13 +12,19 @@
   <property file="local.properties" />
   
   <target name="prepare">
+    <fail message="Property buildRoot is not set in file local.properties" unless="buildRoot"/>
     <fail message="Property eclipse.home is not set in file local.properties" unless="eclipse.home"/>
     <fail message="Property eclipse.pde.build is not set in file local.properties" unless="eclipse.pde.build"/>
+    <fail message="Property equinox.launcher is not set in file local.properties" unless="equinox.launcher"/>
+    <fail message="Property pluginPath is not set in file local.properties" unless="pluginPath"/>
   </target>
 
   <!-- compile uDig, invoking Eclipse in headless mode -->
   <target name="compile" >
     <java jar="${equinox.launcher}" fork="true" failonerror="true">
+
+      <sysproperty key="pluginPath" value="${pluginPath}"/>
+      <sysproperty key="buildRoot" value="${buildRoot}"/>
 
       <arg value="-noupdate" />
       <arg value="-application" />
