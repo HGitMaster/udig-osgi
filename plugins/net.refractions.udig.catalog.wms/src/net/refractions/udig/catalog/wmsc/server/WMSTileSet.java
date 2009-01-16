@@ -499,7 +499,7 @@ public class WMSTileSet implements TileSet {
             sb.append(this.bboxSrs.getMinX());
         }
         if (this.bboxSrs != null && this.bboxSrs.getCoordinateReferenceSystem() != null) {
-            sb.append(this.bboxSrs.getCoordinateReferenceSystem().hashCode());
+            sb.append(this.bboxSrs.getCoordinateReferenceSystem().toString().hashCode());
         }
         
         sb.append(this.width);
