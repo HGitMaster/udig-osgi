@@ -77,9 +77,11 @@ public class DatabaseConnectionRunnable implements IRunnableWithProgress {
             }
 
         } catch (SQLException e) {
-            // TODO handle case where template1 is not accessible
-            if( e.getMessage().contains("FATAL: no pg_hba.conf entry for host") && e.getMessage().contains("template1") ){
+            if( e.getMessage().contains("FATAL: no pg_hba.conf entry for host") && e.getMessage().contains("template1") ){ //$NON-NLS-1$ //$NON-NLS-2$
                 // this is understandable the template1 database is not accessible to this user/location so it is not an error
+            }else if( e.getMessage().contains("FATAL: role") && e.getMessage().contains("does not exist") ){  //$NON-NLS-1$//$NON-NLS-2$
+                    // this is understandable the template1 database is not accessible to this user/location so it is not an error
+                result = "Username or password is incorrect";
             }else {
                 result = "Unrecognized connection failure.  Check parameters and database.";
             }

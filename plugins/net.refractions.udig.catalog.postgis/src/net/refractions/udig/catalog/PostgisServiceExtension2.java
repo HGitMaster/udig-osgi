@@ -52,6 +52,8 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         implements
             ServiceExtension2 {
 
+    private static final String IN_TESTING = "testing";
+
     public IService createService( URL id, Map<String, Serializable> params ) {
         if( reasonForFailure(params)!=null ){
             return null;
@@ -156,6 +158,14 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         if( !DBTYPE.sample.equals(params.get(DBTYPE.key)) ){
             return "Parameter DBTYPE is required to be \"postgis\"";
         }
+        
+        // if the testing parameter is in params then this is 
+        // a recursive call originating in processParams and should be shorted
+        // to prevent infinate loop.
+        if( params.containsKey(IN_TESTING)){
+            return null;
+        }
+        
         Pair<Map<String, Serializable>, String> resultOfSplit = processParams(params);
         if (resultOfSplit.getRight() != null) {
             String reason = resultOfSplit.getRight();
@@ -171,7 +181,8 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
 
         HashMap<String, Serializable> testedParams = new HashMap<String, Serializable>(params);
         testedParams.put(SCHEMA.key, "public"); //$NON-NLS-1$
-        String reason = super.reasonForFailure(params);
+        testedParams.put(IN_TESTING, true);
+        String reason = super.reasonForFailure(testedParams);
 
         if (reason == null) {
             goodSchemas.add("public"); //$NON-NLS-1$
@@ -180,15 +191,17 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         String[] schemas = schemasString.split(","); //$NON-NLS-1$
 
         for( String string : schemas ) {
-            testedParams = new HashMap<String, Serializable>(params);
-            String trimmedSchema = string.trim();    
-            testedParams.put(SCHEMA.key, trimmedSchema);
-
-            String reasonForFailure = super.reasonForFailure(testedParams);
-            if (reasonForFailure == null) {
-                goodSchemas.add(string);
-            } else {
-                reason = reasonForFailure;
+            if( !goodSchemas.contains(string) ){
+                testedParams = new HashMap<String, Serializable>(params);
+                String trimmedSchema = string.trim();    
+                testedParams.put(SCHEMA.key, trimmedSchema);
+    
+                String reasonForFailure = super.reasonForFailure(testedParams);
+                if (reasonForFailure == null) {
+                    goodSchemas.add(string);
+                } else {
+                    reason = reasonForFailure;
+                }
             }
         }
 
@@ -196,6 +209,8 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
             testedParams.put(SCHEMA.key, combineSchemaStrings(goodSchemas));
         }
 
+        testedParams.remove(IN_TESTING);
+        
         Pair<Map<String, Serializable>, String> result;
         result = new Pair<Map<String, Serializable>, String>(testedParams, reason);
         return result;
