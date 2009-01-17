@@ -355,8 +355,9 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
                     Filter firstElement = (Filter) structuredSelection.getFirstElement();
                     updateLayerFilter(firstElement);
                 }
-                
-                layer.getMapInternal().getEditManagerInternal().setEditFeature(null, null);
+                //TODO Sprint Mauricio Aritz: The next line provoke the SelectionTool cannot execute the commit operation (acceptChangeBehaviour line 109). 
+                // Actually we do not understand the purpose of this line, but it is the source of problem.  
+                //layer.getMapInternal().getEditManagerInternal().setEditFeature(null, null);
                 
                 fireSelectionChanged();
             }
