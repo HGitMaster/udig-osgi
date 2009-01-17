@@ -189,7 +189,19 @@ public class CRSChooser {
                 if (matcher.matches()) {
                     selectedCRS = createCRS(matcher.group(1));
                     if (selectedCRS != null && wktText != null) {
-                        wktText.setText(selectedCRS.toWKT());
+                        wktText.setEditable(true);
+                        String wkt = null;
+                        try{
+                            wkt = selectedCRS.toWKT();
+                        }catch (Exception e) {
+                            /*
+                             *  if unable to generate WKT, just return the 
+                             *  string and make the text area non editable. 
+                             */
+                            wkt = selectedCRS.toString();
+                            wktText.setEditable(false);
+                        }
+                        wktText.setText(wkt);
                         Preferences node = findNode(matcher.group(1));
                         if( node!=null ){
                             Preferences kn = node.node(ALIASES_ID);
