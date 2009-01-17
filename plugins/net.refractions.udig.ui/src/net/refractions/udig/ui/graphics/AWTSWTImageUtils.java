@@ -77,8 +77,7 @@ public final class AWTSWTImageUtils {
       if (palette.isDirect) {
           // no alpha data?
           if(data.alphaData==null) {
-              colorModel = new DirectColorModel(32, palette.redMask, 
-                      palette.greenMask, palette.blueMask, 0xff000000);               
+              colorModel = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);               
               BufferedImage bufferedImage = new BufferedImage(colorModel, 
                       colorModel.createCompatibleWritableRaster(data.width, data.height), 
                       false, null);               
@@ -100,14 +99,22 @@ public final class AWTSWTImageUtils {
                       raster.setPixels(x, y, 1, 1, pixelArray);                       
                   }
               }
-              
-              return bufferedImage;
+                int w = bufferedImage.getWidth();
+                int h = bufferedImage.getHeight();
+                Raster ras = bufferedImage.getData();
+                for( int i = 0; i < w; i++ ) {
+                    for( int j = 0; j < h; j++ ) {
+                        double[] pixel = ras.getPixel(i, j, new double[4]);
+                        System.out.println(pixel[0] + " " +pixel[1] + " " +pixel[2] + " " +pixel[3]);
+                    }
+                }
+
+                return bufferedImage;
           }
           
           // image has alpha data, preserve it
           else {
-              colorModel = new DirectColorModel(32, palette.redMask, 
-                      palette.greenMask, palette.blueMask, 0xff000000);               
+              colorModel = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);               
               BufferedImage bufferedImage = new BufferedImage(colorModel, 
                       colorModel.createCompatibleWritableRaster(data.width, data.height), 
                       false, null);               
