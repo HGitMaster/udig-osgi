@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: CompositeRendererImpl.java 31019 2008-12-26 20:29:15Z jeichar $
+ * <copyright></copyright> $Id: CompositeRendererImpl.java 31056 2009-01-17 08:18:09Z aantonello $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -33,6 +33,7 @@ import net.refractions.udig.project.internal.render.RenderListenerAdapter;
 import net.refractions.udig.project.internal.render.RenderManager;
 import net.refractions.udig.project.internal.render.Renderer;
 import net.refractions.udig.project.internal.render.RendererCreator;
+import net.refractions.udig.project.internal.render.SelectionLayer;
 import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.render.ILabelPainter;
 import net.refractions.udig.project.render.IRenderContext;
@@ -346,10 +347,18 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
                     executors = new TreeSet<RenderExecutor>(comparator);
                     executors.addAll(getRenderExecutors());
                 }
+                ILabelPainter cache = getContext().getLabelPainter();
+                
                 RENDERERS: for( RenderExecutor executor : executors ) {
 
-                    if (!executor.getContext().isVisible())
+                    if (!executor.getContext().isVisible()){
+                        if(paintLabels && !(executor.getContext().getLayer() instanceof SelectionLayer)){
+                          //disable layer from label cache
+                            cache.disableLayer(executor.getContext().getLayer().getID().toString());
+                        }
                         continue RENDERERS;
+                    }
+                        
 
                     if (executor.getState() == NEVER || executor.getState() == STARTING || executor.getState() == RENDER_REQUEST) {
                         continue RENDERERS;
@@ -366,7 +375,6 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
                 if(paintLabels){
                     RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setRenderingHints(hints);
-                    ILabelPainter cache = getContext().getLabelPainter();
                     Dimension displaySize = getContext().getMapDisplay().getDisplaySize();
                     cache.end(g, new Rectangle(displaySize));
                 }

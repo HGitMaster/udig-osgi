@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectImpl.java 30965 2008-11-25 01:29:51Z hbullen $
+ * <copyright></copyright> $Id: ProjectImpl.java 31056 2009-01-17 08:18:09Z aantonello $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -417,6 +417,7 @@ public class ProjectImpl extends EObjectImpl implements Project {
         resourceName = resourceName.replaceAll("[/\\\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
         resourceName = resourceName.replaceAll("\\s", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         resourceName = resourceName.replaceAll("_+", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        resourceName = resourceName.replaceAll(":", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         String extension = projectElement.getFileExtension();
         if( !extension.startsWith(".") ) //$NON-NLS-1$
             extension="."+extension; //$NON-NLS-1$
