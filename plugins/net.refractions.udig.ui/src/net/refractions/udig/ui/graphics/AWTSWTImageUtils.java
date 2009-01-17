@@ -105,7 +105,6 @@ public final class AWTSWTImageUtils {
                 for( int i = 0; i < w; i++ ) {
                     for( int j = 0; j < h; j++ ) {
                         double[] pixel = ras.getPixel(i, j, new double[4]);
-                        System.out.println(pixel[0] + " " +pixel[1] + " " +pixel[2] + " " +pixel[3]);
                     }
                 }
 
