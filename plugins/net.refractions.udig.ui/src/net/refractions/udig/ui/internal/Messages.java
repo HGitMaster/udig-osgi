@@ -44,6 +44,7 @@ public class Messages extends NLS {
     public static String FeatureTableContentProvider_outOfMemory;
     public static String FeatureTableContentProvider_sortTable;
     public static String FeatureTableContentProvider_unexpectedErro;
+    public static String FeatureTableContentProvider_probablecharseterror;
     public static String FeatureTableContentProvider_updateTaskName;
     public static String FeatureTableContentProvider_updatingFeatures;
     public static String FeatureTableControl_1;

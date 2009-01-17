@@ -91,8 +91,12 @@ public class CharsetChange implements IOp {
             }
 
             private Charset getCharset( IService serviceImpl ) throws IOException {
-                String name = (String) ShapefileDataStoreFactory.DBFCHARSET.lookUp(serviceImpl
+                Object lookUp = ShapefileDataStoreFactory.DBFCHARSET.lookUp(serviceImpl
                         .getConnectionParams());
+                String name = null;
+                if (lookUp instanceof String) {
+                    name = (String) lookUp;
+                }
                 if( name==null ){
                     return Charset.defaultCharset();
                 }
