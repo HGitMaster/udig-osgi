@@ -26,6 +26,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import net.refractions.udig.core.IProviderWithParam;
 import net.refractions.udig.core.Pair;
 import net.refractions.udig.mapgraphic.MapGraphic;
@@ -115,6 +117,10 @@ public class ScalebarMapGraphic implements MapGraphic {
         double inMeters = scaleDenom * pixelInMeters;
 
         Rectangle location = getGraphicLocation(context);
+        
+        // reserve this area of the screen so labels are not drawn here
+        context.getLabelPainter().put( location );
+        
         BarStyle type = getBarStyle(context);
 
         if (inMeters == 0.0) {
@@ -204,6 +210,9 @@ public class ScalebarMapGraphic implements MapGraphic {
     private void doDraw( Unit measurement, MapGraphicContext context, int trueBarLength, int nice ) {
 
         Rectangle location = getGraphicLocation(context);
+        
+        context.getLabelPainter().put( location );
+        
         BarStyle type = getBarStyle(context);
         /*
          * Draw the scale bar

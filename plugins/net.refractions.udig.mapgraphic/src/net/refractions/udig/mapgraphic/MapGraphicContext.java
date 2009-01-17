@@ -2,6 +2,7 @@ package net.refractions.udig.mapgraphic;
 
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.AbstractContext;
+import net.refractions.udig.project.render.ILabelPainter;
 import net.refractions.udig.ui.graphics.ViewportGraphics;
 
 /**
@@ -27,4 +28,10 @@ public interface MapGraphicContext extends AbstractContext {
      */
     ViewportGraphics getGraphics();
     
+    /**
+     * Returns the labeller for the next rendering.  
+     *
+     * @return the labeller that draws the labels on the top of the map.
+     */
+    ILabelPainter getLabelPainter();    
 }

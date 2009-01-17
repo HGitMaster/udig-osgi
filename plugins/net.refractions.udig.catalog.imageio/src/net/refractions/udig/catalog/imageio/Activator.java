@@ -50,14 +50,13 @@ public class Activator extends AbstractUIPlugin {
     }
     
     public void start(BundleContext context) throws Exception {
-    	if (!GDALUtilities.isGDALAvailable())
-    		return;
-        // we perform a check here to check if gdal is actually around
-        // if we fail then the plugin contributions would smoothly
-        // not be applied.
-    		
-    		
-    	super.start(context);
+        super.start(context);
+    	if (!GDALUtilities.isGDALAvailable()){
+    		// we perform a check here to check if gdal is actually around
+            // if we fail then the plugin contributions would smoothly
+            // not be applied.
+    	    throw new RuntimeException("GDAL Not Available ... some image formats disabled");
+    	}
     }
     
     public void stop(BundleContext context) throws Exception {

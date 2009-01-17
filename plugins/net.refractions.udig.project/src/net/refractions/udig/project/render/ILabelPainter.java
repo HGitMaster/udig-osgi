@@ -14,6 +14,8 @@
  */
 package net.refractions.udig.project.render;
 
+import java.awt.Rectangle;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.geotools.renderer.lite.LabelCache;
 
@@ -28,5 +30,5 @@ import org.geotools.renderer.lite.LabelCache;
  * @author Jesse
  * @since 1.1.0
  */
-public interface ILabelPainter extends IAdaptable,LabelCache {
+public interface ILabelPainter extends IAdaptable,LabelCache {  
 }
