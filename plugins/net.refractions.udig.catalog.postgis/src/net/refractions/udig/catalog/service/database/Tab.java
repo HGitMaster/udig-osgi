@@ -19,9 +19,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
-import net.refractions.udig.catalog.internal.postgis.ui.PostgisConnectionPage;
-import net.refractions.udig.core.Pair;
-
 import org.eclipse.swt.widgets.Listener;
 
 /**

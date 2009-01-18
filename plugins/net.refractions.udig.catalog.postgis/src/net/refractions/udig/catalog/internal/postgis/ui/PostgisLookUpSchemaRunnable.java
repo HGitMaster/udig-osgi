@@ -29,11 +29,11 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
+import net.refractions.udig.catalog.service.database.LookUpSchemaRunnable;
 import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.core.Pair;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.postgis.PostgisDataStoreFactory;
 
@@ -44,7 +44,7 @@ import org.geotools.data.postgis.PostgisDataStoreFactory;
  * @author jesse
  * @since 1.1.0
  */
-public class LookUpSchemaRunnable implements IRunnableWithProgress {
+public class PostgisLookUpSchemaRunnable implements LookUpSchemaRunnable {
 
     private final String host;
     private final int port;
@@ -55,7 +55,7 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
     private volatile String error;
     private volatile boolean ran = false;
 
-    public LookUpSchemaRunnable( String host, int port, String username, String password,
+    public PostgisLookUpSchemaRunnable( String host, int port, String username, String password,
             String database ) {
         this.host = host;
         this.port = port;

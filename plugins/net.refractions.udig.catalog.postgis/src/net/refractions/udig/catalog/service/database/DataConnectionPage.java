@@ -12,15 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package net.refractions.udig.catalog.internal.postgis.ui;
-
-import static org.geotools.data.postgis.PostgisDataStoreFactory.DATABASE;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.DBTYPE;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.HOST;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.PASSWD;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.PORT;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.USER;
+package net.refractions.udig.catalog.service.database;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -33,15 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
-import net.refractions.udig.catalog.postgis.internal.Messages;
-import net.refractions.udig.catalog.service.database.Either;
-import net.refractions.udig.catalog.service.database.Tab;
-import net.refractions.udig.catalog.service.database.TableDescriptor;
-import net.refractions.udig.catalog.service.database.TableSelectionTab;
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -63,10 +48,10 @@ import org.eclipse.swt.widgets.TabItem;
  * @author jesse
  * @since 1.1.0
  */
-public class PostgisConnectionPage extends AbstractUDIGImportPage implements Listener {
+public class DataConnectionPage extends AbstractUDIGImportPage implements Listener {
 
     private Combo database;
-    private PostgisUserHostPage userHostPage;
+    private UserHostPage userHostPage;
     Map<Control, Tab> tabs = new HashMap<Control, Tab>();
     private TableSelectionTab tableSelection;
     private TabFolder tabFolder;
@@ -75,8 +60,8 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
     private String currentHost, currentUsername;
     private int currentPort;
     
-    public PostgisConnectionPage() {
-        super(Messages.PostGisWizardPage_title);
+    public DataConnectionPage() {
+        super("Databse connection page");
     }
 
     @Override
@@ -85,14 +70,15 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
     }
     
     public Map<String, Serializable> getParams() {
+        
         Map<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put(HOST.key, userHostPage.getHost());
-        params.put(PORT.key, userHostPage.getPort());
-        params.put(USER.key, userHostPage.getUsername());
-        params.put(PASSWD.key, userHostPage.getPassword());
-        params.put(DATABASE.key, database.getText());
-        params.put(SCHEMA.key, (Serializable) SCHEMA.sample);
-        params.put(DBTYPE.key, (Serializable) DBTYPE.sample);
+        params.put(userHostPage.dialect.hostParam.key, userHostPage.getHost());
+        params.put(userHostPage.dialect.portParam.key, userHostPage.getPort());
+        params.put(userHostPage.dialect.usernameParam.key, userHostPage.getUsername());
+        params.put(userHostPage.dialect.passwordParam.key, userHostPage.getPassword());
+        params.put(userHostPage.dialect.databaseParam.key, database.getText());
+        params.put(userHostPage.dialect.schemaParam.key, (Serializable) userHostPage.dialect.schemaParam.sample);
+        params.put(userHostPage.dialect.typeParam.key, (Serializable) userHostPage.dialect.typeParam.sample);
         
         Either<String, Map<String, Serializable>> result = getActiveTab().getParams(params);
         if( result.isLeft() ){
@@ -139,7 +125,7 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
         if (size.y < 640) {
             getShell().setSize(size.x, 640);
         }
-        userHostPage = (PostgisUserHostPage) getPreviousPage();
+        userHostPage = (UserHostPage) getPreviousPage();
 
         Composite top = new Composite(parent, SWT.NONE);
         setControl(top);
@@ -150,27 +136,17 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
         tabFolder = createTabFolder(top);
 
         addTableSelectionTab(tabFolder);
-//        addSQLTab(tabFolder);
+        tabs.putAll(userHostPage.dialect.createOptionConnectionPageTabs(tabFolder, this));
     }
 
     private void addTableSelectionTab( TabFolder tabFolder ) {
-        tableSelection = new TableSelectionTab(new PostgisServiceDialect());
+        tableSelection = new TableSelectionTab(userHostPage.dialect);
         
         TabItem item = new TabItem(tabFolder, SWT.NONE);
         item.setText("Tables");
         item.setControl(tableSelection.createControl(tabFolder, SWT.NONE));
         tabs.put(item.getControl(), tableSelection);
         tableSelection.addListener(this);
-    }
-
-    private void addSQLTab( TabFolder tabFolder ) {
-        SQLComposite sqlComposite = new SQLComposite(getDialogSettings());
-        
-        sqlComposite.setWizard(getWizard());
-        TabItem item = new TabItem(tabFolder, SWT.NONE);
-        item.setText("SQL");
-        item.setControl(sqlComposite.createControl(tabFolder, SWT.NONE));
-        tabs.put(item.getControl(), sqlComposite);
     }
 
     private TabFolder createTabFolder( Composite top ) {
@@ -196,9 +172,9 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
                 int port = userHostPage.getPort();
                 String password = userHostPage.getPassword();
                 String username = userHostPage.getUsername();
-                String database = PostgisConnectionPage.this.database.getText();
+                String database = DataConnectionPage.this.database.getText();
 
-                LookUpSchemaRunnable runnable = new LookUpSchemaRunnable(host, port, username,
+                LookUpSchemaRunnable runnable = userHostPage.dialect.createLookupSchemaRunnable(host, port, username,
                         password, database);
                 try {
                     getContainer().run(false, true, runnable);
@@ -271,11 +247,6 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
 
             database.setItems(items);
         }
-    }
-
-    @Override
-    protected IDialogSettings getDialogSettings() {
-        return PostgisPlugin.getDefault().getDialogSettings();
     }
 
     @Override

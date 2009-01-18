@@ -45,13 +45,13 @@ import org.eclipse.swt.widgets.Text;
  * @author jesse
  * @since 1.1.0
  */
-public class SQLComposite implements Listener, Tab {
+public class SQLTab implements Listener, Tab {
 
     private Text sqlText;
     private IDialogSettings settings;
     private Set<Listener> listeners = new HashSet<Listener>();
 
-    public SQLComposite( IDialogSettings settings ) {
+    public SQLTab( IDialogSettings settings ) {
         this.settings = settings;
     }
 

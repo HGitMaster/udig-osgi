@@ -73,7 +73,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
     private static final String PORT_ERROR = "The port value must be an integer > 0";
     private static final String DELETED = "DELETED";
 
-    private final DatabaseServiceDialect dialect;
+    final DatabaseServiceDialect dialect;
     
     private Text host;
     private Text port;

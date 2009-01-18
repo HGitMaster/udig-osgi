@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
-import net.refractions.udig.catalog.internal.postgis.ui.LookUpSchemaRunnable;
+import net.refractions.udig.catalog.internal.postgis.ui.PostgisLookUpSchemaRunnable;
 import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
 
@@ -141,7 +141,7 @@ public class PostgisService2 extends IService {
         String user = (String) params.get(USER.key);
         String pass = (String) params.get(PASSWD.key);
         
-        LookUpSchemaRunnable runnable = new LookUpSchemaRunnable(host, port, user, pass, database);
+        PostgisLookUpSchemaRunnable runnable = new PostgisLookUpSchemaRunnable(host, port, user, pass, database);
         runnable.run(monitor);
         
         if (runnable.getError()!=null){

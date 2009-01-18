@@ -23,7 +23,7 @@
     </wizardPage>
     <wizardPage
           banner="icons/wizban/postgis_wiz.gif"
-          class="net.refractions.udig.catalog.internal.postgis.ui.PostgisConnectionPage"
+          class="net.refractions.udig.catalog.service.database.DataConnectionPage"
           description="%wizard.description"
           icon="icons/etool16/postgis_wiz.gif"
           name="Connection">
