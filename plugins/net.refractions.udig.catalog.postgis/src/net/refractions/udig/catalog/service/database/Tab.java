@@ -12,12 +12,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package net.refractions.udig.catalog.internal.postgis.ui;
+package net.refractions.udig.catalog.service.database;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+
+import net.refractions.udig.catalog.internal.postgis.ui.PostgisConnectionPage;
+import net.refractions.udig.core.Pair;
 
 import org.eclipse.swt.widgets.Listener;
 
@@ -50,9 +53,9 @@ public interface Tab {
      * Returns the connection parameters as known by the caller.  
      * @param params the basic parameters for connecting to a database.  The tab can augment the params. 
      * 
-     * @return A map of connection parameters.
+     * @return An error message or a map of connection parameters if all goes right.
      */
-    Map<String, Serializable> getParams(Map<String, Serializable> params);
+    Either<String,Map<String, Serializable>> getParams(Map<String, Serializable> params);
     
     /**
      * Return the ids of the selected IGeoResource (if needed)
@@ -71,4 +74,9 @@ public interface Tab {
      * @param modifyListener
      */
     public void addListener( Listener modifyListener );
+
+    /**
+     * Called when the containing page has just been shown.  The tab should clear cached information 
+     */
+    public void init();
 }

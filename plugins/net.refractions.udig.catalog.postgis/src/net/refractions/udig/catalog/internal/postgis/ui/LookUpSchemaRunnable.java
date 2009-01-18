@@ -14,19 +14,28 @@
  */
 package net.refractions.udig.catalog.internal.postgis.ui;
 
+import static java.text.MessageFormat.format;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
+import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
+import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.core.Pair;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.geotools.data.postgis.PostgisConnectionFactory;
+import org.geotools.data.DataSourceException;
+import org.geotools.data.postgis.PostgisDataStoreFactory;
 
 /**
  * A runnable that looks up all the schemas in the provided database using the provided username and
@@ -42,7 +51,7 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
     private final String username;
     private final String password;
     private final String database;
-    private final Set<PostgisTableDescriptor> tables = new HashSet<PostgisTableDescriptor>();
+    private final Set<TableDescriptor> tables = new HashSet<TableDescriptor>();
     private volatile String error;
     private volatile boolean ran = false;
 
@@ -56,46 +65,53 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
     }
 
     public void run( IProgressMonitor monitor ) {
-        
+
         monitor.beginTask("Loading Database tables", 3);
         monitor.worked(1);
-        PostgisConnectionFactory conFac = new PostgisConnectionFactory(host, port, database);
-        conFac.setLogin(username, password);
-        DriverManager.setLoginTimeout(3);
 
         try {
-            loadTableDescriptrs(conFac);
+            loadTableDescriptors();
 
         } catch (SQLException e) {
             error = "An error occurred while looking up list of tables.  Check that you entered the correct username and database name.";
+            PostgisPlugin.log("error", e);
+        } catch (DataSourceException e) {
+            error = "An error occurred while looking up list of tables.  Check that you entered the correct username and database name.";
+            PostgisPlugin.log("error", e);
         }
         monitor.done();
         ran = true;
     }
 
-    private void loadTableDescriptrs( PostgisConnectionFactory conFac ) throws SQLException {
-        Connection connection = conFac.getConnection();
+    private void loadTableDescriptors() throws SQLException, DataSourceException {
+        DataSource source = PostgisDataStoreFactory.getDefaultDataSource(host, username, password,
+                port, database, 10, 4, true);
+        Connection connection = source.getConnection();
         try {
 
             Statement statement = connection.createStatement();
-            if (statement
-                    .execute("SELECT schemaname, tablename FROM pg_tables ORDER BY schemaname, tablename;")) {
-                ResultSet resultSet = statement.getResultSet();
-                while( resultSet.next() ) {
-                    String schema = resultSet.getString("schemaname");
-                    String table = resultSet.getString("tablename");
-                    Pair<String, Pair<String, String>> results = lookupGeometryColumn(table,
-                            schema, connection);
-                    if (results != null) {
-                        String geometryColumn = results.getLeft();
-                        String geometryType = results.getRight().getLeft();
-                        String srid = results.getRight().getRight();
-                        tables.add(new PostgisTableDescriptor(table, geometryType, schema,
-                                geometryColumn, srid));
-                    }
 
-                }
+            if (!hasWritableTable("geometry_columns", "f_geometry_column", statement)) { //$NON-NLS-1$
+                error = "Database is not a Postgis Database.\nThe 'geometry_columns' table is either missing or not accessible";
+                return;
             }
+            if (!hasWritableTable("spatial_ref_sys", "srid", statement)) { //$NON-NLS-1$
+                error = "Database is not a Postgis Database.\nThe 'srid' table is either missing or not accessible";
+                return;
+            }
+
+            // Pair is schema, table name
+            List<Pair<String, String>> tableNames = new ArrayList<Pair<String, String>>();
+
+            ResultSet resultSet = statement
+                    .executeQuery("SELECT schemaname, tablename FROM pg_tables ORDER BY schemaname, tablename;");
+            while( resultSet.next() ) {
+                String schema = resultSet.getString("schemaname"); //$NON-NLS-1$
+                String table = resultSet.getString("tablename"); //$NON-NLS-1$
+                tableNames.add(Pair.create(schema, table));
+            }
+            Collection<TableDescriptor> results = lookupGeometryColumn(tableNames, connection);
+            tables.addAll(results);
             statement.close();
         } catch (SQLException e) {
             error = "An error occurred when querying the database about the data it contains. Please talk to the administrator: "
@@ -104,35 +120,84 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
             connection.close();
         }
     }
+    private boolean hasWritableTable( String tablename, String column, Statement statement ) {
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("select ");
+            stringBuilder.append(column);
+            stringBuilder.append(" from ");
+            stringBuilder.append(tablename);
+            stringBuilder.append(" limit 0;");
+            statement.executeQuery(stringBuilder.toString());
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 
-    private Pair<String, Pair<String, String>> lookupGeometryColumn( String table, String schema,
+    private Set<TableDescriptor> lookupGeometryColumn( List<Pair<String, String>> tablenames,
             Connection connection ) throws SQLException {
-
+        final String f_geometry_column = "f_geometry_column";
+        final String geomTypeCol = "type";
+        final String sridCol = "srid";
+        final String f_table_name = "f_table_name";
+        final String f_table_schema = "f_table_schema";
         Statement statement = connection.createStatement();
         try {
-            String f_geometry_column = "f_geometry_column";
-            String type = "type";
-            String srid = "srid";
-            String sql = "SELECT " + f_geometry_column + ", " + type + ", " + srid
-                    + " FROM geometry_columns WHERE f_table_name='" + table
-                    + "' AND f_table_schema='" + schema + "';";
-            if (statement.execute(sql)) {
-                ResultSet results = statement.getResultSet();
-                if (results.next()) {
-                    Pair<String, String> typeSrid = new Pair<String, String>(results
-                            .getString(type), results.getString(srid));
-                    String geom = results.getString(f_geometry_column);
-                    Pair<String, Pair<String, String>> all = new Pair<String, Pair<String, String>>(
-                            geom, typeSrid);
-                    return all;
+            StringBuilder where = new StringBuilder();
+            final String wherePattern = " ( {0}=''{1}'' AND {2}=''{3}'')";
+            for( Pair<String, String> pair : tablenames ) {
+                if (where.length() > 0) {
+                    where.append(" or ");
                 }
+                String schema = pair.left();
+                String table = pair.right();
+                where.append(format(wherePattern, f_table_name, table, f_table_schema, schema));
+            }
+            final String sql = "SELECT {0}, {1}, {2}, {3}, {4} FROM geometry_columns WHERE {5};";
+            ResultSet results = statement.executeQuery(format(sql, f_geometry_column, geomTypeCol,
+                    sridCol, f_table_name, f_table_schema, where));
+            while( results.next() ) {
+                String srid = results.getString(sridCol);
+                String geomType = results.getString(geomTypeCol);
+                String geom = results.getString(f_geometry_column);
+                String table = results.getString(f_table_name);
+                String schema = results.getString(f_table_schema);
+
+                boolean broken = isBroken(connection, table, schema, geom, geomType);
+                tables.add(new TableDescriptor(table, geomType, schema, geom, srid, broken));
+
             }
 
-            return null;
+            return tables;
         } finally {
             statement.close();
         }
     }
+
+    private boolean isBroken( Connection connection, String table, String schema, String geom,
+            String type ) throws SQLException {
+        Statement statement = connection.createStatement();
+        try {
+            String sql = "select " + geom + " from " + schema + "." + table + " limit 0";
+            ResultSet results = statement.executeQuery(sql);
+            String columnType = results.getMetaData().getColumnTypeName(1);
+            return !(columnType.equalsIgnoreCase(type) || columnType.equalsIgnoreCase("geometry")
+                    || columnType.equalsIgnoreCase("geometry[]")
+                    || columnType.equalsIgnoreCase("point")
+                    || columnType.equalsIgnoreCase("point[]")
+                    || columnType.equalsIgnoreCase("line") || columnType.equalsIgnoreCase("line[]")
+                    || columnType.equalsIgnoreCase("polygon") || columnType
+                    .equalsIgnoreCase("polygon[]"));
+
+        } catch (SQLException e) {
+            return false;
+        } finally {
+            statement.close();
+        }
+
+    }
+
     /**
      * Returns null if the run method was able to connect to the database otherwise will return a
      * message indicating what went wrong.
@@ -156,7 +221,7 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
      * @return the names of the databases in the database that this object connected to when the run
      *         method was executed.
      */
-    public Set<PostgisTableDescriptor> getSchemas() {
+    public Set<TableDescriptor> getSchemas() {
         return tables;
     }
 

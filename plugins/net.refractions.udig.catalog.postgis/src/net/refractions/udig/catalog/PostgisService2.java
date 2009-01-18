@@ -35,7 +35,7 @@ import java.util.concurrent.locks.Lock;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.catalog.internal.postgis.ui.LookUpSchemaRunnable;
-import net.refractions.udig.catalog.internal.postgis.ui.PostgisTableDescriptor;
+import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -149,9 +149,9 @@ public class PostgisService2 extends IService {
             status = Status.BROKEN;
             return null;
         }
-        Set<PostgisTableDescriptor> tables = runnable.getSchemas();
+        Set<TableDescriptor> tables = runnable.getSchemas();
         Set<String> schemas = new HashSet<String>();
-        for( PostgisTableDescriptor schema : tables ) {
+        for( TableDescriptor schema : tables ) {
             schemas.add(schema.schema);
         }
         return schemas.toArray(new String[0]);

@@ -179,7 +179,9 @@ public class EndConnectionState extends State {
                 monitor.beginTask("Disposing dereferenced services", toDispose.size());
                 // dispose old services
                 for( IService service : toDispose ) {
-                    service.dispose(SubMonitor.convert(monitor));
+                    if( service.parent(monitor)==null){
+                        service.dispose(SubMonitor.convert(monitor));
+                    }
                     monitor.worked(1);
                 }
             }

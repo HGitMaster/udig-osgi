@@ -38,23 +38,23 @@ public class Pair<T,V> {
      * Factory method
      * @return return a new instance
      */
-    public <L,R> Pair<L,R> create(L left, R right){
+    public static <L,R> Pair<L,R> create(L left, R right){
         return new Pair<L,R>(left,right);
     }
     
-    public T l(){
+    public final T l(){
         return getLeft();
     }
     
-    public V r(){
+    public final V r(){
         return getRight();
     }
     
-    public T left(){
+    public final T left(){
         return getLeft();
     }
     
-    public V right(){
+    public final V right(){
         return getRight();
     }
     

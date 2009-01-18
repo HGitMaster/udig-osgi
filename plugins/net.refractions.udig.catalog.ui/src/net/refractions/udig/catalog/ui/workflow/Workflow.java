@@ -55,81 +55,33 @@ public class Workflow {
     /** context object, states use this object as a seed to perform work * */
     private Object context;
 
-    /** A thread that drives the workflow */
-    private WorkflowThread thread;
+    private ThreadingStrategy threading;
+
+    /**
+     * Creates an empty workflow. When using this constructor the states of the workflow must be set
+     * before the workflow can be started.
+     */
+    public Workflow(ThreadingStrategy threading) {
+        threading.init();
+        this.threading = threading;
+    }
+
+    /**
+     * Creates a workflow from a set of workflow states.
+     * 
+     * @param states The states of the workflow.
+     */
+    public Workflow( ThreadingStrategy strategy, State[] states ) {
+        this(strategy);
+        setStates(states);
+    }
 
     /**
      * Creates an empty workflow. When using this constructor the states of the workflow must be set
      * before the workflow can be started.
      */
     public Workflow() {
-        initThread();
-    }
-    private synchronized void initThread() {
-        if (thread == null) {
-            thread = new WorkflowThread();
-            thread.setDaemon(true);
-            thread.setName("Workflow Thread"); //$NON-NLS-1$
-            thread.start();
-        }
-    }
-    @Override
-    protected void finalize() throws Throwable {
-        shutdown();
-        super.finalize();
-    }
-
-    public void shutdown() {
-        if (thread!=null && thread.running) {
-            Runnable runnable = new Runnable(){
-
-                public void run() {
-                    thread.running = false;
-                    thread = null;
-                }
-
-            };
-            thread.requests.add(runnable);
-        }
-    }
-
-    private void run( final Runnable runnable ) {
-        if (Thread.currentThread() == thread) {
-            runnable.run();
-        } else {
-            final boolean[] done = new boolean[1];
-            final Throwable[] exception = new Throwable[1];
-            thread.requests.add(new Runnable(){
-
-                public void run() {
-                    try {
-                        runnable.run();
-                    } catch (Throwable e) {
-                        exception[0] = e;
-                    } finally {
-                        done[0] = true;
-                    }
-                }
-
-            });
-
-            Display display = Display.getCurrent();
-            while( !done[0] ) {
-                if (display == null || !display.readAndDispatch()) {
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        break;
-                    }
-                }
-            }
-
-            if (exception[0] instanceof RuntimeException) {
-                throw (RuntimeException) exception[0];
-            } else if (exception[0] != null) {
-                throw new RuntimeException(exception[0]);
-            }
-        }
+        this(new DefaultThreading());
     }
 
     /**
@@ -138,8 +90,7 @@ public class Workflow {
      * @param states The states of the workflow.
      */
     public Workflow( State[] states ) {
-        this();
-        setStates(states);
+        this(new DefaultThreading(), states);
     }
 
     /**
@@ -154,6 +105,10 @@ public class Workflow {
 
     public void removeListener( Listener l ) {
         listeners.remove(l);
+    }
+
+    public void shutdown() {
+        threading.shutdown();
     }
 
     /**
@@ -247,7 +202,7 @@ public class Workflow {
     public void start( final IProgressMonitor monitor ) {
         final IProgressMonitor progressMonitor = checkMonitor(monitor);
 
-        initThread();
+        threading.init();
 
         Runnable request = new Runnable(){
             public void run() {
@@ -270,7 +225,7 @@ public class Workflow {
             }
         };
 
-        run(request);
+        threading.run(request);
     }
 
     /**
@@ -327,7 +282,7 @@ public class Workflow {
             }
         };
 
-        run(request);
+        threading.run(request);
     }
     private IProgressMonitor checkMonitor( final IProgressMonitor monitor ) {
         if (monitor == null) {
@@ -406,7 +361,7 @@ public class Workflow {
                     current = null;
 
                     finished = true;
-                    shutdown();
+                    threading.shutdown();
                     dispatchFinished(last);
                 }
             } else {
@@ -463,7 +418,7 @@ public class Workflow {
             }
         };
 
-        run(request);
+        threading.run(request);
     }
 
     /**
@@ -607,23 +562,6 @@ public class Workflow {
         }
     }
 
-    private final static class WorkflowThread extends Thread {
-        private final BlockingQueue<Runnable> requests = new LinkedBlockingQueue<Runnable>();
-        private volatile boolean running = true;
-        @Override
-        public void run() {
-            while( running ) {
-                Runnable runnable;
-                try {
-                    runnable = requests.take();
-                } catch (InterruptedException e) {
-                    continue;
-                }
-                runnable.run();
-            }
-        }
-    }
-
     public static class WorkflowRunner implements Listener {
         Workflow pipe;
         boolean stopped;
@@ -636,7 +574,7 @@ public class Workflow {
             final boolean[] result = new boolean[1];
 
             // run in the Workflow thread
-            pipe.run(new Runnable(){
+            pipe.threading.run(new Runnable(){
                 public void run() {
                     result[0] = runInternal(monitor);
                 }

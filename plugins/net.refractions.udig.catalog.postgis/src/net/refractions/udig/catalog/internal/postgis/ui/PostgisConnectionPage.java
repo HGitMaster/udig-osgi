@@ -28,12 +28,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.catalog.postgis.internal.Messages;
+import net.refractions.udig.catalog.service.database.Either;
+import net.refractions.udig.catalog.service.database.Tab;
+import net.refractions.udig.catalog.service.database.TableDescriptor;
+import net.refractions.udig.catalog.service.database.TableSelectionTab;
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -63,8 +68,12 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
     private Combo database;
     private PostgisUserHostPage userHostPage;
     Map<Control, Tab> tabs = new HashMap<Control, Tab>();
-    private PostgisTableSelectionComposite tableSelection;
+    private TableSelectionTab tableSelection;
     private TabFolder tabFolder;
+    // for checking to see if the connection has changed 
+    // if it has then the cached information must be changed.
+    private String currentHost, currentUsername;
+    private int currentPort;
     
     public PostgisConnectionPage() {
         super(Messages.PostGisWizardPage_title);
@@ -84,8 +93,15 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
         params.put(DATABASE.key, database.getText());
         params.put(SCHEMA.key, (Serializable) SCHEMA.sample);
         params.put(DBTYPE.key, (Serializable) DBTYPE.sample);
-
-        return getActiveTab().getParams(params);
+        
+        Either<String, Map<String, Serializable>> result = getActiveTab().getParams(params);
+        if( result.isLeft() ){
+            setErrorMessage(result.getLeft());
+            return null;
+        }else{
+            setErrorMessage(null);
+            return result.getRight();
+        }
     }
     
     private Tab getActiveTab() {
@@ -93,6 +109,24 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
         Control control2 = tabFolder.getItem(selection).getControl();
         
         return tabs.get(control2);
+    }
+    
+    @Override
+    public void shown() {
+        boolean sameConnection = userHostPage.getHost().equals(currentHost) &&
+                userHostPage.getPort() == currentPort &&
+                userHostPage.getUsername().equals(currentUsername);
+        
+        if( !sameConnection ){
+            for( Tab tab : tabs.values() ) {
+                tab.init();
+            }
+            populateDatabaseCombo();
+        }
+        
+        currentHost = userHostPage.getHost();
+        currentPort = userHostPage.getPort();
+        currentUsername = userHostPage.getUsername();
     }
 
     @Override
@@ -116,11 +150,11 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
         tabFolder = createTabFolder(top);
 
         addTableSelectionTab(tabFolder);
-        addSQLTab(tabFolder);
+//        addSQLTab(tabFolder);
     }
 
     private void addTableSelectionTab( TabFolder tabFolder ) {
-        tableSelection = new PostgisTableSelectionComposite();
+        tableSelection = new TableSelectionTab(new PostgisServiceDialect());
         
         TabItem item = new TabItem(tabFolder, SWT.NONE);
         item.setText("Tables");
@@ -170,9 +204,12 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
                     getContainer().run(false, true, runnable);
                     if (runnable.getError() != null) {
                         setErrorMessage(runnable.getError());
+                        tableSelection.setTableInput(Collections.<TableDescriptor>emptySet());
                     } else {
+                        setErrorMessage(null);
                         tableSelection.setTableInput(runnable.getSchemas());
                     }
+                    getContainer().updateButtons();
                 } catch (InvocationTargetException e) {
                     throw (RuntimeException) new RuntimeException().initCause(e);
                 } catch (InterruptedException e) {
@@ -190,42 +227,49 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
         database = new Combo(top, SWT.BORDER);
         database.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        String[] names = userHostPage.getDatabaseNames();
+        populateDatabaseCombo();
+        database.addListener(SWT.KeyUp, new Listener(){
+            
+            public void handleEvent( Event event ) {
+                String[] items = database.getItems();
+                // if the key pressed is a word character
+                if (("" + event.character).matches("\\w") || event.keyCode == SWT.BS  //$NON-NLS-1$//$NON-NLS-2$
+                        || event.keyCode == SWT.DEL) {
+                    String string = database.getText();
+                    if (string.trim().length() == 0) {
+                        database.setItems(items);
+                    } else {
+                        List<String> filtered = new ArrayList<String>();
+                        for( String item : items ) {
+                            if (item.startsWith(string)) {
+                                filtered.add(item);
+                            }
+                        }
+                        
+                        database.setItems(filtered.toArray(new String[0]));
+                        database.setText(string);
+                    }
+                }
+            }
+            
+        });
+    }
 
+    private void populateDatabaseCombo() {
+        String[] names = userHostPage.getDatabaseNames();
+        database.setText("");
         if( names.length == 0){
+            database.setItems(new String[0]);
             setMessage("You do not have permissions to access the list of all databases, Please enter the database to connect to", WARNING);
         } else {
+            setMessage(null);
             Arrays.sort(names);
 
-            final String[] items = new String[names.length + 1];
+            String[] items = new String[names.length + 1];
             items[0] = ""; //$NON-NLS-1$
             System.arraycopy(names, 0, items, 1, names.length);
 
             database.setItems(items);
-            database.addListener(SWT.KeyUp, new Listener(){
-
-                public void handleEvent( Event event ) {
-                    // if the key pressed is a word character
-                    if (("" + event.character).matches("\\w") || event.keyCode == SWT.BS  //$NON-NLS-1$//$NON-NLS-2$
-                            || event.keyCode == SWT.DEL) {
-                        String string = database.getText();
-                        if (string.trim().length() == 0) {
-                            database.setItems(items);
-                        } else {
-                            List<String> filtered = new ArrayList<String>();
-                            for( String item : items ) {
-                                if (item.startsWith(string)) {
-                                    filtered.add(item);
-                                }
-                            }
-
-                            database.setItems(filtered.toArray(new String[0]));
-                            database.setText(string);
-                        }
-                    }
-                }
-
-            });
         }
     }
 
@@ -236,7 +280,11 @@ public class PostgisConnectionPage extends AbstractUDIGImportPage implements Lis
 
     @Override
     public Collection<URL> getResourceIDs() {
-        return getActiveTab().getResourceIDs(getParams());
+        Map<String, Serializable> params = getParams();
+        if( params==null ){
+            return Collections.emptySet();
+        }
+        return getActiveTab().getResourceIDs(params);
     }
 
     public void handleEvent( Event event ) {

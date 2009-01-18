@@ -25,9 +25,6 @@ import org.eclipse.jface.wizard.WizardPage;
  */
 public abstract class AbstractUDIGImportPage extends WorkflowWizardPage implements UDIGConnectionPage {
 
-    private Stack<Entry> messages = new Stack<Entry>();
-    private Stack<String> errors = new Stack<String>();
-
     public AbstractUDIGImportPage( String pageName ) {
         super(pageName);
     }
@@ -38,15 +35,6 @@ public abstract class AbstractUDIGImportPage extends WorkflowWizardPage implemen
      */
     @Override
     public void setMessage( String newMessage, int newType ) {
-        if (newMessage == null) {
-            popMessage();
-        } else {
-            messages.push(new Entry(getMessage(), getMessageType()));
-        }
-        setMessagePrivate(newMessage, newType);
-    }
-
-    private void setMessagePrivate( String newMessage, int newType ) {
         super.setMessage(newMessage, newType);
 
         // wizard pages are decorated by a connection page, so the default
@@ -66,15 +54,6 @@ public abstract class AbstractUDIGImportPage extends WorkflowWizardPage implemen
      */
     @Override
     public void setErrorMessage( String newMessage ) {
-        if (newMessage == null) {
-            popErrorMessage();
-        } else {
-            errors.push(getErrorMessage());
-        }
-        setErrorMessagePrivate(newMessage);
-    }
-
-    private void setErrorMessagePrivate( String newMessage ) {
         super.setErrorMessage(newMessage);
 
         // wizard pages are decorated by a connection page, so the default
@@ -85,31 +64,6 @@ public abstract class AbstractUDIGImportPage extends WorkflowWizardPage implemen
         } else {
             CatalogUIPlugin.log("A WizardPage was expected but instead was a " //$NON-NLS-1$
                     + page.getClass().getName(), new Exception());
-        }
-    }
-
-    /**
-     * Removes the current error message and replaces it with the previously visible error message.
-     */
-    protected void popErrorMessage() {
-        if (errors.isEmpty()) {
-            setErrorMessagePrivate(null);
-        } else {
-            String previous = errors.pop();
-
-            setErrorMessagePrivate(previous);
-        }
-    }
-
-    /**
-     * Removes the current message and replaces it with the previously visible message.
-     */
-    protected void popMessage() {
-        if (messages.isEmpty()) {
-            setMessagePrivate(null, getMessageType());
-        } else {
-            Entry previous = messages.pop();
-            setMessagePrivate(previous.message, previous.type);
         }
     }
 

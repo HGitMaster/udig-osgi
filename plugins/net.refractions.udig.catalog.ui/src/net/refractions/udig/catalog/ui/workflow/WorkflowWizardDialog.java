@@ -62,7 +62,7 @@ public class WorkflowWizardDialog extends WizardDialog implements Listener {
         final Workflow pipe = getWizard().getWorkflow();
 
         try {
-            run(true, true, new IRunnableWithProgress(){
+            run(false, true, new IRunnableWithProgress(){
 
                 public void run( IProgressMonitor monitor ) throws InvocationTargetException,
                         InterruptedException {
@@ -154,7 +154,7 @@ public class WorkflowWizardDialog extends WizardDialog implements Listener {
             }
         };
         try {
-            run(true, true, runnable);
+            run(false, true, runnable);
         } catch (InvocationTargetException e) {
             CatalogUIPlugin.log(e.getLocalizedMessage(), e);
         } catch (InterruptedException e) {
@@ -185,7 +185,7 @@ public class WorkflowWizardDialog extends WizardDialog implements Listener {
         final Workflow pipe = getWizard().getWorkflow();
 
         try {
-            run(true, true, new IRunnableWithProgress(){
+            run(false, true, new IRunnableWithProgress(){
 
                 public void run( IProgressMonitor monitor ) throws InvocationTargetException,
                         InterruptedException {

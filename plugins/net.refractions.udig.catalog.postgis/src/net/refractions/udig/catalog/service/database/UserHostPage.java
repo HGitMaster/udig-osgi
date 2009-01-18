@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package net.refractions.udig.catalog.internal.mysql.ui;
+package net.refractions.udig.catalog.service.database;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -22,15 +22,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import net.refractions.udig.catalog.internal.mysql.MySQLPlugin;
 import net.refractions.udig.catalog.internal.ui.Images;
-import net.refractions.udig.catalog.mysql.internal.Messages;
+import net.refractions.udig.catalog.postgis.internal.Messages;
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
+import net.refractions.udig.catalog.ui.CatalogUIPlugin;
+import net.refractions.udig.catalog.ui.ISharedImages;
 import net.refractions.udig.catalog.ui.UDIGConnectionPage;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -44,34 +46,35 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-
 /**
- * The first of a two page wizard for connecting to a mysql. This page requires the user enter
+ * The first of a two page wizard for connecting to a postgis. This page requires the user enter
  * host, port, username and password.
  * 
  * @author jesse
- * @author Harry Bullen, Intelligent Automation
  * @since 1.1.0
  */
-public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGConnectionPage {
+public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnectionPage {
 
     // /////
     // The following constants are those used to store (and retrieve) the settings from and to the
     // Dialog Settings
     // /////
-    private static final String PREVIOUS_CONNECTIONS = "previous_settings";
-    protected static final String TIMESTAMP = "TIMESTAMP";
-    private static final String USERNAME = "USERNAME";
-    private static final String HOST = "HOST";
-    private static final String PORT = "PORT";
-    protected static final String PASSWORD = "PASSWORD";
-    private static final String SAVE_PASSWORD = "SAVE_PASSWORD";
+    private static final String PREVIOUS_CONNECTIONS = "previous_settings"; //$NON-NLS-1$
+    protected static final String TIMESTAMP = "TIMESTAMP"; //$NON-NLS-1$
+    private static final String USERNAME = "USERNAME"; //$NON-NLS-1$
+    private static final String HOST = "HOST"; //$NON-NLS-1$
+    private static final String PORT = "PORT"; //$NON-NLS-1$
+    protected static final String PASSWORD = "PASSWORD"; //$NON-NLS-1$
+    private static final String SAVE_PASSWORD = "SAVE_PASSWORD"; //$NON-NLS-1$
     // / End of Dialog settings constants
 
-    private static final String REQUIRED_DECORATION = "REQUIRED_DECORATION";
-    private static final String DEFAULT_PORT = "3306";
+    private static final String REQUIRED_DECORATION = "REQUIRED_DECORATION"; //$NON-NLS-1$
+    private static final String DEFAULT_PORT = "5432"; //$NON-NLS-1$
     private static final String PORT_ERROR = "The port value must be an integer > 0";
+    private static final String DELETED = "DELETED";
 
+    private final DatabaseServiceDialect dialect;
+    
     private Text host;
     private Text port;
     private Text password;
@@ -81,9 +84,11 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
     // without having to reconnect to the database.
     private String[] databaseNames;
     private Button savePassword;
+    private Combo previousConnections;
 
-    public MySQLUserHostPage() {
-        super(Messages.MySQLWizardPage_title);
+    public UserHostPage(DatabaseServiceDialect dialect) {
+        super(Messages.PostGisWizardPage_title);
+        this.dialect = dialect;
     }
 
     public Map<String, Serializable> getParams() {
@@ -114,6 +119,53 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
         
         this.savePassword = new Button(top, SWT.CHECK);
         this.savePassword.setText("Store Password");
+        GridDataFactory.swtDefaults().span(4, 1).applyTo(savePassword);
+        
+        Button removeConnection = new Button(top, SWT.PUSH);
+        GridDataFactory.swtDefaults().span(4, 1).indent(0, 10).applyTo(removeConnection);
+        removeConnection.setText("Remove Connection");
+        removeConnection.addListener(SWT.Selection, new Listener(){
+
+            public void handleEvent( Event event ) {
+                removeConnection();
+            }
+            
+        });
+        
+    }
+
+    protected void removeConnection() {
+        if(host.getText().length()==0 && 
+                username.getText().length()==0 &&
+                password.getText().length()==0 &&
+                port.getText().equals(DEFAULT_PORT)){
+            return;
+        }
+        
+        boolean confirm = MessageDialog.openConfirm(getShell(), "Remove Connection", "Are you sure you want to clear the connection information?");
+        
+        if (confirm) {
+            this.host.setText(""); //$NON-NLS-1$
+            this.port.setText(DEFAULT_PORT); 
+            this.username.setText(""); //$NON-NLS-1$
+            this.password.setText(""); //$NON-NLS-1$
+            this.savePassword.setSelection(false);
+            this.host.setFocus();
+
+            int index = previousConnections.getSelectionIndex();
+            String item = previousConnections.getItem(index);
+            IDialogSettings settings = (IDialogSettings) previousConnections.getData(item);
+            if (settings != null) {
+                previousConnections.remove(index);
+                previousConnections.setData(item, null);
+                settings.put(DELETED, true);
+            }
+            
+            if(previousConnections.getItemCount()<=1){
+                previousConnections.setVisible(false);
+            }
+        }
+
     }
 
     private void createPreviousConnectionsCombo( Composite top ) {
@@ -123,7 +175,7 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         label.setLayoutData(gridData);
 
-        final Combo previousConnections = new Combo(top, SWT.READ_ONLY);
+        this.previousConnections = new Combo(top, SWT.READ_ONLY);
         populatePreviousConnections(previousConnections);
         gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
         gridData.horizontalSpan = 3;
@@ -147,7 +199,9 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
                     String password = settings.get(PASSWORD);
                     boolean savedPassword = settings.getBoolean(SAVE_PASSWORD);
                     populateWidgets(host, port, username, password, savedPassword );
-                    MySQLUserHostPage.this.password.setFocus();
+                    UserHostPage.this.password.setFocus();
+                }else{
+                    populateWidgets("", DEFAULT_PORT, "", "", false);
                 }
                 previousConnections.setToolTipText(item);
             }
@@ -166,7 +220,7 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
 
     private String nullToString( String string ) {
         if (string == null) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         return string;
     }
@@ -190,17 +244,19 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
 
             });
             List<String> items = new ArrayList<String>(sections.length);
-            items.add("");
+            items.add(""); //$NON-NLS-1$
             for( IDialogSettings connection : sections ) {
-                StringBuilder name = new StringBuilder();
-                name.append(connection.get(USERNAME));
-                name.append('@');
-                name.append(connection.get(HOST));
-                name.append(':');
-                name.append(connection.get(PORT));
-
-                previousConnections.setData(name.toString(), connection);
-                items.add(name.toString());
+                if( !connection.getBoolean(DELETED) ) {
+                    StringBuilder name = new StringBuilder();
+                    name.append(connection.get(USERNAME));
+                    name.append('@');
+                    name.append(connection.get(HOST));
+                    name.append(':');
+                    name.append(connection.get(PORT));
+    
+                    previousConnections.setData(name.toString(), connection);
+                    items.add(name.toString());
+                }
             }
 
             previousConnections.setItems(items.toArray(new String[0]));
@@ -208,7 +264,7 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
     }
     @Override
     protected IDialogSettings getDialogSettings() {
-        return MySQLPlugin.getDefault().getDialogSettings();
+        return dialect.getDialogSetting();
     }
 
     private Text createLabelAndText( Composite parent, String labelText, int textStyle ) {
@@ -218,10 +274,10 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
         final Text text = new Text(parent, textStyle);
 
         final ControlDecoration decoration = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
-        ImageRegistry imageRegistry = MySQLPlugin.getDefault().getImageRegistry();
+        ImageRegistry imageRegistry = CatalogUIPlugin.getDefault().getImageRegistry();
         Image image = imageRegistry.get(REQUIRED_DECORATION);
         if (image == null) {
-            image = Images.getDescriptor(Images.WARNING_OVR).createImage();
+            image = Images.getDescriptor(ISharedImages.WARNING_OVR).createImage();
             imageRegistry.put(REQUIRED_DECORATION, image);
         }
         decoration.setImage(image);
@@ -233,7 +289,7 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
             public void handleEvent( Event event ) {
                 getContainer().updateButtons();
                 boolean valid = isValid(text);
-                if (text.getText().trim().equals("") && valid) {
+                if (text.getText().trim().equals("") && valid) { //$NON-NLS-1$
                     decoration.show();
                 } else {
                     decoration.hide();
@@ -275,13 +331,17 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
     @Override
     public boolean isPageComplete() {
         boolean enteredEntries = port.getText().trim().length() > 0
-                && host.getText().trim().length() > 0 && username.getText().trim().length() > 0
-                && password.getText().trim().length() > 0;
+                && host.getText().trim().length() > 0 && username.getText().trim().length() > 0;
         boolean validEntries = isValid(port) && isValid(host) && isValid(username)
                 && isValid(password);
         return enteredEntries && validEntries;
     }
 
+    @Override
+    public void shown() {
+        populatePreviousConnections(previousConnections);
+    }
+    
     @Override
     public boolean leavingPage() {
 
@@ -343,19 +403,20 @@ public class MySQLUserHostPage extends AbstractUDIGImportPage implements UDIGCon
         String username2 = nullToString(username.getText());
         String password2 = nullToString(password.getText());
         try {
-            DatabaseConnectionRunnable runnable = new DatabaseConnectionRunnable(host2, port2,
+            DatabaseConnectionRunnable runnable = dialect.createDatabaseConnectionRunnable(host2, Integer.parseInt(port2),
                     username2, password2);
             getContainer().run(false, true, runnable);
             String connect = runnable.canConnect();
             if (connect != null) {
                 setErrorMessage(connect);
             } else {
+                setErrorMessage(null);
                 databaseNames  = runnable.getDatabaseNames();
             }
             return connect == null;
         } catch (InvocationTargetException e) {
             setErrorMessage("Unexpected Error:" + e);
-            MySQLPlugin.log("Error while running database connection runnable", e);
+            dialect.log("Error while running database connection runnable", e);
             return false;
         }
     }
