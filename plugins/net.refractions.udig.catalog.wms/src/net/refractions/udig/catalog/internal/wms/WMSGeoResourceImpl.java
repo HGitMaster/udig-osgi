@@ -236,6 +236,8 @@ public class WMSGeoResourceImpl extends IGeoResource {
                 image = imageDescriptor.createImage();
                 Rectangle bound = image.getBounds();
                 if (bound.width == 16 && bound.height == 16) {
+                    // perfect! it did what was expected!
+                    //
                     final ImageData data = (ImageData) image.getImageData().clone();
                     return new ImageDescriptor(){
                         public ImageData getImageData() {
@@ -244,8 +246,12 @@ public class WMSGeoResourceImpl extends IGeoResource {
                     };
                 }
                 if (bound.height < 16 || bound.width < 16) {
-                    if (WmsPlugin.getDefault().isDebugging())
+                    // the image is smaller than what we asked for
+                    // perhaps we should display nothing?
+                    // in stead we will try scaling it up
+                    if (WmsPlugin.getDefault().isDebugging()){
                         System.out.println("Icon scaled up to requested size"); //$NON-NLS-1$                                        
+                    }
                     final ImageData data = image.getImageData().scaledTo(16, 16);
                     return new ImageDescriptor(){
                         public ImageData getImageData() {
@@ -253,6 +259,11 @@ public class WMSGeoResourceImpl extends IGeoResource {
                         }
                     };
                 }
+                // the image is larger than the size we asked for
+                // (so this WMS is not being nice!)
+                // we will try and decide what to do here ...
+                // let us select the image we want ...
+                
                 swatch = new Image(null, 16, 16);
                 GC gc = new GC(swatch);
                 int sy = 0; // (bound.height / 2 ) - 8;
@@ -342,7 +353,14 @@ public class WMSGeoResourceImpl extends IGeoResource {
                 if (WmsPlugin.getDefault().isDebugging())
                     System.out.println("Image resized to " + sh + "x" + sw); //$NON-NLS-1$ //$NON-NLS-2$
 
-                gc.drawImage(image, sx, sy, sw, sh, 0, 0, 16, 16);
+                //gc.drawImage(image, sx, sy, sw, sh, 0, 0, 16, 16);
+                
+                // chances are this has a label or category view or something
+                // grab the gply from the bottom left corner and we are good to
+                // (based on mapserver example)
+                //
+                gc.drawImage(image, 0, bound.height-16, 16, 16, 0, 0, 16, 16);
+                
                 final ImageData data = (ImageData) swatch.getImageData().clone();
                 return new ImageDescriptor(){
                     public ImageData getImageData() {
