@@ -40,13 +40,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -55,46 +63,47 @@ import org.eclipse.ui.PlatformUI;
  * @author jeichar
  * @since 0.9.0
  */
-public class FileConnectionPage extends AbstractUDIGImportPage 
-	implements UDIGConnectionPage {
+public class FileConnectionPage extends AbstractUDIGImportPage implements UDIGConnectionPage {
 
     private final Set<URL> list = new HashSet<URL>();
     private Composite comp;
 
     private FileConnectionFactory factory = new FileConnectionFactory();
     private FileDialog fileDialog;
-    private Collection<URL> resourceIds=new HashSet<URL>();
+    private Collection<URL> resourceIds = new HashSet<URL>();
+    private ListViewer viewer;
 
     public String getId() {
         return "net.refractions.udig.catalog.ui.openFilePage"; //$NON-NLS-1$
     }
-    
+
     /**
      * Construct <code>OpenFilePage</code>.
      */
     public FileConnectionPage() {
-        super(Messages.OpenFilePage_pageTitle); 
+        super(Messages.OpenFilePage_pageTitle);
     }
 
     List<IService> process( List<URL> urls, IProgressMonitor monitor ) {
         List<IService> resources = new ArrayList<IService>();
-        monitor.beginTask(Messages.OpenFilePage_1, list.size()); 
+        monitor.beginTask(Messages.OpenFilePage_1, list.size());
         int worked = 0;
         for( URL url : urls ) {
             if (monitor.isCanceled())
                 return null;
             try {
                 monitor.subTask(url.toExternalForm());
-                List<IService> acquire = CatalogPlugin.getDefault().getServiceFactory().createService(url);
+                List<IService> acquire = CatalogPlugin.getDefault().getServiceFactory()
+                        .createService(url);
                 resources.addAll(acquire);
             } catch (Throwable e) {
-                CatalogUIPlugin.log( "error obtaining services from service factory", e); //$NON-NLS-1$
+                CatalogUIPlugin.log("error obtaining services from service factory", e); //$NON-NLS-1$
             }
             monitor.worked(worked++);
         }
         return resources;
     }
-    
+
     private void pushButton( final int buttonId ) {
         try {
 
@@ -124,11 +133,12 @@ public class FileConnectionPage extends AbstractUDIGImportPage
         }
         return null;
     }
-    protected boolean hasOneResource( SubProgressMonitor monitor, List<IService> services ) throws IOException {
-        if( services.size()>1 || services.isEmpty() )
+    protected boolean hasOneResource( SubProgressMonitor monitor, List<IService> services )
+            throws IOException {
+        if (services.size() > 1 || services.isEmpty())
             return false;
-        
-        if (services.get(0).resources(monitor).size()==1)
+
+        if (services.get(0).resources(monitor).size() == 1)
             return true;
         return false;
     }
@@ -144,12 +154,18 @@ public class FileConnectionPage extends AbstractUDIGImportPage
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl( Composite parent ) {
-        comp = new Composite(parent, SWT.NULL);
-        // comp.setLayout(new GridLayout(1,true));
-        // viewer=new ListViewer(comp);
-        // viewer.getControl().setLayoutData(new GridData(SWT.FILL,SWT.FILL,true, true));
-        // viewer.setContentProvider(new ArrayContentProvider());
-        // viewer.setLabelProvider(new LabelProvider());
+        comp = new Composite(parent, SWT.NONE);
+        comp.setLayout(new GridLayout(1,true));
+
+        Label label = new Label(comp,SWT.NONE);
+        GridDataFactory.swtDefaults().applyTo(label);
+        label.setText("Please wait; loading the following resources");
+        
+        viewer = new ListViewer(comp,SWT.READ_ONLY| SWT.H_SCROLL | SWT.V_SCROLL);
+        viewer.setContentProvider(new ArrayContentProvider());
+        viewer.setLabelProvider(new LabelProvider());
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getControl());
+        
         setControl(comp);
     }
 
@@ -157,28 +173,30 @@ public class FileConnectionPage extends AbstractUDIGImportPage
     public void shown() {
         Runnable openFileDialog = new Runnable(){
             public void run() {
-                openFileDialog();
+                selectAndContinueWizard();
             }
         };
         // file dialog must be opened asynchronously so that the workflow can finish the
-        // next action.  Otherwise we will deadlock
-        PlatformGIS.asyncInDisplayThread(openFileDialog , false);
+        // next action. Otherwise we will deadlock
+        PlatformGIS.asyncInDisplayThread(openFileDialog, false);
     }
-    
-    private void openFileDialog() {
+
+    private void selectAndContinueWizard() {
+        boolean okPressed;
         list.clear();
-        boolean okPressed = openFileDialog(comp);
+        okPressed = openFileDialog(comp);
+        viewer.setInput(list);
         getContainer().updateButtons();
+        
         /*
-         * XXX I'm not liking this.  I think the workflow should be used to drive the pages
-         * because by trying to put the buttons it is dependent the implementation of
+         * XXX I'm not liking this. I think the workflow should be used to drive the pages because
+         * by trying to put the buttons it is dependent the implementation of
          * ConnectionPageDecorator's isPageComplete method as well as what order the
-         * WorkflowWizard's canFinish method is implemented.  IE if 
-         * canFinish does not call isPageComplete before
-         * calling dryRun() the finish button will not be activated.
+         * WorkflowWizard's canFinish method is implemented. IE if canFinish does not call
+         * isPageComplete before calling dryRun() the finish button will not be activated.
          */
         if (okPressed) {
-            if( findButton(getShell().getChildren(), IDialogConstants.FINISH_ID).isEnabled() ){
+            if (findButton(getShell().getChildren(), IDialogConstants.FINISH_ID).isEnabled()) {
                 pushButton(IDialogConstants.FINISH_ID);
             } else {
                 pushButton(IDialogConstants.NEXT_ID);
@@ -258,9 +276,10 @@ public class FileConnectionPage extends AbstractUDIGImportPage
     private boolean openFileDialog( Composite parent ) {
         String lastOpenedDirectory = PlatformUI.getPreferenceStore().getString(
                 CatalogUIPlugin.PREF_OPEN_DIALOG_DIRECTORY);
-        fileDialog = new FileDialog(parent.getShell(), SWT.MULTI);
+        fileDialog = new FileDialog(parent.getShell(), SWT.MULTI | SWT.OPEN);
+
         List<String> fileTypes = factory.getExtensionList();
-       
+
         StringBuffer all = new StringBuffer();
         for( Iterator<String> i = fileTypes.iterator(); i.hasNext(); ) {
             all.append(i.next());
@@ -268,16 +287,14 @@ public class FileConnectionPage extends AbstractUDIGImportPage
                 all.append(";"); //$NON-NLS-1$ //semicolon is magic in eclipse FileDialog
         }
         fileTypes.add(0, all.toString());
-        
+
         fileTypes.add("*.*"); //$NON-NLS-1$
 
         fileDialog.setFilterExtensions(fileTypes.toArray(new String[fileTypes.size()]));
 
-        if (lastOpenedDirectory != null && !checkDND(fileDialog) ) {
+        if (lastOpenedDirectory != null && !checkDND(fileDialog)) {
             fileDialog.setFilterPath(lastOpenedDirectory);
         }
-
-        
 
         // //this is a HACK to check for headless execution
         // if (getContainer() instanceof HeadlessWizardDialog) {
@@ -302,38 +319,40 @@ public class FileConnectionPage extends AbstractUDIGImportPage
         }
         return true;
     }
-    
+
     @Override
     public Collection<IService> getServices() {
         resourceIds.clear();
-        
+
         final Collection<IService> services = new ArrayList<IService>();
         IRunnableWithProgress runnable = new IRunnableWithProgress(){
 
             public void run( IProgressMonitor monitor ) throws InvocationTargetException,
                     InterruptedException {
-                services.addAll(EndConnectionState.constructServices(monitor, new HashMap<String, Serializable>(), list));
+                services.addAll(EndConnectionState.constructServices(monitor,
+                        new HashMap<String, Serializable>(), list));
                 for( IService service : services ) {
                     try {
-                        List< ? extends IGeoResource> resources = service.resources(SubMonitor.convert(monitor));
-                        if( resources.size()==1 ){
+                        List< ? extends IGeoResource> resources = service.resources(SubMonitor
+                                .convert(monitor));
+                        if (resources.size() == 1) {
                             IGeoResource resource = resources.iterator().next();
                             resourceIds.add(resource.getIdentifier());
                         }
                     } catch (IOException e) {
                         // skip
-                        CatalogUIPlugin.log("error resolving:" + service.getIdentifier(), e);
+                        CatalogUIPlugin.log("error resolving:" + service.getIdentifier(), e); //$NON-NLS-1$
                     }
                 }
             }
-            
+
         };
         try {
-            getContainer().run(false, true, runnable );
+            getContainer().run(false, true, runnable);
         } catch (InvocationTargetException e) {
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
+            throw (RuntimeException) new RuntimeException().initCause(e);
         } catch (InterruptedException e) {
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
+            throw (RuntimeException) new RuntimeException().initCause(e);
         }
         return services;
     }
