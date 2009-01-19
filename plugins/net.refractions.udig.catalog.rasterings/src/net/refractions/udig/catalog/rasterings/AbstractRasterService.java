@@ -111,7 +111,7 @@ public abstract class AbstractRasterService extends IService {
             try {
                 AbstractGridFormat frmt = (AbstractGridFormat) getFormat();
                 URL id = getIdentifier();
-                if( "file".equals(id.getProtocol()) ){
+                if( "file".equals(id.getProtocol()) ){ //$NON-NLS-1$
 //	                if( id.toExternalForm().startsWith("C:/")){
 //	                    id = new URL("file:///"+id.toExternalForm());
 //	                }

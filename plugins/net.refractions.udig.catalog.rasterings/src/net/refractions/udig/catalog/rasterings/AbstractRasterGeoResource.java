@@ -153,7 +153,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 					AbstractGridCoverage2DReader reader = this.service.getReader(null);
 					ParameterGroup pvg = getReadParameters();
 					List list = pvg.values();
-					@SuppressWarnings("unchecked") GeneralParameterValue[] values = //$NON-NLS-1$
+					@SuppressWarnings("unchecked") GeneralParameterValue[] values = 
 					(GeneralParameterValue[]) list
 							.toArray(new GeneralParameterValue[0]);
 					this.coverage = new SoftReference<GridCoverage>(reader.read(values));

@@ -117,8 +117,10 @@ public class ShpServiceImpl extends IService {
         if (adaptee == null) {
             throw new NullPointerException("No adaptor specified"); //$NON-NLS-1$
         }
-		if (adaptee.isAssignableFrom(ShapefileDataStore.class))
-			return adaptee.cast(getDS(monitor));
+        if (adaptee.isAssignableFrom(ShapefileDataStore.class))
+            return adaptee.cast(getDS(monitor));
+        if (adaptee.isAssignableFrom(File.class))
+            return adaptee.cast(toFile());
 		return super.resolve(adaptee, monitor);
 	}
 
