@@ -118,6 +118,7 @@ public class Messages extends NLS {
 	//public static String NewFeatureTypeOp_cantWriteTitle    ;
 	//public static String NewFeatureTypeOp_cantWriteMessage1 ;
 	public static String FileConnectionPage_taskname ;
+    public static String FileConnectionPage_waitMessage;
 	//public static String FileChooserWizardPage_title                       ;
 	//public static String FileChooserWizardPage_taskname                    ;
 	//public static String FileChooserWizardPage_subtask_name                ;

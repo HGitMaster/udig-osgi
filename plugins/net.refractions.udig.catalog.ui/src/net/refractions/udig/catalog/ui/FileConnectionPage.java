@@ -41,13 +41,11 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -159,7 +157,7 @@ public class FileConnectionPage extends AbstractUDIGImportPage implements UDIGCo
 
         Label label = new Label(comp,SWT.NONE);
         GridDataFactory.swtDefaults().applyTo(label);
-        label.setText("Please wait; loading the following resources");
+        label.setText(Messages.FileConnectionPage_waitMessage);
         
         viewer = new ListViewer(comp,SWT.READ_ONLY| SWT.H_SCROLL | SWT.V_SCROLL);
         viewer.setContentProvider(new ArrayContentProvider());
