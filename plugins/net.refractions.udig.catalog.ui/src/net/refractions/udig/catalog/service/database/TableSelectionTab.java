@@ -286,7 +286,7 @@ public class TableSelectionTab implements Tab {
             case 0:
                 return table.name;
             case 1:
-                return table.schema;
+                return table.schema==null?"":table.schema; //$NON-NLS-1$
             case 2:
                 if( table.broken ){
                     return localization.incorrectConfiguration;
