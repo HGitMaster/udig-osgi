@@ -70,19 +70,6 @@ public class MifServiceImpl extends IService {
 	public MifServiceImpl(URL arg1, Map<String, Serializable> arg2) {
 		url = arg1;
 		params = arg2;
-		Serializable memorymapped = params.get("memory mapped buffer"); //$NON-NLS-1$
-		if (memorymapped == null) {
-			memorymapped = false;
-			try {
-				File file = URLUtils.urlToFile(url);
-				final int maxsize = 1024 * 2048;
-				if (file.length() > maxsize) {
-					memorymapped = false;
-				}
-			} catch (Exception e) {
-				memorymapped = false;
-			}
-		}
         if( !params.containsKey(MIFDataStoreFactory.PARAM_CHARSET.key)){
             params.put(MIFDataStoreFactory.PARAM_CHARSET.key,
                     MifServiceExtension.defaultCharset());

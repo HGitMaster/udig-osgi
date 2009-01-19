@@ -34,6 +34,7 @@ import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ui.internal.Messages;
 import net.refractions.udig.catalog.ui.workflow.EndConnectionState;
+import net.refractions.udig.ui.PlatformGIS;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
@@ -154,6 +155,17 @@ public class FileConnectionPage extends AbstractUDIGImportPage
 
     @Override
     public void shown() {
+        Runnable openFileDialog = new Runnable(){
+            public void run() {
+                openFileDialog();
+            }
+        };
+        // file dialog must be opened asynchronously so that the workflow can finish the
+        // next action.  Otherwise we will deadlock
+        PlatformGIS.asyncInDisplayThread(openFileDialog , false);
+    }
+    
+    private void openFileDialog() {
         list.clear();
         boolean okPressed = openFileDialog(comp);
         getContainer().updateButtons();
@@ -174,8 +186,8 @@ public class FileConnectionPage extends AbstractUDIGImportPage
         } else {
             pushButton(IDialogConstants.BACK_ID);
         }
+
     }
-    
     private boolean checkDND( FileDialog fileDialog ) {
         try {
 
