@@ -21,8 +21,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.refractions.udig.catalog.service.database.Either;
 import net.refractions.udig.catalog.service.database.Tab;
+import net.refractions.udig.core.Either;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizard;

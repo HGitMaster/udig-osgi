@@ -22,8 +22,9 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.refractions.udig.catalog.service.database.DatabaseConnectionRunnable;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
@@ -36,17 +37,17 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
  * @author Harry Bullen, Intelligent Automation
  * @since 1.1.0
  */
-public class DatabaseConnectionRunnable implements IRunnableWithProgress {
+public class MySqlDatabaseConnectionRunnable implements DatabaseConnectionRunnable {
 
     private volatile boolean ran = false;
     private volatile String result = null;
     private final Set<String> databaseNames = new HashSet<String>();
     private final String host;
-    private final String port;
+    private final int port;
     private final String username;
     private final String password;
 
-    public DatabaseConnectionRunnable( String host2, String port2, String username2,
+    public MySqlDatabaseConnectionRunnable( String host2, int port2, String username2,
             String password2 ) {
         this.host = host2;
         this.port = port2;
@@ -59,8 +60,8 @@ public class DatabaseConnectionRunnable implements IRunnableWithProgress {
     	
         MysqlDataSource ds = new MysqlDataSource();
         ds.setServerName(host);
-        ds.setPort(Integer.parseInt(port));
-        ds.setDatabaseName("mysql");
+        ds.setPort(port);
+        ds.setDatabaseName("mysql"); //$NON-NLS-1$
         ds.setUser(username);
         ds.setPassword(password);
         
@@ -81,7 +82,7 @@ public class DatabaseConnectionRunnable implements IRunnableWithProgress {
             }
 
         } catch (SQLException e) {
-            result = "Unrecognized connection failure: " + e.getMessage() + "\nCheck parameters and database.";
+            result = "Unrecognized connection failure: " + e.getMessage() + "\nCheck parameters and database."; //$NON-NLS-1$ //$NON-NLS-2$
         }
         ran = true;
     }
@@ -97,7 +98,7 @@ public class DatabaseConnectionRunnable implements IRunnableWithProgress {
     public String canConnect() throws IllegalStateException {
         if (!ran) {
             throw new IllegalStateException(
-                    "run must complete running before this method is called.");
+                    "run must complete running before this method is called."); //$NON-NLS-1$
         }
         return result;
     }

@@ -1,7 +1,6 @@
 package net.refractions.udig.catalog.service.database;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.refractions.udig.catalog.PostgisServiceExtension2;
-import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
+import net.refractions.udig.core.internal.CorePlugin;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Control;
@@ -65,10 +63,20 @@ public abstract class DatabaseServiceDialect {
 	 * The key that indicates the type of Datastore to create.  For example PostgisDataStoreFactory#DBTYPE
 	 */
     public final Param typeParam;
+    
+    /**
+     * The prefix/host to put in a url that identifies this type of database.
+     * 
+     * For example the postgis one is: "jdbc.postgis"
+     */
+    public final String urlPrefix;
 
+    public final DatabaseWizardLocalization localization;
+
+    
     public DatabaseServiceDialect(Param schemaParam, Param databaseParam,
             Param hostParam, Param portParam, Param usernameParam,
-            Param passwordParam, Param typeParam) {
+            Param passwordParam, Param typeParam, String urlPrefix, DatabaseWizardLocalization localization) {
         this.schemaParam = schemaParam;
         this.databaseParam = databaseParam;
         this.hostParam = hostParam;
@@ -76,11 +84,13 @@ public abstract class DatabaseServiceDialect {
         this.usernameParam = usernameParam;
         this.passwordParam = passwordParam;
         this.typeParam = typeParam;
+        this.urlPrefix = urlPrefix;
+        this.localization = localization;
     }
 
 	public Collection<URL> constructResourceIDs(TableDescriptor[] descriptors, Map<String, Serializable> params) {
         try {
-            URL url = PostgisServiceExtension2.toURL(params);
+            URL url = toURL(params);
             String serviceURL = url.toExternalForm();
             List<URL> urls = new ArrayList<URL>();
             for( int i = 0; i < descriptors.length; i++ ) {
@@ -90,14 +100,37 @@ public abstract class DatabaseServiceDialect {
             return urls;
         } catch (MalformedURLException e) {
             // really shouldn't happen
-            PostgisPlugin.log("Can't make URL", e); //$NON-NLS-1$
+            log("Can't make URL", e); //$NON-NLS-1$
             return Collections.emptySet();
         }
 	}
+	
+    public URL toURL( Map<String, Serializable> params ) throws MalformedURLException {
+        String the_host = (String) params.get(hostParam.key);
+        Integer intPort = (Integer) params.get(portParam.key);
+        String the_database = (String) params.get(databaseParam.key);
+        String the_username = (String) params.get(usernameParam.key);
+        String the_password = (String) params.get(passwordParam.key);
+
+        URL toURL = toURL(the_username, the_password, the_host, intPort, the_database);
+        return toURL;
+    }
+
+    public URL toURL( String the_username, String the_password, String the_host,
+            Integer intPort, String the_database ) throws MalformedURLException {
+        String the_spec = urlPrefix+"://" + the_username //$NON-NLS-1$
+                + ":" + the_password + "@" + the_host //$NON-NLS-1$ //$NON-NLS-2$
+                + ":" + intPort + "/" + the_database; //$NON-NLS-1$  //$NON-NLS-2$
+        return toURL(the_spec);
+    }
+
+    public URL toURL( String the_spec ) throws MalformedURLException {
+        return new URL(null, the_spec, CorePlugin.RELAXED_HANDLER);
+    }
 
     public abstract IDialogSettings getDialogSetting();
 
-    public abstract void log( String message, InvocationTargetException e );
+    public abstract void log( String message, Throwable e );
 
     /**
      * Creates a {@link DatabaseConnectionRunnable}.

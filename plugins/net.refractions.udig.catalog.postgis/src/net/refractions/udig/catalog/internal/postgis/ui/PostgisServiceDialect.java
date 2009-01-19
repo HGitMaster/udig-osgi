@@ -7,13 +7,13 @@ import static org.geotools.data.postgis.PostgisDataStoreFactory.PORT;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.USER;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.catalog.service.database.DataConnectionPage;
 import net.refractions.udig.catalog.service.database.DatabaseConnectionRunnable;
 import net.refractions.udig.catalog.service.database.DatabaseServiceDialect;
+import net.refractions.udig.catalog.service.database.DatabaseWizardLocalization;
 import net.refractions.udig.catalog.service.database.LookUpSchemaRunnable;
 import net.refractions.udig.catalog.service.database.Tab;
 
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.TabItem;
 public class PostgisServiceDialect extends DatabaseServiceDialect {
 
 	public PostgisServiceDialect() {
-		super(SCHEMA, DATABASE, HOST, PORT, USER, PASSWD, DBTYPE);
+		super(SCHEMA, DATABASE, HOST, PORT, USER, PASSWD, DBTYPE, "jdbc.postgis", new DatabaseWizardLocalization()); //$NON-NLS-1$
 	}
 
     @Override
@@ -40,7 +40,7 @@ public class PostgisServiceDialect extends DatabaseServiceDialect {
     }
 
     @Override
-    public void log( String message, InvocationTargetException e ) {
+    public void log( String message, Throwable e ) {
         PostgisPlugin.log(message, e);
     }
 
@@ -62,7 +62,7 @@ public class PostgisServiceDialect extends DatabaseServiceDialect {
         
         sqlComposite.setWizard(containingPage.getWizard());
         TabItem item = new TabItem(tabFolder, SWT.NONE);
-        item.setText("SQL");
+        item.setText("SQL"); //$NON-NLS-1$
         item.setControl(sqlComposite.createControl(tabFolder, SWT.NONE));
         tabs.put(item.getControl(), sqlComposite);
     }

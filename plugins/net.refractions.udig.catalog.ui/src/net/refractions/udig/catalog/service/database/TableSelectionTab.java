@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.refractions.udig.core.Either;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -75,15 +77,18 @@ public class TableSelectionTab implements Tab {
 
     private final DatabaseServiceDialect dialect;
 
-    public TableSelectionTab( DatabaseServiceDialect paramDescriptor ) {
-        this.dialect = paramDescriptor;
+    private final DatabaseWizardLocalization localization;
+
+    public TableSelectionTab( DatabaseServiceDialect dialect ) {
+        this.dialect = dialect;
+        this.localization = dialect.localization;
     }
     
 
     public void init() {
         if(tableViewer!=null){
             tableViewer.setInput(Collections.emptyList());
-            filterBox.setText("");
+            filterBox.setText(""); //$NON-NLS-1$
         }
     }
 
@@ -125,7 +130,7 @@ public class TableSelectionTab implements Tab {
         for( int i = 0; i < elements.length; i++ ) {
             TableDescriptor descriptor = (TableDescriptor) elements[i];
             if( descriptor.broken ){
-                return Either.createLeft("One or more of the selected elements is broken");
+                return Either.createLeft(localization.brokenElements);
             }
             if (builder.length() > 0) {
                 builder.append(',');
@@ -166,13 +171,13 @@ public class TableSelectionTab implements Tab {
         layout.addColumnData(new ColumnWeightData(1));
 
         TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
-        nameColumn.setText("Table");
+        nameColumn.setText(localization.table);
 
         TableColumn schemaColumn = new TableColumn(table, SWT.LEFT);
-        schemaColumn.setText("Schema");
+        schemaColumn.setText(localization.schema);
 
         TableColumn geometryColumn = new TableColumn(table, SWT.LEFT);
-        geometryColumn.setText("Geometry");
+        geometryColumn.setText(localization.geometry);
 
         tableViewer = new CheckboxTableViewer(table);
         tableViewer.setContentProvider(new FilteringContentProvider());
@@ -208,8 +213,8 @@ public class TableSelectionTab implements Tab {
 
     private void createFilterButtons( Composite top ) {
         publicSchema = new Button(top, SWT.CHECK);
-        publicSchema.setText("Public Schema");
-        publicSchema.setToolTipText("Shows only data that is part of the public postgis schema");
+        publicSchema.setText(localization.publicSchema);
+        publicSchema.setToolTipText(localization.publicSchemaTooltip);
 
         Listener listener = new Listener(){
 
@@ -226,12 +231,12 @@ public class TableSelectionTab implements Tab {
 
     private void createFilterText( Composite top ) {
         Label label = new Label(top, SWT.NONE);
-        label.setText("Filter");
+        label.setText(localization.filter);
 
         filterBox = new Text(top, SWT.BORDER);
         filterBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         filterBox
-                .setToolTipText("Shows data with a srid, name, geometry or schema that contains the filter text");
+                .setToolTipText(localization.tableSelectionFilterTooltip);
 
         filterBox.addListener(SWT.Modify, new Listener(){
 
@@ -284,7 +289,7 @@ public class TableSelectionTab implements Tab {
                 return table.schema;
             case 2:
                 if( table.broken ){
-                    return "Incorrectly configured";
+                    return localization.incorrectConfiguration;
                 }
                 return table.geometryType;
             default:

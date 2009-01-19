@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: CompositeRendererImpl.java 31056 2009-01-17 08:18:09Z aantonello $
+ * <copyright></copyright> $Id: CompositeRendererImpl.java 31068 2009-01-19 10:17:31Z jeichar $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -142,7 +142,6 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
     /**
      * @param renderer
      */
-    @SuppressWarnings("unchecked")
     protected RenderExecutor createRenderExecutor( Renderer renderer ) {
          final RenderExecutor executor = RenderFactory.eINSTANCE.createRenderExecutor(renderer);
         executor.eAdapters().add(new RenderListenerAdapter(){

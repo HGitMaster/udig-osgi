@@ -12,9 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package net.refractions.udig.catalog.service.database;
+package net.refractions.udig.core;
 
-import net.refractions.udig.core.Pair;
 
 /**
  * A specialized pair where only one of the two should be set
@@ -46,7 +45,7 @@ public class Either<T1, T2> extends Pair<T1, T2> {
     @Override
     public T1 getLeft() {
         if(!isLeft()){
-            throw new IllegalStateException("The left value is not set.  Call isLeft first");
+            throw new IllegalStateException("The left value is not set.  Call isLeft first"); //$NON-NLS-1$
         }
         return super.getLeft();
     }
@@ -54,7 +53,7 @@ public class Either<T1, T2> extends Pair<T1, T2> {
     @Override
     public T2 getRight() {
         if(!isRight()){
-            throw new IllegalStateException("The right value is not set.  Call isRight first");
+            throw new IllegalStateException("The right value is not set.  Call isRight first"); //$NON-NLS-1$
         }
         return super.getRight();
     }

@@ -22,10 +22,11 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.refractions.udig.catalog.service.database.LookUpSchemaRunnable;
+import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.core.Pair;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
@@ -37,18 +38,18 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
  * @author Harry Bullen, Intelligent Automation
  * @since 1.1.0
  */
-public class LookUpSchemaRunnable implements IRunnableWithProgress {
+public class MySqlLookUpSchemaRunnable implements LookUpSchemaRunnable {
 
     private final String host;
     private final int port;
     private final String username;
     private final String password;
     private final String database;
-    private final Set<MySQLTableDescriptor> tables = new HashSet<MySQLTableDescriptor>();
+    private final Set<TableDescriptor> tables = new HashSet<TableDescriptor>();
     private volatile String error;
     private volatile boolean ran = false;
 
-    public LookUpSchemaRunnable( String host, int port, String username, String password,
+    public MySqlLookUpSchemaRunnable( String host, int port, String username, String password,
             String database ) {
         this.host = host;
         this.port = port;
@@ -83,19 +84,19 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
 
             Statement statement = connection.createStatement();
             if (statement
-                    .execute("SHOW TABLES;")) {
+                    .execute("SHOW TABLES;")) { //$NON-NLS-1$
                 ResultSet resultSet = statement.getResultSet();
                 while( resultSet.next() ) {
                     
-                    String table = resultSet.getString("Tables_in_"+database);
+                    String table = resultSet.getString("Tables_in_"+database); //$NON-NLS-1$
                     Pair<String, Pair<String, String>> results = lookupGeometryColumn(table,
                              connection);
                     if (results != null) {
                         String geometryColumn = results.getLeft();
                         String geometryType = results.getRight().getLeft();
                         String srid = results.getRight().getRight();
-                        tables.add(new MySQLTableDescriptor(table, geometryType,
-                                geometryColumn, srid));
+                        tables.add(new TableDescriptor(table, geometryType, null,
+                                geometryColumn, srid,false));
                     }
 
                 }
@@ -159,7 +160,7 @@ public class LookUpSchemaRunnable implements IRunnableWithProgress {
      * @return the names of the databases in the database that this object connected to when the run
      *         method was executed.
      */
-    public Set<MySQLTableDescriptor> getSchemas() {
+    public Set<TableDescriptor> getSchemas() {
         return tables;
     }
 

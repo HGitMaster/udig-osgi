@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import net.refractions.udig.core.Either;
+
 import org.eclipse.swt.widgets.Listener;
 
 /**

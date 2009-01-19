@@ -16,6 +16,7 @@
  */
 package net.refractions.udig.catalog;
 
+import static java.text.MessageFormat.format;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.DATABASE;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.DBTYPE;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.HOST;
@@ -33,9 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
+import net.refractions.udig.catalog.internal.postgis.ui.PostgisServiceDialect;
 import net.refractions.udig.catalog.postgis.internal.Messages;
 import net.refractions.udig.core.Pair;
-import net.refractions.udig.core.internal.CorePlugin;
 
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.postgis.PostgisDataStoreFactory;
@@ -52,7 +53,8 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         implements
             ServiceExtension2 {
 
-    private static final String IN_TESTING = "testing";
+    private static final String IN_TESTING = "testing"; //$NON-NLS-1$
+    public static final PostgisServiceDialect DIALECT = new PostgisServiceDialect();
 
     public IService createService( URL id, Map<String, Serializable> params ) {
         if( reasonForFailure(params)!=null ){
@@ -63,7 +65,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         ensurePortIsInt(params2);
 
         try {
-            URL finalID = toURL(params2);
+            URL finalID = DIALECT.toURL(params2);
             Pair<Map<String, Serializable>, String> split = processParams(params2);
             if (split.getRight() != null) {
                 return null;
@@ -83,17 +85,6 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
             int val = new Integer((String) params.get(PORT.key));
             params.put(PORT.key, val);
         }
-    }
-
-    public static URL toURL( Map<String, Serializable> params ) throws MalformedURLException {
-        String the_host = (String) params.get(HOST.key);
-        Integer intPort = (Integer) params.get(PORT.key);
-        String the_database = (String) params.get(DATABASE.key);
-        String the_username = (String) params.get(USER.key);
-        String the_password = (String) params.get(PASSWD.key);
-
-        URL toURL = toURL(the_username, the_password, the_host, intPort, the_database);
-        return toURL;
     }
 
     /**
@@ -135,17 +126,6 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
                 url.getProtocol().toLowerCase().equals("jdbc.postgis"); //$NON-NLS-1$
     }
 
-    public static URL toURL( String the_username, String the_password, String the_host,
-            Integer intPort, String the_database ) throws MalformedURLException {
-        String the_spec = "postgis.jdbc://" + the_username //$NON-NLS-1$
-                + ":" + the_password + "@" + the_host //$NON-NLS-1$ //$NON-NLS-2$
-                + ":" + intPort + "/" + the_database; //$NON-NLS-1$  //$NON-NLS-2$
-        return toURL(the_spec);
-    }
-
-    public static URL toURL( String the_spec ) throws MalformedURLException {
-        return new URL(null, the_spec, CorePlugin.RELAXED_HANDLER);
-    }
 
     public String reasonForFailure( URL url ) {
         if (!isPostGIS(url))
@@ -156,7 +136,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
     @Override
     protected String doOtherChecks( Map<String, Serializable> params ) {
         if( !DBTYPE.sample.equals(params.get(DBTYPE.key)) ){
-            return "Parameter DBTYPE is required to be \"postgis\"";
+            return format("Parameter DBTYPE is required to be \"{0}\"", DBTYPE.key);
         }
         
         // if the testing parameter is in params then this is 
@@ -180,7 +160,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         Set<String> goodSchemas = new HashSet<String>();
 
         HashMap<String, Serializable> testedParams = new HashMap<String, Serializable>(params);
-        testedParams.put(SCHEMA.key, "public"); //$NON-NLS-1$
+        testedParams.put(SCHEMA.key, "public");  //$NON-NLS-1$
         testedParams.put(IN_TESTING, true);
         String reason = super.reasonForFailure(testedParams);
 
@@ -192,7 +172,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
 
         for( String string : schemas ) {
             if( !goodSchemas.contains(string) ){
-                testedParams = new HashMap<String, Serializable>(params);
+                testedParams = new HashMap<String, Serializable>(testedParams);
                 String trimmedSchema = string.trim();    
                 testedParams.put(SCHEMA.key, trimmedSchema);
     

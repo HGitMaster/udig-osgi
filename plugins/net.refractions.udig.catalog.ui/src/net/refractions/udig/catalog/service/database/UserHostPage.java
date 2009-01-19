@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.internal.ui.Images;
-import net.refractions.udig.catalog.postgis.internal.Messages;
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
 import net.refractions.udig.catalog.ui.CatalogUIPlugin;
 import net.refractions.udig.catalog.ui.ISharedImages;
@@ -69,11 +68,10 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
     // / End of Dialog settings constants
 
     private static final String REQUIRED_DECORATION = "REQUIRED_DECORATION"; //$NON-NLS-1$
-    private static final String DEFAULT_PORT = "5432"; //$NON-NLS-1$
-    private static final String PORT_ERROR = "The port value must be an integer > 0";
-    private static final String DELETED = "DELETED";
+    private static final String DELETED = "DELETED"; //$NON-NLS-1$
 
     final DatabaseServiceDialect dialect;
+    private final DatabaseWizardLocalization localization;
     
     private Text host;
     private Text port;
@@ -85,10 +83,13 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
     private String[] databaseNames;
     private Button savePassword;
     private Combo previousConnections;
+    private String defaultPort;
 
     public UserHostPage(DatabaseServiceDialect dialect) {
-        super(Messages.PostGisWizardPage_title);
+        super("User and Host page"); //$NON-NLS-1$
         this.dialect = dialect;
+        this.defaultPort = dialect.portParam.sample.toString();
+        this.localization = dialect.localization;
     }
 
     public Map<String, Serializable> getParams() {
@@ -101,29 +102,29 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
         setControl(top);
 
         createPreviousConnectionsCombo(top);
-        host = createLabelAndText(top, "Host:", SWT.BORDER);
+        host = createLabelAndText(top, localization.host+":", SWT.BORDER); //$NON-NLS-1$
         host.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        port = createLabelAndText(top, "Port:", SWT.BORDER);
-        port.setText(DEFAULT_PORT);
+        port = createLabelAndText(top, localization.port+":", SWT.BORDER); //$NON-NLS-1$
+        port.setText(defaultPort);
         port.setLayoutData(new GridData());
 
-        username = createLabelAndText(top, "User Name:", SWT.BORDER);
+        username = createLabelAndText(top, localization.username+":", SWT.BORDER); //$NON-NLS-1$
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 3;
         username.setLayoutData(data);
 
-        password = createLabelAndText(top, "Password:", SWT.PASSWORD | SWT.BORDER);
+        password = createLabelAndText(top, localization.password+":", SWT.PASSWORD | SWT.BORDER); //$NON-NLS-1$
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 3;
         password.setLayoutData(data);
         
         this.savePassword = new Button(top, SWT.CHECK);
-        this.savePassword.setText("Store Password");
+        this.savePassword.setText(localization.storePassword);
         GridDataFactory.swtDefaults().span(4, 1).applyTo(savePassword);
         
         Button removeConnection = new Button(top, SWT.PUSH);
         GridDataFactory.swtDefaults().span(4, 1).indent(0, 10).applyTo(removeConnection);
-        removeConnection.setText("Remove Connection");
+        removeConnection.setText(localization.removeConnection);
         removeConnection.addListener(SWT.Selection, new Listener(){
 
             public void handleEvent( Event event ) {
@@ -138,15 +139,15 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
         if(host.getText().length()==0 && 
                 username.getText().length()==0 &&
                 password.getText().length()==0 &&
-                port.getText().equals(DEFAULT_PORT)){
+                port.getText().equals(defaultPort)){
             return;
         }
         
-        boolean confirm = MessageDialog.openConfirm(getShell(), "Remove Connection", "Are you sure you want to clear the connection information?");
+        boolean confirm = MessageDialog.openConfirm(getShell(), localization.removeConnection, localization.confirmRemoveConnection);
         
         if (confirm) {
             this.host.setText(""); //$NON-NLS-1$
-            this.port.setText(DEFAULT_PORT); 
+            this.port.setText(defaultPort); 
             this.username.setText(""); //$NON-NLS-1$
             this.password.setText(""); //$NON-NLS-1$
             this.savePassword.setSelection(false);
@@ -170,7 +171,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
 
     private void createPreviousConnectionsCombo( Composite top ) {
         Label label = new Label(top, SWT.NONE);
-        label.setText("Previous Connections");
+        label.setText(localization.previousConnections);
 
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         label.setLayoutData(gridData);
@@ -201,7 +202,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
                     populateWidgets(host, port, username, password, savedPassword );
                     UserHostPage.this.password.setFocus();
                 }else{
-                    populateWidgets("", DEFAULT_PORT, "", "", false);
+                    populateWidgets("", defaultPort, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 previousConnections.setToolTipText(item);
             }
@@ -281,7 +282,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
             imageRegistry.put(REQUIRED_DECORATION, image);
         }
         decoration.setImage(image);
-        decoration.setDescriptionText("This is a required field");
+        decoration.setDescriptionText(localization.requiredField);
         decoration.show();
 
         text.addListener(SWT.Modify, new Listener(){
@@ -312,7 +313,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
             try {
                 int i = Integer.parseInt(text.getText());
                 if (i > 0) {
-                    if (PORT_ERROR.equals(getErrorMessage())) {
+                    if (localization.portError.equals(getErrorMessage())) {
                         setErrorMessage(null);
                     }
                     return true;
@@ -320,8 +321,8 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
             } catch (NumberFormatException e) {
                 // not good but failure is handled out side this catch
             }
-            if (!PORT_ERROR.equals(getErrorMessage())) {
-                setErrorMessage(PORT_ERROR);
+            if (!localization.portError.equals(getErrorMessage())) {
+                setErrorMessage(localization.portError);
             }
             return false;
         }
@@ -364,7 +365,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
                             if( storedPass==null || storedPass.length()==0 ){
                                 match.put(PASSWORD, password.getText());
                             }else {
-                                boolean choice = MessageDialog.openConfirm(getShell(), "Modify password", "Do you want to change the saved password?");
+                                boolean choice = MessageDialog.openConfirm(getShell(), localization.password, localization.changePasswordQuery);
                                 if( choice ){
                                     match.put(PASSWORD, password.getText());                                    
                                 }
@@ -372,13 +373,13 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
                         }
                         
                     }else{
-                        match.put(PASSWORD, "");
+                        match.put(PASSWORD, ""); //$NON-NLS-1$
                     }
                     
                     match.put(SAVE_PASSWORD, savePassword.getSelection());
                     match.put(TIMESTAMP, System.currentTimeMillis());
                 } else {
-                    IDialogSettings params = section.addNewSection(allSections.length + 1 + "");
+                    IDialogSettings params = section.addNewSection(allSections.length + 1 + ""); //$NON-NLS-1$
                     params.put(HOST, host.getText());
                     params.put(PORT, port.getText());
                     params.put(USERNAME, username.getText());
@@ -392,7 +393,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
                 return true;
             }
         } catch (InterruptedException e) {
-            setMessage("Database connection process interrupted");
+            setMessage(localization.databaseConnectionInterrupted);
             return false;
         }
     }
@@ -415,8 +416,8 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
             }
             return connect == null;
         } catch (InvocationTargetException e) {
-            setErrorMessage("Unexpected Error:" + e);
-            dialect.log("Error while running database connection runnable", e);
+            setErrorMessage(localization.unexpectedError+":" + e); //$NON-NLS-1$
+            dialect.log("Error while running database connection runnable", e); //$NON-NLS-1$
             return false;
         }
     }

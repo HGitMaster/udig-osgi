@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
- net.refractions.udig.catalog.ui,
+ net.refractions.udig.catalog.ui;visibility:=reexport,
  net.refractions.udig.libs
 Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.catalog

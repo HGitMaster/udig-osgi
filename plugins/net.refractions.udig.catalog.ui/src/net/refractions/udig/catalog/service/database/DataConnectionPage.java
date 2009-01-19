@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
+import net.refractions.udig.core.Either;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -61,7 +62,7 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
     private int currentPort;
     
     public DataConnectionPage() {
-        super("Databse connection page");
+        super("Databse connection page"); //$NON-NLS-1$
     }
 
     @Override
@@ -72,13 +73,13 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
     public Map<String, Serializable> getParams() {
         
         Map<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put(userHostPage.dialect.hostParam.key, userHostPage.getHost());
-        params.put(userHostPage.dialect.portParam.key, userHostPage.getPort());
-        params.put(userHostPage.dialect.usernameParam.key, userHostPage.getUsername());
-        params.put(userHostPage.dialect.passwordParam.key, userHostPage.getPassword());
-        params.put(userHostPage.dialect.databaseParam.key, database.getText());
-        params.put(userHostPage.dialect.schemaParam.key, (Serializable) userHostPage.dialect.schemaParam.sample);
-        params.put(userHostPage.dialect.typeParam.key, (Serializable) userHostPage.dialect.typeParam.sample);
+        params.put(dialect().hostParam.key, userHostPage.getHost());
+        params.put(dialect().portParam.key, userHostPage.getPort());
+        params.put(dialect().usernameParam.key, userHostPage.getUsername());
+        params.put(dialect().passwordParam.key, userHostPage.getPassword());
+        params.put(dialect().databaseParam.key, database.getText());
+        params.put(dialect().schemaParam.key, (Serializable) dialect().schemaParam.sample);
+        params.put(dialect().typeParam.key, (Serializable) dialect().typeParam.sample);
         
         Either<String, Map<String, Serializable>> result = getActiveTab().getParams(params);
         if( result.isLeft() ){
@@ -136,17 +137,25 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
         tabFolder = createTabFolder(top);
 
         addTableSelectionTab(tabFolder);
-        tabs.putAll(userHostPage.dialect.createOptionConnectionPageTabs(tabFolder, this));
+        tabs.putAll(dialect().createOptionConnectionPageTabs(tabFolder, this));
     }
 
     private void addTableSelectionTab( TabFolder tabFolder ) {
-        tableSelection = new TableSelectionTab(userHostPage.dialect);
+        tableSelection = new TableSelectionTab(dialect());
         
         TabItem item = new TabItem(tabFolder, SWT.NONE);
-        item.setText("Tables");
+        item.setText(localization().table);
         item.setControl(tableSelection.createControl(tabFolder, SWT.NONE));
         tabs.put(item.getControl(), tableSelection);
         tableSelection.addListener(this);
+    }
+
+    private DatabaseWizardLocalization localization() {
+        return dialect().localization;
+    }
+
+    private DatabaseServiceDialect dialect() {
+        return userHostPage.dialect;
     }
 
     private TabFolder createTabFolder( Composite top ) {
@@ -159,7 +168,7 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
 
     private void createLookupButton( Composite top ) {
         Button button = new Button(top, SWT.PUSH);
-        button.setText("Lookup Tables");
+        button.setText(localization().list);
 
         GridData layoutData = new GridData();
         layoutData.horizontalSpan = 2;
@@ -174,7 +183,7 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
                 String username = userHostPage.getUsername();
                 String database = DataConnectionPage.this.database.getText();
 
-                LookUpSchemaRunnable runnable = userHostPage.dialect.createLookupSchemaRunnable(host, port, username,
+                LookUpSchemaRunnable runnable = dialect().createLookupSchemaRunnable(host, port, username,
                         password, database);
                 try {
                     getContainer().run(false, true, runnable);
@@ -198,7 +207,7 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
 
     private void createDatabaseCombo( Composite top ) {
         Label label = new Label(top, SWT.NONE);
-        label.setText("Database");
+        label.setText(localization().database);
 
         database = new Combo(top, SWT.BORDER);
         database.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -233,10 +242,10 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
 
     private void populateDatabaseCombo() {
         String[] names = userHostPage.getDatabaseNames();
-        database.setText("");
+        database.setText(""); //$NON-NLS-1$
         if( names.length == 0){
             database.setItems(new String[0]);
-            setMessage("You do not have permissions to access the list of all databases, Please enter the database to connect to", WARNING);
+            setMessage(localization().databasePermissionProblemMessage, WARNING);
         } else {
             setMessage(null);
             Arrays.sort(names);

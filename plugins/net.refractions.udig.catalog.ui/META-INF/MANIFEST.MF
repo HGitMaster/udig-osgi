@@ -7,10 +7,13 @@ Bundle-Activator: net.refractions.udig.catalog.ui.CatalogUIPlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
 Export-Package: net.refractions.udig.catalog.internal.ui,
- net.refractions.udig.catalog.internal.ui.actions,
- net.refractions.udig.catalog.internal.ui.ops,
+ net.refractions.udig.catalog.internal.ui.actions;x-friends:="net.refractions.udig.catalog.tests.ui",
+ net.refractions.udig.catalog.internal.ui.ops;x-friends:="net.refractions.udig.catalog.tests.ui",
+ net.refractions.udig.catalog.memory,
+ net.refractions.udig.catalog.service.database,
  net.refractions.udig.catalog.ui,
  net.refractions.udig.catalog.ui.export,
+ net.refractions.udig.catalog.ui.internal;x-friends:="net.refractions.udig.catalog.tests.ui",
  net.refractions.udig.catalog.ui.operation,
  net.refractions.udig.catalog.ui.preferences,
  net.refractions.udig.catalog.ui.search,
