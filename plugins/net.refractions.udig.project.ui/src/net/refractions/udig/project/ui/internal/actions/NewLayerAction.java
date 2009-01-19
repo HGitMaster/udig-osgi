@@ -138,7 +138,7 @@ public class NewLayerAction extends ActionDelegate implements IWorkbenchWindowAc
 		FeatureTypeEditor editor = dialog.getEditor();
         SimpleFeatureType ft = editor.createDefaultFeatureType();
         SimpleFeatureTypeBuilder builder = editor.builderFromFeatureType(ft);
-        String defaultGeometry = builder.getDefaultGeometry();
+        String defaultGeometry = ft.getGeometryDescriptor().getLocalName();
         if( defaultGeometry == null ){
             return;
         }
