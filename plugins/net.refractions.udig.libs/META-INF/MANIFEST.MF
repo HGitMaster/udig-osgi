@@ -114,7 +114,8 @@ Bundle-ClassPath: library.jar,
  lib/batik-svg-dom-1.6.jar,
  lib/batik-xml-1.6.jar,
  lib/batik-awt-util-1.6.jar,
- lib/batik-script-1.6.jar
+ lib/batik-script-1.6.jar,
+ lib/gt-mif-2.6-SNAPSHOT.jar
 Export-Package: .,
  com.google.common.base;uses:="new com.google.common.base",
  com.google.common.collect;uses:="new com.google.common.collect,new new com.google.common.collect,com.google.common.base",
@@ -933,6 +934,7 @@ Export-Package: .,
    org.geotools.feature.collection,
    org.geotools.feature,
    org.opengis.feature.simple",
+ org.geotools.data.mif,
  org.geotools.data.mysql;
   uses:="org.geotools.data.jdbc.attributeio,
    com.vividsolutions.jts.geom,

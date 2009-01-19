@@ -62,6 +62,7 @@
 			<dependency groupId="org.geotools" artifactId="gt-wfs" version="${geotools.version}" />
 			<dependency groupId="org.geotools" artifactId="gt-process" version="${geotools.version}" />
 			<dependency groupId="org.geotools" artifactId="gt-wps" version="${geotools.version}" />
+			<dependency groupId="org.geotools" artifactId="gt-mif" version="${geotools.version}" />
 
 			<!-- batik jars - used by geotools renderer -->
 		    <dependency groupId="batik" artifactId="batik-dom" version="1.6" />
