@@ -66,18 +66,19 @@ public class WFSServiceExtension extends AbstractDataStoreServiceExtension
 
 	public Map<String, Serializable> createParams(URL url) {
 		if (!isWFS(url)) {
+		    // check that the URL at least tries to be a WFS get capabilities url
 			return null;
 		}
-
-		// wfs check
+		// set up the default parameters based on this URL
+		// (we could get these from a preferences setting if we wanted to)
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 		params.put(WFSDataStoreFactory.URL.key, url);
 		params.put(WFSDataStoreFactory.BUFFER_SIZE.key, 100);
 		params.put(WFSDataStoreFactory.LENIENT.key, true);
 		params.put(WFSDataStoreFactory.TRY_GZIP.key, true);
 
-		// don't check ... it blocks
-		// (XXX: but we are using that to figure out if the service will work?)
+		// We are not trying to connect here since it would block
+		// return the parameters
 		return params;
 	}
 

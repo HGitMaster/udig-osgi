@@ -259,7 +259,7 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
     			source = data.getResource().resolve(FeatureSource.class, new NullProgressMonitor());
     			typeName = source.getSchema().getTypeName();
             }
-			URLUtils.cleanFilename(typeName);
+			typeName = URLUtils.cleanFilename(typeName);
 			
             final File[] destination = new File[]{addSuffix(new File(exportDir, typeName))};
             if (destination[0].exists()) {

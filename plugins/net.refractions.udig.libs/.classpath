@@ -53,7 +53,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-2.6-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-2.6-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-validation-2.6-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-wfs-2.6-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-wfs-2.6-SNAPSHOT.jar" sourcepath="C:/java/geotools/trunk/modules/plugin/wfs"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-wms-2.6-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-wps-2.6-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-xml-2.6-SNAPSHOT.jar"/>
