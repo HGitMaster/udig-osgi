@@ -70,7 +70,7 @@ public class GeoTiffPlugin extends AbstractUIPlugin {
 	 * Returns the plugin's resource bundle,
 	 * @return Default ResourceBundle for this plugin.
 	 */
-	public ResourceBundle getResourceBundle() {
+	public synchronized ResourceBundle getResourceBundle() {
 		try {
 			if (this.resourceBundle == null)
 				this.resourceBundle = ResourceBundle.getBundle(

@@ -91,7 +91,7 @@ public class GeoTiffServiceExtension implements ServiceExtension2 {
         return id;
     }
 
-    private static GeoTiffFormat getFormat() {
+    private synchronized static GeoTiffFormat getFormat() {
         if (format == null) {
             format = (GeoTiffFormat) getFactory().createFormat();
         }
@@ -103,7 +103,7 @@ public class GeoTiffServiceExtension implements ServiceExtension2 {
      * 
      * @return Default GeoTiffFormatFactorySpi
      */
-    public static GeoTiffFormatFactorySpi getFactory() {
+    public synchronized static GeoTiffFormatFactorySpi getFactory() {
         if (factory == null) {
             factory = new GeoTiffFormatFactorySpi();
         }
@@ -149,9 +149,7 @@ public class GeoTiffServiceExtension implements ServiceExtension2 {
         if (!file.exists() )
             return file+Messages.GeoTiffServiceExtension_notExist;
         
-        String result = geotiffFile(file);
-        if (result!=null)
-            return result;
+
         try {
             if (!getFormat().accepts(file))
                 return Messages.GeoTiffServiceExtension_unknown;
@@ -166,18 +164,6 @@ public class GeoTiffServiceExtension implements ServiceExtension2 {
 
         return (file.endsWith(".tiff") || file.endsWith(".tif")); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    private String geotiffFile(File file) {
-        RenderedOp img=null;
-        try{
-            img = JAI.create("ImageRead", file); //$NON-NLS-1$
-        }catch (Throwable e) {
-            return Messages.GeoTiffServiceExtension_notReadWError+e;
-        }
-        if (img == null) {
-            return Messages.GeoTiffServiceExtension_NotRead;
-        }
 
-        return null;
-    }
     
 }

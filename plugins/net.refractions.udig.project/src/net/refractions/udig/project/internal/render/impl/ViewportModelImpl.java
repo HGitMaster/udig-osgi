@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ViewportModelImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: ViewportModelImpl.java 31078 2009-01-26 21:51:54Z simboss $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -276,7 +276,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
      * 
      * @generated NOT
      */
-    public ReferencedEnvelope getBounds() {
+    public synchronized ReferencedEnvelope getBounds() {
         if( bounds == null ){
             return getMapInternal().getBounds(ProgressManager.instance().get());
         }
@@ -321,7 +321,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
                 return;
             }
         }
-        bounds = new ReferencedEnvelope(newBounds,bounds.getCoordinateReferenceSystem());
+        bounds = new ReferencedEnvelope(newBounds,getCRS());
         fireNotification(oldBounds);
     }
 

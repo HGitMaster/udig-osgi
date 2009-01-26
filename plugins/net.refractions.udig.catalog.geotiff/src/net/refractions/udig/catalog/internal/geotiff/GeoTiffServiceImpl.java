@@ -57,7 +57,7 @@ public class GeoTiffServiceImpl extends AbstractRasterService {
     @Override
     public synchronized  List<AbstractRasterGeoResource> resources( IProgressMonitor monitor ) 
             throws IOException {
-        if(monitor != null) {
+         if(monitor != null) {
             String msg = MessageFormat.format(
                     Messages.GeoTiffServiceImpl_connecting_to, 
                     new Object[] {});
