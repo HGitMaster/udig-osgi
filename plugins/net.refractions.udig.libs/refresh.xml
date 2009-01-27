@@ -88,6 +88,10 @@
         -->
 
 			<!-- skip these - they are already accounted for by plug-in dependencies  -->
+			<dependency groupId="javax.media" artifactId="jai_imageio" version="1.1" scope="provided" />
+			<dependency groupId="javax.media" artifactId="jai_codec" version="1.1.3" scope="provided" />
+			<dependency groupId="javax.media" artifactId="jai_core" version="1.1.3" scope="provided" />
+			
 			<dependency groupId="org.geotools" artifactId="gt-epsg-wkt" version="${geotools.version}" scope="provided" />
 			<dependency groupId="org.geotools" artifactId="gt-sample-data" version="${geotools.version}" scope="provided" />
 			<dependency groupId="ant" artifactId="ant-optional" version="1.5.1" scope="provided" />
