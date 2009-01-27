@@ -5,8 +5,5 @@ Bundle-SymbolicName: net.refractions.udig.catalog.gml; singleton:=true
 Bundle-Version: 1.2.0
 Bundle-Activator: net.refractions.udig.catalog.internal.gml.GmlPlugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui,
- net.refractions.udig.catalog,
- net.refractions.udig.libs,
  net.refractions.udig.catalog.ui
 Bundle-ActivationPolicy: lazy

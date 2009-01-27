@@ -2,6 +2,7 @@ package net.refractions.udig.catalog;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,7 +19,10 @@ import net.refractions.udig.core.internal.CorePlugin;
  * @author Jody Garnett
  * @since pending
  */
-public class ID {
+public class ID implements Serializable {
+    /** long serialVersionUID field */
+    private static final long serialVersionUID = 5858146620416500314L;
+    
     private String id;
     private File file;
     private URL url;
@@ -50,7 +54,15 @@ public class ID {
         } catch (URISyntaxException e) {            
         }
         if( uri.isAbsolute() && "file".equals( uri.getScheme())){ //$NON-NLS-1$
-            file = new File(uri);
+            try {
+                file = new File(uri);
+            }
+            catch( Throwable t ){
+                file = null;
+                if( CatalogPlugin.getDefault().isDebugging()){
+                    t.printStackTrace();
+                }
+            }
         }
         if( file != null ){
             try {

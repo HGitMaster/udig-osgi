@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RendererImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: RendererImpl.java 31083 2009-01-27 10:39:47Z jgarnett $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -96,7 +96,7 @@ public abstract class RendererImpl extends EObjectImpl implements Renderer {
     /**
      * Seems to be a cache of the current bounds to renderer.
      */
-    private volatile ReferencedEnvelope renderbounds2; // why the 2?
+    private volatile ReferencedEnvelope renderbounds;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -310,9 +310,15 @@ public abstract class RendererImpl extends EObjectImpl implements Renderer {
     	return true;
     }
     
+    /**
+     * Set the bounds you wish to have drawn.
+     * <p>
+     * If a ReferencedEnvelope is provided it would be best; if not the context CoordinateReferenceSystem (ie world crs) will be assumed.
+     * </p>
+     */
     public synchronized void setRenderBounds( Envelope boundsToRender ) {
         if( boundsToRender == null ){
-        	renderbounds2 = null;
+        	renderbounds = null;
         }
         else if( boundsToRender instanceof ReferencedEnvelope){
         	ReferencedEnvelope referencedEnvelope = (ReferencedEnvelope) boundsToRender;
@@ -320,7 +326,7 @@ public abstract class RendererImpl extends EObjectImpl implements Renderer {
         	if( referencedEnvelope.getCoordinateReferenceSystem() == null ){
         		throw new IllegalArgumentException("The provided referenced envelope does not have a CRS, did you mean getContext().getCRS()?"); //$NON-NLS-1$
         	}
-        	renderbounds2 = referencedEnvelope;
+        	renderbounds = referencedEnvelope;
         } else {
             CoordinateReferenceSystem crs = getContext().getCRS();
             if( crs == null ){
@@ -328,19 +334,28 @@ public abstract class RendererImpl extends EObjectImpl implements Renderer {
             }
             // Assume the Map CRS will do
         	ReferencedEnvelope referencedEnvelope = new ReferencedEnvelope(boundsToRender, crs);        	
-        	renderbounds2 = referencedEnvelope;
+        	renderbounds = referencedEnvelope;
         }
     }
-    
+    /**
+     * Set the bounds to the indicated screenArea (by using the pixelToWorld method to produced a ReferencedEnvelope.
+     */
     public synchronized void setRenderBounds( Rectangle screenArea ) {
-
         Coordinate min = getContext().pixelToWorld(screenArea.x, screenArea.y);
         Coordinate max = getContext().pixelToWorld(screenArea.width + screenArea.x,
                 screenArea.height + screenArea.y);
-        setRenderBounds(new Envelope(min, max));
+        ReferencedEnvelope worldArea = new ReferencedEnvelope( min.x, max.x, min.y,max.y, getContext().getCRS() );
+        setRenderBounds( worldArea );
     }
+    /**
+     * The area of the world that we wish to draw.
+     * <p>
+     * This is a RefernecedEnvelope and may (or may not) exactly match the data CRS you are working with. To be sure you
+     * should always transform this bounds into your data crs.
+     * @return area of the world to draw
+     */
     public synchronized ReferencedEnvelope getRenderBounds() {
-        return renderbounds2;
+        return renderbounds;
     }
     
 } // RendererImpl

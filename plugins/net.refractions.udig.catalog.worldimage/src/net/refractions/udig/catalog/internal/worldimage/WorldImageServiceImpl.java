@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,8 +90,11 @@ public class WorldImageServiceImpl extends AbstractRasterService {
     
     @Override
     public Map<String, Serializable> getConnectionParams() {
-        return new WorldImageServiceExtension().createParams(getIdentifier());
+        Map<String, Serializable> params = new HashMap<String, Serializable>(); 
+        params.put(WorldImageServiceExtension.URL_PARAM, getIdentifier() );
+        return params;
     }
+    
     public void dispose( IProgressMonitor monitor ) {
         // do nothing
     }

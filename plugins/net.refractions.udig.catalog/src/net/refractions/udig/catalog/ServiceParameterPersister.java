@@ -77,7 +77,10 @@ public class ServiceParameterPersister {
 					
 					String[] nodes = servicePref.childrenNames();
 					for (String childName : nodes) {
-					    if( PROPERTIES_KEY.equals(childName)) continue;
+					    if( PROPERTIES_KEY.equals(childName)) {
+					        // slip properties entry
+					        continue;
+					    }
 						mapAsObject(servicePref, connectionParams, childName);
 					}
 					
@@ -309,7 +312,12 @@ public class ServiceParameterPersister {
                     if( object instanceof URL){
                     	url = (URL) object;
                     }else if( object instanceof File ){
+                        URL old=((File)object).toURL();
                     	url=((File)object).toURI().toURL();
+                    	if( !old.equals(url)){
+                    	    System.out.println("old url:"+old);
+                    	    System.out.println("new url:"+url);
+                    	}                    	    
                     }
                     
                     String value;

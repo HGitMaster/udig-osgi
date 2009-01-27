@@ -278,10 +278,10 @@ public abstract class IService implements IResolve {
 
     public URI getID() {
     	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+            return getIdentifier().toURI();
+        } catch (URISyntaxException e) {
+            return null;
+        }
     }
     
     /**

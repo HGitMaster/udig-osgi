@@ -25,7 +25,16 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Blocking IAdaptable, used to contact external services.
+ * Represents external services; you can contact the external
+ * service using an API of your choice.
+ * <p>
+ * Quick example:<pre><code>
+ * if( resolve.canResolve( FeatureSource.class ) ){
+ *     FeatureSource source = resolve.resolve( FeatureSource.class, new NullProgressMonitor() );
+ *     FeatureCollection features = source.getFeatures();
+ *     ...
+ * }
+ * </code></pre>
  * 
  * @author David Zwiers, Refractions Research
  * @since 0.7.0
@@ -173,10 +182,15 @@ public interface IResolve {
     public abstract URL getIdentifier();
     
     /**
-     * A unique resource identifier ... this should be unique for each service.
+     * A unique resource ID ... this should be unique for each service.
      * Must Not Block.
-     *
-     * @return ID for this IResolve, should not be null.
+     * <p>
+     * This method is similar to new ID( getIdentifier() ) but is a lot easier to
+     * maintain. We are using a strongly typed ID object since there are so many
+     * restrictions and corner cases when working with URLs, URIs (or even Strings
+     * across platforms).
+     * </p>
+     * @return ID for this object, will not be null.
      */
     public abstract URI getID();
     

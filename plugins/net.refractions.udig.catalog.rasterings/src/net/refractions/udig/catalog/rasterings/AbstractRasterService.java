@@ -19,9 +19,11 @@ package net.refractions.udig.catalog.rasterings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
 
@@ -42,7 +44,7 @@ import org.geotools.data.DataUtilities;
  * @since 0.6.0
  */
 public abstract class AbstractRasterService extends IService {
-    private URL id;
+    private ID id;
     
     /** <code>status</code> field describes the status of the service */
     protected Status status = Status.NOTCONNECTED;
@@ -63,8 +65,8 @@ public abstract class AbstractRasterService extends IService {
      * @param id
      * @param factory
      */
-    public AbstractRasterService( URL id, GridFormatFactorySpi factory ) {
-        this.id = id;
+    public AbstractRasterService( URL url, GridFormatFactorySpi factory ) {
+        this.id = new ID( url );
         this.factory = factory;
     }
 
@@ -85,7 +87,11 @@ public abstract class AbstractRasterService extends IService {
     }
 
     public URL getIdentifier() {
-        return this.id;
+        return id.toURL();
+    }
+    
+    public URI getID() {
+        return id.toURI();
     }
 
     /**

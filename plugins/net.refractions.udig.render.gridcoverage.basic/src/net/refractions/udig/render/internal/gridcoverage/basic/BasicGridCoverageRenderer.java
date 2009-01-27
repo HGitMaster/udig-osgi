@@ -90,7 +90,7 @@ public class BasicGridCoverageRenderer extends RendererImpl {
             currentContext.setStatusMessage(Messages.BasicGridCoverageRenderer_rendering_status);
             
             //get the envelope and the screen extent
-            Envelope envelope = getRenderBounds();
+            ReferencedEnvelope envelope = getRenderBounds();
             if( envelope == null || envelope.isNull()){
                 envelope = context.getImageBounds();
             }
@@ -383,10 +383,10 @@ public class BasicGridCoverageRenderer extends RendererImpl {
         public double minScale;
         public double maxScale;
         public IRenderContext context;
-        public Envelope bounds;
+        public ReferencedEnvelope bounds;
         public Rectangle displayArea;
 
-        public State( IRenderContext context, Envelope bbox, Rectangle displayArea, float opacity,
+        public State( IRenderContext context, ReferencedEnvelope bbox, Rectangle displayArea, float opacity,
                 double minScale, double maxScale ) {
             this.opacity = opacity;
             this.minScale = minScale;
