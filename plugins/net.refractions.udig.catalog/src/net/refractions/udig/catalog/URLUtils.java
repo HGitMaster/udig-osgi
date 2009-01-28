@@ -150,7 +150,8 @@ public class URLUtils {
                 || destination.getQuery() != null || destination.getRef() != null)
             return destination;
 
-        String from = urlToString(fileToURL(reference), false).substring(5);
+        URL referenceURL = fileToURL(reference);
+        String from = urlToString(referenceURL, false).substring(5);
         String to = urlToString(destination, false).substring(5);
 
         if (from.equals(to)){
@@ -286,7 +287,7 @@ public class URLUtils {
         if (string.startsWith(standardPrefix)) {
             path3 = string.substring(standardPrefix.length());
         } else if (string.startsWith(simplePrefix)) {
-            path3 = string.substring(simplePrefix.length() /*- 1*/);
+            path3 = string.substring(simplePrefix.length() - 1 );
         } else {
             String auth = url.getAuthority();
             String path2 = url.getPath().replace("%20", " ");

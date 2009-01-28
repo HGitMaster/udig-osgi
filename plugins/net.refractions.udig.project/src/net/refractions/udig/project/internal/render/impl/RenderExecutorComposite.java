@@ -93,13 +93,13 @@ public class RenderExecutorComposite extends RenderExecutorMultiLayer {
             }
 
             CompositeRendererImpl renderer2 = getExecutor().getRenderer();
-            long before = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
             synchronized (getExecutor()) {
                 while( (getMonitor() != null && !getMonitor().isCanceled())
                         && isRendering(renderer2) && getExecutor().timeout < TIMEOUT ) {
-                    long start = System.currentTimeMillis();
                     getExecutor().wait(wait_period);
-                    getExecutor().timeout += System.currentTimeMillis() - start;
+                    long now = System.currentTimeMillis();
+                    getExecutor().timeout = (int)(now - start);
                     if (isRendering(renderer2)) {
                         renderer2.refreshImage(false);
                         getExecutor().setState(RENDERING);
@@ -110,8 +110,10 @@ public class RenderExecutorComposite extends RenderExecutorMultiLayer {
 //                System.out.println("Timed Out"); 
 //            }            
 
-            String message = "Time taken to render is: " + (System.currentTimeMillis() - before) / 1000 + "seconds"; //$NON-NLS-1$ //$NON-NLS-2$
-            ProjectPlugin.trace(Trace.RENDER, getClass(), message, null);
+            if( ProjectPlugin.getPlugin().isDebugging()){
+                String message = "Time taken to render is: " + (System.currentTimeMillis() - start) / 1000 + "seconds"; //$NON-NLS-1$ //$NON-NLS-2$
+                ProjectPlugin.trace(Trace.RENDER, getClass(), message, null);
+            }
             synchronized (getExecutor()) {
                 if (getMonitor() != null && !getMonitor().isCanceled()) {
                     renderer2.refreshImage();

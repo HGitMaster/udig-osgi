@@ -11,6 +11,9 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import javax.media.jai.JAI;
+import javax.media.jai.TileCache;
+
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.ProjectBlackboardConstants;
@@ -56,7 +59,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * @see #getImage()
      */
     protected volatile BufferedImage image = null;
-    
+        
     /**
      * The size of the image (width and height in pixels)
      */
@@ -88,6 +91,8 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     private boolean selection;
 
+    protected TileCache tempCache;
+
 
     public RenderContextImpl() {
         super();
@@ -110,6 +115,14 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
         this.imageBounds = impl.imageBounds;
     }
 
+    public synchronized TileCache getTileCache(){
+        if( tempCache == null){
+            tempCache =JAI.createTileCache();
+            tempCache.setMemoryCapacity(16*1024*1024);
+            tempCache.setMemoryThreshold(1.0f);
+        }
+        return tempCache;
+    }
     /**
      * Sets the size of the image.  If set to null the size of the image will
      * be the same as the mapdisplay.
@@ -354,6 +367,10 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     public void dispose() {
         image = null;
+        if( tempCache != null){
+            tempCache.flush();
+            tempCache = null;
+        }
     }
     
     public RenderContextImpl copy() {

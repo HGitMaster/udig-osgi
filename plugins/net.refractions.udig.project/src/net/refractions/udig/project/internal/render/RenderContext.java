@@ -13,6 +13,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import javax.media.jai.TileCache;
+
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.AbstractContext;
@@ -52,7 +54,7 @@ public interface RenderContext extends AbstractContext, Comparable<RenderContext
      * @return Buffered image copied from the raster, or null if unavailable
      */
     public BufferedImage copyImage( Rectangle rectangle );
-
+    
     /**
      * Returns a bufferedImage that a renderer can render to.
      * <p>

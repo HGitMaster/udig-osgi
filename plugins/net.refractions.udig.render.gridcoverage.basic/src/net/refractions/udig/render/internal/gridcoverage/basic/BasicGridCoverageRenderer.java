@@ -81,9 +81,8 @@ public class BasicGridCoverageRenderer extends RendererImpl {
 	public synchronized void render( Graphics2D graphics, IProgressMonitor monitor )
             throws RenderException {
         try {
-        	//ge the current context
-        	final IRenderContext currentContext = getContext();
-        	
+        	// ge the current context
+        	final IRenderContext currentContext = getContext();       	
         	
         	//check that actually we have something to draw
             currentContext.setStatus(ILayer.WAIT);
@@ -131,6 +130,10 @@ public class BasicGridCoverageRenderer extends RendererImpl {
 			ReferencingFactoryFinder.getMathTransformFactory(null).createConcatenatedTransform(displayToLayer, currentContext.getLayer().mapToLayerTransform()); 
 			GridGeometry2D geom=new GridGeometry2D(range, displayToLayer, destinationCRS );
 			param.setValue(geom);
+			
+			currentContext.setStatus(ILayer.WORKING);
+			setState( STARTING );
+			
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(group.values().toArray(new ParameterValue[0]));
 			if(coverage!=null)
 			{
@@ -146,9 +149,8 @@ public class BasicGridCoverageRenderer extends RendererImpl {
 	            hints.add(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF));
 	            hints.add(new RenderingHints(JAI.KEY_INTERPOLATION,new InterpolationNearest()));
 	            graphics.addRenderingHints(hints);
-	            final TileCache tempCache=JAI.createTileCache();
-	            tempCache.setMemoryCapacity(16*1024*1024);
-	            tempCache.setMemoryThreshold(1.0f);
+	            
+	            final TileCache tempCache=currentContext.getTileCache();
 	            hints.add(new RenderingHints(JAI.KEY_TILE_CACHE,tempCache));
 	                        
 	            //draw
@@ -162,16 +164,21 @@ public class BasicGridCoverageRenderer extends RendererImpl {
 	                if (minScale <= currentScale && currentScale <= maxScale ) {
 	                    final GridCoverageRenderer paint = new GridCoverageRenderer( destinationCRS, envelope, screenSize,hints );
 	                    final RasterSymbolizer rasterSymbolizer = SLD.rasterSymbolizer(style);
+	                
+	                    //setState( RENDERING );
 	                    paint.paint( graphics, coverage, rasterSymbolizer );                        
-	                }  
+	                    setState( DONE );
+	                }
 	                
 	            } catch(Exception e) {
 	                final GridCoverageRenderer paint = new GridCoverageRenderer( destinationCRS, envelope, screenSize,hints );
 	                RasterSymbolizer rasterSymbolizer = CommonFactoryFinder.getStyleFactory(null).createRasterSymbolizer();
+	                
+	                //setState( RENDERING );
 	                paint.paint( graphics, coverage, rasterSymbolizer );
+                    setState( DONE );
 	            }
-	            
-	            tempCache.flush();
+	            //tempCache.flush();
 			}
         } catch (Exception e1) {
             throw new RenderException(e1);

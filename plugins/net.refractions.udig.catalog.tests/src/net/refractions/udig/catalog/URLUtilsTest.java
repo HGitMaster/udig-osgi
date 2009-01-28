@@ -36,6 +36,11 @@ public class URLUtilsTest extends TestCase {
 		
 		result = URLUtils.toRelativePath( reference, url);
 		assertEquals( url, result );		
+		
+//		url = new URL("file:/home/moovida/data/NORVEGIA/trond50geor.jpg");
+//		reference = new File("/home/moovida/rcpdevelopment/WORKSPACES/runtime-jgrass_trunk/.localCatalog");
+//		result = URLUtils.toRelativePath( reference, url);
+//		assertEquals( url, result );        
 	}
 
 	public void testConstructURL() throws Exception {
