@@ -239,6 +239,14 @@ public class URLUtils {
             substring = substring.substring(2);
         }
         try {
+            // check if it is a relative path
+            File tmp = new File(base.getParentFile(), substring);
+            if (tmp.exists()) {
+                File absoluteFile = tmp.getCanonicalFile();
+                URL url2 = absoluteFile.toURI().toURL();
+                return url2;
+            }
+            // what did the author do here?
             if (substring.charAt(0) == base.getCanonicalPath().charAt(0)) {
                 return url;
             }
