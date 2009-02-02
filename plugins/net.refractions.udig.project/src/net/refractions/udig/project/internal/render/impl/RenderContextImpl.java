@@ -119,7 +119,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
         if( tempCache == null){
             tempCache =JAI.createTileCache();
             tempCache.setMemoryCapacity(16*1024*1024);
-            tempCache.setMemoryThreshold(1.0f);
+            tempCache.setMemoryThreshold(0.75f);
         }
         return tempCache;
     }

@@ -7,14 +7,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * A TileRange represents a set of Tiles in a given bounds.  A TileRange
+ * A TileRange represents a set of Tiles that can be fetched.  A TileRange
  * is responsible for fetching the individual tiles if they are not yet
  * "complete" and ready to paint. 
  * 
  * Every time a tile is "completed", all listeners will be notified.
  *  
  * An example of two different implementations could be one that caches the tiles
- * in memory and another that caches them on disk.
+ * in memory and another that caches them on disk. 
+ * 
+ * A TileRange is often used to represent the Tiles that are required to draw
+ * on the screen or are required by an offline process.
  * 
  * @author GDavis
  *

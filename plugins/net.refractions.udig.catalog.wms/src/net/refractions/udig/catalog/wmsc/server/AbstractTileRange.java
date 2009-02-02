@@ -54,7 +54,14 @@ public abstract class AbstractTileRange implements TileRange {
      */
     protected volatile Map<String, Tile> tilesWaitingToLoad = new HashMap<String, Tile>();
      
-    
+    /**
+     * A TileRange implementation where you can fill in the fetching protocol.
+     * @param server The Server to fetch the tiles from
+     * @param tileset TileSet of rendered content
+     * @param bounds Optional bounds (may be null) that contain the provided tiles
+     * @param tiles The tiles that we wish to fetch; must be from the provided tileset
+     * @param requestTileWorkQueue Queue of worker threads that can be used to fetch tiles
+     */
     public AbstractTileRange(TiledWebMapServer server, TileSet tileset, Envelope bounds, 
             Map<String, Tile> tiles, TileWorkerQueue requestTileWorkQueue) {
         this.server = server;

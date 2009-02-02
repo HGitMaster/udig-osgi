@@ -35,7 +35,15 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class TileRangeInMemory extends AbstractTileRange {
      
-    
+    /**
+     * TileRange that holds the tiles in memory using a soft hash map.
+     * 
+     * @param server The Server to fetch the tiles from
+     * @param tileset TileSet of rendered content
+     * @param bounds Optional bounds (may be null) that contain the provided tiles
+     * @param tiles The tiles that we wish to fetch; must be from the provided tileset
+     * @param requestTileWorkQueue Queue of worker threads that can be used to fetch tiles
+     */
     public TileRangeInMemory(TiledWebMapServer server, TileSet tileset, Envelope bounds, 
             Map<String, Tile> tiles, TileWorkerQueue requestTileWorkQueue) {
         super(server, tileset, bounds, tiles, requestTileWorkQueue);
