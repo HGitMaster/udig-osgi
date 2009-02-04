@@ -128,9 +128,19 @@ public class WMSCTileUtils {
                     // cut up the bounds of the whole resolution into smaller pieces so that we
                     // don't get a hashmap of tiles that is huge (eg: 100K+) and run out of
                     // memory.
-                    List<Envelope> boundsList = tileset.getBoundsListForZoom(tileset.getBounds(),
-                            resolution);
-                    long totalTilesForZoom = tileset.getTileCount(tileset.getBounds(), resolution);
+                    List<Envelope> boundsList;
+                    long totalTilesForZoom;
+                    // a performance boost, if we take the entire bounds of the tileset we get 
+                    // a lot of redundant checking and a slow system so simple create a 
+                    // approximate bounds around our selected Geometry so we are only ever 
+                    // getting tiles within a close proximity to our region of interest
+                    if (tileset != null) {
+                        boundsList = tileset.getBoundsListForZoom(JTS.toEnvelope(select), resolution);
+                        totalTilesForZoom = tileset.getTileCount(JTS.toEnvelope(select), resolution);
+                    } else {
+                        boundsList = tileset.getBoundsListForZoom(tileset.getBounds(),resolution);
+                        totalTilesForZoom = tileset.getTileCount(tileset.getBounds(),resolution);
+                    }
 
                     Iterator<Envelope> boundsIter = boundsList.iterator();
 
