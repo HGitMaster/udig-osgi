@@ -53,7 +53,7 @@ public class ID implements Serializable {
             this.uri = url.toURI();
         } catch (URISyntaxException e) {            
         }
-        if( uri.isAbsolute() && "file".equals( uri.getScheme())){ //$NON-NLS-1$
+        if( uri != null && uri.isAbsolute() && "file".equals( uri.getScheme())){ //$NON-NLS-1$
             try {
                 file = new File(uri);
             }
