@@ -134,7 +134,7 @@ public class WMSCTileUtils {
                     // a lot of redundant checking and a slow system so simple create a 
                     // approximate bounds around our selected Geometry so we are only ever 
                     // getting tiles within a close proximity to our region of interest
-                    if (tileset != null) {
+                    if (select != null) {
                         boundsList = tileset.getBoundsListForZoom(JTS.toEnvelope(select), resolution);
                         totalTilesForZoom = tileset.getTileCount(JTS.toEnvelope(select), resolution);
                     } else {
