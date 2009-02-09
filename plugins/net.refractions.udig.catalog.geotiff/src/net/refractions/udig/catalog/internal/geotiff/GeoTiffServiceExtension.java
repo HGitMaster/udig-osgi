@@ -23,9 +23,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension2;
 import net.refractions.udig.catalog.geotiff.internal.Messages;
