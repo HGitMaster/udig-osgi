@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="src" path="src/"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-awt-util-1.6.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-bridge-1.6.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-css-1.6.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
@@ -15,7 +15,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/batik-transcoder-1.6.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-util-1.6.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-xml-1.6.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/beam-1.0.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-beanutils-1.7.0.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.2.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.1.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
