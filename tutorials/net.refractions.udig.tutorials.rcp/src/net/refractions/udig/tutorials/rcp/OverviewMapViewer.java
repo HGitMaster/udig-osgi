@@ -9,6 +9,7 @@ import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
 import net.refractions.udig.project.internal.ContextModelListenerAdapter;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
+import net.refractions.udig.project.internal.ProjectPackage;
 import net.refractions.udig.project.render.IViewportModelListener;
 import net.refractions.udig.project.render.ViewportModelEvent;
 import net.refractions.udig.project.render.ViewportModelEvent.EventType;
@@ -24,7 +25,9 @@ import net.refractions.udig.project.ui.viewers.MapViewer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -185,6 +188,20 @@ public class OverviewMapViewer {
             }
         };
         mainmap.getContextModel().eAdapters().add(contextListener);
+        
+        //add a deep listener to listen to layer hide/show events
+        Adapter layerVisibilityAdapter = new AdapterImpl(){
+            @SuppressWarnings("unchecked")
+            public void notifyChanged( final Notification msg ) {
+                if (msg.getNotifier() instanceof Layer && msg.getFeatureID(Layer.class) == ProjectPackage.LAYER__VISIBLE) {
+                    if (msg.getNewBooleanValue() != msg.getOldBooleanValue()){
+                        // mapviewer needs refreshing
+                        overviewmap.getRenderManager().refresh((Layer)msg.getNotifier(), null);
+                    }
+                }
+            }
+        };
+        mainmap.addDeepAdapter(layerVisibilityAdapter);
     }
     
     /**
