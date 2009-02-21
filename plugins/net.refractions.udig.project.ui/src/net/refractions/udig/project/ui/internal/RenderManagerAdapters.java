@@ -672,7 +672,29 @@ public class RenderManagerAdapters {
             }
         };
     }
-    
+
+    /**
+     * Creates an adapter that listens for
+     * visibility changes in layers.  When a layer
+     * visibility change occurs the tiles
+     * in the tiles render manager need to be invalidated
+     * appropriately.
+     *
+     * @param manager
+     * @return
+     */
+    static Adapter createVisibilityChangedAdapater(final TiledRenderManagerDynamic manager){
+        return new AdapterImpl(){
+            public void notifyChanged( final Notification msg ) {
+              if (msg.getNotifier() instanceof Layer && msg.getFeatureID(Layer.class) == ProjectPackage.LAYER__VISIBLE) {
+                  if (msg.getNewBooleanValue() != msg.getOldBooleanValue()){
+                      manager.layerMadeVisible((Layer)msg.getNotifier());
+                  }
+              }
+          }
+        };
+    }
+            
     
     /**
      * Creates a new adapter for dealing with zorder changes, layers added and removed.
@@ -729,6 +751,5 @@ public class RenderManagerAdapters {
                 manager.layersRemoved(msg);
             }
         };
-
     }
 }
