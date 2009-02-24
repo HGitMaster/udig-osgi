@@ -84,7 +84,7 @@ public class ActiveMapTracker implements IPartListener2, IWindowListener, IPageL
     	
     	if( Display.getCurrent()!=null ){
     		MapPart part = getActivePart();
-    		if( part!=null && part!=activeParts.get(0)){
+    		if( part!=null && !activeParts.isEmpty() && part!=activeParts.get(0)){
     			addActivePart(part);
     			return part.getMap();
     		}
