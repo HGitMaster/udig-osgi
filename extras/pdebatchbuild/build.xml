@@ -6,10 +6,13 @@
   Author: Harald Wellmann
 -->
 
-<project name="udig-osgi" default="compile" basedir=".">
+<project name="udig-osgi" default="compile" basedir="." xmlns:maven="antlib:org.apache.maven.artifact.ant">
 
   <!-- read properties depending on the build machine from an external file -->
   <property file="local.properties" />
+
+  <property name="deps.dir" value="${pluginPath}/plugins"/>
+  <property name="gt.version" value="2.6-SNAPSHOT"/>
   
   <target name="prepare">
     <fail message="Property buildRoot is not set in file local.properties" unless="buildRoot"/>
@@ -19,8 +22,63 @@
     <fail message="Property pluginPath is not set in file local.properties" unless="pluginPath"/>
   </target>
 
+  <target name="platform">
+    <delete dir="${deps.dir}"/>
+    <mkdir dir="${deps.dir}"/>
+    <maven:dependencies filesetId="platform.fileset" useScope="runtime">
+      <maven:localRepository path="d:/m2/repository"/>
+
+      <maven:dependency groupId="org.geotools" artifactId="gt-api" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-brewer" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-coverage" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-cql" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-data" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-epsg-wkt" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-main" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-metadata" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-referencing" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-render" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-shapefile" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-wms" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-xml" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-process" version="${gt.version}"/>
+
+      <maven:dependency groupId="javax.media.jai" artifactId="com.springsource.javax.media.jai.codec" version="1.1.3"/>
+      <maven:dependency groupId="javax.media.jai" artifactId="com.springsource.javax.media.jai.core" version="1.1.3"/>
+      <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.jai_imageio" version="1.1"/>
+      <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" version="1.3.1"/>
+
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.bridge" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.ext.awt" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.dom.svg" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.dom" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.gvt" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.svggen" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" version="1.7.0"/>
+      <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" version="1.0.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.beanutils" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.collections" version="3.2.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.logging" version="1.1.1"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.lang" version="2.4.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.pool" version="1.4.0"/>
+      <maven:dependency groupId="org.apache.log4j" artifactId="com.springsource.org.apache.log4j" version="1.2.15"/>
+      <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" version="1.2.0"/>
+      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>
+      <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.9"/>
+
+    </maven:dependencies>
+
+   <copy todir="${deps.dir}" verbose="false">
+     <fileset refid="platform.fileset" />
+     <mapper type="flatten" />
+   </copy>
+
+
+  </target>
+
   <!-- compile uDig, invoking Eclipse in headless mode -->
-  <target name="compile" >
+  <target name="compile" depends="platform">
     <java jar="${equinox.launcher}" fork="true" failonerror="true">
 
       <sysproperty key="pluginPath" value="${pluginPath}"/>
