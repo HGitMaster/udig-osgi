@@ -19,6 +19,7 @@
     <fail message="Property eclipse.home is not set in file local.properties" unless="eclipse.home"/>
     <fail message="Property eclipse.pde.build is not set in file local.properties" unless="eclipse.pde.build"/>
     <fail message="Property equinox.launcher is not set in file local.properties" unless="equinox.launcher"/>
+    <fail message="Property maven.repo.local is not set in file local.properties" unless="equinox.launcher"/>
     <fail message="Property pluginPath is not set in file local.properties" unless="pluginPath"/>
   </target>
 
@@ -26,7 +27,7 @@
     <delete dir="${deps.dir}"/>
     <mkdir dir="${deps.dir}"/>
     <maven:dependencies filesetId="platform.fileset" useScope="runtime">
-      <maven:localRepository path="d:/m2/repository"/>
+      <maven:localRepository path="${maven.repo.local}"/>
 
       <maven:dependency groupId="org.geotools" artifactId="gt-api" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-brewer" version="${gt.version}"/>

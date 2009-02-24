@@ -26,4 +26,6 @@ buildRoot = d:/work/udig-osgi
 # This path must contain a subfolder "plugins".
 pluginPath=d:/targets/udig-luxoft
 
+# Path to local Maven 2 repository
+maven.repo.local = d:/m2/repository
 
