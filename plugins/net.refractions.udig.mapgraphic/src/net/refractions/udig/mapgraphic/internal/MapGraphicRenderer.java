@@ -1,6 +1,5 @@
 package net.refractions.udig.mapgraphic.internal;
 
-
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -27,12 +26,15 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.mapgraphic.MapGraphic;
 import net.refractions.udig.mapgraphic.MapGraphicContext;
 import net.refractions.udig.mapgraphic.MapGraphicPlugin;
+import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.render.impl.RendererImpl;
 import net.refractions.udig.project.render.ICompositeRenderContext;
 import net.refractions.udig.project.render.IMultiLayerRenderer;
@@ -43,36 +45,38 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.BasicEList;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 /**
  * Renderer for MapGraphic layers
  */
 public class MapGraphicRenderer extends RendererImpl implements IMultiLayerRenderer {
 
+    public static final String BLACKBOARD_IMAGE_KEY = "CACHED_IMAGE"; //$NON-NLS-1$
+    public static final String BLACKBOARD_IMAGE_BOUNDS_KEY = "CACHED_IMAGE_BOUNDS"; //$NON-NLS-1$
+    
     @Override
     public String getName() {
         return super.getName();
     }
-
-    BasicEList l;
-    /**
-     * @see net.refractions.udig.project.internal.render.impl.RendererImpl#render(java.awt.Graphics2D, IProgressMonitor)
-     * @param destination
+   
+    
+    /*
+     * Renders the mapgraphic for the entire screen
+     * 
+     * @returns array[0] = new image; array[1] = image bounds
      */
-    @Override
-    public void render( Graphics2D destination, IProgressMonitor monitor ) {
-        List<IOException> exceptions = new ArrayList<IOException>();
-
-
-        for( IRenderContext l : getContext().getContexts() ) {
-            Graphics2D copy = (Graphics2D) destination.create();
+     private Object[] backgroundRenderImage(ICompositeRenderContext context, List<IOException> exceptions){
+        BufferedImage cache = new BufferedImage(context.getMapDisplay().getWidth(), context.getMapDisplay().getHeight(), BufferedImage.TYPE_INT_ARGB);      
+        ReferencedEnvelope imageBounds = context.getViewportModel().getBounds();
+        
+        for( IRenderContext l : context.getContexts() ) {
+            Graphics2D copy = (Graphics2D) cache.createGraphics();
             //final NonDisposableGraphics graphics = new NonDisposableGraphics(copy);
             try {
                 if( !l.getLayer().isVisible() )
                     continue;
                 MapGraphic mg = l.getGeoResource().resolve(MapGraphic.class, null);
-                //MapGraphicContext mgContext = new MapGraphicContextImpl(l, graphics);
                 MapGraphicContext mgContext = new MapGraphicContextImpl(l, copy);
                 mg.draw(mgContext);
             } catch (IOException e) {
@@ -82,6 +86,46 @@ public class MapGraphicRenderer extends RendererImpl implements IMultiLayerRende
             }
             setState(RENDERING);
         }
+        return new Object[]{cache, imageBounds};   
+    }
+
+    /**
+     * @see net.refractions.udig.project.internal.render.impl.RendererImpl#render(java.awt.Graphics2D, IProgressMonitor)
+     * @param destination
+     */
+    @Override
+    public void render( Graphics2D destination, IProgressMonitor monitor ) {
+        List<IOException> exceptions = new ArrayList<IOException>();
+
+        BlackboardItem cached =  (BlackboardItem)getContext().getLayer().getBlackboard().get(BLACKBOARD_IMAGE_KEY);
+        if (cached != null){
+            if (!cached.layersEqual(getContext().getLayers())){
+                cached = null;
+            }
+        }
+        
+        if (cached == null){
+            Object values[] = backgroundRenderImage(getContext(), exceptions);
+            cached = new BlackboardItem((BufferedImage)values[0], (ReferencedEnvelope)values[1], getContext().getLayers());
+            getContext().getLayer().getBlackboard().put(BLACKBOARD_IMAGE_KEY, cached);
+        }
+        
+        BufferedImage cache = cached.image;
+        ReferencedEnvelope imageBounds = cached.env;
+        
+        //we need to extract from the cache which is the size of the map display
+        //the part of the image which is appropriate for the given bounds
+        ReferencedEnvelope request = getContext().getImageBounds();
+
+        double pixelperunitx = cache.getWidth() / imageBounds.getWidth() ;
+        double pixelperunity = cache.getHeight() / imageBounds.getHeight();
+
+        int lx = (int)Math.round((request.getMinX() - imageBounds.getMinX()) * pixelperunitx);
+        int ly = (int)Math.round((request.getMaxY() - imageBounds.getMaxY()) * pixelperunity);
+
+        AffineTransform transform = new AffineTransform(1f,0f,0f,1f,-lx,ly);
+        destination.drawImage(cache, transform, null);
+        
         if (!exceptions.isEmpty()) {
             //XXX: externalize this message
             RenderException exception = new RenderException(exceptions.size()
@@ -136,6 +180,19 @@ public class MapGraphicRenderer extends RendererImpl implements IMultiLayerRende
     @Override
     public boolean isCacheable() {
     	return false;
+    }
+    
+    @Override
+    public void setState( int newState ) {
+        
+        if (newState == RENDER_REQUEST){
+            //clear blackboard
+            //TODO: make this only occur on layer.refresh() event.  Right now this works fine for the regular
+            //renderer but does not work well for the tiled renderer as a render_request occurs for each
+            //tile rendered.
+            getContext().getLayer().getBlackboard().put(BLACKBOARD_IMAGE_KEY, null);
+        }
+        super.setState(newState);
     }
 
 
@@ -486,6 +543,28 @@ public class MapGraphicRenderer extends RendererImpl implements IMultiLayerRende
 
         public void translate( int x, int y ) {
             graphics.translate(x, y);
+        }
+        
+    }
+    
+    static class BlackboardItem{
+        BufferedImage image;
+        ReferencedEnvelope env;      
+        Collection<ILayer> layers;
+        
+        public BlackboardItem(BufferedImage image, ReferencedEnvelope env, Collection<ILayer> layers){
+            this.image = image;
+            this.env = env;
+            this.layers = layers; 
+        }
+        
+        public boolean layersEqual(Collection<ILayer> layers){
+            if (this.layers.size() != layers.size()) return false;
+            for( Iterator<ILayer> iterator = this.layers.iterator(); iterator.hasNext(); ) {
+                ILayer layer = (ILayer) iterator.next();
+                if (!layers.contains(layer))return false;
+            }
+            return true;
         }
         
     }
