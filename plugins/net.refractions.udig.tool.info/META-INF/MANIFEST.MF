@@ -15,6 +15,15 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project.ui,
  net.refractions.udig.ui,
  org.eclipse.ui.views,
- net.refractions.udig.style.wms,
- net.refractions.udig.render.wms.basic
+ org.geotools.data;bundle-version="2.6.0",
+ org.geotools.main;bundle-version="2.6.0"
 Eclipse-LazyStart: true
+Import-Package: com.vividsolutions.jts.geom,
+ org.opengis.feature.simple,
+ org.opengis.feature.type,
+ org.opengis.filter,
+ org.opengis.filter.expression,
+ org.opengis.filter.spatial,
+ org.opengis.referencing,
+ org.opengis.referencing.crs,
+ org.opengis.referencing.operation

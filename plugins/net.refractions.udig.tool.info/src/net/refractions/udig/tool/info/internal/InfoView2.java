@@ -51,7 +51,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.ows.Layer;
+//import org.geotools.data.ows.Layer;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -256,19 +256,20 @@ public class InfoView2 extends SearchPart {
                     InfoPlugin.log( "Information request "+layer.getName()+" failed "+t, t ); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 continue;
-            }            
-            if( layer.hasResource( Layer.class ) ) {
-                // TODO: freek out because WMS is so hard to use
-                try {
-                    LayerPointInfo hit = WMSDescribeLayer.info2( layer, request.bbox );
-                    if( hit != null ) set.add( hit );
-                }
-                catch( Throwable t ) {
-                    InfoPlugin.log( "Information request "+layer.getName()+" failed "+t, t ); //$NON-NLS-1$ //$NON-NLS-2$
-                    t.printStackTrace();
-                }
-                continue;
             }
+// hwellmann: We don't want to depend on WMS            
+//            if( layer.hasResource( Layer.class ) ) {
+//                // TODO: freek out because WMS is so hard to use
+//                try {
+//                    LayerPointInfo hit = WMSDescribeLayer.info2( layer, request.bbox );
+//                    if( hit != null ) set.add( hit );
+//                }
+//                catch( Throwable t ) {
+//                    InfoPlugin.log( "Information request "+layer.getName()+" failed "+t, t ); //$NON-NLS-1$ //$NON-NLS-2$
+//                    t.printStackTrace();
+//                }
+//                continue;
+//            }
         }
     }
     @Override
