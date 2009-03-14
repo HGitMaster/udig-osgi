@@ -244,19 +244,32 @@ public class FeatureTableControl implements ISelectionProvider {
     /**
      * show the warning about loading features into memory.
      * 
+     * @returns true if the user wishes to continue to load features; false otherwise.
+     * 
      */
-    public void showWarning( Display display ) {
+    public boolean showWarning( Display display ) {
         
         IPreferenceStore preferenceStore = UiPlugin.getDefault().getPreferenceStore();
         if (!preferenceStore.getBoolean(CACHING_WARNING) && !shown) {
             shown=true;
-            MessageDialogWithToggle dialog = MessageDialogWithToggle.openWarning(display
+           
+            MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(display
                     .getActiveShell(), Messages.FeatureTableControl_warningTitle,
                     Messages.FeatureTableControl_warningMessage,
                     Messages.FeatureTableControl_warningToggle, false, null, null);
+//            MessageDialogWithToggle dialog = MessageDialogWithToggle.openWarning(display
+//                    .getActiveShell(), Messages.FeatureTableControl_warningTitle,
+//                    Messages.FeatureTableControl_warningMessage,
+//                    Messages.FeatureTableControl_warningToggle, false, null, null);
             preferenceStore.setValue(CACHING_WARNING, dialog.getToggleState());
+            if (dialog.getReturnCode() ==MessageDialogWithToggle.OK){
+                return true;
+            }else{
+                return false;
+            }
 
         }
+        return true;
 
     }
 

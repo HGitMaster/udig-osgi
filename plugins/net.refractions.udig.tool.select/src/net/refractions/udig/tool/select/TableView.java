@@ -968,7 +968,10 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         
         Display.getDefault().asyncExec(new Runnable(){
             public void run() {
-                    table.showWarning(table.getControl().getDisplay());
+                    if (!table.showWarning(table.getControl().getDisplay())){
+                        //user doesn't want to show table.
+                        return;
+                    }
 
                     // we don't need to display the geometries, that's what the map is for.
                     queryAtts.add(0,ANY);
