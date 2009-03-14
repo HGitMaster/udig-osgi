@@ -88,6 +88,11 @@ public class PostgisService2 extends IService {
             builder.append(folder.getSchemaName());
         }
         params.put(SCHEMA.key, builder.toString());
+        
+        // for wkt for a moment!
+        // params.put( PostgisDataStoreFactory.WKBENABLED.key, Boolean.FALSE );
+        
+        params.put( PostgisDataStoreFactory.LOOSEBBOX.key, Boolean.TRUE );
         return params;
     }
 
