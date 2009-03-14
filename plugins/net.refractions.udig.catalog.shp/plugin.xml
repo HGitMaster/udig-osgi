@@ -70,13 +70,16 @@
              id="net.refractions.udig.catalog.shp.prj.write"
              menuPath="net.refractions.udig.catalog.ui.operation.resourceCategory"
              name="%writePRJ"
-             targetClass="java.lang.Object">
+             targetClass="net.refractions.udig.catalog.IResolve">
           <enablement>
-             <and>
+             <or>
                 <adaptsTo
-                      target="org.geotools.data.shapefile.ShapefileDataStore">
+                      target="net.refractions.udig.catalog.internal.shp.ShpGeoResourceImpl">
                 </adaptsTo>
-             </and>
+                <adaptsTo
+                      target="net.refractions.udig.catalog.internal.shp.ShpServiceImpl">
+                </adaptsTo>
+             </or>
           </enablement>
        </operation>
     </extension>
