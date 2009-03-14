@@ -151,13 +151,20 @@
 	</target>
 
 	<target name="fix">
-		<move file="${lib}/geoapi-2.2-SNAPSHOT.jar" tofile="${lib}/geoapi-2.2-PREVIOUS.jar" verbose="true" failonerror="no" />
+		<move file="${lib}/geoapi-2.3-SNAPSHOT.jar" tofile="${lib}/geoapi-2.3-PREVIOUS.jar" verbose="true" failonerror="no" />
+		<move file="${lib}/geoapi-pending-2.3-SNAPSHOT.jar" tofile="${lib}/geoapi-pending-2.3-PREVIOUS.jar" verbose="true" failonerror="no" />
 		<move todir="${lib}" verbose="true" failonerror="no">
 			<fileset dir="${lib}">
-				<include name="geoapi-2.2-*.jar" />
+				<include name="geoapi-2.3-*.jar" />
 			</fileset>
-			<mapper type="regexp" from="^.*$" to="geoapi-2\.2-SNAPSHOT\.jar" />
+			<mapper type="regexp" from="^.*$" to="geoapi-2\.3-SNAPSHOT\.jar" />
 		</move>
+		<move todir="${lib}" verbose="true" failonerror="no">
+			<fileset dir="${lib}">
+				<include name="geoapi-pending-2.3-*.jar" />
+			</fileset>
+			<mapper type="regexp" from="^.*$" to="geoapi-pending-2\.3-SNAPSHOT\.jar" />
+		</move>		
 	</target>
 	
 	<!-- Used by headless build please make sure this does everthing from clean to download and fix etc.. -->
