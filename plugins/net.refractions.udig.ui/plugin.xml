@@ -44,6 +44,15 @@
                id="charset">
          </keywordReference>
       </page>
+      <page
+            category="net.refractions.udig.ui.page.general"
+            class="net.refractions.udig.ui.preferences.RunntimePreferences"
+            id="net.refractions.udig.ui.runntimepreferences"
+            name="%runntimePreferences">
+         <keywordReference
+               id="charset">
+         </keywordReference>
+      </page>
        </extension>
    <extension
          id="application"
