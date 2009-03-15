@@ -6,13 +6,15 @@
   Author: Harald Wellmann
 -->
 
-<project name="udig-osgi" default="compile" basedir="." xmlns:maven="antlib:org.apache.maven.artifact.ant">
+<project name="udig-osgi" default="all" basedir="." xmlns:maven="antlib:org.apache.maven.artifact.ant">
 
   <!-- read properties depending on the build machine from an external file -->
   <property file="local.properties" />
 
+  <property name="gt.version" value="2.6.0.osgi1"/>
+  <property name="maven.settings" value="settings.xml"/>
+  <property name="pluginPath" value="${buildRoot}/dependencies"/>
   <property name="deps.dir" value="${pluginPath}/plugins"/>
-  <property name="gt.version" value="2.6-SNAPSHOT"/>
   
   <target name="prepare">
     <fail message="Property buildRoot is not set in file local.properties" unless="buildRoot"/>
@@ -20,7 +22,6 @@
     <fail message="Property eclipse.pde.build is not set in file local.properties" unless="eclipse.pde.build"/>
     <fail message="Property equinox.launcher is not set in file local.properties" unless="equinox.launcher"/>
     <fail message="Property maven.repo.local is not set in file local.properties" unless="equinox.launcher"/>
-    <fail message="Property pluginPath is not set in file local.properties" unless="pluginPath"/>
   </target>
 
   <target name="platform">
@@ -79,7 +80,7 @@
   </target>
 
   <!-- compile uDig, invoking Eclipse in headless mode -->
-  <target name="compile" depends="platform">
+  <target name="compile" >
     <java jar="${equinox.launcher}" fork="true" failonerror="true">
 
       <sysproperty key="pluginPath" value="${pluginPath}"/>
@@ -88,7 +89,7 @@
       <arg value="-noupdate" />
       <arg value="-application" />
       <arg value="org.eclipse.ant.core.antRunner" />
-      <!--<arg value="-debug" /> -->
+      <!--arg value="-debug" /--> 
      
       <!-- the Ant build file to be run in an Eclipse context -->
       <arg value="-buildfile" />
@@ -99,6 +100,8 @@
     </java>
 
   </target>
+
+  <target name="all" depends="platform, compile"/>
 
 </project>
 
