@@ -224,6 +224,7 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
                     if (string.trim().length() == 0) {
                         database.setItems(items);
                     } else {
+                    	Point p = database.getSelection();
                         List<String> filtered = new ArrayList<String>();
                         for( String item : items ) {
                             if (item.startsWith(string)) {
@@ -233,6 +234,7 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
                         
                         database.setItems(filtered.toArray(new String[0]));
                         database.setText(string);
+                        database.setSelection(p);
                     }
                 }
             }

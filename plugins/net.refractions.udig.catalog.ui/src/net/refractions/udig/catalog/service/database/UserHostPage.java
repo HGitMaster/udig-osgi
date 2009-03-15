@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * The first of a two page wizard for connecting to a postgis. This page requires the user enter
+ * The first of a two page wizard for connecting to a database. This page requires the user enter
  * host, port, username and password.
  * 
  * @author jesse
