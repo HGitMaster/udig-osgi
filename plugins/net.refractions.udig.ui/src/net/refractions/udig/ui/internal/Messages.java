@@ -79,7 +79,6 @@ public class Messages extends NLS {
     public static String RunntimeFieldEditor_path_not_existing;
     public static String RunntimeFieldEditor_restart;
     public static String RunntimeFieldEditor_workspace_path;
-    public static String RunOperationDialog_run_operation;
     public static String SendLogDialog_contact;
     public static String SendLogDialog_contact_message;
     public static String SendLogDialog_description;
