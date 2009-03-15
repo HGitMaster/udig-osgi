@@ -154,6 +154,7 @@ public class Messages extends NLS {
 	public static String UiPreferences_description;
     public static String UiPreferences_ImperialUnits;
     public static String UiPreferences_MetricUnits;
+    public static String UiPreferences_AutoUnits;
     public static String UiPreferences_UnitsLabel;
     public static String CRSChooser_tooltip;
     public static String CRSChooser_unnamed;

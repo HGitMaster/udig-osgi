@@ -40,6 +40,7 @@ public class BarStyle {
     public static final int MAXIMUM_DIVISIONS = 20;
     public static final int DIVISION_INCREMENT = 1;
     
+    public static final int AUTO_UNITS = -1;
     public static final int METRIC_UNITS = 0;
     public static final int IMPERIAL_UNITS = 1;
     
@@ -77,7 +78,13 @@ public class BarStyle {
     private Color bgColor = null;
     private int numintervales = 4;
     private BarType type = BarType.SIMPLE;
-    private int units = UiPlugin.getDefault().getPreferenceStore().getString(net.refractions.udig.ui.preferences.PreferenceConstants.P_DEFAULT_UNITS).equals( net.refractions.udig.ui.preferences.PreferenceConstants.METRIC_UNITS) ? METRIC_UNITS : IMPERIAL_UNITS;
+    private int units = determineDefaultUnits();
+    private static int determineDefaultUnits() {
+        String previous = UiPlugin.getDefault().getPreferenceStore().getString(net.refractions.udig.ui.preferences.PreferenceConstants.P_DEFAULT_UNITS);
+        if(previous.equals( net.refractions.udig.ui.preferences.PreferenceConstants.METRIC_UNITS)) return METRIC_UNITS;
+        else if(previous.equals( net.refractions.udig.ui.preferences.PreferenceConstants.IMPERIAL_UNITS)) return IMPERIAL_UNITS;
+        else return AUTO_UNITS;
+    }
     /**
      * Creates a new default bar style.
      */

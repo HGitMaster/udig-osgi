@@ -39,7 +39,6 @@ public class CRSUtil {
      * 
      * @throws NoSuchAuthorityCodeException
      */
-    @SuppressWarnings("unchecked")
     public static CoordinateReferenceSystem findEPSGCode( CoordinateReferenceSystem crs,
             IProgressMonitor monitor ) {
 
@@ -47,7 +46,7 @@ public class CRSUtil {
             return crs;
         }
         
-        Set<String> codes = CRS.getSupportedCodes("EPSG");
+        Set<String> codes = CRS.getSupportedCodes("EPSG"); //$NON-NLS-1$
         monitor.beginTask("Searching for EPSG Code", codes.size());
         for( String string : codes ) {
             if (monitor.isCanceled()) {
@@ -91,6 +90,40 @@ public class CRSUtil {
 
         }
         return codes;
+    }
+
+    /**
+     * This general purpose function simply makes a recommendation for using imperial units based on the
+     * coordinate reference system. It is quite simple and defaults to false (ie. metric) for most cases.
+     * At the time of writing it was used by the DistanceTool and the MapGraphic.Scalebar to decide on
+     * metric/imperial if the user had chosen 'auto' in the uDIG preferences (or the scalebar style).
+     * 
+     * Currently the code simply gets the first axis, and looks at the string representation of it's unit.
+     * If this is "ft" or starts with "foot" (as in "foot_survey_us"), it returns true, otherwise false.
+     * We decided against a complete analysis of the units, because the structure is highly variable (multiply
+     * nested set), and this code was much simpler, and therefore easy to read and debug. It worked well against
+     * a number of test cases, particularly in the NAD83* range.
+     *
+     * @author craig
+     * @since 1.2.0 (M3)
+     * @param crs
+     * @return true if there is a sign of 'ft' or 'foot_survey_us' in the CRS units.
+     */
+    public static boolean isCoordinateReferenceSystemImperial(org.opengis.referencing.crs.CoordinateReferenceSystem crs){
+        try {
+            String crs_axis_units = crs.getCoordinateSystem().getAxis(0).getUnit().toString().toLowerCase();
+            if(crs_axis_units.equals("ft") || crs_axis_units.startsWith("foot")){ //$NON-NLS-1$ //$NON-NLS-2$
+                return true;
+            }else if(!crs_axis_units.equals("m") && !crs_axis_units.equals("°")){ //$NON-NLS-1$ //$NON-NLS-2$
+                // TODO: We have this here temporarily to see if we have missed any other common cases
+                System.err.println("Unknown CRS units: "+crs_axis_units); //$NON-NLS-1$
+            }
+        }catch(Exception e){
+            // This is to catch unexpected errors, fall-back to 'metric' without bothering the user too much
+            // TODO: We could consider externalizing this string, but it is one that will not be seen by normal users, so ...
+            System.err.println("Failed to auto-detect scalebar units from CRS: "+e.toString()); //$NON-NLS-1$
+        }
+        return false;
     }
 
 }

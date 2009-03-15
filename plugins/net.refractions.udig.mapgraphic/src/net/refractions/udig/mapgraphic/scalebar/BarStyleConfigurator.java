@@ -135,7 +135,7 @@ public class BarStyleConfigurator extends IStyleConfigurator
         label.setLayoutData(new GridData());
         
         cmbUnits = new Combo(parent, SWT.DROP_DOWN);
-        cmbUnits.setItems(new String[]{Messages.BarStyleConfigurator_MetricUnits, Messages.BarStyleConfigurator_ImperialUnits});
+        cmbUnits.setItems(new String[]{Messages.BarStyleConfigurator_AutoUnits, Messages.BarStyleConfigurator_MetricUnits, Messages.BarStyleConfigurator_ImperialUnits});
         cmbUnits.select(0);
         cmbUnits.setLayoutData(new GridData());
         cmbUnits.addSelectionListener(this);
@@ -162,9 +162,11 @@ public class BarStyleConfigurator extends IStyleConfigurator
         }
         
         if (barStyle.getUnits() == BarStyle.METRIC_UNITS){
-            cmbUnits.select(0);
-        }else{
             cmbUnits.select(1);
+        }else if (barStyle.getUnits() == BarStyle.IMPERIAL_UNITS){
+            cmbUnits.select(2);
+        }else{
+            cmbUnits.select(0);
         }
     }
 
@@ -191,10 +193,12 @@ public class BarStyleConfigurator extends IStyleConfigurator
             barStyle.setType((BarStyle.BarType) tViewer.getTable().getSelection()[0].getData());
         }
         
-        if (cmbUnits.getSelectionIndex() == 0){
+        if (cmbUnits.getSelectionIndex() == 1){
             barStyle.setUnits(BarStyle.METRIC_UNITS);
-        }else{
+        }else if (cmbUnits.getSelectionIndex() == 2){
             barStyle.setUnits(BarStyle.IMPERIAL_UNITS);
+        }else{
+            barStyle.setUnits(BarStyle.AUTO_UNITS);
         }
 
     }

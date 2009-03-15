@@ -29,6 +29,7 @@ public class Messages extends NLS {
     public static String BarStyleConfigurator_divisionslabel;
     public static String BarStyleConfigurator_ImperialUnits;
     public static String BarStyleConfigurator_MetricUnits;
+    public static String BarStyleConfigurator_AutoUnits;
     public static String BarStyleConfigurator_UnitsLabel;
     public static String Font_ExampleText;
     public static String GridStyleConfigurator_0;

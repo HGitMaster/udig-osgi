@@ -26,6 +26,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import net.refractions.udig.catalog.util.CRSUtil;
 import net.refractions.udig.core.IProviderWithParam;
 import net.refractions.udig.core.Pair;
 import net.refractions.udig.mapgraphic.MapGraphic;
@@ -118,19 +119,22 @@ public class ScalebarMapGraphic implements MapGraphic {
         
         // reserve this area of the screen so labels are not drawn here
         context.getLabelPainter().put( location );
-        
-        BarStyle type = getBarStyle(context);
 
         if (inMeters == 0.0) {
             drawWarning(context.getGraphics(), location, displayHeight);
         } else {
+            BarStyle type = getBarStyle(context);
+            int scalebar_units = type.getUnits();
+            if ((scalebar_units == BarStyle.AUTO_UNITS) && (CRSUtil.isCoordinateReferenceSystemImperial(context.getCRS()))){
+                scalebar_units = BarStyle.IMPERIAL_UNITS;
+            }
             Pair<Integer, Pair<Integer, Unit>> result2 = null;
-            if (type.getUnits() == BarStyle.METRIC_UNITS){
+            if (scalebar_units == BarStyle.IMPERIAL_UNITS){
                 result2 = calculateUnitAndLength(inMeters,
-                      location.width / type.getNumintervals(), KILOMETER, METER, CENTIMETER);                
-            }else{
+                        location.width / type.getNumintervals(), Unit.MILE, Unit.FOOT, Unit.YARD, Unit.INCHES);
+            }else{ /* METRIC and AUTO both treated as metric, since auto is converted above in CRS search */
                 result2 = calculateUnitAndLength(inMeters,
-                    location.width / type.getNumintervals(), Unit.MILE, Unit.FOOT, Unit.YARD, Unit.INCHES);
+                        location.width / type.getNumintervals(), KILOMETER, METER, CENTIMETER);                
             }
             
             int trueBarLength2 = result2.getLeft() * type.getNumintervals();

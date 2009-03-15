@@ -46,10 +46,14 @@ public class PreferenceConstants {
 	 * Represents metric units
 	 */
 	public static final String METRIC_UNITS = "METRIC_UNITS"; //$NON-NLS-1$
-	/**
-	 * Represents imperial units
-	 */
-	public static final String IMPERIAL_UNITS = "IMPERIAL_UNITS"; //$NON-NLS-1$
+    /**
+     * Represents imperial units
+     */
+    public static final String IMPERIAL_UNITS = "IMPERIAL_UNITS"; //$NON-NLS-1$
+    /**
+     * Represents automatically determined units
+     */
+    public static final String AUTO_UNITS = "AUTO_UNITS"; //$NON-NLS-1$
 	
     /**
      * Controls whether the TipDialog should be displayed by default on startup.

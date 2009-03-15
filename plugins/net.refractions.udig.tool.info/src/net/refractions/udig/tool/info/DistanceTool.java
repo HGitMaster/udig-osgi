@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.refractions.udig.catalog.util.CRSUtil;
 import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.project.ui.commands.AbstractDrawCommand;
 import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
@@ -147,6 +148,9 @@ public class DistanceTool extends SimpleTool {
         if (statusBar == null)
             return; // shouldn't happen if the tool is being used.
         String units = UiPlugin.getDefault().getPreferenceStore().getString(net.refractions.udig.ui.preferences.PreferenceConstants.P_DEFAULT_UNITS);
+        if (units.equals( net.refractions.udig.ui.preferences.PreferenceConstants.AUTO_UNITS) && CRSUtil.isCoordinateReferenceSystemImperial(context.getCRS())){
+            units = net.refractions.udig.ui.preferences.PreferenceConstants.IMPERIAL_UNITS;
+        }
         final String message;
         if (units.equals( net.refractions.udig.ui.preferences.PreferenceConstants.IMPERIAL_UNITS)){
             message = createMessageImperial(distance);
