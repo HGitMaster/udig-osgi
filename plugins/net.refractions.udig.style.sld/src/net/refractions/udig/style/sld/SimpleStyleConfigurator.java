@@ -247,7 +247,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
             stroke = SLDs.stroke(sym);
             placement = SLDs.getPlacement(SLDs.ALIGN_LEFT, SLDs.ALIGN_MIDDLE, 0);
 
-            name = sym.getGeometryPropertyName();
+            name = sym == null ? null : sym.getGeometryPropertyName();
         } else if (mode == Mode.POLYGON) {
             polyMode.setSelection(true);
             PolygonSymbolizer sym = SLDs.polySymbolizer(fts);
@@ -255,7 +255,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
             fill = SLDs.fill(sym);
             placement = SLDs.getPlacement(SLDs.ALIGN_CENTER, SLDs.ALIGN_MIDDLE, 0);
 
-            name = sym.getGeometryPropertyName();
+            name = sym == null ? null : sym.getGeometryPropertyName();
         } else if (mode == Mode.POINT || mode == Mode.ALL) { // default to handling as Point
             pointMode.setSelection(true);
             PointSymbolizer sym = SLDs.pointSymbolizer(fts);
@@ -264,8 +264,9 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
             graphic = SLDs.graphic(sym);
             placement = SLDs.getPlacement(SLDs.ALIGN_LEFT, SLDs.ALIGN_MIDDLE, 0);
 
-            name = sym.getGeometryPropertyName();
+            name = sym == null ? null : sym.getGeometryPropertyName();
         }
+        
         if (name == null) {
             name = DEFAULT_GEOMETRY;
             geometryName.getCombo().setText(name);
