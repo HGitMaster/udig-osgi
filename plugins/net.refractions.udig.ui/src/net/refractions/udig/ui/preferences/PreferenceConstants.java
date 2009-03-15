@@ -36,6 +36,21 @@ public class PreferenceConstants {
 
 	public static final String P_DEFAULT_PERSPECTIVE = "defaultPerspective"; //$NON-NLS-1$
 
+	/**
+	 * The default units tools that display units should use.
+	 * For now there are two options: Metric and Imperial
+	 * <p>Used by such things as the distance tool.</p>
+	 */
+	public static final String P_DEFAULT_UNITS = "P_DEFAULT_UNITS"; //$NON-NLS-1$
+	/**
+	 * Represents metric units
+	 */
+	public static final String METRIC_UNITS = "METRIC_UNITS"; //$NON-NLS-1$
+	/**
+	 * Represents imperial units
+	 */
+	public static final String IMPERIAL_UNITS = "IMPERIAL_UNITS"; //$NON-NLS-1$
+	
     /**
      * Controls whether the TipDialog should be displayed by default on startup.
      * Defaults to true, but can be set in plugin_customization.ini. 

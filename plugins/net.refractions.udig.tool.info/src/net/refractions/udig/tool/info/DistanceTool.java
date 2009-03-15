@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.project.ui.commands.AbstractDrawCommand;
 import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
 import net.refractions.udig.project.ui.tool.SimpleTool;
@@ -122,9 +123,11 @@ public class DistanceTool extends SimpleTool {
             distance += JTS.orthodromicDistance(begin, end, getContext().getCRS());
             start = current;
         }
+        
         return distance;
     }
 
+    
     private void displayError() {
         final IStatusLineManager statusBar = getContext().getActionBars().getStatusLineManager();
 
@@ -137,12 +140,20 @@ public class DistanceTool extends SimpleTool {
             }
         });
     }
+    
     private void displayOnStatusBar( double distance ) {
         final IStatusLineManager statusBar = getContext().getActionBars().getStatusLineManager();
 
         if (statusBar == null)
             return; // shouldn't happen if the tool is being used.
-        final String message = createMessage(distance);
+        String units = UiPlugin.getDefault().getPreferenceStore().getString(net.refractions.udig.ui.preferences.PreferenceConstants.P_DEFAULT_UNITS);
+        final String message;
+        if (units.equals( net.refractions.udig.ui.preferences.PreferenceConstants.IMPERIAL_UNITS)){
+            message = createMessageImperial(distance);
+        }else{
+            message = createMessageMetric(distance);
+        }
+
         getContext().updateUI(new Runnable(){
             public void run() {
                 statusBar.setErrorMessage(null);
@@ -154,7 +165,7 @@ public class DistanceTool extends SimpleTool {
      * @param distance
      * @return
      */
-    private String createMessage( double distance ) {
+    private String createMessageMetric( double distance ) {
         String message = Messages.DistanceTool_distance; 
         
         if (distance > 100000.0) {
@@ -169,6 +180,28 @@ public class DistanceTool extends SimpleTool {
             message = message.concat(round(distance, 2) + "m"); //$NON-NLS-1$
         } else { //mm
             message = message.concat(round(distance * 1000.0, 1) + "mm"); //$NON-NLS-1$
+        }
+
+        return message;
+    }
+    
+    private String createMessageImperial( double distance ) {
+        String message = Messages.DistanceTool_distance; 
+        //distance is in meter
+        distance = (distance/1000) * 0.621371192;  //convert to miles
+        
+        if (distance > 1000.0) {
+            message = message.concat((int) (distance) + "mi");    //$NON-NLS-1$
+        } else if (distance > 100.0) { //mile
+            message = message.concat(round(distance, 1) + "mi"); //$NON-NLS-1$
+        } else if (distance > 1.0) { //mile
+            message = message.concat(round(distance, 2) + "mi"); //$NON-NLS-1$
+        } else if (distance > 0.1) { //mile
+            message = message.concat((int)(distance*5280) + "ft"); //$NON-NLS-1$
+        } else if (distance > 0.0189) { //mile approx.100ft
+            message = message.concat(round(distance*5280, 1) + "ft"); //$NON-NLS-1$
+        } else { //mile
+            message = message.concat(round(distance*5280*12, 1) + "in"); //$NON-NLS-1$
         }
 
         return message;

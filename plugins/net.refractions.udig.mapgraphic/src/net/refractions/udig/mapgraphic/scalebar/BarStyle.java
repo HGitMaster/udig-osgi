@@ -16,6 +16,7 @@ package net.refractions.udig.mapgraphic.scalebar;
 
 import java.awt.Color;
 
+import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.mapgraphic.MapGraphicPlugin;
 import net.refractions.udig.mapgraphic.internal.Messages;
 import net.refractions.udig.mapgraphic.internal.ui.ImageConstants;
@@ -76,7 +77,7 @@ public class BarStyle {
     private Color bgColor = null;
     private int numintervales = 4;
     private BarType type = BarType.SIMPLE;
-    private int units = METRIC_UNITS;
+    private int units = UiPlugin.getDefault().getPreferenceStore().getString(net.refractions.udig.ui.preferences.PreferenceConstants.P_DEFAULT_UNITS).equals( net.refractions.udig.ui.preferences.PreferenceConstants.METRIC_UNITS) ? METRIC_UNITS : IMPERIAL_UNITS;
     /**
      * Creates a new default bar style.
      */
