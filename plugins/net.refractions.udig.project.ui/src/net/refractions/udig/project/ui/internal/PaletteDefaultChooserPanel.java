@@ -8,13 +8,16 @@
  */
 package net.refractions.udig.project.ui.internal;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import net.refractions.udig.project.ILayer;
+import net.refractions.udig.project.ProjectBlackboardConstants;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
+import net.refractions.udig.project.ui.internal.dialogs.ColorEditor;
 import net.refractions.udig.ui.PlatformGIS;
 import net.refractions.udig.ui.palette.ColourScheme;
 
@@ -23,6 +26,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -30,6 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.geotools.brewer.color.BrewerPalette;
+
+import sun.security.krb5.internal.PAEncTSEnc;
 
 /**
  * <p>
@@ -52,8 +58,8 @@ public class PaletteDefaultChooserPanel {
     Combo quantityCombo = null;
     ArrayList<PaletteCombo> allLayerControls = new ArrayList<PaletteCombo>();
     Map map = null;
+    ColorEditor colorEditor;  //map background color
 
-    int index = 0;
     int numberOfLayers = 0;
 
     /**
@@ -89,15 +95,12 @@ public class PaletteDefaultChooserPanel {
          */
 
         this.map = thisMap;
-        numberOfLayers = this.map.getContextModel().getLayers().size();
+        numberOfLayers = this.map.getLayersInternal().size();
         mapPalette = map.getColorPalette();
-        mapScheme = map.getColourScheme();
+        mapScheme =  new ColourScheme(map.getColourScheme().getColourPalette(), map.getColourScheme().getSizePalette());
         //workaround for non-saving (need to correct number of colours)
         if (mapScheme.getSizePalette() < numberOfLayers) {
             mapScheme.setSizePalette(numberOfLayers);
-        }
-        if (mapScheme.getSizeScheme() < numberOfLayers) {
-            mapScheme.setSizeScheme(numberOfLayers);
         }
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         composite = new Composite(scrolledComposite, SWT.NONE);
@@ -116,6 +119,23 @@ public class PaletteDefaultChooserPanel {
         data.horizontalSpan = 4;
         titleLabel.setLayoutData(data);
 
+        //map background color label
+        Label backgroundColor = new Label(composite, SWT.NONE);
+        backgroundColor.setText(Messages.PaletteDefaultChooserPanel_MapBackgroundColor);
+        data = new GridData();
+        data.horizontalSpan = 1;
+        backgroundColor.setLayoutData(data);
+        
+        colorEditor = new ColorEditor(composite);
+        Color bgColor = (Color)thisMap.getBlackboard().get(ProjectBlackboardConstants.MAP__BACKGROUND_COLOR);
+        if (backgroundColor != null)
+            colorEditor.setColorValue(new RGB(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
+       //spacer
+        Composite colorc = new Composite(composite, SWT.NONE);
+        data = new GridData();
+        data.horizontalSpan = 2;
+        colorc.setLayoutData(data);
+        
         // palette label
         Label paletteLabel = new Label(composite, SWT.NONE);
         paletteLabel.setText(Messages.PaletteDefaultChooserPanel_palette); 
@@ -132,7 +152,7 @@ public class PaletteDefaultChooserPanel {
         paletteSelectionCombo.setItems(names);
 
         // find out index number for selection
-        index = 0;
+        int index = 0;
         for( int i = 0; i < names.length; i++ ) {
             if ((names[i]).equalsIgnoreCase(mapPalette.getName())) {
                 index = i;
@@ -146,13 +166,14 @@ public class PaletteDefaultChooserPanel {
                  * When a new palette is selected: get the palette String and then we want to
                  * repaint all paletteCombos to have new colours
                  */
-                index = paletteSelectionCombo.getSelectionIndex();
+                int index = paletteSelectionCombo.getSelectionIndex();
                 String name = paletteSelectionCombo.getItem(index);
                 BrewerPalette palette = PlatformGIS.getColorBrewer().getPalette(name);
-                ColourScheme scheme = map.getColourScheme();
-                scheme.setColourPalette(palette);
-                map.setColorPalette(palette);
-                map.setColourScheme(scheme);
+                //ColourScheme scheme = map.getColourScheme();
+                //scheme.setColourPalette(palette);
+                //map.setColorPalette(palette);
+                //map.setColourScheme(scheme);
+                mapScheme = new ColourScheme(palette,  Integer.parseInt(quantityCombo.getItem(quantityCombo.getSelectionIndex())) );
                 updateLayerDisplay();
             }
 
@@ -282,5 +303,31 @@ public class PaletteDefaultChooserPanel {
      */
     public ArrayList<PaletteCombo> getAllLayerControls() {
         return allLayerControls;
+    }
+    
+    public Color getMapBackgroundColor(){
+        return new Color(this.colorEditor.getColorValue().red, this.colorEditor.getColorValue().green, this.colorEditor.getColorValue().blue);
+    }
+    
+    public void updateMapBackgroundColor(Color newColor){
+        colorEditor.setColorValue(new RGB(newColor.getRed(), newColor.getGreen(), newColor.getBlue()));
+    }
+    
+    public void updatePalette(String newPalette){
+        for (int i = 0; i < paletteSelectionCombo.getItemCount(); i ++){
+            if (paletteSelectionCombo.getItem(i).equals(newPalette)){
+                paletteSelectionCombo.select(i);
+                break;
+            }
+        }
+        
+        String name = paletteSelectionCombo.getItem(paletteSelectionCombo.getSelectionIndex());
+        BrewerPalette palette = PlatformGIS.getColorBrewer().getPalette(name);
+        mapScheme = new ColourScheme(palette,  Integer.parseInt(quantityCombo.getItem(quantityCombo.getSelectionIndex())) );
+        updateLayerDisplay();
+    }
+    
+    public ColourScheme getCurrentColourScheme(){
+        return this.mapScheme;
     }
 }

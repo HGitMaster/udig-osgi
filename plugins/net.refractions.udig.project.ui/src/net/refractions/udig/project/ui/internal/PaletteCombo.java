@@ -63,7 +63,7 @@ public class PaletteCombo {
         ColourScheme layerScheme = layer.getColourScheme();
         ColourScheme mapScheme = layer.getMapInternal().getColourScheme();
         
-        ColourScheme currentScheme;
+        final ColourScheme currentScheme;
         if (layerScheme != null && !(layerScheme.equals(mapScheme))) { //TODO: check logic
             currentScheme = layerScheme;
         } else {
@@ -87,7 +87,7 @@ public class PaletteCombo {
         layerLabel.setLayoutData(data);
 
         colourIndicatorButton = new Button(composite, SWT.FLAT | SWT.TRAIL);
-        updateButtonColourDisplay(currentColourIndex);
+        updateButtonColourDisplay(currentScheme, currentColourIndex);
 
         data = new GridData();
         colourIndicatorButton.setLayoutData(data);
@@ -98,7 +98,7 @@ public class PaletteCombo {
         colourLetterCombo.addSelectionListener(new SelectionListener(){
             public void widgetSelected( SelectionEvent e ) {
                 int selectIndex = colourLetterCombo.getSelectionIndex();
-                updateButtonColourDisplay(selectIndex);
+                updateButtonColourDisplay(currentScheme, selectIndex);
             }
 
             public void widgetDefaultSelected( SelectionEvent e ) {
@@ -155,20 +155,20 @@ public class PaletteCombo {
             index = colourLetters.length-1;
         }
         colourLetterCombo.select(index);
-        updateButtonColourDisplay(index);
+        updateButtonColourDisplay(scheme, index);
     }
     
     /**
      * @param index
      */
-    protected void updateButtonColourDisplay( int index ) {
+    protected void updateButtonColourDisplay( ColourScheme scheme, int index ) {
         GC gc = new GC(image);
         gc.drawRectangle(0, 2, fExtent.x, fExtent.y);
         
         if (swtColour != null)
             swtColour.dispose();
 
-        Color clr = layerReference.getMapInternal().getColourScheme().getColour(index);
+        Color clr = scheme.getColour(index);
         swtColour = new org.eclipse.swt.graphics.Color(composite.getDisplay(), new RGB(clr.getRed(),
                 clr.getGreen(), clr.getBlue()));
         gc.setBackground(swtColour);
