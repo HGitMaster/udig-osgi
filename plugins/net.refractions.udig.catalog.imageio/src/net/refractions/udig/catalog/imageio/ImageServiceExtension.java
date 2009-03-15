@@ -211,6 +211,7 @@ public class ImageServiceExtension implements ServiceExtension2 {
 			return Messages.ImageServiceExtension_noID;
 		}
 //		String fileExt = id.getFile().substring(id.getFile().indexOf('.') + 1);
+//		
 //		if (fileExt.compareToIgnoreCase("sid") != 0) { //$NON-NLS-1$
 //			return Messages.ImageServiceExtension_badFileExtension + fileExt;
 //		}
@@ -228,8 +229,21 @@ public class ImageServiceExtension implements ServiceExtension2 {
 					+ id.getFile()
 					+ Messages.ImageServiceExtension_IllegalFilePart2;
 		}
-
-		
+		String filename = file.getName();
+		int split = filename.lastIndexOf(".");
+		String fileExt = split == -1 ? "" : filename.substring( split+1 );
+		String found = null;
+		FOUND: for( List<String> extensionList : fileExtensions.values() ){
+		    for( String extension : extensionList ){
+		        if( fileExt.equalsIgnoreCase( extension )){
+		            found = extension;
+		            break FOUND;
+		        }
+		    }
+		}
+		if( found == null ){
+		    return Messages.ImageServiceExtension_geotoolsDisagrees;
+		}
 		final AbstractGridFormat format= getFormatForObject(id, file);
 
 		/* Does this format accept file or URL? */
