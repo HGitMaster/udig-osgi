@@ -169,15 +169,19 @@ public class TableSelectionTab implements Tab {
         layout.addColumnData(new ColumnWeightData(1));
         layout.addColumnData(new ColumnWeightData(1));
         layout.addColumnData(new ColumnWeightData(1));
+        layout.addColumnData(new ColumnWeightData(1));
 
         TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
         nameColumn.setText(localization.table);
 
         TableColumn schemaColumn = new TableColumn(table, SWT.LEFT);
         schemaColumn.setText(localization.schema);
+        
+        TableColumn geometryNameColumn = new TableColumn(table, SWT.LEFT);
+        geometryNameColumn.setText(localization.geometryName);
 
-        TableColumn geometryColumn = new TableColumn(table, SWT.LEFT);
-        geometryColumn.setText(localization.geometry);
+        TableColumn geometryTypeColumn = new TableColumn(table, SWT.LEFT);
+        geometryTypeColumn.setText(localization.geometryType);
 
         tableViewer = new CheckboxTableViewer(table);
         tableViewer.setContentProvider(new FilteringContentProvider());
@@ -288,6 +292,11 @@ public class TableSelectionTab implements Tab {
             case 1:
                 return table.schema==null?"":table.schema; //$NON-NLS-1$
             case 2:
+            	if( table.broken ){
+            		return localization.incorrectConfiguration;
+            	}
+            	return table.geometryColumn;
+            case 3:
                 if( table.broken ){
                     return localization.incorrectConfiguration;
                 }

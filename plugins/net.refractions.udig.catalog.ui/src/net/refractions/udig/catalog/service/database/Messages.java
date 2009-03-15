@@ -11,7 +11,8 @@ public class Messages extends NLS {
     public static String DatabaseWizardLocalization_databaseConnectionInterrupted;
     public static String DatabaseWizardLocalization_databasePermissionProblemMessage;
     public static String DatabaseWizardLocalization_filter;
-    public static String DatabaseWizardLocalization_geometry;
+    public static String DatabaseWizardLocalization_geometryType;
+    public static String DatabaseWizardLocalization_geometryName;
     public static String DatabaseWizardLocalization_host;
     public static String DatabaseWizardLocalization_incorrectConfiguration;
     public static String DatabaseWizardLocalization_list;

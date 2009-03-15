@@ -26,7 +26,8 @@ public class DatabaseWizardLocalization {
     public String brokenElements = Messages.DatabaseWizardLocalization_brokenElements;
     public String table = Messages.DatabaseWizardLocalization_table;
     public String schema = Messages.DatabaseWizardLocalization_schema;
-    public String geometry = Messages.DatabaseWizardLocalization_geometry;
+    public String geometryName = Messages.DatabaseWizardLocalization_geometryName;
+    public String geometryType = Messages.DatabaseWizardLocalization_geometryType;
     public String publicSchema = Messages.DatabaseWizardLocalization_publicSchema;
     public String publicSchemaTooltip = Messages.DatabaseWizardLocalization_publicSchemaTooltip;
     public String filter = Messages.DatabaseWizardLocalization_filter;
