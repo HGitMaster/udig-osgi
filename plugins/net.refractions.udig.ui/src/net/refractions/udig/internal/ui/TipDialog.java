@@ -81,7 +81,7 @@ public class TipDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(400, 250);
+		return new Point(400, 300);
 	}
 
 	@Override
