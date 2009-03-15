@@ -27,6 +27,9 @@ public class Messages extends NLS {
     public static String BarStyleConfigurator_barstylelabel;
     public static String BarStyleConfigurator_colorlable;
     public static String BarStyleConfigurator_divisionslabel;
+    public static String BarStyleConfigurator_ImperialUnits;
+    public static String BarStyleConfigurator_MetricUnits;
+    public static String BarStyleConfigurator_UnitsLabel;
     public static String Font_ExampleText;
     public static String GridStyleConfigurator_0;
     public static String GridStyleConfigurator_1;

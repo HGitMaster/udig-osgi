@@ -26,7 +26,10 @@ public enum Unit {
     METER("m", 1), //$NON-NLS-1$
     CENTIMETER("cm", .01), //$NON-NLS-1$
     YARD("yards",0.9144), //$NON-NLS-1$
-    FOOT("feet", 0.3048); //$NON-NLS-1$
+    FOOT("feet", 0.3048), //$NON-NLS-1$
+    INCHES("in", 2.54 * 0.01), //$NON-NLS-1$
+    MILE("mile", 1.6093 * 1000); //$NON-NLS-1$
+    
     
     public String display;
     private double toMeter;

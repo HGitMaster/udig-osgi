@@ -26,8 +26,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
-
 import net.refractions.udig.core.IProviderWithParam;
 import net.refractions.udig.core.Pair;
 import net.refractions.udig.mapgraphic.MapGraphic;
@@ -126,9 +124,15 @@ public class ScalebarMapGraphic implements MapGraphic {
         if (inMeters == 0.0) {
             drawWarning(context.getGraphics(), location, displayHeight);
         } else {
-            Pair<Integer, Pair<Integer, Unit>> result2 = calculateUnitAndLength(inMeters,
-                    location.width / type.getNumintervals(), KILOMETER, METER, CENTIMETER);
-
+            Pair<Integer, Pair<Integer, Unit>> result2 = null;
+            if (type.getUnits() == BarStyle.METRIC_UNITS){
+                result2 = calculateUnitAndLength(inMeters,
+                      location.width / type.getNumintervals(), KILOMETER, METER, CENTIMETER);                
+            }else{
+                result2 = calculateUnitAndLength(inMeters,
+                    location.width / type.getNumintervals(), Unit.MILE, Unit.FOOT, Unit.YARD, Unit.INCHES);
+            }
+            
             int trueBarLength2 = result2.getLeft() * type.getNumintervals();
             Pair<Integer, Unit> unitMeasure2 = result2.getRight();
             int nice2 = unitMeasure2.getLeft();

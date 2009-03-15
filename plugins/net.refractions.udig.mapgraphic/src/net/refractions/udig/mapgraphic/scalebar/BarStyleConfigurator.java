@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
@@ -57,7 +58,7 @@ public class BarStyleConfigurator extends IStyleConfigurator
     private Spinner divSpinner = null;
     private ColorEditor chooser = null;
     private TableViewer tViewer;
-
+    private Combo cmbUnits;
     @Override
     public boolean canStyle( Layer layer ) {
         return layer.hasResource(MapGraphic.class)
@@ -128,6 +129,16 @@ public class BarStyleConfigurator extends IStyleConfigurator
         label.setLayoutData(new GridData());
         chooser = new ColorEditor(parent);
         chooser.addSelectionListener(this);
+        
+        label = new Label(parent, SWT.RIGHT);
+        label.setText(Messages.BarStyleConfigurator_UnitsLabel);
+        label.setLayoutData(new GridData());
+        
+        cmbUnits = new Combo(parent, SWT.DROP_DOWN);
+        cmbUnits.setItems(new String[]{Messages.BarStyleConfigurator_MetricUnits, Messages.BarStyleConfigurator_ImperialUnits});
+        cmbUnits.select(0);
+        cmbUnits.setLayoutData(new GridData());
+        cmbUnits.addSelectionListener(this);
     }
 
     @Override
@@ -148,6 +159,12 @@ public class BarStyleConfigurator extends IStyleConfigurator
         if (chooser != null) {
             Color c = barStyle.getColor();
             chooser.setColorValue(new RGB(c.getRed(), c.getGreen(), c.getBlue()));
+        }
+        
+        if (barStyle.getUnits() == BarStyle.METRIC_UNITS){
+            cmbUnits.select(0);
+        }else{
+            cmbUnits.select(1);
         }
     }
 
@@ -172,6 +189,12 @@ public class BarStyleConfigurator extends IStyleConfigurator
 
         if (tViewer.getTable().getSelection().length > 0) {
             barStyle.setType((BarStyle.BarType) tViewer.getTable().getSelection()[0].getData());
+        }
+        
+        if (cmbUnits.getSelectionIndex() == 0){
+            barStyle.setUnits(BarStyle.METRIC_UNITS);
+        }else{
+            barStyle.setUnits(BarStyle.IMPERIAL_UNITS);
         }
 
     }

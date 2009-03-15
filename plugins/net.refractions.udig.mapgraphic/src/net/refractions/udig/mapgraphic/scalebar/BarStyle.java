@@ -38,6 +38,10 @@ public class BarStyle {
     public static final int MINIMUM_DIVISIONS = 2;
     public static final int MAXIMUM_DIVISIONS = 20;
     public static final int DIVISION_INCREMENT = 1;
+    
+    public static final int METRIC_UNITS = 0;
+    public static final int IMPERIAL_UNITS = 1;
+    
     /**
      * <p>
      * Tracks the different types of scale bars.
@@ -72,7 +76,7 @@ public class BarStyle {
     private Color bgColor = null;
     private int numintervales = 4;
     private BarType type = BarType.SIMPLE;
-
+    private int units = METRIC_UNITS;
     /**
      * Creates a new default bar style.
      */
@@ -85,11 +89,13 @@ public class BarStyle {
      * @param type the type of scale bar
      * @param color the color of the scale bar
      * @param numintervals the number of intervals to display in the scale bar
+     * @param units - METRIC/IMPERIAL
      */
-    public BarStyle( BarType type, Color color, int numintervals ) {
+    public BarStyle( BarType type, Color color, int numintervals, int units ) {
         this.type = type;
         this.color = color;
         this.numintervales = numintervals;
+        this.units = units;
     }
 
     /**
@@ -120,6 +126,15 @@ public class BarStyle {
     }
 
     /**
+     * Returns the units of the scale bar
+     * IMPERIAL_UNITS or METRIC_UNITS
+     *
+     * @return
+     */
+    public int getUnits(){
+        return this.units;
+    }
+    /**
      * Sets the type of scale bar to be drawn.
      * 
      * @param type new scale bar type
@@ -135,6 +150,15 @@ public class BarStyle {
      */
     public void setColor( Color c ) {
         this.color = c;
+    }
+    
+    /**
+     * Sets the units.
+     *
+     * @param newUnits
+     */
+    public void setUnits(int newUnits){
+        this.units = newUnits;
     }
     /**
      * Sets the number of intervals
