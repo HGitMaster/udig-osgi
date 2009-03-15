@@ -30,6 +30,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.Preferences;
 
+/**
+ * This is an Authenticator used when URL connection negotiation
+ * needs to ask for the users credentials.
+ * <p>
+ * This implementation is written to prompt the user with SWT; and
+ * to store the username/password if possible.
+ * </p>
+ * @since 1.0.0
+ */
 public class UDIGAuthenticator extends Authenticator {
     private static final String NAME = "NAME"; //$NON-NLS-1$
     private static final String PASSWORD = "PASSWORD"; //$NON-NLS-1$
