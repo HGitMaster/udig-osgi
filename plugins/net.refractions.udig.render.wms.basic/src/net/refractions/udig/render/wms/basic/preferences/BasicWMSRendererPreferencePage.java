@@ -4,34 +4,36 @@ package net.refractions.udig.render.wms.basic.preferences;
 import net.refractions.udig.render.wms.basic.WMSPlugin;
 import net.refractions.udig.render.wms.basic.internal.Messages;
 
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
- * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
- * subclassing <samp>FieldEditorPreferencePage</samp>, we
- * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
- * save, restore and apply itself.
+ * Preference page controling the basic wms renderer.
  * <p>
- * This page is used to modify preferences only. They
- * are stored in the preference store that belongs to
- * the main plug-in class. That way, preferences can
- * be accessed directly via the preference store.
+ * By subclassing <samp>FieldEditorPreferencePage</samp>, we can use the field support built into
+ * JFace that allows us to create a page that is small and knows how to save, restore and apply
+ * itself.
+ * <p>
+ * This page is used to modify preferences only. They are stored in the preference store that
+ * belongs to the main plug-in class. That way, preferences can be accessed directly via the
+ * preference store.
  */
-
 public class BasicWMSRendererPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
 
-	private ImageTypeListEditor editor;
-   private BooleanFieldEditor checkbox;
+    private ImageTypeListEditor editor;
+    private BooleanFieldEditor checkbox;
 
    /**
 	 * 
@@ -99,20 +101,22 @@ public class BasicWMSRendererPreferencePage
 
       @Override
       protected String getNewInputObject(){
-//         String str = new String("image/");
-//         InputDialog dialog = new InputDialog(
-//                        Display.getCurrent().getActiveShell(),
-//                        "New Image Type",
-//                        "Enter the image type",
-//                        str,
-//                        null
-//         );
-//         dialog.open();
-//         if(dialog.getReturnCode() == Window.OK){
-//            str = dialog.getValue();
-//         }
-//         return str;
-         return null;
+         String str = new String("image/");  
+         InputDialog dialog = new InputDialog(
+                        Display.getCurrent().getActiveShell(),
+                        "New Image Type",
+                        "Enter the image type",
+                        str,
+                        null
+         );
+         int result = dialog.open();         
+         if(result == Window.OK){
+            str = dialog.getValue();
+         }
+         if( "image/".equals( str )){
+             return null; // nothing to add
+         }
+         return str;
       }
 
       @Override
