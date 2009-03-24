@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.refractions.udig.catalog.CatalogPlugin;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -47,7 +49,7 @@ public class CRSUtil {
         }
         
         Set<String> codes = CRS.getSupportedCodes("EPSG"); //$NON-NLS-1$
-        monitor.beginTask("Searching for EPSG Code", codes.size());
+        monitor.beginTask("Searching for EPSG Code", codes.size()); //$NON-NLS-1$
         for( String string : codes ) {
             if (monitor.isCanceled()) {
                 return null;
@@ -116,12 +118,12 @@ public class CRSUtil {
                 return true;
             }else if(!crs_axis_units.equals("m") && !crs_axis_units.equals("°")){ //$NON-NLS-1$ //$NON-NLS-2$
                 // TODO: We have this here temporarily to see if we have missed any other common cases
-                System.err.println("Unknown CRS units: "+crs_axis_units); //$NON-NLS-1$
+                CatalogPlugin.trace("Unknown CRS units: "+crs_axis_units, null); //$NON-NLS-1$
             }
         }catch(Exception e){
             // This is to catch unexpected errors, fall-back to 'metric' without bothering the user too much
             // TODO: We could consider externalizing this string, but it is one that will not be seen by normal users, so ...
-            System.err.println("Failed to auto-detect scalebar units from CRS: "+e.toString()); //$NON-NLS-1$
+            CatalogPlugin.trace("Failed to auto-detect scalebar units from CRS: "+e.toString(),null); //$NON-NLS-1$
         }
         return false;
     }

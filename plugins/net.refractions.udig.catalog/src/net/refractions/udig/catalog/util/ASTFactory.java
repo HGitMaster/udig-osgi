@@ -12,6 +12,8 @@ import java.util.ListIterator;
 import java.util.Stack;
 
 /**
+ * Used by catalog to implement search.
+ * 
  * @author David Zwiers, Refractions Research
  */
 public class ASTFactory {
@@ -156,6 +158,7 @@ public class ASTFactory {
     private static class And implements AST {
         private AST left, right;
 
+        @SuppressWarnings("unused")
         private And() {/* should not be used */
         }
         public And( AST left, AST right ) {
@@ -204,6 +207,7 @@ public class ASTFactory {
     private static class Or implements AST {
         private AST left, right;
 
+        @SuppressWarnings("unused")
         private Or() {/* should not be used */
         }
         public Or( AST left, AST right ) {
@@ -253,6 +257,7 @@ public class ASTFactory {
     private static class Not implements AST {
         private AST child;
 
+        @SuppressWarnings("unused")
         private Not() {/* should not be used */
         }
         public Not( AST child ) {
@@ -300,6 +305,7 @@ public class ASTFactory {
     private static class Literal implements AST {
         private String value;
 
+        @SuppressWarnings("unused")
         private Literal() {/* should not be used */
         }
         public Literal( String value ) {
