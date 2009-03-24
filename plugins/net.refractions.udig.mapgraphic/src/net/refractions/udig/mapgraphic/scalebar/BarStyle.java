@@ -16,7 +16,6 @@ package net.refractions.udig.mapgraphic.scalebar;
 
 import java.awt.Color;
 
-import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.mapgraphic.MapGraphicPlugin;
 import net.refractions.udig.mapgraphic.internal.Messages;
 import net.refractions.udig.mapgraphic.internal.ui.ImageConstants;
@@ -39,10 +38,6 @@ public class BarStyle {
     public static final int MINIMUM_DIVISIONS = 2;
     public static final int MAXIMUM_DIVISIONS = 20;
     public static final int DIVISION_INCREMENT = 1;
-    
-    public static final int AUTO_UNITS = -1;
-    public static final int METRIC_UNITS = 0;
-    public static final int IMPERIAL_UNITS = 1;
     
     /**
      * <p>
@@ -71,20 +66,15 @@ public class BarStyle {
         public String getName(){
             return this.name;
         }
-
     }
 
     private Color color = Color.BLACK;
     private Color bgColor = null;
     private int numintervales = 4;
     private BarType type = BarType.SIMPLE;
-    private int units = determineDefaultUnits();
-    private static int determineDefaultUnits() {
-        String previous = UiPlugin.getDefault().getPreferenceStore().getString(net.refractions.udig.ui.preferences.PreferenceConstants.P_DEFAULT_UNITS);
-        if(previous.equals( net.refractions.udig.ui.preferences.PreferenceConstants.METRIC_UNITS)) return METRIC_UNITS;
-        else if(previous.equals( net.refractions.udig.ui.preferences.PreferenceConstants.IMPERIAL_UNITS)) return IMPERIAL_UNITS;
-        else return AUTO_UNITS;
-    }
+    
+    private UnitPolicy units = UnitPolicy.determineDefaultUnits();
+    
     /**
      * Creates a new default bar style.
      */
@@ -99,7 +89,7 @@ public class BarStyle {
      * @param numintervals the number of intervals to display in the scale bar
      * @param units - METRIC/IMPERIAL
      */
-    public BarStyle( BarType type, Color color, int numintervals, int units ) {
+    public BarStyle( BarType type, Color color, int numintervals, UnitPolicy units ) {
         this.type = type;
         this.color = color;
         this.numintervales = numintervals;
@@ -134,12 +124,12 @@ public class BarStyle {
     }
 
     /**
-     * Returns the units of the scale bar
-     * IMPERIAL_UNITS or METRIC_UNITS
+     * Returns the UnitPolicy used when displaying the scale bar
+     * AUTO, IMPERIAL or METRIC
      *
-     * @return
+     * @return UnitPolicy used when displayin gthe scale bar
      */
-    public int getUnits(){
+    public UnitPolicy getUnits(){
         return this.units;
     }
     /**
@@ -165,7 +155,7 @@ public class BarStyle {
      *
      * @param newUnits
      */
-    public void setUnits(int newUnits){
+    public void setUnits(UnitPolicy newUnits){
         this.units = newUnits;
     }
     /**

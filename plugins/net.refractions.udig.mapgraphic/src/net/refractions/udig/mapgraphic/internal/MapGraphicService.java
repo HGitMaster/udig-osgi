@@ -23,14 +23,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * Service implementation for map graphics
  */
 public class MapGraphicService extends IService {
-    public static String ID = "mapgraphic:///localhost/mapgraphic";
+    public static String ID = "mapgraphic:///localhost/mapgraphic"; //$NON-NLS-1$
     
     /** Dummy url for a MapGraphic */
     public final static URL SERVICE_URL;
     static {
         URL tmp;
         try {
-            tmp = new URL(null, ID , CorePlugin.RELAXED_HANDLER); //$NON-NLS-1$
+            tmp = new URL(null, ID , CorePlugin.RELAXED_HANDLER);
         } catch (MalformedURLException e) {
             tmp=null;
             e.printStackTrace();

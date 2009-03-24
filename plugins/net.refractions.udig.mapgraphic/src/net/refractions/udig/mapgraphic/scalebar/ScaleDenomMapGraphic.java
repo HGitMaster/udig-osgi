@@ -51,7 +51,7 @@ public class ScaleDenomMapGraphic implements MapGraphic {
             horizAlignment = ViewportGraphics.ALIGN_LEFT;
             anchorPointX = 0;
         }
-        g.drawString(configBean.getLabel()+"1:"+denomStr, anchorPointX, configBean.getHeight() / 2, horizAlignment, ViewportGraphics.ALIGN_MIDDLE);
+        g.drawString(configBean.getLabel()+"1:"+denomStr, anchorPointX, configBean.getHeight() / 2, horizAlignment, ViewportGraphics.ALIGN_MIDDLE); //$NON-NLS-1$
     }
 
     private ScaleDenomMapGraphicBean getConfigBean(IStyleBlackboard styleBlackboard) {
@@ -60,12 +60,12 @@ public class ScaleDenomMapGraphic implements MapGraphic {
         //set defaults
         if (configBean == null) {
             configBean = new ScaleDenomMapGraphicBean();
-            configBean.setFont(new Font("Arial",Font.PLAIN, 10));
+            configBean.setFont(new Font("Arial",Font.PLAIN, 10)); //$NON-NLS-1$
             configBean.setWidth(150);
             configBean.setHeight(40);
             configBean.setTextColor(Color.BLACK);
             configBean.setBackgroundColor(Color.WHITE);
-            configBean.setLabel("");
+            configBean.setLabel(""); //$NON-NLS-1$
             configBean.setHorizAlignment(ScaleDenomMapGraphicBean.ALIGN_CENTER);
             
             NumberFormat nf = NumberFormat.getInstance();

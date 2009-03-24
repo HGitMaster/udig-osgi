@@ -124,12 +124,12 @@ public class ScalebarMapGraphic implements MapGraphic {
             drawWarning(context.getGraphics(), location, displayHeight);
         } else {
             BarStyle type = getBarStyle(context);
-            int scalebar_units = type.getUnits();
-            if ((scalebar_units == BarStyle.AUTO_UNITS) && (CRSUtil.isCoordinateReferenceSystemImperial(context.getCRS()))){
-                scalebar_units = BarStyle.IMPERIAL_UNITS;
+            UnitPolicy scalebarUnits = type.getUnits();
+            if ((scalebarUnits == UnitPolicy.AUTO) && (CRSUtil.isCoordinateReferenceSystemImperial(context.getCRS()))){
+                scalebarUnits = UnitPolicy.IMPERIAL;
             }
             Pair<Integer, Pair<Integer, Unit>> result2 = null;
-            if (scalebar_units == BarStyle.IMPERIAL_UNITS){
+            if (scalebarUnits == UnitPolicy.IMPERIAL){
                 result2 = calculateUnitAndLength(inMeters,
                         location.width / type.getNumintervals(), Unit.MILE, Unit.FOOT, Unit.YARD, Unit.INCHES);
             }else{ /* METRIC and AUTO both treated as metric, since auto is converted above in CRS search */

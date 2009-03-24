@@ -85,7 +85,8 @@ public class BarStyleContent extends StyleContent {
             Color c = new Color(r,g,b);
             int numintervales = memento.getInteger(NUM_INTERVAL);
             String bartype = memento.getString(BARSTYLE);
-            int units = memento.getInteger(UNITS);
+            //int units = memento.getInteger(UNITS);
+            UnitPolicy units = UnitPolicy.valueOf(memento.getString(UNITS));
             BarStyle bs = new BarStyle(BarType.valueOf(bartype), c, numintervales, units);
             return bs;
         } catch (Throwable e) {
@@ -107,7 +108,7 @@ public class BarStyleContent extends StyleContent {
         memento.putInteger(COLOR_R, style.getColor().getRed());
         memento.putInteger(COLOR_G, style.getColor().getGreen());
         memento.putInteger(COLOR_B, style.getColor().getBlue());
-        memento.putInteger(UNITS, style.getUnits());
-       }
+        memento.putString(UNITS, style.getUnits().name());
+    }
 
 }
