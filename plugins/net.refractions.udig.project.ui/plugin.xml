@@ -707,6 +707,14 @@
            %selectionExport.desc
         </description>
      </wizard>
+     <wizard
+           class="net.refractions.udig.project.ui.wizard.export.project.ExportProjectWizard"
+           id="net.refractions.udig.project.ui.export.project"
+           name="Export Project">
+        <description>
+           Export selected project to specified location
+        </description>
+     </wizard>
    </extension>
    <extension
          point="net.refractions.udig.project.ui.toolManagers">
