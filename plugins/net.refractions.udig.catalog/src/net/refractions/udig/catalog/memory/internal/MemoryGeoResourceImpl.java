@@ -35,6 +35,7 @@ public class MemoryGeoResourceImpl extends IGeoResource implements ITransientRes
     private volatile Throwable message;
 
 	public MemoryGeoResourceImpl(String type, MemoryServiceImpl parent) {
+	    this.service = parent;
 		this.type = type;
 		this.parent = parent;
 	}

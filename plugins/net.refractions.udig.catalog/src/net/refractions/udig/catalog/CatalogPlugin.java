@@ -134,16 +134,16 @@ public class CatalogPlugin extends Plugin {
      */
     private void handlerLoadingError( Exception e ) {
         try {
-            File backup = new File(getLocalCatalogFile().getParentFile(), "corruptedLocalCatalog");
+            File backup = new File(getLocalCatalogFile().getParentFile(), "corruptedLocalCatalog"); //$NON-NLS-1$
             copy(getLocalCatalogFile(), backup);
         } catch (IOException ioe) {
-            log("Coulding make a back up of the corrupted local catalog", ioe);
+            log("Coulding make a back up of the corrupted local catalog", ioe); //$NON-NLS-1$
         }
         boolean addShutdownHook = MessageDialog
                 .openQuestion(
                         Display.getDefault().getActiveShell(),
-                        "Error loading Local Catalog",
-                        "An error occurred while loading the local catalog. The application should still work when maps are opened but data in the local catalog will not be available. \n\n A backup of the corrupted catalog has been made.  Do you wish to overwrite the old catalog on shutdown?");
+                        Messages.CatalogPlugin_ErrorLoading,
+                        Messages.CatalogPlugin__ErrorLoadingMessage);
         if (addShutdownHook) {
             addSaveLocalCatalogShutdownHook();
         }
@@ -228,7 +228,7 @@ public class CatalogPlugin extends Plugin {
         if (!userLocation.exists())
             userLocation.mkdirs();
         // local catalog saved in working directory/.localCatalog
-        File catalogLocation = new File(userLocation, ".localCatalog");
+        File catalogLocation = new File(userLocation, ".localCatalog"); //$NON-NLS-1$
         return catalogLocation;
     }
 

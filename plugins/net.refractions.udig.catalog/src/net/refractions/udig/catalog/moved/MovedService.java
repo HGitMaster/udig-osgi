@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IForward;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
@@ -51,12 +52,8 @@ public class MovedService extends IService implements IForward  {
     public URL getIdentifier() {
         return identifier;
     }
-    public URI getID() {
-    	try {
-			return identifier.toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( identifier );
     }
     public Throwable getMessage() {
         return new IllegalStateException("Service has moved to "+forward );

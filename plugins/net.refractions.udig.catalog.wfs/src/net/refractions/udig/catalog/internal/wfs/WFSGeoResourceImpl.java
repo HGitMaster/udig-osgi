@@ -56,6 +56,7 @@ public class WFSGeoResourceImpl extends IGeoResource {
      * @param typename
      */
     public WFSGeoResourceImpl(WFSServiceImpl parent, String typename){
+        this.service = parent;
         this.parent = parent; this.typename = typename;
         try {
             identifier= new URL(parent.getIdentifier().toString()+"#"+typename); //$NON-NLS-1$

@@ -16,8 +16,8 @@ public class CSVGeoResource extends IGeoResource {
     private CSV csv;
 
     public CSVGeoResource( CSVService service ) {
-        File file = service.getFile();
         this.service = service;
+        File file = service.getFile();
         try {
             url = new URL( service.getIdentifier()+"#"+file.getName() );
         } catch (MalformedURLException e) {            

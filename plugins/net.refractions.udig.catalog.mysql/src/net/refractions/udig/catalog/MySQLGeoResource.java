@@ -68,6 +68,7 @@ public class MySQLGeoResource extends IGeoResource {
      * @param typename
      */
     public MySQLGeoResource( MySQLServiceImpl parent, String typename ) {
+        this.service = parent;
         this.parent = parent;
         this.typename = typename;
         try {

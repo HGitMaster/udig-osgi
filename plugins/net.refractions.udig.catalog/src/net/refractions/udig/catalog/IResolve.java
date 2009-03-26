@@ -17,7 +17,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -155,13 +154,13 @@ public interface IResolve {
     public Status getStatus();
 
     /**
-     * Text description for this serice status.
+     * Text description for status of this resource.
      * <p>
      * For a BROKEN status this will contain the error message, null will be returned if there is
      * nothing interesting to report.
      * <p>
      * <p>
-     * Not the Exception is ecpected to be in humar readable, terms.
+     * Not the Exception is expected to be in human readable, terms.
      * </p>
      * 
      * @return Text describing service status
@@ -192,9 +191,12 @@ public interface IResolve {
      * </p>
      * @return ID for this object, will not be null.
      */
-    public abstract URI getID();
+    public abstract ID getID();
     
     /**
+     * Non blocking method to retrieve a title - often used as a label
+     * to represent this resource in a user interface.
+     * <p>
      * Retrieves any readily available title.  This method must not block.
      * The general algorithm for this is to check any title cache, and then
      * check for the presents of an Info object to retrieve the title from.
@@ -202,12 +204,12 @@ public interface IResolve {
      * readily available, return null to indicate that a title must be 
      * generated.
      * 
-     * @return title or null if none is readily available
+     * @return title or <code>null</code> if none is readily available
      */
     public String getTitle();
     
     /**
-     * Clean up after aquired resources - the handle will not function
+     * Clean up after acquired resources - the handle will not function
      * after being disposed.
      * 
      * @param monitor

@@ -49,7 +49,7 @@ public interface IResolveManager {
      * @param targetClass desired type to resolve to
      * @return true if the resolve can be resolved to the targetClass.
      */
-    public boolean canResolve(IResolve resolve, Class targetClass);
+    public boolean canResolve(IResolve resolve, Class<?> targetClass);
     
     /**
      * Registers a factory with the ResolveManager
@@ -72,6 +72,6 @@ public interface IResolveManager {
      * @param factory 
      * @param resolveType
      */
-    public void unregisterResolves(IResolveAdapterFactory factory, Class resolveType);
+    public void unregisterResolves(IResolveAdapterFactory factory, Class<?> resolveType);
 
 }

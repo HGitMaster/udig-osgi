@@ -18,8 +18,6 @@ package net.refractions.udig.catalog;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -52,10 +50,18 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public abstract class IGeoResource implements IResolve {
 
+    /**
+     * Temporary string based on getIdentifier() allowing quick implementaiton
+     * of equals.
+     */
     private volatile String stringURL;
-	protected IService service;
-	protected IGeoResourceInfo info;
 
+    /** Service providing this resource */
+	protected IService service = null;
+	
+	/** Description of this resource */
+	protected IGeoResourceInfo info = null;
+	
     /**
      * Blocking operation to resolve into the adaptee, if available.
      * <p>
@@ -74,7 +80,7 @@ public abstract class IGeoResource implements IResolve {
      * 
      * </p>
      * <p>
-     * Recommendated adaptions:
+     * Recommended adaptions:
      * <ul>
      * <li>ImageDescriptor.class (for icon provided by external service)
      * <li>List.class - members( monitor ) ie children of this georesource as in the wms layer case
@@ -107,8 +113,10 @@ public abstract class IGeoResource implements IResolve {
             try {
                 monitor.beginTask("service info", 100); //$NON-NLS-1$
                 IService service = service( new SubProgressMonitor(monitor,40));
-                IServiceInfo info = service.createInfo( new SubProgressMonitor(monitor,60) );
-                return adaptee.cast( info );
+                if( service != null ){
+                    IServiceInfo info = service.createInfo( new SubProgressMonitor(monitor,60) );
+                    return adaptee.cast( info );
+                }                
             }
             finally {
                 monitor.done();
@@ -245,6 +253,12 @@ public abstract class IGeoResource implements IResolve {
         }
         return false;
     }
+    /**
+     * This method uses URLUtils.urlToString method to populate our internal
+     * stringURL field (so we can quickly compare in our implementation of equals).
+     *
+     * @return the identifier as a String
+     */
     private String getStringURL() {
         if( stringURL==null ){
             synchronized (this) {
@@ -311,12 +325,8 @@ public abstract class IGeoResource implements IResolve {
      */
     public abstract URL getIdentifier();
 
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( getIdentifier() );
     }
     
     /**
@@ -334,24 +344,23 @@ public abstract class IGeoResource implements IResolve {
 	 * 
 	 * @return title or null if none is readily available
 	 */
-	@Override
 	public String getTitle() {
-		String title = null;
-		if(service != null) {
-			Serializable s = 
-					service.getPersistentProperties().get(
-							getID().toString() + "_title");
-			title = (s != null ? s.toString() : null);
-		}
-		if(title == null && info != null) {
-			title = info.getTitle();
-			if(service != null) {
-				service.getPersistentProperties().put(
-						getID().toString() + "_title", title);
-			}
-		}
-		return title;
-	}
+	    String title = null;
+	    if (info != null) {
+	        // We are connected and have a real title!
+            title = info.getTitle();
+            if (title != null && service != null) {
+                // cache the title for when we are not connected
+                service.getPersistentProperties().put(getID().toString() + "_title", title); //$NON-NLS-1$
+            }
+        }
+	    if (title == null && service != null) {
+	        // let us grab the title from the cache
+            Serializable s = service.getPersistentProperties().get(getID().toString() + "_title"); //$NON-NLS-1$
+            title = (s != null ? s.toString() : null);
+        }        
+        return title;
+    }
 	
 	public IService service(IProgressMonitor monitor) throws IOException {
 	    return service;

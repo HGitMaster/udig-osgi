@@ -31,6 +31,7 @@ public class DummyGeoResource extends IGeoResource {
     
 	
 	public DummyGeoResource(IService parent, String name) {
+	    this.service = parent;
 		this.parent = parent;
 		this.name = name;
 	}

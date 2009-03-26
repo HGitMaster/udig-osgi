@@ -82,7 +82,7 @@ public class IGeoResourceInfo {
     /**
      * Returns the resource's title
      * 
-     * @return Readble title (in current local)
+     * @return Readable title (in current local)
      */
     public String getTitle() {
         return title;

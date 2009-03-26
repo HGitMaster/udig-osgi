@@ -56,6 +56,7 @@ public class DB2GeoResource extends IGeoResource {
     String name;
 
     DB2GeoResource( DB2Service parent, String name ) {
+        this.service = parent;
         this.parent = parent;
         this.name = name;
     }

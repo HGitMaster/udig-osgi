@@ -39,7 +39,7 @@ import org.osgi.service.prefs.Preferences;
  * @author Jesse
  */
 public class ServiceParameterPersister {
-	private static final String PROPERTIES_KEY = "_properties";
+	private static final String PROPERTIES_KEY = "_properties"; //$NON-NLS-1$
     private static final String VALUE_ID = "value"; //$NON-NLS-1$
 	private static final String TYPE_ID = "type"; //$NON-NLS-1$
     private static final String ENCODING = "UTF-8"; //$NON-NLS-1$
@@ -182,7 +182,6 @@ public class ServiceParameterPersister {
 	 * @param currentKey
 	 * @throws MalformedURLException
 	 */
-	@SuppressWarnings("unchecked")
     private void mapAsObject(Preferences servicePreferenceNode, Map<String, Serializable> connectionParams, String currentKey) {
 		Preferences paramNode = servicePreferenceNode.node(currentKey);
 		String value=paramNode.get(VALUE_ID, null);
@@ -198,7 +197,7 @@ public class ServiceParameterPersister {
 	
 	private Serializable toObject( String txt, String type ){
 		try{
-			Class clazz=Class.forName(type);
+			Class<?> clazz=Class.forName(type);
 			
 			// reference can be null so only decode relative path if reference is not null.
 			// ie assume the URL/File is absolute if reference is null
@@ -219,7 +218,7 @@ public class ServiceParameterPersister {
 			
 			try{
 				// try finding the constructor that takes a string
-				Constructor constructor = clazz.getConstructor(new Class[]{String.class});
+				Constructor<?> constructor = clazz.getConstructor(new Class[]{String.class});
 				Object object = constructor.newInstance(new Object[]{txt});
 				return (Serializable) object;
 			}catch(Throwable t){
@@ -315,8 +314,8 @@ public class ServiceParameterPersister {
                         URL old=((File)object).toURL();
                     	url=((File)object).toURI().toURL();
                     	if( !old.equals(url)){
-                    	    System.out.println("old url:"+old);
-                    	    System.out.println("new url:"+url);
+                    	    CatalogPlugin.trace("old url:"+old,null); //$NON-NLS-1$
+                    	    CatalogPlugin.trace("new url:"+url,null); //$NON-NLS-1$
                     	}                    	    
                     }
                     
@@ -382,7 +381,7 @@ public class ServiceParameterPersister {
                     paramNode.flush();
                     
                 } catch (Exception e) {
-                    System.out.println("Could not encode "+KEY+" - "+e);
+                    CatalogPlugin.trace("Could not encode "+KEY+" - "+e, e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
@@ -402,6 +401,7 @@ public class ServiceParameterPersister {
                 final String KEY = keys[j];
                 Preferences paramNode = preference.node(KEY);                
                 String txt = paramNode.get(VALUE_ID,null);
+                if( txt == null ) continue;
                 try {
 					txt= URLDecoder.decode( txt, ENCODING );
 				} catch (UnsupportedEncodingException e) {

@@ -169,8 +169,7 @@ public class CreateAndAddGeoResourceToMap {
 	}
 
 	public class ExpectedGeoResource extends IGeoResource {
-
-		@Override
+        @Override
 		public URL getIdentifier() {
 			return null;
 		}

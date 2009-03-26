@@ -18,8 +18,6 @@ package net.refractions.udig.catalog;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -142,6 +140,9 @@ public abstract class IService implements IResolve {
      * Used to save persisted properties; please see ServiceParameterPersister for details.
      */
     private Map<String, Serializable> properties = Collections.synchronizedMap(new HashMap<String, Serializable>());
+    /**
+     * This is a protected field; that is laziy created when getInfo is called.
+     */
 	protected volatile IServiceInfo info = null;
 
     /**
@@ -294,12 +295,8 @@ public abstract class IService implements IResolve {
         return info;
     }
 
-    public URI getID() {
-    	try {
-            return getIdentifier().toURI();
-        } catch (URISyntaxException e) {
-            return null;
-        }
+    public ID getID() {
+        return new ID( getIdentifier() );
     }
     
     /**
@@ -341,14 +338,19 @@ public abstract class IService implements IResolve {
 	 * 
 	 * @returns the service title or null if non is readily available
 	 */
-	@Override
 	public String getTitle() {
-    	Serializable s = properties.get("title");
-		String title = (s != null ? s.toString() : null);
-		if(title == null && info != null) {
-			title = info.getTitle();
-			getPersistentProperties().put("title", title);
-		}
+	    String title = null;
+	    if( info != null ){
+	        // we are connected and can use the real title
+	        title = info.getTitle();
+	        
+	        // cache title for when we are next offline
+	        getPersistentProperties().put("title", title); //$NON-NLS-1$
+	    }
+	    if( title == null ){
+	        Serializable s = properties.get("title"); //$NON-NLS-1$
+	        title = (s != null ? s.toString() : null);	        
+	    }
 		return title;
 	}
     
@@ -356,12 +358,12 @@ public abstract class IService implements IResolve {
      * This should represent the identifier
      * 
      * @see Object#equals(java.lang.Object)
-     * @param arg0
+     * @param obj
      * @return
      */
-    public final boolean equals( Object arg0 ) {
-        if (arg0 != null && arg0 instanceof IService) {
-            IService service = (IService) arg0;
+    public final boolean equals( Object obj ) {
+        if (obj != null && obj instanceof IService) {
+            IService service = (IService) obj;
             if (getIdentifier() != null && service.getIdentifier() != null)
                 return URLUtils.urlToString(getIdentifier(), false).equals(
                         URLUtils.urlToString(service.getIdentifier(), false));

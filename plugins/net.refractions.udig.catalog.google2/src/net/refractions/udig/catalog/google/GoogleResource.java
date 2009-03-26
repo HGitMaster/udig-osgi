@@ -71,6 +71,7 @@ abstract class GoogleResource extends IGeoResource {
     private URL id = null;
     
     public GoogleResource(OGCLayer layer) {
+        service = null; // we do not have a service (you will need to connect first!)
         id = layer.getId();
         info = new IGeoResourceInfo(layer.getTitle(), layer.getName(), layer.getDescription(), getSchema(), 
                 new Envelope(), null, new String[] {layer.getServertype(), layer.getName(), layer.getTitle()}, getIcon() );

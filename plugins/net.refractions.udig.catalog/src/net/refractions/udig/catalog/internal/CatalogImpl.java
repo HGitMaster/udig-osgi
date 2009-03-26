@@ -25,8 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -782,7 +780,6 @@ public class CatalogImpl extends ICatalog {
         return new LinkedList<IResolve>(services);
     }
     
-    @Override
     public String getTitle() {
     	return metadata.getTitle();
     }
@@ -808,12 +805,8 @@ public class CatalogImpl extends ICatalog {
         return metadata.getSource();
     }
 
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( getIdentifier() );
     }
     
     @Override

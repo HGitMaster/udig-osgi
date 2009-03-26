@@ -37,6 +37,7 @@ public class MapGraphicResource extends IGeoResource {
     private MapGraphic mapgraphic;
 
     MapGraphicResource( MapGraphicService service, IConfigurationElement element ) {
+        this.service = service;
         parent = service;
         this.name = element.getAttribute("name"); //$NON-NLS-1$
         this.id = element.getAttribute("id"); //$NON-NLS-1$

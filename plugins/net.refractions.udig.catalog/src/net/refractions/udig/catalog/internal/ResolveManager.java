@@ -56,7 +56,7 @@ public class ResolveManager implements IResolveManager {
     /**
      * Is this a cache of exceptions thrown?
      */
-    Map<IResolveAdapterFactory,Set<Class>> exceptions=new HashMap<IResolveAdapterFactory,Set<Class>>();
+    Map<IResolveAdapterFactory,Set<Class<?>>> exceptions=new HashMap<IResolveAdapterFactory,Set<Class<?>>>();
 
     /**
      * Set of registered factories.
@@ -78,7 +78,7 @@ public class ResolveManager implements IResolveManager {
      * @param resolve Resolve handle to convert
      * @param adapter Requested target interface
      */
-    public boolean canResolve( IResolve resolve, Class adapter ) {
+    public boolean canResolve( IResolve resolve, Class<?> adapter ) {
     	for( Map.Entry<IConfigurationElement,IResolveAdapterFactory> entry : factories.entrySet() ){
     		IConfigurationElement element = entry.getKey();
     		try {
@@ -106,7 +106,7 @@ public class ResolveManager implements IResolveManager {
     	//
     	for( IResolveAdapterFactory factory : registeredFactories ) {
     		try {
-	    		Set<Class> ignoreSet = exceptions.get(factory);
+	    		Set<Class<?>> ignoreSet = exceptions.get(factory);
 	    		if( ignoreSet != null && ignoreSet.contains(adapter) ){
 	    			continue; // skip this as it is listed as an exception
 	    		}
@@ -130,16 +130,18 @@ public class ResolveManager implements IResolveManager {
      * @param targetClass
      * @return The first factory that is willing to adapat to the target classs
      */
-    private IResolveAdapterFactory findRegisteredFactory( IResolve resolve, Class targetClass ) {
+    /*
+    private IResolveAdapterFactory findRegisteredFactory( IResolve resolve, Class<?> targetClass ) {
         for( IResolveAdapterFactory factory : registeredFactories ) {
             if( factory.canAdapt(resolve, targetClass) ){
-                Set<Class> set = exceptions.get(factory);
+                Set<Class<?>> set = exceptions.get(factory);
                 if( set==null || !set.contains(targetClass) )
                     return factory;
             }
         }
         return null;
     }
+    */
     /**
      * XML check on the "resolveableType" entry to ensure the provided resolve handle
      * meets the basic requirements.
@@ -167,7 +169,7 @@ public class ResolveManager implements IResolveManager {
      * @param target
      * @return true if the target should be considered
      */
-    private boolean isTargetTypeSupported( IConfigurationElement element, Class target ){
+    private boolean isTargetTypeSupported( IConfigurationElement element, Class<?> target ){
     	IConfigurationElement[] resolveList  = element.getChildren("resolve"); //$NON-NLS-1$
         for( IConfigurationElement child : resolveList ) {
             String resolveType=child.getAttribute("type"); //$NON-NLS-1$
@@ -222,7 +224,7 @@ public class ResolveManager implements IResolveManager {
             	Status status = new Status(
             			IStatus.WARNING,
             			element.getContributor().getName(),
-            			"Cannot determine resolve class for "+element.getDeclaringExtension().getUniqueIdentifier(),
+            			"Cannot determine resolve class for "+element.getDeclaringExtension().getUniqueIdentifier(), //$NON-NLS-1$
             			notFound );
 				log.log( status );
             }
@@ -230,6 +232,7 @@ public class ResolveManager implements IResolveManager {
         return false;
     }
     
+    /*
     @SuppressWarnings("unchecked")
     private boolean canResolve( IConfigurationElement element, IResolve resolve, Class targetClass ) {
     	// Do a couple of quick sanity checks against the XML
@@ -243,6 +246,7 @@ public class ResolveManager implements IResolveManager {
     	IResolveAdapterFactory factory = getResolveAdapterFactory( element );
     	return factory.canAdapt( resolve, targetClass );
     }
+    */
     /**
      * Register the provided adapater factory with the resolve manager.
      * <p>
@@ -273,7 +277,7 @@ public class ResolveManager implements IResolveManager {
 
 			monitor.beginTask( problem.toString(), 1);
 			monitor.done();
-			throw (IOException) new IOException("This factory is broken:"+problem).initCause(problem);
+			throw (IOException) new IOException("This factory is broken:"+problem).initCause(problem); //$NON-NLS-1$
 		}
 
 		/** This factory is broken and cannot adapt anything */
@@ -325,7 +329,7 @@ public class ResolveManager implements IResolveManager {
     	if( monitor == null ) monitor = new NullProgressMonitor();
     	int count = registeredFactories.size() + factories.size();
     	
-    	monitor.beginTask("Searching for "+adapter.getCanonicalName(), count*10 );
+    	monitor.beginTask("Searching for "+adapter.getCanonicalName(), count*10 ); //$NON-NLS-1$
     	try {
 	    	for( Map.Entry<IConfigurationElement,IResolveAdapterFactory> entry : factories.entrySet() ){
 	    		IConfigurationElement element = entry.getKey();
@@ -365,7 +369,7 @@ public class ResolveManager implements IResolveManager {
 	    	//
 	    	for( IResolveAdapterFactory factory : registeredFactories ) {
 	    		try {
-		    		Set<Class> ignoreSet = exceptions.get(factory);
+		    		Set<Class<?>> ignoreSet = exceptions.get(factory);
 		    		if( ignoreSet != null && ignoreSet.contains(adapter) ){
 		    			monitor.worked(10);
 		    			continue; // skip this as it is listed as an exception
@@ -394,8 +398,8 @@ public class ResolveManager implements IResolveManager {
     		monitor.done();
     	}
     }
-
-    private IResolveAdapterFactory findFactory( IResolve resolve, Class targetType ) {
+    /*
+    private IResolveAdapterFactory findFactory( IResolve resolve, Class<?> targetType ) {
         IResolveAdapterFactory factory = findRegisteredFactory(resolve, targetType);
         if( factory!=null )
             return factory;
@@ -421,12 +425,12 @@ public class ResolveManager implements IResolveManager {
             factory=(IResolveAdapterFactory) found.createExecutableExtension("class"); //$NON-NLS-1$
             factories.put(found, factory);
         } catch (CoreException e) {
-        	String target = found.getAttribute("class");
+        	String target = found.getAttribute("class"); //$NON-NLS-1$
             throw (RuntimeException) new RuntimeException( target ).initCause( e );
-        }
-        
+        }        
         return factory;
     }
+    */
     /**
      * Remove the indicated factory from further consideration.
      * @param factory
@@ -440,13 +444,13 @@ public class ResolveManager implements IResolveManager {
      * @param factory factory previous registered
      * @pram resolveType Please skip the resolve target
      */
-    public void unregisterResolves( IResolveAdapterFactory factory, Class resolveType ) {
+    public void unregisterResolves( IResolveAdapterFactory factory, Class<?> resolveType ) {
         if( !registeredFactories.contains(factory) )
             throw new IllegalArgumentException(factory+" is not a registered factory"); //$NON-NLS-1$
         
-        Set<Class> set = exceptions.get(factory);
+        Set<Class<?>> set = exceptions.get(factory);
         if( set==null ){
-            set=new HashSet<Class>();
+            set=new HashSet<Class<?>>();
             exceptions.put(factory, set);
         }        
         set.add(resolveType);

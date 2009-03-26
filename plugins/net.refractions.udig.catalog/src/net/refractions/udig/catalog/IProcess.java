@@ -17,8 +17,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -291,12 +289,8 @@ public abstract class IProcess implements IResolve {
      */
     public abstract URL getIdentifier();
 
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( getIdentifier() );
     }
     
     /**

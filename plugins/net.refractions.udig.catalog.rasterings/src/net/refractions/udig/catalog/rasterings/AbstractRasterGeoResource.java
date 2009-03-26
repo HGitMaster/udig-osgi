@@ -80,7 +80,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 	 *            Human readable name of this resource.
 	 */
 	public AbstractRasterGeoResource(AbstractRasterService service, String name) {
-		this.service = service;
+	    this.service = service;
 		if (name == null) {
 			name = service.getIdentifier().getFile();
 			int slash = name.lastIndexOf('/');

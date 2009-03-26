@@ -65,7 +65,9 @@ public class ShpGeoResourceImpl extends IGeoResource {
      * @param typename
      */
     public ShpGeoResourceImpl(ShpServiceImpl parent, String typename){
-        this.parent = parent; this.typename = typename;
+        this.service = parent;
+        this.parent = parent;
+        this.typename = typename;
         try {
             identifier= new URL(parent.getIdentifier().toString()+"#"+typename); //$NON-NLS-1$
         } catch (MalformedURLException e) {

@@ -19,7 +19,6 @@ package net.refractions.udig.catalog.rasterings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -90,8 +89,8 @@ public abstract class AbstractRasterService extends IService {
         return id.toURL();
     }
     
-    public URI getID() {
-        return id.toURI();
+    public ID getID() {
+        return id;
     }
 
     /**

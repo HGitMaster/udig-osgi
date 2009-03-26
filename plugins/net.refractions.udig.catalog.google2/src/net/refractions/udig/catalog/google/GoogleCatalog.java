@@ -19,8 +19,6 @@ package net.refractions.udig.catalog.google;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -254,13 +252,10 @@ public class GoogleCatalog extends ISearch {
     public URL getIdentifier() {
         return url;
     }
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+    	return new ID( getIdentifier() );		
     }
+    
     void fire( IResolveChangeEvent event ) {
         Object[] listeners = catalogListeners.getListeners();        
         if( listeners.length == 0 ) return;
@@ -303,7 +298,6 @@ public class GoogleCatalog extends ISearch {
         catalogListeners.clear();
     }
 
-	@Override
 	public String getTitle() {
 		return info != null ? info.getTitle() : null;
 	}

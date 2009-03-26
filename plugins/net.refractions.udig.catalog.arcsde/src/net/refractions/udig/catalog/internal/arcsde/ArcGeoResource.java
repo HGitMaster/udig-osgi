@@ -56,7 +56,7 @@ public class ArcGeoResource extends IGeoResource {
      * @param typename
      */
     public ArcGeoResource( ArcServiceImpl service, String typename ) {
-        this.service = service;
+        this.service = service ;
         this.typename = typename;
     }
 

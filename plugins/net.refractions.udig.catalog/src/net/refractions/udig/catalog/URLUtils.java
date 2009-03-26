@@ -24,8 +24,6 @@ import java.net.URLDecoder;
 
 import net.refractions.udig.core.internal.CorePlugin;
 
-import org.geotools.data.DataUtilities;
-
 /**
  * Utilities for dealing with the catalog's use of URLs as identifiers
  * 
@@ -277,20 +275,20 @@ public class URLUtils {
      * @return File for the provided URL, or null if the URL was for another protocol like "http"
      */
     public static File urlToFile( URL url ) {
-        if (!"file".equalsIgnoreCase(url.getProtocol())) {
+        if (!"file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
             return null;
         }
         String string = url.toExternalForm();
 
         try {
-            string = URLDecoder.decode(string, "UTF-8");
+            string = URLDecoder.decode(string, "UTF-8"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
             // Shouldn't happen
         }
 
         String path3;
-        String simplePrefix = "file:/";
-        String standardPrefix = simplePrefix + "/";
+        String simplePrefix = "file:/"; //$NON-NLS-1$
+        String standardPrefix = simplePrefix + "/"; //$NON-NLS-1$
 
         if (string.startsWith(standardPrefix)) {
             path3 = string.substring(standardPrefix.length());
@@ -298,10 +296,9 @@ public class URLUtils {
             path3 = string.substring(simplePrefix.length() - 1 );
         } else {
             String auth = url.getAuthority();
-            String path2 = url.getPath().replace("%20", " ");
-            File f = null;
-            if (auth != null && !auth.equals("")) {
-                path3 = "//" + auth + path2;
+            String path2 = url.getPath().replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
+            if (auth != null && !auth.equals("")) { //$NON-NLS-1$
+                path3 = "//" + auth + path2; //$NON-NLS-1$
             } else {
                 path3 = path2;
             }
@@ -318,7 +315,7 @@ public class URLUtils {
                 return file.toURL();
             } catch (MalformedURLException e1) {
                 try {
-                    return new URL( "file:/"+file.getCanonicalPath().replace('\\', '/'));
+                    return new URL( "file:/"+file.getCanonicalPath().replace('\\', '/')); //$NON-NLS-1$
                 } catch (MalformedURLException e2) {
                     return null;
                 } catch (IOException e2) {

@@ -19,8 +19,6 @@ import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -114,12 +112,8 @@ public class PostgisSchemaFolder implements IResolveFolder {
     public URL getIdentifier() {
         return identifier;
     }
-    public URI getID() {
-        try {
-            return getIdentifier().toURI();
-        } catch (URISyntaxException e) {
-            return null;
-        }
+    public ID getID() {
+        return new ID( getIdentifier() );        
     }
     public Throwable getMessage() {
         return null;

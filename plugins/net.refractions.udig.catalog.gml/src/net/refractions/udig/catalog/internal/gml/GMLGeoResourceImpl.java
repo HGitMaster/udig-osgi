@@ -49,8 +49,6 @@ public class GMLGeoResourceImpl extends IGeoResource {
     GMLServiceImpl parent;
     String typename = null;
     
-    private GMLGeoResourceImpl(){/*not for use*/}
-    
     /**
      * Construct <code>ShpGeoResourceImpl</code>.
      *
@@ -58,7 +56,9 @@ public class GMLGeoResourceImpl extends IGeoResource {
      * @param typename
      */
     public GMLGeoResourceImpl(GMLServiceImpl parent, String typename){
-        this.parent = parent; this.typename = typename;
+        this.service = parent;
+        this.parent = parent;
+        this.typename = typename;
     }
     
     public URL getIdentifier() {
