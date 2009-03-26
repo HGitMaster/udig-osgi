@@ -41,6 +41,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public class OpenProject implements IViewActionDelegate, IWorkbenchWindowActionDelegate {
 
     private volatile Job job;
+    private String path;
 
     /**
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
@@ -58,7 +59,7 @@ public class OpenProject implements IViewActionDelegate, IWorkbenchWindowActionD
         dialog.setFilterPath(Messages.OpenProject_newProject_filename); 
         dialog.setMessage(Messages.OpenProject_selectProject); 
         dialog.setText(Messages.OpenProject_openProject); 
-        final String path = dialog.open();
+        path = dialog.open();
         if (path == null)
             return;
 
