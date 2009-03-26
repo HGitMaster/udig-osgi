@@ -302,4 +302,9 @@ public class GoogleCatalog extends ISearch {
         // do nothing
         catalogListeners.clear();
     }
+
+	@Override
+	public String getTitle() {
+		return info != null ? info.getTitle() : null;
+	}
 }

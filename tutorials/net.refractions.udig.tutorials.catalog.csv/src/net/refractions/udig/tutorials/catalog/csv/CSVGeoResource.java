@@ -6,14 +6,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IService;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CSVGeoResource extends IGeoResource {
 
-    private URL url;
-    private CSVService service;
-    private CSVGeoResourceInfo info;
+    public URL url;
     private CSV csv;
 
     public CSVGeoResource( CSVService service ) {
@@ -31,22 +30,10 @@ public class CSVGeoResource extends IGeoResource {
     }
 
     @Override
-    public CSVGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null) { //lazy creation
-            synchronized (this) { //support concurrent access
-                if (info == null) {
-                    info = new CSVGeoResourceInfo( this, monitor );
-                }
-            }
-        }
-        return info;
+	protected CSVGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+    	return new CSVGeoResourceInfo( this, monitor );
     }
-
-    @Override
-    public CSVService service( IProgressMonitor monitor ) throws IOException {
-        return service;
-    }
-
+    
     public Throwable getMessage() {
         return service.getMessage();
     }
@@ -65,11 +52,16 @@ public class CSVGeoResource extends IGeoResource {
         if (csv == null) { // lazy creation
             synchronized (this) { //support concurrent access
                 if (csv == null) {
-                    csv = new CSV( service.getFile() );
+                    csv = new CSV( service(monitor).getFile() );
                 }
             }
         }
         return csv;
+    }
+    
+    @Override
+    public CSVService service(IProgressMonitor monitor) throws IOException {
+    	return (CSVService)super.service(monitor);
     }
     
     @Override

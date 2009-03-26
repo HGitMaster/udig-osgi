@@ -96,7 +96,7 @@ public class GMLGeoResourceImpl extends IGeoResource {
             return null;
         
         if(adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast( getInfo(monitor) );
+            return adaptee.cast( createInfo(monitor) );
         if(adaptee.isAssignableFrom(FeatureStore.class)){
             FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS(monitor).getFeatureSource(typename);
             if(fs instanceof FeatureStore)
@@ -107,9 +107,6 @@ public class GMLGeoResourceImpl extends IGeoResource {
         return super.resolve(adaptee, monitor);
     }
     
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
      */
@@ -122,8 +119,7 @@ public class GMLGeoResourceImpl extends IGeoResource {
                 adaptee.isAssignableFrom(IService.class))||
                 super.canResolve(adaptee);
     }
-    private volatile IGeoResourceInfo info;
-    public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException{
+    protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
         if(info == null && getStatus()!=Status.BROKEN){
             parent.dsLock.lock();
             try{

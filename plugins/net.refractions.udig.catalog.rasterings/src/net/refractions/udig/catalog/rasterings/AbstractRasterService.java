@@ -177,5 +177,5 @@ public abstract class AbstractRasterService extends IService {
             throws IOException;
 
 
-    public abstract IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException;
+    protected abstract IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException;
 }

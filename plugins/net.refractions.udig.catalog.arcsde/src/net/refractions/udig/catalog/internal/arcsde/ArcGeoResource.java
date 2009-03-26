@@ -47,7 +47,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @since 0.6
  */
 public class ArcGeoResource extends IGeoResource {
-    ArcServiceImpl service;
     String typename = null;
 
     /**
@@ -93,23 +92,19 @@ public class ArcGeoResource extends IGeoResource {
         if (adaptee == null)
             return null;
         if (adaptee.isAssignableFrom(IService.class))
-            return adaptee.cast(service);
+            return adaptee.cast(service(monitor));
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs = service.getDS(monitor).getFeatureSource(typename);
+            FeatureSource<SimpleFeatureType, SimpleFeature> fs = service(monitor).getDS(monitor).getFeatureSource(typename);
             if (fs instanceof FeatureStore)
                 return adaptee.cast(fs);
             if (adaptee.isAssignableFrom(FeatureSource.class))
-                return adaptee.cast(service.getDS(null).getFeatureSource(typename));
+                return adaptee.cast(service(monitor).getDS(null).getFeatureSource(typename));
         }
         return super.resolve( adaptee, monitor);
-    }
-    @Override
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return service;
     }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
@@ -122,10 +117,9 @@ public class ArcGeoResource extends IGeoResource {
                 || adaptee.isAssignableFrom(FeatureSource.class) || adaptee
                 .isAssignableFrom(IService.class));
     }
-    private volatile IGeoResourceInfo info;
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null && getStatus() != Status.BROKEN) {
-            synchronized (service.getDS(monitor)) {
+            synchronized (service(monitor).getDS(monitor)) {
                 if (info == null) {
                     info = new ArcGeoResourceInfo(this);
                 }
@@ -135,5 +129,9 @@ public class ArcGeoResource extends IGeoResource {
                     .fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
         }
         return info;
+    }
+    
+    public ArcServiceImpl service( IProgressMonitor monitor ) throws IOException {
+    	return (ArcServiceImpl) super.service(monitor);
     }
 }

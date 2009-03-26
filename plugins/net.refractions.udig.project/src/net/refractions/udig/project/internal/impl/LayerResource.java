@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
-import net.refractions.udig.catalog.IService;
 import net.refractions.udig.core.internal.ExtensionPointList;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IResourceCachingInterceptor;
@@ -133,9 +132,6 @@ public class LayerResource extends IGeoResource {
             return null;
         resource = processPostResourceInterceptors(resource, adaptee);
         return resource;
-    }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return resolve(IService.class, monitor);
     }
     @Override
     public IResolve parent( IProgressMonitor monitor ) throws IOException {
@@ -286,7 +282,7 @@ public class LayerResource extends IGeoResource {
         }
     }
     @Override
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         return resolve(IGeoResourceInfo.class, monitor);
     }
 

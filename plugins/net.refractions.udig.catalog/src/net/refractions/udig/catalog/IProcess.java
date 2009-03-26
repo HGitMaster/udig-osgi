@@ -105,7 +105,7 @@ public abstract class IProcess implements IResolve {
             try {
                 monitor.beginTask("service info", 100); //$NON-NLS-1$
                 IService service = service( new SubProgressMonitor(monitor,40));
-                IServiceInfo info = service.getInfo( new SubProgressMonitor(monitor,60) );
+                IServiceInfo info = service.createInfo( new SubProgressMonitor(monitor,60) );
                 return adaptee.cast( info );
             }
             finally {

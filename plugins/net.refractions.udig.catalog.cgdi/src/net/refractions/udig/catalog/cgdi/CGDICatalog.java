@@ -397,4 +397,9 @@ public class CGDICatalog extends ISearch {
     public <T extends IResolve> T getById(Class<T> type, ID id, IProgressMonitor monitor) {
         return null;
     }
+
+	@Override
+	public String getTitle() {
+		return info != null ? info.getTitle() : null;
+	}
 }

@@ -59,18 +59,13 @@ public class DummyGeoResource extends IGeoResource {
 //           if( IService.class.isAssignableFrom(adaptee) )
 //                return adaptee.cast(parent);
            if( IGeoResourceInfo.class.isAssignableFrom(adaptee) )
-               return adaptee.cast(getInfo(monitor));
+               return adaptee.cast(createInfo(monitor));
            if( List.class.isAssignableFrom(adaptee) )
                return adaptee.cast(resolveTos);
                
 		return super.resolve(adaptee, monitor);
 	}
-    @Override
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
-
-	public <T> boolean canResolve(Class<T> adaptee) {
+    public <T> boolean canResolve(Class<T> adaptee) {
         for( Object resolveObject : resolveTos ) {
             if( adaptee.isAssignableFrom(resolveObject.getClass()))
                 return true;
@@ -101,7 +96,7 @@ public class DummyGeoResource extends IGeoResource {
 	}
 	
 	@Override
-	public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException {
+	protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException {
 		return new DummyGeoResourceInfo();
 	}
 	

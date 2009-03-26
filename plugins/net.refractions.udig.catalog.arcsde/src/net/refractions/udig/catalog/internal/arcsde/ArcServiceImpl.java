@@ -58,7 +58,6 @@ public class ArcServiceImpl extends IService {
     private volatile DataStore ds = null;
     private static final Lock dsLock = new UDIGDisplaySafeLock();
     private volatile List<ArcGeoResource> members = null;    
-    private volatile IServiceInfo info = null;
     /**
      * Construct <code>PostGISServiceImpl</code>.
      * 
@@ -121,7 +120,7 @@ public class ArcServiceImpl extends IService {
     /*
      * @see net.refractions.udig.catalog.IService#getInfo(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         getDS(monitor); // load ds
         if (info == null && ds != null) {
             synchronized (ds) {

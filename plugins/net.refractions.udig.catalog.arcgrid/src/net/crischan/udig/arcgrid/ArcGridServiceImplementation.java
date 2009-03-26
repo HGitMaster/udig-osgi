@@ -15,14 +15,12 @@ import net.refractions.udig.catalog.rasterings.AbstractRasterService;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ArcGridServiceImplementation extends AbstractRasterService {	
-	private ArcGridServiceInfo info;
-
 	public ArcGridServiceImplementation(URL id, org.geotools.coverage.grid.io.GridFormatFactorySpi factory) {
 		super(id, factory);
 	}
 
 	@Override
-	public IServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+	protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
 		if (monitor != null)
 			monitor.beginTask("ArcGrid loading", 2);
 

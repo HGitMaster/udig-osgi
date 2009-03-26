@@ -42,8 +42,6 @@ import org.geotools.gce.geotiff.GeoTiffFormat;
  * @since 0.6.0
  */
 public class GeoTiffServiceImpl extends AbstractRasterService {
-    private GeoTiffServiceInfo info;
-
     /**
      * Construct <code>GeoTiffServiceImpl</code>.
      *
@@ -97,7 +95,7 @@ public class GeoTiffServiceImpl extends AbstractRasterService {
         return this.reader;
     }
     
-    public synchronized IServiceInfo getInfo(IProgressMonitor monitor) {
+    protected synchronized IServiceInfo createInfo(IProgressMonitor monitor) {
          if(monitor != null)
             monitor.beginTask(Messages.GeoTiffServiceImpl_loading_task_title, 2); 
         if(this.info == null) {

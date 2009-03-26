@@ -142,6 +142,7 @@ public abstract class IService implements IResolve {
      * Used to save persisted properties; please see ServiceParameterPersister for details.
      */
     private Map<String, Serializable> properties = Collections.synchronizedMap(new HashMap<String, Serializable>());
+	protected volatile IServiceInfo info = null;
 
     /**
      * Will attempt to morph into the adaptee, and return that object. Harded coded to capture the
@@ -188,7 +189,7 @@ public abstract class IService implements IResolve {
             throw new NullPointerException("No adaptor specified"); //$NON-NLS-1$
         }
         if (adaptee.isAssignableFrom(IServiceInfo.class)) {
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         }
         if (adaptee.isAssignableFrom(IService.class)) {
             monitor.done();
@@ -269,12 +270,29 @@ public abstract class IService implements IResolve {
     }
     
     /**
+     * Responsible for creation of an appropriate IServiceInfo object.
+     * 
+     * @return IServiceInfo resolve(IServiceInfo.class, IProgressMonitor monitor);
+     * @throws IOException
+     */
+    protected abstract IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException;
+    
+    /**
      * Information about this service.
      * 
      * @return IServiceInfo resolve(IServiceInfo.class,IProgressMonitor monitor);
      * @see IService#resolve(Class, IProgressMonitor)
      */
-    public abstract IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException;
+    public final IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        if (info == null) { //lazy creation
+            synchronized (this) { //support concurrent access
+                if (info == null) {
+                	info = createInfo(monitor);
+                }
+            }
+        }
+        return info;
+    }
 
     public URI getID() {
     	try {
@@ -314,6 +332,25 @@ public abstract class IService implements IResolve {
     public Map<String,Serializable> getPersistentProperties() {
         return properties;
     }
+    
+    /**
+	 * Retrieves the title from the IService cache, or from the ServiceInfo
+	 * object iff it is present.  Returns null if either of these are not
+	 * available.  If the title is fetched from ServiceInfo, it is added to the
+	 * cache before returning.
+	 * 
+	 * @returns the service title or null if non is readily available
+	 */
+	@Override
+	public String getTitle() {
+    	Serializable s = properties.get("title");
+		String title = (s != null ? s.toString() : null);
+		if(title == null && info != null) {
+			title = info.getTitle();
+			getPersistentProperties().put("title", title);
+		}
+		return title;
+	}
     
     /**
      * This should represent the identifier
@@ -384,4 +421,6 @@ public abstract class IService implements IResolve {
             }
         }
     }
+
+
 }

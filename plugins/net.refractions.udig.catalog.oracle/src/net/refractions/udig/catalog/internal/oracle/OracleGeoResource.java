@@ -102,7 +102,7 @@ public class OracleGeoResource extends IGeoResource {
 //        if (adaptee.isAssignableFrom(IService.class))
 //            return adaptee.cast(parent);
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
@@ -113,9 +113,6 @@ public class OracleGeoResource extends IGeoResource {
                 return adaptee.cast(parent.getDS(monitor).getFeatureSource(typename));
         }
         return super.resolve(adaptee, monitor);
-    }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
     }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
@@ -129,8 +126,7 @@ public class OracleGeoResource extends IGeoResource {
                 .isAssignableFrom(IService.class))
                 || super.canResolve(adaptee);
     }
-    private volatile IGeoResourceInfo info;
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null && getStatus() != Status.BROKEN) {
             parent.rLock.lock();
             try {

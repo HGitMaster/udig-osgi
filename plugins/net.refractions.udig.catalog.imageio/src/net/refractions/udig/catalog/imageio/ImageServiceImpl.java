@@ -42,7 +42,6 @@ import org.geotools.coverage.grid.io.GridFormatFactorySpi;
  * @since 0.6.0
  */
 public class ImageServiceImpl extends AbstractRasterService {
-    private ImageServiceInfo info;
     private AbstractRasterGeoResource resource;
 
     /**
@@ -79,7 +78,7 @@ public class ImageServiceImpl extends AbstractRasterService {
     /**
      * Get metadata about an Image Service, represented by instance of {@link ImageServiceInfo}.
      */
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (this.info == null) {
             this.info = new ImageServiceInfo(this);
         }

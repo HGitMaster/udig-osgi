@@ -161,7 +161,7 @@ public class CreateAndAddGeoResourceToMap {
 		}
 
 		@Override
-		public IServiceInfo getInfo(IProgressMonitor monitor)
+		protected IServiceInfo createInfo(IProgressMonitor monitor)
 				throws IOException {
 			return null;
 		}
@@ -184,13 +184,8 @@ public class CreateAndAddGeoResourceToMap {
 		}
 
 		@Override
-		public IGeoResourceInfo getInfo(IProgressMonitor monitor)
+		protected IGeoResourceInfo createInfo(IProgressMonitor monitor)
 				throws IOException {
-			return null;
-		}
-
-		@Override
-		public IService service(IProgressMonitor monitor) throws IOException {
 			return null;
 		}
 

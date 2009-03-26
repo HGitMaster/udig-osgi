@@ -40,7 +40,6 @@ import org.geotools.gce.image.WorldImageFormatFactory;
  * @since 0.6.0
  */
 public class WorldImageServiceImpl extends AbstractRasterService {
-    private WorldImageServiceInfo info;
     private AbstractRasterGeoResource resource;
 
     /**
@@ -81,7 +80,7 @@ public class WorldImageServiceImpl extends AbstractRasterService {
         return list;
     }
  
-    public IServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+    protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
         if(this.info == null) {            
             this.info = new WorldImageServiceInfo();
         }

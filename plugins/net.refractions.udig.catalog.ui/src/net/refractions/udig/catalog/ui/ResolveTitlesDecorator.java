@@ -30,10 +30,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.IForward;
+import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IProcess;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;
 import net.refractions.udig.catalog.IResolveDelta;
+import net.refractions.udig.catalog.IResolveFolder;
+import net.refractions.udig.catalog.ISearch;
+import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IResolveChangeEvent.Type;
 import net.refractions.udig.catalog.IResolveDelta.Kind;
 import net.refractions.udig.catalog.ui.internal.Messages;
@@ -217,9 +223,9 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
 
         IResolve resolve = (IResolve) element;
         decorated.put(resolve, null);
-        if (CatalogUIPlugin.hasCachedTitle(resolve)) {
+        if (resolve.getTitle() != null) {
             LabelData data = new LabelData();
-            data.text = CatalogUIPlugin.label(resolve);
+            data.text = resolve.getTitle();
             decorated.put(resolve, data);
             return data.text;
         }
@@ -354,13 +360,25 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
                     LabelData data = new LabelData();
                     try {
                         if(text){
-                            data.text = CatalogUIPlugin.title(element);
-                            try {
-                                CatalogUIPlugin.storeLabel(element, data.text);
-                            } catch (Throwable e) {
-                                CatalogUIPlugin.log("Error storing label", e); //$NON-NLS-1$
-                            }
-    
+                        	if(element instanceof IGeoResource) {
+                        		IGeoResource resource = (IGeoResource) element;
+                        		data.text = resource.getInfo(monitor).getTitle();
+                        		IService service = resource.service(monitor);
+                        		service.getPersistentProperties().put(resource.getID() + "_title", data.text);
+                        	} else if(element instanceof IService) {
+                        		IService service = (IService) element;
+                        		data.text = service.getInfo(monitor).getTitle();
+                        		service.getPersistentProperties().put("title", data.text);
+                        	} else if(element instanceof IProcess) {
+                        		IProcess proc = (IProcess) element;
+                        		data.text = proc.getInfo(monitor).getTitle();
+                        	} else if(element instanceof ISearch) {
+                        		ISearch search = (ISearch) element;
+                        		data.text = search.getInfo(monitor).getTitle();
+                        	} else {
+                        		IResolveFolder folder = (IResolveFolder) element;
+                        		data.text = folder.getID().toString();
+                        	}
                         }
                     } catch (Throwable e) {
                         CatalogUIPlugin.log("Error fetching the Title for the resource", e); //$NON-NLS-1$

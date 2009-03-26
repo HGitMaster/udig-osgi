@@ -64,7 +64,7 @@ public abstract class AbstractCatalogTest extends AbstractResolveTest {
                     return null;
                 }
 
-                public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+                protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                     return null;
                 }
                 public URL getIdentifier() {
@@ -113,7 +113,7 @@ public abstract class AbstractCatalogTest extends AbstractResolveTest {
                     return null;
                 }
 
-                public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+                protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                     return null;
                 }
                 public Throwable getMessage() {
@@ -164,7 +164,7 @@ public abstract class AbstractCatalogTest extends AbstractResolveTest {
                     return false;
                 }
 
-                public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+                protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                     return null;
                 }
                 public Status getStatus() {
@@ -201,7 +201,7 @@ public abstract class AbstractCatalogTest extends AbstractResolveTest {
                     return null;
                 }
 
-                public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+                protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                     return null;
                 }
                 public <T> boolean canResolve( Class<T> adaptee ) {
@@ -356,7 +356,7 @@ public abstract class AbstractCatalogTest extends AbstractResolveTest {
             public Throwable getMessage() {
                 return null;
             }
-            public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+            protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                 return null;
             }
             public URL getIdentifier() {

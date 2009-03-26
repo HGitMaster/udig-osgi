@@ -39,7 +39,7 @@ public class MovedService extends IService implements IForward  {
         return params;
     }
 
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         return null;
     }
 

@@ -55,7 +55,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class MifGeoResourceImpl extends IGeoResource {
     MifServiceImpl parent;
-    private volatile GeotoolsResourceInfoAdapter info;
     String typename = null;
     private URL identifier;
     
@@ -126,7 +125,7 @@ public class MifGeoResourceImpl extends IGeoResource {
             return adaptee.cast( this );
         }
         if(adaptee.isAssignableFrom(IGeoResourceInfo.class)){
-            return adaptee.cast( getInfo(monitor) );
+            return adaptee.cast( createInfo(monitor) );
         }
         if(adaptee.isAssignableFrom(FeatureStore.class)){
             FeatureSource<SimpleFeatureType, SimpleFeature> fs = featureSource(monitor);
@@ -201,11 +200,6 @@ public class MifGeoResourceImpl extends IGeoResource {
         return null; // well nothing worked out; make your own style
     }
 
-    @Override
-    public MifServiceImpl service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
-    
     /**
      * Helper method performing the same function as service( monitor ) without the
      * monitor or chance of IOException. 
@@ -230,7 +224,7 @@ public class MifGeoResourceImpl extends IGeoResource {
                 adaptee.isAssignableFrom(Style.class)) ||
                 super.canResolve(adaptee);
     }
-    public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException{
+    protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
         return info;
     }
 }

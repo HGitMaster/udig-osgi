@@ -33,6 +33,7 @@ import net.refractions.udig.ui.ProgressManager;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.geotools.coverage.grid.GeneralGridRange;
 import org.geotools.coverage.grid.GridGeometry2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
@@ -60,12 +61,6 @@ import org.opengis.parameter.ParameterDescriptor;
  * @since 0.6.0
  */
 public abstract class AbstractRasterGeoResource extends IGeoResource {
-	/**
-	 * <code>service</code> field recalls the service that created this
-	 * resource
-	 */
-	protected AbstractRasterService service;
-
 	private volatile SoftReference<GridCoverage> coverage;
 
 	private ParameterGroup readParams;
@@ -150,7 +145,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 		try {
 			if (this.coverage == null  || this.coverage.get()==null ) {
 				try {
-					AbstractGridCoverage2DReader reader = this.service.getReader(null);
+					AbstractGridCoverage2DReader reader = this.service(new NullProgressMonitor()).getReader(null);
 					ParameterGroup pvg = getReadParameters();
 					List list = pvg.values();
 					@SuppressWarnings("unchecked") GeneralParameterValue[] values = 
@@ -193,7 +188,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 				return null;
 			}
 			if (adaptee.isAssignableFrom(AbstractGridCoverage2DReader.class)) {
-				return adaptee.cast(service.getReader(monitor));
+				return adaptee.cast(service(monitor).getReader(monitor));
 			}
 			if (adaptee.isAssignableFrom(GridCoverage.class)) {
 				return adaptee.cast(findResource());
@@ -201,7 +196,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 			if (adaptee.isAssignableFrom(IGeoResourceInfo.class)) {
 				if (monitor != null)
 					monitor.done();
-				return adaptee.cast(getInfo(monitor));
+				return adaptee.cast(createInfo(monitor));
 			}
 			if (adaptee.isAssignableFrom(ParameterGroup.class)) {
 				if (monitor != null)
@@ -214,10 +209,6 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 		}
 	}
 
-	public IService service(IProgressMonitor monitor) throws IOException {
-		return service;
-	}
-
 	public <T> boolean canResolve(Class<T> adaptee) {
 		if (adaptee == null)
 			return false;
@@ -228,7 +219,7 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 				|| super.canResolve(adaptee);
 	}
 
-	public abstract IGeoResourceInfo getInfo(IProgressMonitor monitor)
+	protected abstract IGeoResourceInfo createInfo(IProgressMonitor monitor)
 			throws IOException;
 
 	/**
@@ -252,4 +243,8 @@ public abstract class AbstractRasterGeoResource extends IGeoResource {
 		return gridGeometryDescriptor;
 	}
 
+	@Override
+	public AbstractRasterService service(IProgressMonitor monitor) throws IOException {
+		return (AbstractRasterService) super.service(monitor);
+	}
 }

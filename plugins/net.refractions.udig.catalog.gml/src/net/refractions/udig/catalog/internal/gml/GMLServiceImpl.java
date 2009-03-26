@@ -138,7 +138,7 @@ public class GMLServiceImpl extends IService {
     /*
      * @see net.refractions.udig.catalog.IService#getInfo(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         getDS(monitor); // load ds
         if (info == null && ds != null) {
             dsLock.lock();
@@ -155,7 +155,6 @@ public class GMLServiceImpl extends IService {
         }
         return info;
     }
-    private volatile IServiceInfo info = null;
     /*
      * @see net.refractions.udig.catalog.IService#getConnectionParams()
      */

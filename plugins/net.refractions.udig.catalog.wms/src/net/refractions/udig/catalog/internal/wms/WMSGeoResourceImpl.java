@@ -65,9 +65,7 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class WMSGeoResourceImpl extends IGeoResource {
 
-    WMSServiceImpl service;
     org.geotools.data.ows.Layer layer;
-    private IGeoResourceInfo info;
     private ImageDescriptor icon;
     private URL identifier;
     private ArrayList<IResolve> members;
@@ -127,15 +125,15 @@ public class WMSGeoResourceImpl extends IGeoResource {
         return service.getStatus();
     }
 
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null) {
-            service.rLock.lock();
+            service(monitor).rLock.lock();
             try {
                 if (info == null) {
                     info = new WMSResourceInfo(monitor);
                 }
             } finally {
-                service.rLock.unlock();
+                service(monitor).rLock.unlock();
             }
         }
         return info;
@@ -168,11 +166,11 @@ public class WMSGeoResourceImpl extends IGeoResource {
         }
 
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class)) {
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         }
 
         if (adaptee.isAssignableFrom(WebMapServer.class)) {
-            return adaptee.cast(service.getWMS(monitor));
+            return adaptee.cast(service(monitor).getWMS(monitor));
         }
 
         if (adaptee.isAssignableFrom(org.geotools.data.ows.Layer.class)) {
@@ -183,16 +181,12 @@ public class WMSGeoResourceImpl extends IGeoResource {
         }
         return super.resolve(adaptee, monitor);
     }
-    public WMSServiceImpl service( IProgressMonitor monitor ) throws IOException {
-        return service;
-    }
-
     /** Must be the same as resolve( ImageDescriptor.class ) */
-    public ImageDescriptor getIcon( IProgressMonitor monitor ) {
+    public ImageDescriptor getIcon( IProgressMonitor monitor ) throws IOException {
         iconLock.lock();
         try {
             if (icon == null) {
-                icon = fetchIcon(monitor, layer, service);
+                icon = fetchIcon(monitor, layer, service(monitor));
                 if (icon == null) {
                     icon = CatalogUIPlugin.getDefault().getImages().getImageDescriptor(
                             ISharedImages.GRID_OBJ);
@@ -522,7 +516,7 @@ public class WMSGeoResourceImpl extends IGeoResource {
     private class WMSResourceInfo extends IGeoResourceInfo {
         @SuppressWarnings("unchecked")
         WMSResourceInfo( IProgressMonitor monitor ) throws IOException {
-            WebMapServer wms = service.getWMS(monitor);
+            WebMapServer wms = service(monitor).getWMS(monitor);
             WMSCapabilities caps = wms.getCapabilities();
 
             if (layer.getTitle() != null && layer.getTitle().length() != 0) {
@@ -626,5 +620,9 @@ public class WMSGeoResourceImpl extends IGeoResource {
         public String getTitle() {
             return title;
         }
+    }
+    @Override
+    public WMSServiceImpl service(IProgressMonitor monitor) throws IOException {
+    	return (WMSServiceImpl) super.service(monitor);
     }
 }

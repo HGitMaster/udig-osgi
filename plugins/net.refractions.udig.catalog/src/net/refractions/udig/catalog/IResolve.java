@@ -195,6 +195,18 @@ public interface IResolve {
     public abstract URI getID();
     
     /**
+     * Retrieves any readily available title.  This method must not block.
+     * The general algorithm for this is to check any title cache, and then
+     * check for the presents of an Info object to retrieve the title from.
+     * An Info object must not be created in this method.  If no title is 
+     * readily available, return null to indicate that a title must be 
+     * generated.
+     * 
+     * @return title or null if none is readily available
+     */
+    public String getTitle();
+    
+    /**
      * Clean up after aquired resources - the handle will not function
      * after being disposed.
      * 

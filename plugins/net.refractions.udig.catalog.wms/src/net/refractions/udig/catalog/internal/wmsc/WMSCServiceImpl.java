@@ -56,7 +56,6 @@ public class WMSCServiceImpl extends IService {
     private TiledWebMapServer wmsc;
     private Throwable msg;
 
-    private WMSCServieInfo info;
     private List<IResolve> members;
 
     protected final Lock rLock = new UDIGDisplaySafeLock();
@@ -81,7 +80,7 @@ public class WMSCServiceImpl extends IService {
         return params;
     }
     @Override
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null) {
             getWMSC();
             rLock.lock();

@@ -54,7 +54,6 @@ public class CGDIResource extends IGeoResource {
     private CGDIResource() {/* not used */
     }
 
-    private IGeoResourceInfo info = null;
     class CGDIResourceInfo extends IGeoResourceInfo {
         CGDIResourceInfo( Element layer, Namespace context ) {
             Element server = layer.getChild("Server", context); //$NON-NLS-1$
@@ -128,12 +127,11 @@ public class CGDIResource extends IGeoResource {
     URL serverURL = null;
 
     private IGeoResource real = null;
-    private IService service = null;
     Throwable error = null;
     private URL identifier;
 
     private void loadReal( IProgressMonitor monitor ) throws IOException {
-        getInfo(monitor); // load me
+        createInfo(monitor); // load me
         if (info == null || serverURL == null || info.getName() == null)
             return;
 
@@ -177,7 +175,7 @@ public class CGDIResource extends IGeoResource {
     /*
      * @see net.refractions.udig.catalog.IGeoResource#getInfo()
      */
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (real != null)
             return real.getInfo(monitor);
         return info;
@@ -242,10 +240,6 @@ public class CGDIResource extends IGeoResource {
             return getService(monitor).resolve(adaptee, monitor);
         }
         return super.resolve(adaptee, monitor);
-    }
-    @Override
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return getService(monitor);
     }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)

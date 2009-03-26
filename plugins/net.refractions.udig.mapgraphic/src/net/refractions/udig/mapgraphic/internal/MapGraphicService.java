@@ -41,9 +41,6 @@ public class MapGraphicService extends IService {
     /** MapGraphic resource children * */
     private volatile List<MapGraphicResource> members;
 
-    /** info object * */
-    private MapGraphicServiceInfo info;
-
     /**
      * Construct <code>MapGraphicService</code>.
      */
@@ -72,7 +69,8 @@ public class MapGraphicService extends IService {
         return super.resolve(adaptee, monitor);
     }
     @Override
-    public synchronized IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected
+    synchronized IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null){
             info = new MapGraphicServiceInfo();
         }

@@ -781,6 +781,11 @@ public class CatalogImpl extends ICatalog {
     	monitor.done();
         return new LinkedList<IResolve>(services);
     }
+    
+    @Override
+    public String getTitle() {
+    	return metadata.getTitle();
+    }
 
     /*
      * @see net.refractions.udig.catalog.IResolve#getStatus()

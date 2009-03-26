@@ -183,7 +183,7 @@ public class CGDIService extends IService {
             return service.resolve(adaptee, monitor);
         }
         if (adaptee.isAssignableFrom(IServiceInfo.class)) {
-            return adaptee.cast(this.getInfo(monitor));
+            return adaptee.cast(this.createInfo(monitor));
         }
         try {
             loadService();
@@ -249,7 +249,7 @@ public class CGDIService extends IService {
     /*
      * @see net.refractions.udig.catalog.IService#getInfo()
      */
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (service != null) {
             if (serviceInfo == null) {
                 serviceInfo = service.getInfo(monitor);

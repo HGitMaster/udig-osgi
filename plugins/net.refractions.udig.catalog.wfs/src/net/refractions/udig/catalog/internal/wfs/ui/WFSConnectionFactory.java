@@ -34,7 +34,7 @@ public class WFSConnectionFactory extends UDIGConnectionFactory {
 		if( data==null )
             return null;
         if( data instanceof WFSServiceImpl ){
-            WFSServiceImpl wfs = (WFSServiceImpl) data;
+            IService wfs = (IService) data;
             return wfs.getConnectionParams();
         }
         URL url = toCapabilitiesURL( data );
@@ -49,14 +49,14 @@ public class WFSConnectionFactory extends UDIGConnectionFactory {
             for( IResolve resolve : list ){
                 if( resolve instanceof WFSServiceImpl) {
                     // got a hit!
-                    WFSServiceImpl wfs = (WFSServiceImpl) resolve;
+                    IService wfs = (IService) resolve;
                     return wfs.getConnectionParams();
                 }
                 else if (resolve instanceof WFSGeoResourceImpl ){
                     WFSGeoResourceImpl layer = (WFSGeoResourceImpl) resolve;
-                    WFSServiceImpl wfs;
+                    IService wfs;
                     try {
-                        wfs = (WFSServiceImpl) layer.parent( null );
+                        wfs = (IService) layer.parent( null );
                         return wfs.getConnectionParams();
                     } catch (IOException e) {
                         checkedURL( layer.getIdentifier() );

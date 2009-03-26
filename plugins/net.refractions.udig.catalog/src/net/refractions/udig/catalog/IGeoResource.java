@@ -17,6 +17,7 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -52,6 +53,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 public abstract class IGeoResource implements IResolve {
 
     private volatile String stringURL;
+	protected IService service;
+	protected IGeoResourceInfo info;
 
     /**
      * Blocking operation to resolve into the adaptee, if available.
@@ -95,7 +98,7 @@ public abstract class IGeoResource implements IResolve {
             throw new NullPointerException("No adaptor specified"); //$NON-NLS-1$
         }
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class)) {
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         }
         if (adaptee.isAssignableFrom(IService.class)) {
             return adaptee.cast(service(monitor));
@@ -104,7 +107,7 @@ public abstract class IGeoResource implements IResolve {
             try {
                 monitor.beginTask("service info", 100); //$NON-NLS-1$
                 IService service = service( new SubProgressMonitor(monitor,40));
-                IServiceInfo info = service.getInfo( new SubProgressMonitor(monitor,60) );
+                IServiceInfo info = service.createInfo( new SubProgressMonitor(monitor,60) );
                 return adaptee.cast( info );
             }
             finally {
@@ -162,6 +165,15 @@ public abstract class IGeoResource implements IResolve {
     }
 
     /**
+     * Delegate to implementing classes to create and return the appropriate
+     * IGeoResourceInfo implementation.
+     * 
+     * @return IGeoResourceInfo resolve(IGeoResourceInfo.class,IProgressMonitor monitor);
+     * @throws IOException
+     */
+    protected abstract IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException;
+    
+    /**
      * Blocking operation to describe this service.
      * <p>
      * As an example this method is used by LabelDecorators to acquire title, and icon.
@@ -170,18 +182,16 @@ public abstract class IGeoResource implements IResolve {
      * @return IGeoResourceInfo resolve(IGeoResourceInfo.class,IProgressMonitor monitor);
      * @see IGeoResource#resolve(Class, IProgressMonitor)
      */
-    public abstract IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException;
-
-    /**
-     * Returns the IService for this GeoResource.
-     * <p>
-     * Method is useful in dealing with deeply nested GeoResource children (where parent may not
-     * always be an IService).
-     * 
-     * @return IService for this GeoResource
-     * @see IGeoResource#resolve(Class, IProgressMonitor)
-     */
-    public abstract IService service( IProgressMonitor monitor ) throws IOException;
+    public final IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException {
+        if (info == null) { //lazy creation
+            synchronized (this) { //support concurrent access
+            	if(info == null) {
+            		info = createInfo(monitor);
+            	}
+            }
+    	}
+    	return info;
+    }
 
     /**
      * Returns parent for this GeoResource.
@@ -219,7 +229,7 @@ public abstract class IGeoResource implements IResolve {
     public List<IResolve> members( IProgressMonitor monitor ) {        
         return Collections.emptyList(); // type safe EMPTY_LIST
     }
-
+    
     /**
      * This should represent the identifier
      * 
@@ -317,4 +327,33 @@ public abstract class IGeoResource implements IResolve {
     public void dispose( IProgressMonitor monitor ) {
         // default impl does nothing
     }
+	/**
+	 * Retrieves the title from the IService cache or from the GeoResourceInfo
+	 * object if they exist.  No objects are created and null is returned
+	 * if there is no title readily available.
+	 * 
+	 * @return title or null if none is readily available
+	 */
+	@Override
+	public String getTitle() {
+		String title = null;
+		if(service != null) {
+			Serializable s = 
+					service.getPersistentProperties().get(
+							getID().toString() + "_title");
+			title = (s != null ? s.toString() : null);
+		}
+		if(title == null && info != null) {
+			title = info.getTitle();
+			if(service != null) {
+				service.getPersistentProperties().put(
+						getID().toString() + "_title", title);
+			}
+		}
+		return title;
+	}
+	
+	public IService service(IProgressMonitor monitor) throws IOException {
+	    return service;
+	}
 }

@@ -40,14 +40,11 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @since 1,2
  */
 public class PostgisGeoResource2 extends IGeoResource {
-    private final PostgisService2 service;
     final String typename;
     private volatile Status status;
     private volatile Throwable message;
     private final URL identifier;
     private final PostgisSchemaFolder parent;
-    private IGeoResourceInfo info;
-
     public PostgisGeoResource2( PostgisService2 service, PostgisSchemaFolder postgisSchemaFolder, String typename ) {        
             this.service = service;
             this.parent=postgisSchemaFolder;
@@ -102,7 +99,7 @@ public class PostgisGeoResource2 extends IGeoResource {
         if (adaptee == null)
             return null;
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         
@@ -122,9 +119,6 @@ public class PostgisGeoResource2 extends IGeoResource {
 
         return super.resolve(adaptee, monitor);
     }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return service;
-    }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
      */
@@ -140,7 +134,7 @@ public class PostgisGeoResource2 extends IGeoResource {
                 || super.canResolve(adaptee);
     }
 
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         return info;
     }
 

@@ -26,9 +26,6 @@ public class MapGraphicResource extends IGeoResource {
     /** the service which contains all decorator resources * */
     private final MapGraphicService parent;
 
-    /** the info for the map graphic resource * */
-    private volatile MapGraphicResourceInfo info;
-
     /** the map graphic name * */
     private String name;
 
@@ -66,7 +63,7 @@ public class MapGraphicResource extends IGeoResource {
         // return adaptee.cast(parent);
         // }
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class)) {
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         }
         if (adaptee.isAssignableFrom(MapGraphic.class)) {
             return adaptee.cast(getMapGraphic());
@@ -90,10 +87,7 @@ public class MapGraphicResource extends IGeoResource {
         return mapgraphic;
     }
 
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null) {
             info = new MapGraphicResourceInfo(element);
         }

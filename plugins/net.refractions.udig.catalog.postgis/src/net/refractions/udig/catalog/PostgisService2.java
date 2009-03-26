@@ -97,7 +97,7 @@ public class PostgisService2 extends IService {
     }
 
     @Override
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         // make sure members are loaded cause they're needed for info
         members(monitor);
         return new PostgisServiceInfo(this);

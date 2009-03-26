@@ -45,7 +45,7 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
     @SuppressWarnings("unchecked")
     WMSGeoResourceInfo( WMSGeoResourceImpl geoResourceImpl, IProgressMonitor monitor ) throws IOException {
         resource = geoResourceImpl;
-        WebMapServer wms = resource.service.getWMS(monitor);
+        WebMapServer wms = resource.service(monitor).getWMS(monitor);
         WMSCapabilities caps = wms.getCapabilities();
 
         org.opengis.geometry.Envelope env = null;
@@ -82,7 +82,7 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
         bounds = new ReferencedEnvelope(new Envelope(env.getMinimum(0), env.getMaximum(0), env
                 .getMinimum(1), env.getMaximum(1)), crs);
 
-        String parentid = resource.service != null && resource.service.getIdentifier() != null ? resource.getIdentifier()
+        String parentid = resource.service(monitor) != null && resource.service(monitor).getIdentifier() != null ? resource.getIdentifier()
                 .toString() : ""; //$NON-NLS-1$
         name = resource.layer.getName();
         List<String> keywordsFromWMS = new ArrayList<String>();

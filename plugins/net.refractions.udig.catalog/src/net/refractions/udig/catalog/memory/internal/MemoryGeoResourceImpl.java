@@ -31,10 +31,7 @@ public class MemoryGeoResourceImpl extends IGeoResource implements ITransientRes
 	/** feature type name * */
 	String type;
 
-	/** info object * */
-	private volatile ScratchResourceInfo info;
-
-    private volatile Status status;
+	private volatile Status status;
     private volatile Throwable message;
 
 	public MemoryGeoResourceImpl(String type, MemoryServiceImpl parent) {
@@ -55,7 +52,7 @@ public class MemoryGeoResourceImpl extends IGeoResource implements ITransientRes
 		if (adaptee.isAssignableFrom(IGeoResource.class))
 			return adaptee.cast(this);
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
-			return adaptee.cast(getInfo(monitor));
+			return adaptee.cast(createInfo(monitor));
 		if (adaptee.isAssignableFrom(FeatureStore.class))
 			return adaptee.cast(parent.getDS().getFeatureSource(type));
         if (adaptee.isAssignableFrom(FeatureSource.class))
@@ -66,10 +63,7 @@ public class MemoryGeoResourceImpl extends IGeoResource implements ITransientRes
 		return super.resolve(adaptee, monitor);
 	}
 
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
-	public <T> boolean canResolve(Class<T> adaptee) {
+    public <T> boolean canResolve(Class<T> adaptee) {
 		if (adaptee == null)
 			return false;
 
@@ -102,7 +96,7 @@ public class MemoryGeoResourceImpl extends IGeoResource implements ITransientRes
 	}
 
 	@Override
-	public IGeoResourceInfo getInfo(IProgressMonitor monitor)
+	protected IGeoResourceInfo createInfo(IProgressMonitor monitor)
 			throws IOException {
 		if (info == null) {
 			parent.rLock.lock();

@@ -109,7 +109,7 @@ public class MySQLGeoResource extends IGeoResource {
         if (adaptee == null)
             return null;
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
@@ -125,9 +125,6 @@ public class MySQLGeoResource extends IGeoResource {
 
         return super.resolve(adaptee, monitor);
     }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
      */
@@ -141,9 +138,7 @@ public class MySQLGeoResource extends IGeoResource {
                 .isAssignableFrom(Connection.class) ||
                 super.canResolve(adaptee);
     }
-    private volatile IGeoResourceInfo info;
-
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null && getStatus() != Status.BROKEN) {
             parent.rLock.lock();
             try{

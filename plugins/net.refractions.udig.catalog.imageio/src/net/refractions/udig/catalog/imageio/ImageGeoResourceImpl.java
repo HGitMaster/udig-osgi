@@ -40,8 +40,6 @@ import org.geotools.parameter.ParameterGroup;
  */
 public class ImageGeoResourceImpl extends AbstractRasterGeoResource {
 
-	/** holding information about the geoResource */
-	private IGeoResourceInfo info;
 	String name;
 
 	/**
@@ -61,7 +59,7 @@ public class ImageGeoResourceImpl extends AbstractRasterGeoResource {
 	 * Get metadata about a geoResource, represented by instance of
 	 * {@link ImageGeoResourceInfo}.
 	 */
-	public IGeoResourceInfo getInfo(IProgressMonitor monitor)
+	protected IGeoResourceInfo createInfo(IProgressMonitor monitor)
 			throws IOException {
 		this.lock.lock();
 		try {

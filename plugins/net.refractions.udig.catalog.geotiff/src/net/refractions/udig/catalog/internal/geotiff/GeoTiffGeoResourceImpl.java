@@ -16,14 +16,18 @@
  */
 package net.refractions.udig.catalog.internal.geotiff;
 
+import java.io.IOException;
+
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IGeoResourceInfo;
+import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.geotiff.internal.Messages;
 import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResource;
 import net.refractions.udig.catalog.rasterings.AbstractRasterService;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -40,8 +44,6 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 0.6.0
  */
 public class GeoTiffGeoResourceImpl extends AbstractRasterGeoResource {
-    private GeoTiffGeoResourceInfo info;
-
     /**
      * Construct <code>GeoTiffGeoResourceImpl</code>.
      */
@@ -49,7 +51,7 @@ public class GeoTiffGeoResourceImpl extends AbstractRasterGeoResource {
         super(service, name);
     }
     
-    public synchronized IGeoResourceInfo getInfo(IProgressMonitor monitor) {
+    protected synchronized IGeoResourceInfo createInfo(IProgressMonitor monitor) {
         if(monitor != null)  {
             monitor.beginTask(Messages.GeoTiffGeoResource_connect, 2); 
             monitor.worked(1);
@@ -87,7 +89,7 @@ public class GeoTiffGeoResourceImpl extends AbstractRasterGeoResource {
         public synchronized ReferencedEnvelope getBounds() {
             if (this.bounds == null) {
                 try {
-                    AbstractGridCoverage2DReader source = service.getReader(null);
+                    AbstractGridCoverage2DReader source = service(new NullProgressMonitor()).getReader(null);
                     if (source == null) {
                         return null;
                     }
@@ -115,4 +117,11 @@ public class GeoTiffGeoResourceImpl extends AbstractRasterGeoResource {
             return this.bounds;
         }
     } 
+    
+    @Override
+    public GeoTiffServiceImpl service(IProgressMonitor monitor) throws IOException {
+    	IService serv = super.service(monitor);
+    	return (serv != null && serv instanceof GeoTiffServiceImpl) 
+    			? (GeoTiffServiceImpl) serv : null;
+    }
 }
