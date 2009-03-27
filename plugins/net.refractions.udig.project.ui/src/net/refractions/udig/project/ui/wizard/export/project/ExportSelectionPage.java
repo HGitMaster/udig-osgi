@@ -31,7 +31,7 @@ public class ExportSelectionPage extends WizardPage {
         setDescription(description);
     }
     
-    @Override public void createControl( Composite parent ) {
+    public void createControl( Composite parent ) {
          Composite fileSelectionArea = new Composite(parent, SWT.NONE);
         GridData fileSelectionData = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.FILL_HORIZONTAL);
@@ -54,7 +54,6 @@ public class ExportSelectionPage extends WizardPage {
             }
         };
         editor.getTextControl(parent).addModifyListener(new ModifyListener(){
-            @Override
             public void modifyText( ModifyEvent e ) {
                 setPageComplete(editor.isValid());
             }

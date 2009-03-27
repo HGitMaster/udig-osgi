@@ -82,7 +82,6 @@ public class ExportProjectWizard extends Wizard implements IExportWizard, IRunna
         addPage(selectionPage);
     }
 
-    @Override
     public void run( IProgressMonitor monitor ) throws InvocationTargetException,
     InterruptedException {
         monitor.beginTask("Exporting projects", selection.size());
