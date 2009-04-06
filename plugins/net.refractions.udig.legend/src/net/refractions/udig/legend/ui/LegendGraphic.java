@@ -280,6 +280,8 @@ public class LegendGraphic implements MapGraphic {
                 }
             });
         }
+        //clear the clip so we don't affect other rendering processes
+        graphics.setClip(null);
     }
    
 
