@@ -96,80 +96,36 @@ public class MapGraphicRenderer extends RendererImpl implements IMultiLayerRende
      */
     @Override
     public void render( Graphics2D destination, IProgressMonitor monitor ) {
+        /* entry point for printing
+         * cannot used cached image when printing; so 
+         * draw directly to destination 
+         */
+        
         List<IOException> exceptions = new ArrayList<IOException>();
-        
-        // this line is causing trouble when the renderer is used for printing
-        // (mostly because the render context does not have a layer?)
-        //
-        // In anycase it is not reasonable to draw the map graphic onto a cached image when printing
-        //
-        BlackboardItem cached = null;
-        ILayer layer = getContext().getLayer();
-        if( layer == null ){
-            // we must be printing
-            for( IRenderContext l : getContext().getContexts() ) {
-                Graphics2D copy = (Graphics2D) destination.create();
-                //final NonDisposableGraphics graphics = new NonDisposableGraphics(copy);
-                try {
-                    if( !l.getLayer().isVisible() )
-                        continue;
-                    MapGraphic mg = l.getGeoResource().resolve(MapGraphic.class, null);
-                    MapGraphicContext mgContext = new MapGraphicContextImpl(l, destination);
-                    mg.draw(mgContext);
-                } catch (IOException e) {
-                    exceptions.add(e);
-                }finally{
-                    copy.dispose();
-                }
-                setState(RENDERING);
+        for( IRenderContext l : getContext().getContexts() ) {
+            Graphics2D copy = (Graphics2D) destination.create();
+            // final NonDisposableGraphics graphics = new NonDisposableGraphics(copy);
+            try {
+                if (!l.getLayer().isVisible())
+                    continue;
+                MapGraphic mg = l.getGeoResource().resolve(MapGraphic.class, null);
+                MapGraphicContext mgContext = new MapGraphicContextImpl(l, destination);
+                mg.draw(mgContext);
+            } catch (IOException e) {
+                exceptions.add(e);
+            } finally {
+                copy.dispose();
             }
-            if (!exceptions.isEmpty()) {
-                //XXX: externalize this message
-                RenderException exception = new RenderException(exceptions.size()
-                        + " exceptions we raised while drawing map graphics", exceptions.get(0)); //$NON-NLS-1$
-                exception.fillInStackTrace();
-            }
-            setState(DONE);
+            setState(RENDERING);
         }
-        else {
-            IBlackboard blackboard = layer.getBlackboard();
-            cached = (BlackboardItem) blackboard.get(BLACKBOARD_IMAGE_KEY);
-            if (cached != null){
-                if (!cached.layersEqual(getContext().getLayers())){
-                    cached = null;
-                }
-            }
-        
-            if (cached == null){
-                Object values[] = backgroundRenderImage(getContext(), exceptions);
-                cached = new BlackboardItem((BufferedImage)values[0], (ReferencedEnvelope)values[1], getContext().getLayers());
-                layer.getBlackboard().put(BLACKBOARD_IMAGE_KEY, cached);
-                
-            }
-            BufferedImage cache = cached.image;
-            ReferencedEnvelope imageBounds = cached.env;
-            
-            //we need to extract from the cache which is the size of the map display
-            //the part of the image which is appropriate for the given bounds
-            ReferencedEnvelope request = getContext().getImageBounds();
-    
-            double pixelperunitx = cache.getWidth() / imageBounds.getWidth() ;
-            double pixelperunity = cache.getHeight() / imageBounds.getHeight();
-    
-            int lx = (int)Math.round((request.getMinX() - imageBounds.getMinX()) * pixelperunitx);
-            int ly = (int)Math.round((request.getMaxY() - imageBounds.getMaxY()) * pixelperunity);
-    
-            AffineTransform transform = new AffineTransform(1f,0f,0f,1f,-lx,ly);
-            destination.drawImage(cache, transform, null);
-            
-            if (!exceptions.isEmpty()) {
-                //XXX: externalize this message
-                RenderException exception = new RenderException(exceptions.size()
-                        + " exceptions we raised while drawing map graphics", exceptions.get(0)); //$NON-NLS-1$
-                exception.fillInStackTrace();
-            }
-            setState(DONE);
+        if (!exceptions.isEmpty()) {
+            // XXX: externalize this message
+            RenderException exception = new RenderException(exceptions.size()
+                    + " exceptions we raised while drawing map graphics", exceptions.get(0)); //$NON-NLS-1$
+            exception.fillInStackTrace();
         }
+        setState(DONE);
+        
     }
 
     /**
@@ -193,8 +149,48 @@ public class MapGraphicRenderer extends RendererImpl implements IMultiLayerRende
     @Override
     public void render( IProgressMonitor monitor ) {
         // this is the entry point for non printing
-        //
-        render(getContext().getImage().createGraphics(), monitor);
+        /* For non-printing we will have a layer and can 
+         * used the cached image on the layer.  
+         */
+        List<IOException> exceptions = new ArrayList<IOException>();
+        ILayer layer = context.getLayer();
+        IBlackboard blackboard = layer.getBlackboard();
+        BlackboardItem cached = (BlackboardItem) blackboard.get(BLACKBOARD_IMAGE_KEY);
+        if (cached != null){
+            if (!cached.layersEqual(getContext().getLayers())){
+                cached = null;
+            }
+        }
+    
+        if (cached == null){
+            Object values[] = backgroundRenderImage(getContext(), exceptions);
+            cached = new BlackboardItem((BufferedImage)values[0], (ReferencedEnvelope)values[1], getContext().getLayers());
+            layer.getBlackboard().put(BLACKBOARD_IMAGE_KEY, cached);
+            
+        }
+        BufferedImage cache = cached.image;
+        ReferencedEnvelope imageBounds = cached.env;
+        
+        //we need to extract from the cache which is the size of the map display
+        //the part of the image which is appropriate for the given bounds
+        ReferencedEnvelope request = getContext().getImageBounds();
+
+        double pixelperunitx = cache.getWidth() / imageBounds.getWidth() ;
+        double pixelperunity = cache.getHeight() / imageBounds.getHeight();
+
+        int lx = (int)Math.round((request.getMinX() - imageBounds.getMinX()) * pixelperunitx);
+        int ly = (int)Math.round((request.getMaxY() - imageBounds.getMaxY()) * pixelperunity);
+
+        AffineTransform transform = new AffineTransform(1f,0f,0f,1f,-lx,ly);
+        Graphics2D denstination = getContext().getImage().createGraphics();
+        denstination.drawImage(cache, transform, null);
+        
+        if (!exceptions.isEmpty()) {
+            //XXX: externalize this message
+            RenderException exception = new RenderException(exceptions.size()
+                    + " exceptions we raised while drawing map graphics", exceptions.get(0)); //$NON-NLS-1$
+            exception.fillInStackTrace();
+        }
         setState(DONE);
     }
 
