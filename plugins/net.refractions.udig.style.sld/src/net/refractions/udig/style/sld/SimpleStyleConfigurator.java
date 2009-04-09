@@ -2,7 +2,6 @@ package net.refractions.udig.style.sld;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import net.refractions.udig.project.internal.Layer;
@@ -17,13 +16,14 @@ import net.refractions.udig.style.sld.simple.StrokeViewer;
 import net.refractions.udig.ui.graphics.SLDs;
 
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.geotools.data.FeatureSource;
@@ -40,11 +40,9 @@ import org.geotools.styling.Style;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.TextSymbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 /**
  * Defines a "simple" StyleConfigurator for working with SLD documents.
@@ -108,7 +106,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
  * @since 1.0.0
  */
 public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
-    private static final String DEFAULT_GEOMETRY = "(default)";
+    private static final String DEFAULT_GEOMETRY = "(default)"; //$NON-NLS-1$
 
     /**
      * Viewer capturing the geometry name; may be "default" or an explicit geometryName provided by
@@ -417,6 +415,11 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
     @Override
     public void createControl( Composite parent ) {
         setLayout(parent);
+        //ensure vertical layout
+        ((RowLayout)parent.getLayout()).type = SWT.VERTICAL;
+        ((RowLayout)parent.getLayout()).spacing = 3;
+        
+        
         KeyAdapter adp = new KeyAdapter(){
             @Override
             public void keyReleased( KeyEvent e ) {
@@ -430,7 +433,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
                 }
             }
         };
-        Composite part = AbstractSimpleConfigurator.subpart(parent, "Geometry");
+        Composite part = AbstractSimpleConfigurator.subpart(parent, Messages.SimpleStyleConfigurator_GeometryLabel);
         geometryName = new ComboViewer(part);
         geometryName.setContentProvider(new IStructuredContentProvider(){
             FeatureType schema;
@@ -456,14 +459,15 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
         });
         geometryName.getCombo().setText(DEFAULT_GEOMETRY);
         geometryName.getCombo().addSelectionListener( synchronize );
+
         
-        part = AbstractSimpleConfigurator.subpart(parent, "Mode:");
+        part = AbstractSimpleConfigurator.subpart(parent, Messages.SimpleStyleConfigurator_ModeLabel);
         this.pointMode = new Button(part, SWT.RADIO);
-        pointMode.setText("Point");
+        pointMode.setText(Messages.SimpleStyleConfigurator_PointMode);
         this.lineMode = new Button(part, SWT.RADIO);
-        lineMode.setText("Line");
+        lineMode.setText(Messages.SimpleStyleConfigurator_LineMode);
         this.polyMode = new Button(part, SWT.RADIO);
-        polyMode.setText("Polygon");
+        polyMode.setText(Messages.SimpleStyleConfigurator_PolygonMode);
 
         this.line.createControl(parent, adp);
         this.fill.createControl(parent, adp);
