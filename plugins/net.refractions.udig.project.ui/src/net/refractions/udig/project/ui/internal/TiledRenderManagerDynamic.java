@@ -51,7 +51,10 @@ import net.refractions.udig.project.internal.render.impl.RenderExecutorMultiLaye
 import net.refractions.udig.project.internal.render.impl.RenderManagerImpl;
 import net.refractions.udig.project.internal.render.impl.TiledCompositeRendererImpl;
 import net.refractions.udig.project.internal.render.impl.TiledRendererCreatorImpl;
+import net.refractions.udig.project.internal.render.impl.UDIGLabelCache;
+import net.refractions.udig.project.internal.render.impl.TiledCompositeRendererImpl.RenderInfo;
 import net.refractions.udig.project.render.AbstractRenderMetrics;
+import net.refractions.udig.project.render.ILabelPainter;
 import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.IRenderer;
 import net.refractions.udig.project.render.Tile;
@@ -71,6 +74,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.renderer.label.LabelCacheImpl;
 import org.geotools.util.ObjectCache;
 import org.geotools.util.ObjectCaches;
 
@@ -109,7 +113,7 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
      * The size of the tiles to use.
      */
     private final static int TILE_SIZE = 512;
-    
+       
     /**
      * A "center" coordinate to use for the tile system.
      */
@@ -276,6 +280,7 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
         Tile tile = new Tile(key, newRE, getTileSize());
         tile.setStateChangedListener(tileStateListener);
         importantTiles.add(tile);
+        ((RenderContextImpl)newRE.getContext()).setLabelPainter(new UDIGLabelCache(new LabelCacheImpl()));
         return tile;
     }
  
@@ -966,7 +971,8 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
             }
         }
        
-        ArrayList<AbstractRenderMetrics> newcontexts = new ArrayList<AbstractRenderMetrics>();
+       ArrayList<AbstractRenderMetrics> newcontexts = new ArrayList<AbstractRenderMetrics>();
+       ILabelPainter tilelabelpainter = ((RenderContextImpl)t.getRenderExecutor().getContext()).getLabelPainter();
        if (currentconfiguration == null){
             //get new configurations
             Collection<AbstractRenderMetrics> newconfig = ((TiledRendererCreatorImpl)getRendererCreator()).getConfiguration(t.getReferencedEnvelope());
@@ -978,6 +984,11 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
             renderer.removeAllChildren();
             renderer.addChildren(newconfig);
             newcontexts = null;
+            for( Iterator<AbstractRenderMetrics> iterator = newconfig.iterator(); iterator.hasNext(); ) {
+                AbstractRenderMetrics abstractRenderMetrics = (AbstractRenderMetrics) iterator.next();
+                //setup label painter
+                ((RenderContextImpl)abstractRenderMetrics.getRenderContext()).setLabelPainter(tilelabelpainter);
+            }
         }else{
             //we have an existing configuration; lets recycle as many of the contexts as possible
             //lets get the new configuration
@@ -997,6 +1008,8 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
                 if (!currentconfiguration.contains(metric)){
                     //this is in the new configuration but not the only one therefore we need to add it
                     addList.add(metric);
+                    //setup label painter
+                    ((RenderContextImpl)metric.getRenderContext()).setLabelPainter(tilelabelpainter);
                 }
             }
             
@@ -1014,7 +1027,7 @@ public class TiledRenderManagerDynamic extends RenderManagerImpl {
                 AbstractRenderMetrics metric = (AbstractRenderMetrics) iterator.next();
                 ((RenderContextImpl)metric.getRenderContext()).dispose();
             }
-        }        
+       }
        return newcontexts;
     }
 
