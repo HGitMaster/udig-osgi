@@ -118,7 +118,7 @@ public class ShpServiceExtension extends AbstractDataStoreServiceExtension imple
         if (auth != null && auth.length() != 0) {
         	urlFile = "//"+auth+urlFile; //$NON-NLS-1$
         }
-        if( !urlFile.endsWith(".shp") ){ //$NON-NLS-1$
+        if( !urlFile.toLowerCase().endsWith(".shp") ){ //$NON-NLS-1$
             urlFile = urlFile.substring(0, urlFile.lastIndexOf('.') )+".shp"; //$NON-NLS-1$
         }
         try {
