@@ -321,7 +321,9 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
                 return;
             }
         }
-        bounds = new ReferencedEnvelope(newBounds,bounds.getCoordinateReferenceSystem());
+        // hwellmann: use the correct CRS
+        // TODO: This class has been changed on trunk. Merge latest fixes.
+        bounds = new ReferencedEnvelope(newBounds,getCRS());
         fireNotification(oldBounds);
     }
 
