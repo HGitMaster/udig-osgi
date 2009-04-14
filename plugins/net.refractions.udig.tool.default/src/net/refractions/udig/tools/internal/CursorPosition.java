@@ -151,14 +151,17 @@ public class CursorPosition extends AbstractTool {
             if( Double.isInfinite(value) ){
                 return Messages.CursorPosition_infinity;
             }
-            
-			String string = String.valueOf(value);
+            // hwellmann: make sure we do not get a string in exponential
+            // notation
+			String string = String.format("%f", value);
+			// hwellmann: What is the purpose of the next statement?
 			string+="00"; //$NON-NLS-1$
             
 //          calculate number of digits to display based on zoom level
             Coordinate coordFactor = getContext().getPixelSize();
             double inverse = (double)1 / coordFactor.x;
-            String strFactor = String.valueOf(inverse);
+            // hwellmann: Avoid exponential notation
+            String strFactor = String.format("%f", inverse);
             int factor = strFactor.lastIndexOf('.');
 
             int end=Math.max(1, Math.min(string.lastIndexOf('.') + factor, string.length() - 1));
