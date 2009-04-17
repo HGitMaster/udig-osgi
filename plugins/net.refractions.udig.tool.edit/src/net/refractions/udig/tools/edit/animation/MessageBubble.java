@@ -15,6 +15,7 @@
 package net.refractions.udig.tools.edit.animation;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -51,7 +52,7 @@ public class MessageBubble extends AbstractDrawCommand implements IAnimation {
     private int horizontalCornerArc=15;
     private Color bubbleColor = new Color(0,0,0,167);
     private Color textColor = new Color( 200,200,200,167);
-
+    private Font myFont = null;
     
     
     /**
@@ -87,6 +88,9 @@ public class MessageBubble extends AbstractDrawCommand implements IAnimation {
     }
 
     public void run( IProgressMonitor monitor ) throws Exception {
+        if (myFont != null){
+            graphics.setFont(myFont);
+        }
         
         display.addMouseListener(mouseListener);
         display.addMouseWheelListener(wheelListener);
@@ -183,6 +187,24 @@ public class MessageBubble extends AbstractDrawCommand implements IAnimation {
         this.bubbleColor = bubbleColor;
     }
 
+    /**
+     * Sets the font used to draw the message.
+     *
+     * @param font the fond to use
+     */
+    public void setFont(Font font){
+        this.myFont = font;
+    }
+    
+    /**
+     * Gets the current font.
+     *
+     * @return null if no font set; otherwise the font being used to draw the message
+     */
+    public Font getFont(){
+        return this.myFont;
+    }
+    
     /**
      * Returns the color used to draw the Message
      *
