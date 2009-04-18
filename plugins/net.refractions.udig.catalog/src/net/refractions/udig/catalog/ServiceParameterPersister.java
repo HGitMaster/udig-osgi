@@ -311,12 +311,14 @@ public class ServiceParameterPersister {
                     if( object instanceof URL){
                     	url = (URL) object;
                     }else if( object instanceof File ){
-                        URL old=((File)object).toURL();
-                    	url=((File)object).toURI().toURL();
+                        File file = (File) object;
+                        
+                        URL old=file.toURL();
+                    	url=file.toURI().toURL();
                     	if( !old.equals(url)){
                     	    CatalogPlugin.trace("old url:"+old,null); //$NON-NLS-1$
                     	    CatalogPlugin.trace("new url:"+url,null); //$NON-NLS-1$
-                    	}                    	    
+                    	}
                     }
                     
                     String value;

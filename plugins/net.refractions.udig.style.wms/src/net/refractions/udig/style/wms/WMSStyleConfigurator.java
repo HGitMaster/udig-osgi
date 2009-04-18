@@ -30,13 +30,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.geotools.data.ows.StyleImpl;
 import org.geotools.data.wms.WebMapServer;
-import org.opengis.layer.Style;
-import org.opengis.sld.FeatureStyle;
+import org.geotools.styling.FeatureTypeStyle;
 
 public class WMSStyleConfigurator extends IStyleConfigurator {
 
 	Combo styleCombo;
-    private List<Object> styles=new ArrayList<Object>();
+    private List<StyleImpl> styles=new ArrayList<StyleImpl>();
     private Text text;
     private SashForm sashForm;
     private Composite root;
@@ -57,21 +56,21 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
             return;
 		layer = getLayer();
 		
-		List<Object> allStyles = getStyles(layer.findGeoResource(org.geotools.data.ows.Layer.class));	
+		List<StyleImpl> allStyles = getStyles(layer.findGeoResource(org.geotools.data.ows.Layer.class));	
         styles.clear();
         styleCombo.setItems(new String[0]);
         // Map<DisplayName,wmsStyle>
-        Map<String,org.opengis.layer.Style> nameMap = new HashMap<String, org.opengis.layer.Style>();
+        Map<String,StyleImpl> nameMap = new HashMap<String, StyleImpl>();
 
         // calculate display names for all styles
         // If there are duplicate titles then a combo title(name) is displayed
         for (Object s : allStyles) {
-            org.opengis.layer.Style wmsStyle = 
-                (org.opengis.layer.Style) s;
+            StyleImpl wmsStyle = 
+                (StyleImpl) s;
             String name = getDisplayName(wmsStyle);
             if( nameMap.containsKey(name) ){
                 // rename the old one and mark it as deleted
-                Style oldStyle = nameMap.get(name);
+                StyleImpl oldStyle = nameMap.get(name);
                 if( oldStyle!=null){
                     nameMap.put(name, null);
                     String oldStyleName = name + " ("+oldStyle.getName()+")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -87,7 +86,7 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
             }
         }
         
-        for( Entry<String, Style> entry : nameMap.entrySet() ) {
+        for( Entry<String, StyleImpl> entry : nameMap.entrySet() ) {
             if( entry.getValue()!=null) {
                 styleCombo.add(entry.getKey());
                 styles.add(entry.getValue());
@@ -99,8 +98,7 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
 		boolean set=false;
         if (style != null) {
             for( int i=0; i<styles.size(); i++) {
-                org.opengis.layer.Style wmsStyle = 
-                    (org.opengis.layer.Style) styles.get(i);
+                StyleImpl wmsStyle = (StyleImpl) styles.get(i);
                 if( style.equals(wmsStyle) ){
                     set=true;
                     styleCombo.select(i);
@@ -111,7 +109,7 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
 		}
         if(!set && styles.size()>0){
             styleCombo.select(0);
-            setDetails((Style) styles.get(0));
+            setDetails((StyleImpl) styles.get(0));
         }
         
 	}
@@ -123,7 +121,7 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
      * @return all named styles.
      */
     @SuppressWarnings("unchecked")
-    static List<Object> getStyles(IGeoResource wmsResource) {
+    static List<StyleImpl> getStyles(IGeoResource wmsResource) {
         org.geotools.data.ows.Layer wmsLayer = null;
 		try {
 			wmsLayer = wmsResource.resolve(org.geotools.data.ows.Layer.class, null);
@@ -140,7 +138,7 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
         return Collections.emptyList();
     }
 
-	private String getDisplayName( Style wmsStyle ) {
+	private String getDisplayName( StyleImpl wmsStyle ) {
         String name=wmsStyle.getName();
         if( wmsStyle.getTitle()!=null )
             name=wmsStyle.getTitle().toString(Locale.getDefault());
@@ -184,8 +182,8 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
 				public void widgetSelected(SelectionEvent e) {
 					int i = styleCombo.getSelectionIndex();
 					if (i > -1) {
-                        org.opengis.layer.Style wmsStyle = 
-                            (org.opengis.layer.Style) styles.get(i);
+                        StyleImpl wmsStyle = 
+                            (StyleImpl) styles.get(i);
 						StyleBlackboard bb = getLayer().getStyleBlackboard();
 						bb.put(WMSStyleContent.WMSSTYLE, wmsStyle);
                         bb.setSelected(new String[]{WMSStyleContent.WMSSTYLE});
@@ -207,7 +205,7 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
         styleCombo.setLayoutData(gridData);
     }
 
-    protected void setDetails( Style wmsStyle ) {
+    protected void setDetails( StyleImpl wmsStyle ) {
         boolean detailsSet=false;
         if( wmsStyle.getAbstract()!=null ){
             text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_abstract_format, new Object[] {
@@ -215,23 +213,13 @@ public class WMSStyleConfigurator extends IStyleConfigurator {
             }));
             detailsSet=true;
         }
-        if( wmsStyle.getStyleURL()!=null ){
-            String styleURL = wmsStyle.getStyleURL().toString(); 
-            text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_styleURL_format, new Object[] { styleURL}));
-            detailsSet=true;
-        }
-        if( wmsStyle.getStyleSheetURL()!=null ){
-            String styleURL = wmsStyle.getStyleURL().toString(); 
-            text.setText(MessageFormat.format(Messages.WMSStyleConfigurator_styleURL_format, new Object[] { styleURL}));
-            detailsSet=true;
-        }
-        if( wmsStyle.getFeatureStyles()!=null ){
+        if( wmsStyle.getFeatureStyles() !=null ){
         	StringBuffer buff = new StringBuffer();
-            List<FeatureStyle> fts = wmsStyle.getFeatureStyles();
-            for( FeatureStyle style : fts ) {
+        	List<FeatureTypeStyle > fts = wmsStyle.getFeatureStyles();
+            for( FeatureTypeStyle style : fts ) {
                 String name = style.getName();
                 if( style.getTitle()!=null )
-                    name=style.getTitle().toString(Locale.getDefault());
+                    name = style.getTitle();                    
                 buff.append( name );
                 buff.append("\n"); //$NON-NLS-1$
             }

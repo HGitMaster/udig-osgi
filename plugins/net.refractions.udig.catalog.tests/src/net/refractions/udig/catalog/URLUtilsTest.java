@@ -41,6 +41,10 @@ public class URLUtilsTest extends TestCase {
 //		reference = new File("/home/moovida/rcpdevelopment/WORKSPACES/runtime-jgrass_trunk/.localCatalog");
 //		result = URLUtils.toRelativePath( reference, url);
 //		assertEquals( url, result );        
+		
+		url = new URL("file:C:/Users/Jody/Desktop/raster/norway/trond50geor.jpg");
+        reference = new File("C:\\java\\udig\\runtime-udig.product\\.localCatalog");
+        
 	}
 
 	public void testConstructURL() throws Exception {
@@ -78,6 +82,10 @@ public class URLUtilsTest extends TestCase {
 		result = URLUtils.constructURL(reference, "file:/"+file.getCanonicalPath().replace('\\', '/')); //$NON-NLS-1$
 		assertEquals(expected.toString(), result.toString());
 		
+		file = new File("E:/Rahul/d a t a/uDigSampleData/bc_border.shp");
+        result = URLUtils.fileToURL( file );
+        File file2 = URLUtils.urlToFile( result );
+        assertEquals( file, file2 );
 	}
 
 }

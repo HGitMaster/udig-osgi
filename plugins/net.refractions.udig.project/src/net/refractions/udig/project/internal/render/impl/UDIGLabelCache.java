@@ -28,7 +28,6 @@ import org.geotools.renderer.label.LabelCacheImpl;
 import org.geotools.renderer.lite.LabelCache;
 import org.geotools.renderer.lite.LabelCacheDefault;
 import org.geotools.renderer.lite.SynchronizedLabelCache;
-import org.opengis.go.CommonFactory;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 

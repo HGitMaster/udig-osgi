@@ -24,6 +24,7 @@ import java.net.URL;
 
 import javax.swing.Icon;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IService;
@@ -57,6 +58,7 @@ public class ShpGeoResourceImpl extends IGeoResource {
     ShpServiceImpl parent;
     String typename = null;
     private URL identifier;
+    private ID id;
     
     /**
      * Construct <code>ShpGeoResourceImpl</code>.
@@ -70,6 +72,10 @@ public class ShpGeoResourceImpl extends IGeoResource {
         this.typename = typename;
         try {
             identifier= new URL(parent.getIdentifier().toString()+"#"+typename); //$NON-NLS-1$
+            id = new ID( parent.getID(), typename );
+            if( !identifier.equals( id.toURL() )){
+                System.out.println( id + "!= "+identifier );
+            }
         } catch (MalformedURLException e) {
             identifier= parent.getIdentifier();
         }
@@ -95,6 +101,9 @@ public class ShpGeoResourceImpl extends IGeoResource {
     
     public URL getIdentifier() {
         return identifier;
+    }
+    public ID getID() {
+        return id;
     }
 
     /*

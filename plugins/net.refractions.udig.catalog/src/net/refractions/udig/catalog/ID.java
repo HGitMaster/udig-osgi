@@ -173,4 +173,202 @@ public class ID implements Serializable {
     public URL toURL( File baseDirectory ){
         return URLUtils.toRelativePath( baseDirectory, toURL() );
     }
+    
+    /**
+     * @return true if ID represents a File
+     */
+    public boolean isFile() {
+        return file != null;
+    }
+    /**
+     *  @return true if ID represents a decorator
+     */
+    public boolean isDecorator() {
+        if( url == null) return false;
+    
+        String HOST = url.getHost();
+        String PROTOCOL = url.getProtocol();
+        String PATH = url.getPath();
+        if (!"http".equals(PROTOCOL))return false; //$NON-NLS-1$
+        if (!"localhost".equals(HOST))return false; //$NON-NLS-1$
+
+        if (!"/mapgraphic".equals(PATH))return false; //$NON-NLS-1$
+        return true;
+    }
+    /**
+     * @return true if ID represents a temporary (or memory) resource
+     */
+    public boolean isTemporary() {
+        if( url == null ) return false;
+        String HOST = url.getHost();
+        String PROTOCOL = url.getProtocol();
+        String PATH = url.getPath();
+        if (!"http".equals(PROTOCOL))return false; //$NON-NLS-1$
+        if (!"localhost".equals(HOST))return false; //$NON-NLS-1$
+
+        if (!"/scratch".equals(PATH))return false; //$NON-NLS-1$
+        return true;
+    }
+    public boolean isWMS(){
+        if( url == null ) return false;
+        String PATH = url.getPath();
+        String QUERY = url.getQuery();
+        String PROTOCOL = url.getProtocol();
+        if (!"http".equals(PROTOCOL)) { //$NON-NLS-1$
+            return false;
+        }
+        if (QUERY != null && QUERY.toUpperCase().indexOf("SERVICE=WMS") != -1) { //$NON-NLS-1$
+            return true;
+        }
+        else if (PATH != null && PATH.toUpperCase().indexOf("GEOSERVER/WMS") != -1) { //$NON-NLS-1$
+            return true;
+        }
+        return false;
+    }
+    public boolean isWFS( URL url ) {
+        if( url == null ) return false;
+        String PATH = url.getPath();
+        String QUERY = url.getQuery();
+        String PROTOCOL = url.getProtocol();
+
+        if (!"http".equals(PROTOCOL)) { //$NON-NLS-1$
+            return false;
+        }
+        if (QUERY != null && QUERY.toUpperCase().indexOf("SERVICE=WFS") != -1) { //$NON-NLS-1$
+            return true;
+        } else if (PATH != null && PATH.toUpperCase().indexOf("GEOSERVER/WFS") != -1) { //$NON-NLS-1$
+            return true;
+        }
+        return false;
+    }
+    public boolean isJDBC( URL url ) {
+        return id.startsWith("jdbc:"); //$NON-NLS-1$
+//        if( url != null){
+//            String PROTOCOL = url.getProtocol();
+//            String HOST = url.getHost();
+//            return "http".equals(PROTOCOL) && HOST != null && HOST.indexOf(".jdbc") != -1; //$NON-NLS-1$ //$NON-NLS-2$
+//        }
+    }
+    public String labelResource(){
+        if (url == null){
+            return id; 
+        }
+        String HOST = url.getHost();
+        String QUERY = url.getQuery();
+        String PATH = url.getPath();
+        String PROTOCOL = url.getProtocol();
+        String REF = url.getRef();
+
+        if (REF != null) {
+            return REF;
+        }
+        if (PROTOCOL == null) {
+            return ""; // we do not represent a server (local host does not cut it) //$NON-NLS-1$
+        }
+        StringBuffer label = new StringBuffer();
+        if ("file".equals(PROTOCOL)) { //$NON-NLS-1$
+            int split = PATH.lastIndexOf('/');
+            if (split == -1) {
+                label.append(PATH);
+            } else {
+                String file = PATH.substring(split + 1);
+                int dot = file.lastIndexOf('.');
+                if (dot != -1) {
+                    file = file.substring(0, dot);
+                }
+                file = file.replace("%20"," "); //$NON-NLS-1$ //$NON-NLS-2$
+                label.append(file);
+            }
+        } else if ("http".equals(PROTOCOL) && HOST.indexOf(".jdbc") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (QUERY != null) {
+                label.append(QUERY);
+            } else {
+                label.append(PATH);
+            }
+        } else if ("http".equals(PROTOCOL)) { //$NON-NLS-1$
+            if (QUERY != null && QUERY.toUpperCase().indexOf("SERVICE=WFS") != -1) { //$NON-NLS-1$
+                for( String split : QUERY.split("&") ) { //$NON-NLS-1$
+                    if (split.toLowerCase().startsWith("type=")) { //$NON-NLS-1$
+                        label.append(split.substring(5));
+                    }
+                }
+            } else if (QUERY != null && QUERY.toUpperCase().indexOf("SERVICE=WMS") != -1) { //$NON-NLS-1$
+                for( String split : QUERY.split("&") ) { //$NON-NLS-1$
+                    if (split.startsWith("LAYER=")) { //$NON-NLS-1$
+                        label.append(split.substring(6));
+                    }
+                }
+            } else {
+                int split = PATH.lastIndexOf('/');
+                if (split == -1) {
+                    label.append(PATH);
+                } else {
+                    label.append(PATH.substring(split + 1));
+                }
+            }
+        } else {
+            int split = PATH.lastIndexOf('/');
+            if (split == -1) {
+                label.append(PATH);
+            } else {
+                label.append(PATH.substring(split + 1));
+            }
+        }
+        return label.toString();
+    }
+    
+    public String labelServer() {
+        if (url == null){
+            return id; 
+        }
+        String HOST = url.getHost();
+        int PORT = url.getPort();
+        String PATH = url.getPath();
+        String PROTOCOL = url.getProtocol();
+
+        if (PROTOCOL == null) {
+            return ""; // we do not represent a server (local host does not cut it) //$NON-NLS-1$
+        }
+        StringBuffer label = new StringBuffer();
+        if (isFile()) {
+            String split[] = PATH.split("\\/"); //$NON-NLS-1$
+
+            if (split.length == 0) {
+                label.append(File.separatorChar);
+            } else {
+                if (split.length < 2) {
+                    label.append(File.separatorChar);
+                    label.append(split[0]);
+                    label.append(File.separatorChar);
+                } else {
+                    label.append(split[split.length - 2]);
+                    label.append(File.separatorChar);
+                }
+                label.append(split[split.length - 1]);
+            }
+        } else if (isJDBC(url)) {
+            int split2 = HOST.lastIndexOf('.');
+            int split1 = HOST.lastIndexOf('.', split2 - 1);
+            label.append(HOST.substring(split1 + 1, split2));
+            label.append("://"); //$NON-NLS-1$
+            label.append(HOST.subSequence(0, split1));
+        } else if ("http".equals(PROTOCOL) || "https".equals(PROTOCOL)) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (isWMS()) {
+                label.append("wms://"); //$NON-NLS-1$
+            } else if (isWFS(url)) {
+                label.append("wfs://"); //$NON-NLS-1$
+            }
+            label.append(HOST);
+        } else {
+            label.append(PROTOCOL);
+            label.append("://"); //$NON-NLS-1$
+            label.append(HOST);
+        }
+        if (PORT != -1) {
+            label.append(":"); //$NON-NLS-1$
+            label.append(PORT);
+        }
+        return label.toString();
+    }
+    
 }

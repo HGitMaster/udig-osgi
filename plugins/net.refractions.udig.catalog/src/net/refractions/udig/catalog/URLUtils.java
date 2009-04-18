@@ -286,24 +286,25 @@ public class URLUtils {
             // Shouldn't happen
         }
 
-        String path3;
+        String path2, path3;
         String simplePrefix = "file:/"; //$NON-NLS-1$
         String standardPrefix = simplePrefix + "/"; //$NON-NLS-1$
 
         if (string.startsWith(standardPrefix)) {
-            path3 = string.substring(standardPrefix.length());
+            path2 = string.substring(standardPrefix.length());
+            path3 = path2.replace("%20", " ");
         } else if (string.startsWith(simplePrefix)) {
-            path3 = string.substring(simplePrefix.length() - 1 );
+            path2 = string.substring(simplePrefix.length() - 1 );
+            path3 = path2.replace("%20", " ");
         } else {
             String auth = url.getAuthority();
-            String path2 = url.getPath().replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
+            path2 = url.getPath().replace("%20", " ");
             if (auth != null && !auth.equals("")) { //$NON-NLS-1$
                 path3 = "//" + auth + path2; //$NON-NLS-1$
             } else {
                 path3 = path2;
             }
         }
-
         return new File(path3);
     }
     

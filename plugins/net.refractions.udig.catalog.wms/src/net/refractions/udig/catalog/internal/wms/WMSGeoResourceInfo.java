@@ -58,8 +58,8 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
         } else {
 
             CRSEnvelope bbox;
-            String epsg4326 = "EPSG:4326";
-            String epsg4269 = "EPSG:4269";
+            String epsg4326 = "EPSG:4326"; //$NON-NLS-1$
+            String epsg4269 = "EPSG:4269"; //$NON-NLS-1$
             if (boundingBoxes.containsKey(epsg4326)) {
                 bbox = (CRSEnvelope) boundingBoxes.get(epsg4326);
             } else if (boundingBoxes.containsKey(epsg4269)) {
@@ -113,7 +113,6 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
         }
         super.icon = CatalogUIPlugin.getDefault().getImages().getImageDescriptor(
                 ISharedImages.GRID_OBJ);
-        // icon = fetchIcon( monitor );
     }
     public String getName() {
         return name;

@@ -28,6 +28,7 @@ import java.util.concurrent.locks.Lock;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveDelta;
@@ -65,8 +66,8 @@ import org.opengis.filter.Filter;
  */
 public class ShpServiceImpl extends IService {
 
-	private URL url = null;
-
+	private URL url;
+	private ID id;
 	private Map<String, Serializable> params = null;
 
 	/**
@@ -75,9 +76,15 @@ public class ShpServiceImpl extends IService {
 	 * @param arg1
 	 * @param arg2
 	 */
-	public ShpServiceImpl(URL arg1, Map<String, Serializable> arg2) {
-		url = arg1;
-		params = arg2;
+	public ShpServiceImpl(URL url, Map<String, Serializable> params) {
+		this.url = url;
+		try {
+		    id = new ID( url );
+		}
+		catch( Throwable t){
+		    t.printStackTrace();
+        }
+		this.params = params;
 		Serializable memorymapped = params.get("memory mapped buffer"); //$NON-NLS-1$
 		if (memorymapped == null) {
 			memorymapped = false;
@@ -350,7 +357,10 @@ public class ShpServiceImpl extends IService {
 	public URL getIdentifier() {
 		return url;
 	}
-	
+	@Override
+	public ID getID() {
+	    return id;
+	}
     /**
      * The File as indicated in the connection parameters, may be null if we are representing a web resource.
      * @return file as indicated in the connection parameters, may be null if we are reprsenting a web resource

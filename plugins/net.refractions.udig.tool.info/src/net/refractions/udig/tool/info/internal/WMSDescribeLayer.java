@@ -24,13 +24,13 @@ import net.refractions.udig.tool.info.LayerPointInfo;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.data.ows.Layer;
+import org.geotools.data.ows.StyleImpl;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.data.wms.request.GetFeatureInfoRequest;
 import org.geotools.data.wms.request.GetMapRequest;
 import org.geotools.data.wms.response.GetFeatureInfoResponse;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.opengis.layer.Style;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -238,7 +238,7 @@ public class WMSDescribeLayer {
             getmap.setProperty(GetMapRequest.FORMAT, "image/bmp"); //$NON-NLS-1$
         }
         
-        Style wmsStyle = (Style) layer.getStyleBlackboard().get(WMSStyleContent.WMSSTYLE);
+        StyleImpl wmsStyle = (StyleImpl) layer.getStyleBlackboard().get(WMSStyleContent.WMSSTYLE);
 		if (wmsStyle != null) {
 			getmap.setProperty(GetMapRequest.STYLES, wmsStyle.getName());
 		}
