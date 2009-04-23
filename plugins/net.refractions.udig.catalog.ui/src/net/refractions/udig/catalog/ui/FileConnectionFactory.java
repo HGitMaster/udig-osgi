@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.URLUtils;
 import net.refractions.udig.core.internal.ExtensionPointProcessor;
 import net.refractions.udig.core.internal.ExtensionPointUtil;
 
@@ -48,7 +49,7 @@ public class FileConnectionFactory extends UDIGConnectionFactory {
 			goodExt = goodExt.toLowerCase();
 			if(fileExt.equals(goodExt.substring(goodExt.lastIndexOf('.') + 1))) {
 				//actually do a test
-				File f = new File(url.getFile());
+			    File f = URLUtils.urlToFile(url);
 				if (f.exists())
 					return url;
 			}
