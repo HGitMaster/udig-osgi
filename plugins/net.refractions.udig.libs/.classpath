@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/h2-1.0-20090420.064039-2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/geoapi-2.3-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/geoapi-pending-2.3-SNAPSHOT.jar" sourcepath="C:/java/geoapi/trunk/geoapi-pending/src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -67,7 +68,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/gt-xsd-ows-2.6-SNAPSHOT.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-xsd-wfs-2.6-SNAPSHOT.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-xsd-wps-2.6-SNAPSHOT.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/h2-1.0-20070319.231009-1.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/hsqldb-1.8.0.7.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-arcgrid-1.0.1.jar" sourcepath="net.refractions.udig.libssrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-customstreams-1.0.1.jar" sourcepath="net.refractions.udig.libssrc.zip"/>

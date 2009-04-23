@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import net.refractions.udig.project.internal.Messages;
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.ui.graphics.SLDs;
 
+import org.geotools.data.ows.StyleImpl;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.LineSymbolizer;
@@ -205,8 +207,10 @@ public class Styling {
 
             List<String> l = new LinkedList<String>();
             try {
-                l.addAll(currentLayer.getResource(org.geotools.data.ows.Layer.class, null)
-                        .getStyles());
+            	for (Iterator<StyleImpl> iterator = currentLayer.getResource(org.geotools.data.ows.Layer.class, null).getStyles().iterator(); iterator.hasNext();) {
+            		StyleImpl style = (StyleImpl) iterator.next();
+            		l.add(style.getName());
+				}
             } catch (IOException e) {
                 ProjectPlugin.log(null, e);
             }
