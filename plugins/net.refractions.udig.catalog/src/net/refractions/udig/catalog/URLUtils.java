@@ -238,7 +238,8 @@ public class URLUtils {
         }
         try {
             // check if it is a relative path
-            File tmp = new File(base.getParentFile(), substring);
+            File tmp = new File(base.getParentFile(), file.getPath());
+            //File tmp = new File(base.getParentFile(), substring);
             if (tmp.exists()) {
                 File absoluteFile = tmp.getCanonicalFile();
                 URL url2 = absoluteFile.toURI().toURL();
@@ -292,13 +293,13 @@ public class URLUtils {
 
         if (string.startsWith(standardPrefix)) {
             path2 = string.substring(standardPrefix.length());
-            path3 = path2.replace("%20", " ");
+            path3 = path2.replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (string.startsWith(simplePrefix)) {
             path2 = string.substring(simplePrefix.length() - 1 );
-            path3 = path2.replace("%20", " ");
+            path3 = path2.replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             String auth = url.getAuthority();
-            path2 = url.getPath().replace("%20", " ");
+            path2 = url.getPath().replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
             if (auth != null && !auth.equals("")) { //$NON-NLS-1$
                 path3 = "//" + auth + path2; //$NON-NLS-1$
             } else {
@@ -313,7 +314,7 @@ public class URLUtils {
             return file.toURI().toURL();
         } catch (MalformedURLException e) {
             try {
-                return file.toURL();
+                return file.toURI().toURL();
             } catch (MalformedURLException e1) {
                 try {
                     return new URL( "file:/"+file.getCanonicalPath().replace('\\', '/')); //$NON-NLS-1$
