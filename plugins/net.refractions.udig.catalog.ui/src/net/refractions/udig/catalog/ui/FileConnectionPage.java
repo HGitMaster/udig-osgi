@@ -309,7 +309,8 @@ public class FileConnectionPage extends AbstractUDIGImportPage implements UDIGCo
         String[] filenames = fileDialog.getFileNames();
         for( int i = 0; i < filenames.length; i++ ) {
             try {
-                URL url = new File(path + System.getProperty("file.separator") + filenames[i]).toURL(); //$NON-NLS-1$
+                //URL url = new File(path + System.getProperty("file.separator") + filenames[i]).toURL(); //$NON-NLS-1$
+                URL url = new File(path + System.getProperty("file.separator") + filenames[i]).toURI().toURL(); //$NON-NLS-1$
                 list.add(url);
             } catch (Throwable e) {
                 CatalogUIPlugin.log("", e); //$NON-NLS-1$
