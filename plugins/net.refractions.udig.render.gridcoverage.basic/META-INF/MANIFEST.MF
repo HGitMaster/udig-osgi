@@ -15,5 +15,12 @@ Require-Bundle: net.refractions.udig.project,
  net.refractions.udig.ui,
  net.refractions.udig.style.sld,
  net.refractions.udig.project.ui,
- org.eclipse.ui.views
+ org.eclipse.ui.views,
+ org.geotools.coverage;bundle-version="2.6.0",
+ org.geotools.referencing;bundle-version="2.6.0",
+ org.geotools.render;bundle-version="2.6.0",
+ org.geotools.imagemosaic;bundle-version="2.6.0"
 Eclipse-LazyStart: true
+Import-Package: com.vividsolutions.jts.geom,
+ javax.measure.unit,
+ org.opengis.coverage.grid
