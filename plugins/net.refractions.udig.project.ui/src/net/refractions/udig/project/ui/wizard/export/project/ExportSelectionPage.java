@@ -13,6 +13,7 @@ package net.refractions.udig.project.ui.wizard.export.project;
 import java.io.File;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,9 +26,8 @@ public class ExportSelectionPage extends WizardPage {
 
     private DirectoryFieldEditor editor;
     
-    public ExportSelectionPage(String title, String description) {
-        super(title);
-        setTitle(title);
+    public ExportSelectionPage(String title, String description, ImageDescriptor pageIcon) {
+        super("Export Selection Page", title, pageIcon);
         setDescription(description);
     }
     

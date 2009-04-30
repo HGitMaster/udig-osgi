@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.refractions.udig.project.internal.Project;
+import net.refractions.udig.project.ui.internal.ProjectUIPlugin;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.URI;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
@@ -35,6 +37,8 @@ public class ExportProjectWizard extends Wizard implements IExportWizard, IRunna
     private String destinationDirectory = "";
     private IStructuredSelection selection;
     private ExportSelectionPage selectionPage;
+    ImageDescriptor wizardPageIconDescriptor = 
+        ProjectUIPlugin.imageDescriptorFromPlugin(ProjectUIPlugin.ID, "icons/wizban/exportproject_wiz.png");
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
@@ -72,7 +76,7 @@ public class ExportProjectWizard extends Wizard implements IExportWizard, IRunna
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         setWindowTitle("Project Export Wizard");
         setNeedsProgressMonitor(true);
-        selectionPage = new ExportSelectionPage("Export Project", "Select the destination to export to");
+        selectionPage = new ExportSelectionPage("Destination", "Select the destination to export to", wizardPageIconDescriptor);
         this.selection = selection;
     }
 

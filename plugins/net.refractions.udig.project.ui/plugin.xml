@@ -709,6 +709,7 @@
      </wizard>
      <wizard
            class="net.refractions.udig.project.ui.wizard.export.project.ExportProjectWizard"
+           icon="icons/etool16/exportproject_wiz.png"
            id="net.refractions.udig.project.ui.export.project"
            name="Export Project">
         <description>
