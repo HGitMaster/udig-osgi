@@ -41,6 +41,7 @@
       <maven:dependency groupId="org.geotools" artifactId="gt-data" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-epsg-wkt" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-main" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-metadata" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-referencing" version="${gt.version}"/>
