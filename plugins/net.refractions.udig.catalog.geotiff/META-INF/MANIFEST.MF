@@ -20,5 +20,9 @@ Require-Bundle: org.eclipse.ui,
  org.geotools.metadata;bundle-version="2.6.0"
 Eclipse-LazyStart: true
 Export-Package: net.refractions.udig.catalog.internal.geotiff;x-friends:="net.refractions.udig.catalog.test.geotiff"
-Import-Package: com.vividsolutions.jts.geom,
- org.opengis.coverage.grid
+Import-Package: com.sun.media.jai.imageioimpl,
+ com.vividsolutions.jts.geom,
+ javax.media.jai,
+ org.opengis.coverage.grid,
+ org.opengis.referencing.crs
+Bundle-Activator: net.refractions.udig.catalog.internal.geotiff.GeoTiffPlugin

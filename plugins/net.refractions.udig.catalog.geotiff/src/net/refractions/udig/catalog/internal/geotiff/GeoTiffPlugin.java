@@ -30,6 +30,8 @@ public class GeoTiffPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		// Make sure that JAI ImageIO is activated by loading one of its classes
+		Class.forName("com.sun.media.jai.imageioimpl.ImageReadWriteSpi");		
 	}
 
 	/**
