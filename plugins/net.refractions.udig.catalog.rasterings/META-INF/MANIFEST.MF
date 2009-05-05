@@ -21,3 +21,4 @@ Eclipse-LazyStart: true
 Export-Package: net.refractions.udig.catalog.rasterings
 Import-Package: com.vividsolutions.jts.geom,
  javax.measure.unit
+Bundle-Vendor: udig.refractions.net

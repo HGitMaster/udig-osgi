@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="net.refractions.udig.lite"
-      label="Lite Feature"
-      version="1.0.0">
+      label="uDig Lite Feature"
+      version="1.2.0.osgi1"
+      provider-name="Harman/Becker"
+      plugin="net.refractions.udig.lite">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,11 +19,19 @@
    </license>
 
    <includes
-         id="net.refractions.udig.geotools"
+         id="org.eclipse.rcp"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.rcp"
+         id="org.geotools"
+         version="0.0.0"/>
+
+   <includes
+         id="org.geotools.deps"
+         version="0.0.0"/>
+
+   <includes
+         id="net.refractions.udig.lite.extradeps"
          version="0.0.0"/>
 
    <includes
@@ -126,31 +136,38 @@
          unpack="false"/>
 
    <plugin
-	  id="net.refractions.udig.catalog.shp"
-	  download-size="0"
-	  install-size="0"
-	  version="0.0.0"
-	  unpack="false"/>
-   
+         id="net.refractions.udig.catalog.shp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
-	  id="net.refractions.udig.catalog.geotiff"
-	  download-size="0"
-	  install-size="0"
-	  version="0.0.0"
-	  unpack="false"/>
-   
+         id="net.refractions.udig.catalog.geotiff"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
-	  id="net.refractions.udig.catalog.rasterings"
-	  download-size="0"
-	  install-size="0"
-	  version="0.0.0"
-	  unpack="false"/>
-   
+         id="net.refractions.udig.catalog.rasterings"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
-	  id="net.refractions.udig.render.gridcoverage.basic"
-	  download-size="0"
-	  install-size="0"
-	  version="0.0.0"
-	  unpack="false"/>
-   
+         id="net.refractions.udig.render.gridcoverage.basic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.refractions.udig.lite"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

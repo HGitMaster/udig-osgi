@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="net.refractions.udig.geotools.deps"
-      label="Deps Feature"
-      version="1.0.0">
+      id="org.geotools.deps"
+      label="Geotools Dependencies"
+      version="2.6.0.osgi1"
+      provider-name="Harman/Becker"
+      plugin="org.geotools.deps">
 
-   <description url="http://www.example.com/description">
+   <description>
       [Enter Feature Description here.]
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright>
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license>
       [Enter License Description here.]
    </license>
 
@@ -246,5 +248,22 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="javax.media.jai.osgi.win32.x86"
+         os="win32"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.deps"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

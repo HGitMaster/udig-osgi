@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="%product.name" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" useFeatures="true">
+<product name="%product.name" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" version="1.2.0.osgi1" useFeatures="true">
 
    <aboutInfo>
       <image path="/net.refractions.udig/icons/about.gif"/>
@@ -14,7 +14,7 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xmx386M -Dosgi.parentClassloader=ext</vmArgs>
+      <vmArgs>-Xmx386M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.awt.headless=true</vmArgsMac>
    </launcherArgs>
 
@@ -25,7 +25,7 @@
       startupProgressRect="0,196,500,8"
       startupMessageRect="7,180,445,16"
       startupForegroundColor="FFFFFF" />
-   <launcher name="udig">
+   <launcher name="udigLite">
       <linux icon="/net.refractions.udig/icons/udig.xpm"/>
       <macosx icon="/net.refractions.udig/icons/icon128.icns"/>
       <solaris/>
