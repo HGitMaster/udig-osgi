@@ -57,3 +57,4 @@ Import-Package: com.vividsolutions.jts.geom,
  org.opengis.util,
  org.picocontainer,
  org.picocontainer.defaults
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

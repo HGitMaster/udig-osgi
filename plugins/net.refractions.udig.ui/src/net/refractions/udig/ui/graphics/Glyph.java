@@ -471,7 +471,7 @@ public class Glyph {
                 
                     return extractImageDataAndDispose( image[0] );
                 } catch(RuntimeException ex){
-                    if(image != null && !image[0].isDisposed()) {
+                    if(image[0] != null && !image[0].isDisposed()) {                    
                         image[0].dispose();
                     }
                     throw ex;

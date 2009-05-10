@@ -18,8 +18,6 @@ package net.refractions.udig.catalog;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,8 +27,6 @@ import java.util.Map;
 import net.refractions.udig.catalog.internal.Messages;
 import net.refractions.udig.ui.ErrorManager;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -144,6 +140,10 @@ public abstract class IService implements IResolve {
      * Used to save persisted properties; please see ServiceParameterPersister for details.
      */
     private Map<String, Serializable> properties = Collections.synchronizedMap(new HashMap<String, Serializable>());
+    /**
+     * This is a protected field; that is laziy created when getInfo is called.
+     */
+	protected volatile IServiceInfo info = null;
 
     /**
      * Will attempt to morph into the adaptee, and return that object. Harded coded to capture the
@@ -190,7 +190,7 @@ public abstract class IService implements IResolve {
             throw new NullPointerException("No adaptor specified"); //$NON-NLS-1$
         }
         if (adaptee.isAssignableFrom(IServiceInfo.class)) {
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
         }
         if (adaptee.isAssignableFrom(IService.class)) {
             monitor.done();
@@ -271,19 +271,32 @@ public abstract class IService implements IResolve {
     }
     
     /**
+     * Responsible for creation of an appropriate IServiceInfo object.
+     * 
+     * @return IServiceInfo resolve(IServiceInfo.class, IProgressMonitor monitor);
+     * @throws IOException
+     */
+    protected abstract IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException;
+    
+    /**
      * Information about this service.
      * 
      * @return IServiceInfo resolve(IServiceInfo.class,IProgressMonitor monitor);
      * @see IService#resolve(Class, IProgressMonitor)
      */
-    public abstract IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException;
+    public final IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        if (info == null) { //lazy creation
+            synchronized (this) { //support concurrent access
+                if (info == null) {
+                	info = createInfo(monitor);
+                }
+            }
+        }
+        return info;
+    }
 
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( getIdentifier() );
     }
     
     /**
@@ -318,15 +331,39 @@ public abstract class IService implements IResolve {
     }
     
     /**
+	 * Retrieves the title from the IService cache, or from the ServiceInfo
+	 * object iff it is present.  Returns null if either of these are not
+	 * available.  If the title is fetched from ServiceInfo, it is added to the
+	 * cache before returning.
+	 * 
+	 * @returns the service title or null if non is readily available
+	 */
+	public String getTitle() {
+	    String title = null;
+	    if( info != null ){
+	        // we are connected and can use the real title
+	        title = info.getTitle();
+	        
+	        // cache title for when we are next offline
+	        getPersistentProperties().put("title", title); //$NON-NLS-1$
+	    }
+	    if( title == null ){
+	        Serializable s = properties.get("title"); //$NON-NLS-1$
+	        title = (s != null ? s.toString() : null);	        
+	    }
+		return title;
+	}
+    
+    /**
      * This should represent the identifier
      * 
      * @see Object#equals(java.lang.Object)
-     * @param arg0
+     * @param obj
      * @return
      */
-    public final boolean equals( Object arg0 ) {
-        if (arg0 != null && arg0 instanceof IService) {
-            IService service = (IService) arg0;
+    public final boolean equals( Object obj ) {
+        if (obj != null && obj instanceof IService) {
+            IService service = (IService) obj;
             if (getIdentifier() != null && service.getIdentifier() != null)
                 return URLUtils.urlToString(getIdentifier(), false).equals(
                         URLUtils.urlToString(service.getIdentifier(), false));
@@ -386,4 +423,6 @@ public abstract class IService implements IResolve {
             }
         }
     }
+
+
 }

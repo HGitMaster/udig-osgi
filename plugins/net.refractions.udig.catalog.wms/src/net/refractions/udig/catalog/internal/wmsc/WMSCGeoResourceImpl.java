@@ -20,6 +20,7 @@ import java.net.URL;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
+import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.wmsc.server.TileSet;
 import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
 import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
@@ -33,9 +34,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 1.1.0
  */
 public class WMSCGeoResourceImpl extends IGeoResource {
-
-    private WMSCServiceImpl service; // the service
-    private IGeoResourceInfo info; // the georesource info
 
     private TileSet tile; // the tile set info from the capabilities document
     private URL identifier; // the unique identifier
@@ -63,11 +61,6 @@ public class WMSCGeoResourceImpl extends IGeoResource {
     }
 
     @Override
-    public WMSCServiceImpl service( IProgressMonitor monitor ) throws IOException {
-        return this.service;
-    }
-
-    @Override
     public IResolve parent( IProgressMonitor monitor ) throws IOException {
         return service;
     }
@@ -92,7 +85,7 @@ public class WMSCGeoResourceImpl extends IGeoResource {
     @Override
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
         if (adaptee.isAssignableFrom(TiledWebMapServer.class)) {
-            return adaptee.cast(service.getWMSC());
+            return adaptee.cast(service(monitor).getWMSC());
         }
         if (adaptee.isAssignableFrom(WMSTileSet.class)){
             return adaptee.cast(tile);
@@ -115,18 +108,23 @@ public class WMSCGeoResourceImpl extends IGeoResource {
     }
 
     @Override
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null) {
-            service.rLock.lock();
+            service(monitor).rLock.lock();
             try {
                 if (info == null) {
                     info = new WMSCGeoResourceInfo(this, monitor);
                 }
             } finally {
-                service.rLock.unlock();
+                service(monitor).rLock.unlock();
             }
         }
         return info;
+    }
+    
+    @Override
+    public WMSCServiceImpl service(IProgressMonitor monitor) throws IOException {
+    	return (WMSCServiceImpl) super.service(monitor);
     }
 
     /**

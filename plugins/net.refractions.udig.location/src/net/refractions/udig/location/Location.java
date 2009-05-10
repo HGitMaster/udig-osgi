@@ -17,7 +17,6 @@ package net.refractions.udig.location;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.xmlrpc.XmlRpcException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.opengis.feature.simple.SimpleFeature;
 

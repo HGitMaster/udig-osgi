@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IForward;
 import net.refractions.udig.catalog.IGeoResource;
-import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class represents a service that has been moved to a new location.
@@ -40,7 +40,7 @@ public class MovedService extends IService implements IForward  {
         return params;
     }
 
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         return null;
     }
 
@@ -52,12 +52,8 @@ public class MovedService extends IService implements IForward  {
     public URL getIdentifier() {
         return identifier;
     }
-    public URI getID() {
-    	try {
-			return identifier.toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( identifier );
     }
     public Throwable getMessage() {
         return new IllegalStateException("Service has moved to "+forward );

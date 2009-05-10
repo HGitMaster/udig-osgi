@@ -21,6 +21,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import javax.media.jai.TileCache;
+
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.project.IAbstractContext;
 import net.refractions.udig.project.ILayer;
@@ -66,6 +68,15 @@ public interface IRenderContext extends IAbstractContext {
      */
     public BufferedImage copyImage( Rectangle rectangle );
 
+    /**
+     * Grab a TileCache to use for JAI operations; this tile
+     * cache can be flushed at any time; and is flushed out
+     * when this context is disposed.
+     * 
+     * @return TileCache for use with JAI operations
+     */
+    public TileCache getTileCache();
+    
     /**
      * Returns a bufferedImage that a renderer can render to.
      * <p>

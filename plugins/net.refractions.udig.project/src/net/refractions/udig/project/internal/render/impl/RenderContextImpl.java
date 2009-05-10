@@ -11,6 +11,9 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import javax.media.jai.JAI;
+import javax.media.jai.TileCache;
+
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.ProjectBlackboardConstants;
@@ -30,7 +33,7 @@ import org.geotools.filter.IllegalFilterException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.operation.matrix.GeneralMatrix;
-import org.geotools.renderer.lite.LabelCacheDefault;
+import org.geotools.renderer.label.LabelCacheImpl;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -56,7 +59,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * @see #getImage()
      */
     protected volatile BufferedImage image = null;
-    
+        
     /**
      * The size of the image (width and height in pixels)
      */
@@ -88,7 +91,11 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     private boolean selection;
 
+    protected TileCache tempCache;
 
+
+    private ILabelPainter labelPainter;
+    
     public RenderContextImpl() {
         super();
     }
@@ -110,6 +117,14 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
         this.imageBounds = impl.imageBounds;
     }
 
+    public synchronized TileCache getTileCache(){
+        if( tempCache == null){
+            tempCache =JAI.createTileCache();
+            tempCache.setMemoryCapacity(16*1024*1024);
+            tempCache.setMemoryThreshold(0.75f);
+        }
+        return tempCache;
+    }
     /**
      * Sets the size of the image.  If set to null the size of the image will
      * be the same as the mapdisplay.
@@ -354,6 +369,10 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     public void dispose() {
         image = null;
+        if( tempCache != null){
+            tempCache.flush();
+            tempCache = null;
+        }
     }
     
     public RenderContextImpl copy() {
@@ -420,17 +439,42 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
         return true;
     }
 
-    public synchronized ILabelPainter getLabelPainter() {
-        ILabelPainter labelPainter = (ILabelPainter) getMap().getBlackboard().get(LABEL_PAINTER);
-        if ( labelPainter==null ){
-            LabelCacheDefault defaultLabelCache = new LabelCacheDefault();
-            labelPainter=new UDIGLabelCache(defaultLabelCache);
-            getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
+    /**
+     * Gets the label painter.  
+     * <p>
+     * If the labelPainter is null then it look on the map
+     * blackboard for a labelPainter. If it can't find one it creates one
+     * and adds it to the map blackboard.
+     * </p>
+     * 
+     */
+    public synchronized ILabelPainter getLabelPainter() {     
+        if ( labelPainter == null ){
+            //lets look on the blackboard first
+            labelPainter = (ILabelPainter) getMap().getBlackboard().get(LABEL_PAINTER);
+            if (labelPainter == null){
+                //create a new one and put it on the blackboard for others to use
+                LabelCacheImpl defaultLabelCache = new LabelCacheImpl();
+                labelPainter=new UDIGLabelCache(defaultLabelCache);
+                getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
+            }
         }
         
         return labelPainter;
     }
 
+    /**
+     * Sets the label painter to use with the context.
+     * <p>
+     * This is used to draw the labels for features.
+     * </p>
+     *
+     * @param labelPainter
+     */
+    public synchronized void setLabelPainter(ILabelPainter labelPainter){
+        this.labelPainter = labelPainter;
+    }
+    
     /**
      * Returns the bounds represented by this render context.
      */

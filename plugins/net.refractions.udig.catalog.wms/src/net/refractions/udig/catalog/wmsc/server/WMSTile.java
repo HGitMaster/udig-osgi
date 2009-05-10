@@ -25,12 +25,13 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import net.refractions.udig.catalog.internal.wms.WmsPlugin;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.data.ows.AbstractRequest;
 import org.geotools.data.ows.Response;
 import org.geotools.ows.ServiceException;
 
-import net.refractions.udig.catalog.internal.wms.WmsPlugin;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**

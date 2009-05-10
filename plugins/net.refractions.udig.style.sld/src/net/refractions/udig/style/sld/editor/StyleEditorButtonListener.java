@@ -87,6 +87,9 @@ class StyleEditorButtonListener implements Listener {
     }
 
     private boolean doApply() {
+        if( this.styleEditorDialog.getCurrentPage() == null){
+            return false;
+        }
         if (this.styleEditorDialog.getCurrentPage().performApply()) {
             this.styleEditorDialog.setExitButtonState();
             this.styleEditorDialog.selectedLayer.apply();

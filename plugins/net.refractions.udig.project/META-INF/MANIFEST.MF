@@ -23,7 +23,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.geotools.render;bundle-version="2.6.0",
  org.geotools.main,
  org.geotools.wms;bundle-version="2.6.0"
-Eclipse-LazyStart: true
 Export-Package: net.refractions.udig.project,
  net.refractions.udig.project.command,
  net.refractions.udig.project.command.factory,
@@ -72,3 +71,5 @@ Import-Package: com.vividsolutions.jts.geom,
  org.opengis.util,
  org.picocontainer;version="1.2.0",
  org.picocontainer.defaults
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

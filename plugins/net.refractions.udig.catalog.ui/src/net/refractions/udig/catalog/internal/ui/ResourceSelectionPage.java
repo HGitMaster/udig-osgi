@@ -94,8 +94,13 @@ public class ResourceSelectionPage extends WorkflowWizardPage implements IPageCh
     @Override
     public void dispose() {
         super.dispose();
-        viewer.getContentProvider().dispose();
-        viewer.getLabelProvider().dispose();
+        if( viewer==null ){
+        	return;
+        }
+        if( viewer.getContentProvider()!=null )
+        	viewer.getContentProvider().dispose();
+        if( viewer.getLabelProvider()!=null )
+        	viewer.getLabelProvider().dispose();
     }
     
     private List<IResolve> getGeoResources( final IResolve resolve, boolean fork ) {

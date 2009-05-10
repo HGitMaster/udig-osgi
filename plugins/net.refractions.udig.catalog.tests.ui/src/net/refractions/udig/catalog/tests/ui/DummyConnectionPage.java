@@ -10,7 +10,6 @@ import java.util.Map;
 
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
 import net.refractions.udig.catalog.ui.UDIGConnectionPage;
-import net.refractions.udig.catalog.ui.workflow.WorkflowWizardPage;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

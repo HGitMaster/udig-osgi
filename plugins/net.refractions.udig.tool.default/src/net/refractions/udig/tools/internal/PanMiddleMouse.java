@@ -27,7 +27,6 @@ import net.refractions.udig.project.ui.tool.IToolContext;
 public class PanMiddleMouse extends Pan {
 
 	public PanMiddleMouse() {
-		System.out.println("created");
 	}
 	
 	@Override
@@ -42,8 +41,7 @@ public class PanMiddleMouse extends Pan {
 		// this tool should never deactivate
 		if( active && !isActive())
 			super.setActive(active);
-		
-		
+
 	}
 	
 	@Override

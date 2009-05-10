@@ -16,12 +16,12 @@ package net.refractions.udig.mapgraphic.scalebar;
 
 import java.awt.Color;
 
-import org.eclipse.swt.graphics.Image;
-
 import net.refractions.udig.mapgraphic.MapGraphicPlugin;
 import net.refractions.udig.mapgraphic.internal.Messages;
 import net.refractions.udig.mapgraphic.internal.ui.ImageConstants;
 import net.refractions.udig.project.internal.StyleBlackboard;
+
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A style that representing the type of bar to draw, the color, and the number of intervals to
@@ -38,6 +38,7 @@ public class BarStyle {
     public static final int MINIMUM_DIVISIONS = 2;
     public static final int MAXIMUM_DIVISIONS = 20;
     public static final int DIVISION_INCREMENT = 1;
+    
     /**
      * <p>
      * Tracks the different types of scale bars.
@@ -65,14 +66,15 @@ public class BarStyle {
         public String getName(){
             return this.name;
         }
-
     }
 
     private Color color = Color.BLACK;
     private Color bgColor = null;
     private int numintervales = 4;
     private BarType type = BarType.SIMPLE;
-
+    
+    private UnitPolicy units = UnitPolicy.determineDefaultUnits();
+    
     /**
      * Creates a new default bar style.
      */
@@ -85,11 +87,13 @@ public class BarStyle {
      * @param type the type of scale bar
      * @param color the color of the scale bar
      * @param numintervals the number of intervals to display in the scale bar
+     * @param units - METRIC/IMPERIAL
      */
-    public BarStyle( BarType type, Color color, int numintervals ) {
+    public BarStyle( BarType type, Color color, int numintervals, UnitPolicy units ) {
         this.type = type;
         this.color = color;
         this.numintervales = numintervals;
+        this.units = units;
     }
 
     /**
@@ -120,6 +124,15 @@ public class BarStyle {
     }
 
     /**
+     * Returns the UnitPolicy used when displaying the scale bar
+     * AUTO, IMPERIAL or METRIC
+     *
+     * @return UnitPolicy used when displayin gthe scale bar
+     */
+    public UnitPolicy getUnits(){
+        return this.units;
+    }
+    /**
      * Sets the type of scale bar to be drawn.
      * 
      * @param type new scale bar type
@@ -135,6 +148,15 @@ public class BarStyle {
      */
     public void setColor( Color c ) {
         this.color = c;
+    }
+    
+    /**
+     * Sets the units.
+     *
+     * @param newUnits
+     */
+    public void setUnits(UnitPolicy newUnits){
+        this.units = newUnits;
     }
     /**
      * Sets the number of intervals

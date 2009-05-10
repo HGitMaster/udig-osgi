@@ -11,14 +11,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 public class ArcGridGeoResourceImplementation extends AbstractRasterGeoResource {
-	ArcGridGeoResourceInfo info;
-
 	public ArcGridGeoResourceImplementation(AbstractRasterService service, String name) {
 		super(service, name);
 	}
 
 	@Override
-	public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException {
+	protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException {
 		if (monitor != null) {
 			monitor.beginTask(Messages.ArcGridGeoResourceImplementation_Connecting, 2);
 			monitor.worked(1);

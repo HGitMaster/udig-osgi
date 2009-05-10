@@ -26,10 +26,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -40,7 +38,6 @@ import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.IProject;
 import net.refractions.udig.project.IProjectElement;
-import net.refractions.udig.project.IStyleBlackboard;
 import net.refractions.udig.project.ProjectBlackboardConstants;
 import net.refractions.udig.project.element.ElementFactory;
 import net.refractions.udig.project.element.IGenericProjectElement;
@@ -83,14 +80,9 @@ import net.refractions.udig.project.ui.tool.IToolContext;
 import net.refractions.udig.project.ui.tool.IToolManager;
 import net.refractions.udig.ui.PlatformGIS;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -1026,6 +1018,27 @@ public class ApplicationGIS {
     public static ProjectElementAdapter createGeneralProjectElement(
             IProject project, Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) throws IllegalArgumentException{
         return ElementFactory.eINSTANCE.createProjectElementAdapter(project, typeToCreate, extensionId);
+    }
+
+    /**
+     * Creates an instance of the typeToCreate and wraps it with the {@link ProjectElementAdapter}.
+     *
+     * This is part of the mechanism for adding custom items to a Project without needing to learn
+     * the EMF framework.  See the net.refractions.udig.project.element Extension Point.
+     * 
+     * If the typeToCreate is NOT the same or a superclass of the object created or if an object cannot
+     * be created a {@link IllegalArgumentException} will be thrown 
+     * @param project the project to add the newly created adapter to
+     * @param elementName the name of the project to create
+     * @param typeToCreate The type of object that is expected to be created.  This is provided as a
+     * check to ensure that the correct type is returned.
+     * @param extensionId the extension to use to create a new instance.
+     * 
+     * @return A {@link ProjectElementAdapter} that wraps/adapts the object created using the extension
+     */
+    public static ProjectElementAdapter createGeneralProjectElement(
+            IProject project, String elementName, Class< ? extends IGenericProjectElement> typeToCreate, String extensionId ) throws IllegalArgumentException{
+        return ElementFactory.eINSTANCE.createProjectElementAdapter(project, elementName, typeToCreate, extensionId);
     }
 
 }

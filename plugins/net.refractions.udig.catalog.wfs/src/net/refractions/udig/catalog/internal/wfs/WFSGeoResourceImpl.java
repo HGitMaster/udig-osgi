@@ -21,8 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
 
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
@@ -33,9 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.ResourceInfo;
-import org.geotools.data.ows.FeatureSetDescription;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.data.wfs.WFSDataStore;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -61,6 +56,7 @@ public class WFSGeoResourceImpl extends IGeoResource {
      * @param typename
      */
     public WFSGeoResourceImpl(WFSServiceImpl parent, String typename){
+        this.service = parent;
         this.parent = parent; this.typename = typename;
         try {
             identifier= new URL(parent.getIdentifier().toString()+"#"+typename); //$NON-NLS-1$
@@ -105,7 +101,7 @@ public class WFSGeoResourceImpl extends IGeoResource {
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast( this );
         if(adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast( getInfo(monitor));
+            return adaptee.cast( createInfo(monitor));
         if(adaptee.isAssignableFrom(FeatureStore.class)){
             FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS(monitor).getFeatureSource(typename);
             if(fs instanceof FeatureStore)
@@ -114,9 +110,6 @@ public class WFSGeoResourceImpl extends IGeoResource {
             return adaptee.cast( parent.getDS(monitor).getFeatureSource(typename));
         }
         return super.resolve(adaptee, monitor);
-    }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
     }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
@@ -131,8 +124,7 @@ public class WFSGeoResourceImpl extends IGeoResource {
                 adaptee.isAssignableFrom(IService.class))||
                 super.canResolve(adaptee);
     }
-    private volatile IGeoResourceInfo info;
-    public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException{
+    protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
         if(info == null && getStatus()!=Status.BROKEN){
             parent.rLock.lock();
             try{

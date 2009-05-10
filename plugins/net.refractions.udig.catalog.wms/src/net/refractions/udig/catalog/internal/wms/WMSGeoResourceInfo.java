@@ -45,7 +45,7 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
     @SuppressWarnings("unchecked")
     WMSGeoResourceInfo( WMSGeoResourceImpl geoResourceImpl, IProgressMonitor monitor ) throws IOException {
         resource = geoResourceImpl;
-        WebMapServer wms = resource.service.getWMS(monitor);
+        WebMapServer wms = resource.service(monitor).getWMS(monitor);
         WMSCapabilities caps = wms.getCapabilities();
 
         org.opengis.geometry.Envelope env = null;
@@ -58,8 +58,8 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
         } else {
 
             CRSEnvelope bbox;
-            String epsg4326 = "EPSG:4326";
-            String epsg4269 = "EPSG:4269";
+            String epsg4326 = "EPSG:4326"; //$NON-NLS-1$
+            String epsg4269 = "EPSG:4269"; //$NON-NLS-1$
             if (boundingBoxes.containsKey(epsg4326)) {
                 bbox = (CRSEnvelope) boundingBoxes.get(epsg4326);
             } else if (boundingBoxes.containsKey(epsg4269)) {
@@ -82,7 +82,7 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
         bounds = new ReferencedEnvelope(new Envelope(env.getMinimum(0), env.getMaximum(0), env
                 .getMinimum(1), env.getMaximum(1)), crs);
 
-        String parentid = resource.service != null && resource.service.getIdentifier() != null ? resource.getIdentifier()
+        String parentid = resource.service(monitor) != null && resource.service(monitor).getIdentifier() != null ? resource.getIdentifier()
                 .toString() : ""; //$NON-NLS-1$
         name = resource.layer.getName();
         List<String> keywordsFromWMS = new ArrayList<String>();
@@ -113,7 +113,6 @@ class WMSGeoResourceInfo extends IGeoResourceInfo {
         }
         super.icon = CatalogUIPlugin.getDefault().getImages().getImageDescriptor(
                 ISharedImages.GRID_OBJ);
-        // icon = fetchIcon( monitor );
     }
     public String getName() {
         return name;

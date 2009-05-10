@@ -14,6 +14,7 @@ Require-Bundle: net.refractions.udig.project,
  net.refractions.udig.project.ui,
  org.geotools.api;bundle-version="2.6.0",
  org.geotools.referencing;bundle-version="2.6.0"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: com.vividsolutions.jts.geom,
  org.opengis.referencing.crs

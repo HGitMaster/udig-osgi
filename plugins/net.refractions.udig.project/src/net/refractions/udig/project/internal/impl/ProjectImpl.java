@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: ProjectImpl.java 31056 2009-01-17 08:18:09Z aantonello $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -26,7 +26,6 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -418,6 +417,7 @@ public class ProjectImpl extends EObjectImpl implements Project {
         resourceName = resourceName.replaceAll("[/\\\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
         resourceName = resourceName.replaceAll("\\s", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         resourceName = resourceName.replaceAll("_+", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        resourceName = resourceName.replaceAll(":", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         String extension = projectElement.getFileExtension();
         if( !extension.startsWith(".") ) //$NON-NLS-1$
             extension="."+extension; //$NON-NLS-1$

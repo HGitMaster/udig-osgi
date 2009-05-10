@@ -61,7 +61,7 @@ import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 
 /**
- * Data page responsible for aquiring WFS services.
+ * Data page responsible for acquiring WFS services.
  * <p>
  * Responsibilities:
  * <ul>
@@ -93,7 +93,7 @@ UDIGConnectionPage{
     
     protected Text bufferText;
     protected Text timeoutText;
-    protected Text maxFeaturesText;
+    //protected Text maxFeaturesText;
 
     //protected Button usePullParser;
     
@@ -359,17 +359,17 @@ UDIGConnectionPage{
         timeoutText.setTextLimit(5);
         timeoutText.addModifyListener(this);
         
-        label = new Label( advanced, SWT.NONE );
-        label.setText("MaxFeatures"); 
-        label.setToolTipText( "Limits the maximum number of features retrieved per FeatureType. Zero means no limit." ); 
-        label.setLayoutData( new GridData(SWT.CENTER, SWT.DEFAULT, false, false) );
+        //label = new Label( advanced, SWT.NONE );
+        // label.setText("MaxFeatures"); 
+        //label.setToolTipText( "Limits the maximum number of features retrieved per FeatureType. Zero means no limit." ); 
+        //label.setLayoutData( new GridData(SWT.CENTER, SWT.DEFAULT, false, false) );
 
-        maxFeaturesText = new Text( advanced, SWT.BORDER | SWT.RIGHT );
-        maxFeaturesText.setLayoutData( new GridData(GridData.FILL, SWT.DEFAULT, true, false ,1,1) );
-        maxFeaturesText.setText( maxFeaturesDefault);
-        maxFeaturesText.setTextLimit(5);
-        maxFeaturesText.addModifyListener(this);
-        
+//        maxFeaturesText = new Text( advanced, SWT.BORDER | SWT.RIGHT );
+//        maxFeaturesText.setLayoutData( new GridData(GridData.FILL, SWT.DEFAULT, true, false ,1,1) );
+//        maxFeaturesText.setText( maxFeaturesDefault);
+//        maxFeaturesText.setTextLimit(5);
+//        maxFeaturesText.addModifyListener(this);
+//        
 
         // get
         /*
@@ -558,20 +558,20 @@ UDIGConnectionPage{
             dsParams.put(WFSDataStoreFactory.BUFFER_SIZE.key,sec);
         }
         
-        String maxFeatures = maxFeaturesText.getText();
-        if(!WFSRegistryWizardPage.maxFeaturesDefault.equals(timeout)){
-            // parse the string
-            Integer max = null;
-            try{
-                max = Integer.valueOf(maxFeatures);
-            }catch(NumberFormatException e){
-                if(red == null)
-                    red = new Color(null,255,0,0);
-                maxFeaturesText.setForeground(red);
-                error = true;
-            }
-            dsParams.put(WFSDataStoreFactory.MAXFEATURES.key, max);
-        }
+//        String maxFeatures = maxFeaturesText.getText();
+//        if(!WFSRegistryWizardPage.maxFeaturesDefault.equals(timeout)){
+//            // parse the string
+//            Integer max = null;
+//            try{
+//                max = Integer.valueOf(maxFeatures);
+//            }catch(NumberFormatException e){
+//                if(red == null)
+//                    red = new Color(null,255,0,0);
+//                maxFeaturesText.setForeground(red);
+//                error = true;
+//            }
+//            dsParams.put(WFSDataStoreFactory.MAXFEATURES.key, max);
+//        }
         /*
         boolean usePull = usePullParser.getSelection();
 		dsParams.put("USE_PULL_PARSER", String.valueOf(usePull)); //$NON-NLS-1$

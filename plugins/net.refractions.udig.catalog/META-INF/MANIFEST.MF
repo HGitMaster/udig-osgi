@@ -21,7 +21,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.geotools.process;bundle-version="2.6.0",
  org.geotools.main,
  org.geotools.referencing;bundle-version="2.6.0"
-Eclipse-LazyStart: true
 Import-Package: com.vividsolutions.jts.geom,
  org.apache.commons.collections.map,
  org.opengis.feature.simple,
@@ -31,3 +30,5 @@ Import-Package: com.vividsolutions.jts.geom,
  org.opengis.referencing,
  org.opengis.referencing.crs,
  org.opengis.util
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

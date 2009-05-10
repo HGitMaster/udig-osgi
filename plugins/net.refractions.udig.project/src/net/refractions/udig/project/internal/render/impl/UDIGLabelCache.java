@@ -19,12 +19,17 @@ import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.render.ILabelPainter;
 
+import org.geotools.geometry.GeometryFactoryFinder;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.renderer.label.LabelCacheImpl;
+import org.geotools.renderer.lite.LabelCache;
 import org.geotools.renderer.lite.LabelCacheDefault;
 import org.geotools.renderer.lite.SynchronizedLabelCache;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 
 /**
@@ -40,21 +45,21 @@ import org.geotools.renderer.lite.SynchronizedLabelCache;
 public class UDIGLabelCache extends SynchronizedLabelCache implements ILabelPainter {
     Set<String> activeLayers = new HashSet<String>();
 
-    private LabelCacheDefault wrappedLabelCache;
+    private LabelCache wrappedLabelCache;
 
     /**
      * 
      */
     public UDIGLabelCache() {
-        this(new LabelCacheDefault());
+        this(new LabelCacheImpl()); // switch to new one here!
     }
 
     /**
      * @param defaultLabelCache
      */
-    public UDIGLabelCache( LabelCacheDefault defaultLabelCache ) {
-        super(defaultLabelCache);
-        this.wrappedLabelCache = defaultLabelCache;
+    public UDIGLabelCache( LabelCache labelCache ) {
+        super(labelCache);
+        this.wrappedLabelCache = labelCache;
     }
 
     public Object getAdapter( Class adapter ) {
@@ -106,7 +111,7 @@ public class UDIGLabelCache extends SynchronizedLabelCache implements ILabelPain
      * 
      * @return
      */
-    protected LabelCacheDefault getWrapperLabelCache() {
+    protected LabelCache getWrapperLabelCache() {
         return wrappedLabelCache;
     }
 

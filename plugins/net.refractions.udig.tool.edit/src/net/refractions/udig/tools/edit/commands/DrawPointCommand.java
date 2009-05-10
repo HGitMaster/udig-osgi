@@ -47,7 +47,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class DrawPointCommand extends AbstractDrawCommand implements MapMouseMotionListener {
     
     private PrimitiveShape shape;
-    private int radius = 3;
+    private int radius = 2;
     private IProvider<Color> outline = new IProvider<Color>(){
 
         public Color get(Object... params) {

@@ -43,7 +43,7 @@ public class PostgisDatastoreStrategy extends AbstractDatastoreStrategy implemen
         featureStore=null;
         datastore=null;
         PostgisServiceExtension2 ext=new PostgisServiceExtension2();
-        Map<String, Serializable> params = ext.createParams(PostgisServiceExtension2.toURL(url));
+        Map<String, Serializable> params = ext.createParams(PostgisServiceExtension2.DIALECT.toURL(url));
         PostgisDataStoreFactory factory = new PostgisDataStoreFactory();
         datastore=factory.createDataStore(params);
         return datastore;

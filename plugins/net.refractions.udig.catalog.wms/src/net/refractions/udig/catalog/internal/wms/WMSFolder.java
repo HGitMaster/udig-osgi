@@ -15,8 +15,6 @@
 package net.refractions.udig.catalog.internal.wms;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +22,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveFolder;
 import net.refractions.udig.catalog.IResolveManager;
@@ -115,12 +114,8 @@ public class WMSFolder implements IResolveFolder {
     public URL getIdentifier() {
         return identifier;
     }
-    public URI getID() {
-        try {
-            return getIdentifier().toURI();
-        } catch (URISyntaxException e) {
-            return null;
-        }
+    public ID getID() {
+        return new ID( getIdentifier() );        
     }
     public Throwable getMessage() {
         return null;

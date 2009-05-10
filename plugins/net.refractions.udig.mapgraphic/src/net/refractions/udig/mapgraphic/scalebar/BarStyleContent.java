@@ -43,8 +43,7 @@ public class BarStyleContent extends StyleContent {
     private static final String COLOR_R = "R"; //$NON-NLS-1$
     private static final String COLOR_G = "G"; //$NON-NLS-1$
     private static final String COLOR_B = "B"; //$NON-NLS-1$
-    
-
+    private static final String UNITS = "UNITS"; //$NON-NLS-1$
     
     public BarStyleContent( ) {
         super(ID);
@@ -86,8 +85,9 @@ public class BarStyleContent extends StyleContent {
             Color c = new Color(r,g,b);
             int numintervales = memento.getInteger(NUM_INTERVAL);
             String bartype = memento.getString(BARSTYLE);
-            
-            BarStyle bs = new BarStyle(BarType.valueOf(bartype), c, numintervales);
+            //int units = memento.getInteger(UNITS);
+            UnitPolicy units = UnitPolicy.valueOf(memento.getString(UNITS));
+            BarStyle bs = new BarStyle(BarType.valueOf(bartype), c, numintervales, units);
             return bs;
         } catch (Throwable e) {
             MapGraphicPlugin.log("Error decoding the stored bar style", e); //$NON-NLS-1$
@@ -108,6 +108,7 @@ public class BarStyleContent extends StyleContent {
         memento.putInteger(COLOR_R, style.getColor().getRed());
         memento.putInteger(COLOR_G, style.getColor().getGreen());
         memento.putInteger(COLOR_B, style.getColor().getBlue());
-       }
+        memento.putString(UNITS, style.getUnits().name());
+    }
 
 }

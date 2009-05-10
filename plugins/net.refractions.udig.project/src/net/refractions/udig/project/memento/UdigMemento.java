@@ -8,7 +8,11 @@
  */
 package net.refractions.udig.project.memento;
 
-import static net.refractions.udig.project.memento.Tokens.*;
+import static net.refractions.udig.project.memento.Tokens.__null__;
+import static net.refractions.udig.project.memento.Tokens._children_;
+import static net.refractions.udig.project.memento.Tokens._data_;
+import static net.refractions.udig.project.memento.Tokens._memento_;
+import static net.refractions.udig.project.memento.Tokens._text_;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

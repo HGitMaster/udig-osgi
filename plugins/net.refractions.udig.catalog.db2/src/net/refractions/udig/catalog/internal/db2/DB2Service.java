@@ -55,9 +55,6 @@ public class DB2Service extends IService {
     /** underlying datastore * */
     private volatile DB2DataStore ds;
 
-    /** info object * */
-    private volatile DB2ServiceInfo info;
-
     /** members (tables) * */
     private volatile List<DB2GeoResource> members;
 
@@ -163,7 +160,7 @@ public class DB2Service extends IService {
     }
 
     @Override
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (this.info == null) {
             DB2DataStore ds = getDataStore( monitor);
             if (ds == null)

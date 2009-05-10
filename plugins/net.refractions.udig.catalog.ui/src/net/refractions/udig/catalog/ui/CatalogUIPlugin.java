@@ -311,39 +311,6 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Quick and dirty label generation based on ID.
-     * <p>
-     * This method does not block and can be safely used to by a LabelProvider. This method does not
-     * make use of any title information available via an info object (because that would require
-     * blocking and be unsafe).
-     * </p>
-     * 
-     * @see title
-     * @return Label for provided resource
-     */
-    public static String label( IResolve resource ) {
-        final URL identifier = resource.getIdentifier();
-        if (identifier == null)
-            return null;
-        try {
-            if( hasCachedTitle(resource) ){
-                return getDefault().getPreferenceStore().getString(LABELS_PREFERENCE_STORE+identifier.toString());
-            }
-            if (resource instanceof IService) {
-                return Identifier.labelServer(identifier);
-            } else if (resource instanceof IGeoResource) {
-                return Identifier.labelResource(identifier);
-            } else if (resource instanceof IResolveFolder) {
-                return ((IResolveFolder)resource).getTitle();
-            } else {
-                return Identifier.labelServer(identifier)
-                        + "/" + Identifier.labelResource(identifier); //$NON-NLS-1$
-            }
-        } catch (Throwable t) {
-            return identifier.toExternalForm(); // warning?!
-        }
-    }
-    /**
      * Quick and dirty image generated based on ID, this image is shared and should not be disposed.
      * <p>
      * This method does not block and can be safely used to by a LabelProvider. This method does not
@@ -468,89 +435,6 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Retrieve title, this is based on associated metadata (aka LayerPointInfo object).
-     * <p>
-     * This method is *not* suitable for use with a LabelProvider, only a LabelDecorator that works
-     * in its own thread.
-     * </p>
-     * 
-     * @return title, or null if not found (consider use of label( resource )
-     */
-    public static String title( IResolve resource, IProgressMonitor monitor ) throws IOException {
-        if (resource instanceof IResolveFolder) {
-        	return ((IResolveFolder)resource).getTitle();
-        }
-            if (resource instanceof IGeoResource) {
-            IGeoResourceInfo info;
-            try{
-                info = resource.resolve(IGeoResourceInfo.class, monitor);            
-            }catch(Throwable t){
-                log("Error obtaining info", t); //$NON-NLS-1$
-                return null;
-            }            
-            if (info == null)
-                return null;
-            String title=null;
-
-            try{
-                title = info.getTitle();
-            }catch(Throwable t){
-                log("Error obtaining title", t); //$NON-NLS-1$
-            }
-            if (title != null && title.trim().length() != 0)
-                return title;
-
-            try{
-                title = info.getName();
-            }catch(Throwable t){
-                log("Error obtaining name", t); //$NON-NLS-1$
-            }
-            if (title != null && title.trim().length() != 0)
-                return title;
-
-            return null; // could not locate title
-        }
-        if (resource instanceof IService) {
-            IServiceInfo info = resource.resolve(IServiceInfo.class, monitor);
-            if (info == null)
-                return null;
-            String title;
-
-            title = info.getTitle();
-            if (title != null && title.trim().length() != 0)
-                return title;
-
-            return null; // could not locate title
-        }
-        if (resource instanceof ICatalog) {
-            ICatalogInfo info = resource.resolve(ICatalogInfo.class, monitor);
-            if (info == null)
-                return null;
-            String title;
-
-            title = info.getTitle();
-            if (title != null && title.length() != 0)
-                return title;
-
-            return null; // could not locate title
-        }
-        return null; // not title available
-    }
-
-    /**
-     * Retrive title, this is based on associated metadata (aka LayerPointInfo object).
-     * <p>
-     * This method is *not* suitable for use with a LabelProvider, only a LabelDecorator that works
-     * in its own thread.
-     * </p>
-     * 
-     * @return title, or null if not found (consider use of label( resource )
-     */
-    public static String title( IResolve resource ) throws IOException {
-        return title(resource, null);
-    }
-
-    /**
      * Create icon for provided resource, this will block!
      * 
      * @param resource
@@ -612,33 +496,6 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
             return null;
 
         return info.getImageDescriptor();
-    }
-
-    /**
-     * Returns true if the title to the resolve was cached during a previous run.  In this case {@link #label(IResolve)} will have returned
-     * the cached title.
-     *
-     * @param resolve the resolve to check for a title.
-     * @return true if the title to the resolve was cached during a previous run.
-     */
-    public static boolean hasCachedTitle( IResolve resolve ) {
-        if( resolve.getIdentifier()==null )
-            return false;
-        IPreferenceStore p=getDefault().getPreferenceStore();
-        String title = p.getString(LABELS_PREFERENCE_STORE+resolve.getIdentifier().toString());
-        return title!=null && title.trim().length()>0;
-    }
-
-
-    public static void storeLabel( IResolve element, String text ) throws IOException {
-        if( element==null || element.getIdentifier()==null )
-            return;
-        String id = LABELS_PREFERENCE_STORE+element.getIdentifier().toString();
-        IPreferenceStore preferenceStore2 = getDefault().getPreferenceStore();
-        if( text==null )
-            preferenceStore2.setToDefault(id);
-        else
-            preferenceStore2.setValue(id, text);
     }
 }
 

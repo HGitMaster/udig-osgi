@@ -114,6 +114,14 @@ public interface IBlackboard {
      * @param value the value
      */
     public void putString( String key, String value );
+    
+    /**
+    * Removes the value identified by key from the blackboard.
+    * 
+    * @param key the key
+    * @return The object removed from the blackboard, or null if no such entry exists.
+    */
+   Object remove( String key );
 
     /**
      * Clear the contents of this blackboard.

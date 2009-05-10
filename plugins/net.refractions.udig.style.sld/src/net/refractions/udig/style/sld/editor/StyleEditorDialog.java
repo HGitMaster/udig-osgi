@@ -8,7 +8,6 @@ import net.refractions.udig.style.sld.SLDContent;
 import net.refractions.udig.style.sld.editor.internal.FilteredEditorDialog;
 import net.refractions.udig.style.sld.editor.internal.IEditorNode;
 import net.refractions.udig.style.sld.internal.Messages;
-import net.refractions.udig.ui.graphics.SLDs;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -27,7 +26,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyledLayerDescriptor;
-import org.geotools.styling.UserLayer;
 import org.geotools.util.NullProgressListener;
 import org.opengis.util.ProgressListener;
 
@@ -103,7 +101,7 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
 
     @Override
     protected void setShellStyle( int newShellStyle ) {
-        super.setShellStyle(SWT.SHELL_TRIM|SWT.ON_TOP|SWT.RESIZE);
+        super.setShellStyle(SWT.SHELL_TRIM|SWT.APPLICATION_MODAL|SWT.RESIZE);
     }
     
     public void setSelectedLayer( Layer layer ) {

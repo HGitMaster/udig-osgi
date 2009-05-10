@@ -17,6 +17,7 @@ package net.refractions.udig.render.internal.feature.basic;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import net.refractions.udig.project.render.ILabelPainter;
@@ -76,8 +77,12 @@ public class LabelCacheDecorator implements LabelCache{
         return wrapped.orderedLabels();
     }
 
+    public void put( Rectangle2D area) {
+        wrapped.put(area);
+    }
+    
     public void put( String layerId, TextSymbolizer symbolizer, SimpleFeature feature, LiteShape2 shape,
-            NumberRange scaleRange ) {
+            NumberRange<Double> scaleRange ) {
 
         wrapped.put(this.layerId, symbolizer, feature, shape, scaleRange);
     }

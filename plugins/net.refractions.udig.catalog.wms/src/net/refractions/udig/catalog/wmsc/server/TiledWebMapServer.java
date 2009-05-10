@@ -89,15 +89,29 @@ public class TiledWebMapServer {
         if (checkForUpdate) {
         	WMSCCapabilities newCaps;
             try {
-            	newCaps = readCapabilities();
-            	double newUpdateSeq = Double.parseDouble(newCaps.getUpdateSequence());
-            	if (capabilities == null || newUpdateSeq > Double.parseDouble(capabilities.getUpdateSequence()) ) {
-            		capabilities = newCaps;
-            	} 
-            	else {
-            		// xml would have been reset when reading caps, so set them back
-            		this.getCaps_xml = caps_xml;
-            	}
+            	newCaps = readCapabilities();                
+                if (capabilities == null){
+                    capabilities = newCaps;
+                }else if (newCaps == null){
+                    //cannot read a new capabilities; so lets use the cached one
+                    this.getCaps_xml = caps_xml;
+                }else{
+                    //compare update sequence values
+                    Double newUpdateSeq = newCaps.getUpdateSequence() == null ? null : Double.parseDouble(newCaps.getUpdateSequence());
+                    Double capUpdateSeq = capabilities.getUpdateSequence() == null ? null :Double.parseDouble(capabilities.getUpdateSequence());
+                    if (newUpdateSeq != null && capUpdateSeq != null ) {
+                        if (newUpdateSeq > capUpdateSeq) {
+                            capabilities = newCaps;
+                        } else {
+                            // xml would have been reset when reading caps, so set them back
+                            this.getCaps_xml = caps_xml;
+                        }
+                    }else{
+                        //at this point one of the update sequence numbers is null
+                        //so lets just take the newest capabilities
+                        capabilities = newCaps;
+                    }
+                }
             } catch (Exception ex) {
                 // TODO: Do something with this error
                 ex.printStackTrace();

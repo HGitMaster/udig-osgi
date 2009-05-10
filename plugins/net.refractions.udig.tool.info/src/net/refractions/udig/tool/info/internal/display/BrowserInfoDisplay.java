@@ -16,6 +16,8 @@
  */
 package net.refractions.udig.tool.info.internal.display;
 
+import java.io.IOException;
+
 import net.refractions.udig.tool.info.InfoDisplay;
 import net.refractions.udig.tool.info.InfoPlugin;
 import net.refractions.udig.tool.info.LayerPointInfo;
@@ -112,8 +114,11 @@ public class BrowserInfoDisplay extends InfoDisplay {
         }
         else {
             browser.setVisible( true );
-            // FIXME: Make the request in a separate thread?
-            browser.setUrl( info.getRequestURL().toString() );
+            try {
+                browser.setText((String) info.acquireValue());
+            } catch (IOException e) {
+                InfoPlugin.log("Could not acquire info value", e);
+            }
         }
     }
     

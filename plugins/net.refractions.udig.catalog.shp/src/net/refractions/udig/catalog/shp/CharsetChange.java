@@ -51,6 +51,7 @@ public class CharsetChange implements IOp {
 
     public void op( final Display display, Object target, IProgressMonitor monitor )
             throws Exception {
+        
         final IService[] services = toService((Object[]) target);
 
         display.asyncExec(new Runnable(){
@@ -90,8 +91,12 @@ public class CharsetChange implements IOp {
             }
 
             private Charset getCharset( IService serviceImpl ) throws IOException {
-                String name = (String) ShapefileDataStoreFactory.DBFCHARSET.lookUp(serviceImpl
+                Object lookUp = ShapefileDataStoreFactory.DBFCHARSET.lookUp(serviceImpl
                         .getConnectionParams());
+                String name = null;
+                if (lookUp instanceof String) {
+                    name = (String) lookUp;
+                }
                 if( name==null ){
                     return Charset.defaultCharset();
                 }

@@ -8,7 +8,6 @@ import net.refractions.udig.mapgraphic.MapGraphic;
 import net.refractions.udig.mapgraphic.MapGraphicContext;
 import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.IMap;
-import net.refractions.udig.tutorial.tool.coordinate.CoordinateTool;
 import net.refractions.udig.ui.graphics.ViewportGraphics;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -27,7 +26,7 @@ public void draw( MapGraphicContext context ) {
      IBlackboard blackboard = context.getLayer().getMap().getBlackboard();
      
      List<Coordinate> coordinates = 
-         (List<Coordinate>) blackboard.get(CoordinateTool.BLACKBOARD_KEY);
+         (List<Coordinate>) blackboard.get("locations");
      
      if (coordinates == null) {
          return; //no coordinates to draw

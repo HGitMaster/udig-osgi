@@ -26,14 +26,12 @@ import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.command.navigation.PanCommand;
 import net.refractions.udig.project.internal.render.ViewportModel;
 import net.refractions.udig.project.ui.internal.commands.draw.TranslateCommand;
-import net.refractions.udig.project.ui.internal.render.displayAdapter.impl.ViewportPaneSWT;
 import net.refractions.udig.project.ui.render.displayAdapter.MapMouseEvent;
 import net.refractions.udig.project.ui.render.displayAdapter.ViewportPane;
 import net.refractions.udig.project.ui.tool.AbstractModalTool;
 import net.refractions.udig.project.ui.tool.ModalTool;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.Canvas;
 
 
 /**

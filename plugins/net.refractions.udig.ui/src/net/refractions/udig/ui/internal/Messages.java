@@ -44,6 +44,7 @@ public class Messages extends NLS {
     public static String FeatureTableContentProvider_outOfMemory;
     public static String FeatureTableContentProvider_sortTable;
     public static String FeatureTableContentProvider_unexpectedErro;
+    public static String FeatureTableContentProvider_probablecharseterror;
     public static String FeatureTableContentProvider_updateTaskName;
     public static String FeatureTableContentProvider_updatingFeatures;
     public static String FeatureTableControl_1;
@@ -71,6 +72,13 @@ public class Messages extends NLS {
 	public static String OperationLabelProvider_unknown;
     public static String PlatformGIS_background;
 	public static String RunOperationDialog_run_operation;
+	public static String RunntimeFieldEditor_error;
+    public static String RunntimeFieldEditor_locale;
+    public static String RunntimeFieldEditor_maxheap;
+    public static String RunntimeFieldEditor_memory_positive;
+    public static String RunntimeFieldEditor_path_not_existing;
+    public static String RunntimeFieldEditor_restart;
+    public static String RunntimeFieldEditor_workspace_path;
     public static String SendLogDialog_contact;
     public static String SendLogDialog_contact_message;
     public static String SendLogDialog_description;
@@ -145,11 +153,16 @@ public class Messages extends NLS {
 	public static String UDIGWorkbenchAdvisor_file;
 	public static String UDIGApplication_error_jai_warning_text;
 	public static String UDIGApplication_error_jai_warning_title;
+    public static String UDIGApplication_helpstring;
     public static String UDIGWorkbenchWindowAdvisor_classNotFound;
     public static String UDIGWorkbenchWindowAdvisor_specifiedButNotFound;
 	public static String UiPreferences_advancedGraphics_label;
     public static String UiPreferences_charset;
 	public static String UiPreferences_description;
+    public static String UiPreferences_ImperialUnits;
+    public static String UiPreferences_MetricUnits;
+    public static String UiPreferences_AutoUnits;
+    public static String UiPreferences_UnitsLabel;
     public static String CRSChooser_tooltip;
     public static String CRSChooser_unnamed;
     public static String CRSChooser_keywordsLabel;

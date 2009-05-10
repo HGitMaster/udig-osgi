@@ -16,11 +16,19 @@
  */
 package net.refractions.udig.catalog.ui;
 
+import java.io.IOException;
+
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IProcess;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;
+import net.refractions.udig.catalog.IResolveFolder;
+import net.refractions.udig.catalog.ISearch;
+import net.refractions.udig.catalog.IService;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
@@ -71,7 +79,31 @@ public class ResolveLabelProviderSimple extends LabelProvider implements IResolv
      */
     public String getText( Object element ) {
         if (element instanceof IResolve) {
-            return CatalogUIPlugin.label((IResolve) element);
+        	try {
+        	if(element instanceof IGeoResource) {
+        		IGeoResource resource = (IGeoResource) element;
+        		String title = resource.getInfo(new NullProgressMonitor()).getTitle();
+        		IService service = resource.service(new NullProgressMonitor());
+        		service.getPersistentProperties().put(resource.getID() + "_title", title);
+        		return title;
+        	} else if(element instanceof IService) {
+        		IService service = (IService) element;
+        		String title = service.getInfo(new NullProgressMonitor()).getTitle();
+        		service.getPersistentProperties().put("title", title);
+        		return title;
+        	} else if(element instanceof IProcess) {
+        		IProcess proc = (IProcess) element;
+        		return proc.getInfo(new NullProgressMonitor()).getTitle();
+        	} else if(element instanceof ISearch) {
+        		ISearch search = (ISearch) element;
+        		return search.getInfo(new NullProgressMonitor()).getTitle();
+        	} else {
+        		IResolveFolder folder = (IResolveFolder) element;
+        		return folder.getID().toString();
+        	}
+        	} catch(IOException e) {
+        		CatalogUIPlugin.log("Error fetching the Title for the resource", e); //$NON-NLS-1$
+        	}
         }
         return super.getText(element);
     }

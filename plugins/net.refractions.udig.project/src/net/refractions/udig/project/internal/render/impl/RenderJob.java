@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultEngineeringCRS;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -222,25 +224,38 @@ public class RenderJob extends Job {
     private synchronized ReferencedEnvelope combineRequests() throws TransformException, FactoryException {
         CoordinateReferenceSystem targetCRS = getExecutor().getContext().getCRS();
     	ReferencedEnvelope bounds = new ReferencedEnvelope( targetCRS );
-    	
-        for( ReferencedEnvelope env : requests ) {
-        	if( env.isNull() || env.isEmpty() || env.getCoordinateReferenceSystem() == null){
-        		// these are "invalid" requests and we will skip them
-        		System.out.println("We are skipping an empty request");
-        		continue; // skip!
-        	}
-			if( !CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), targetCRS) ){
-                env = env.transform(targetCRS, true);
-            }
-            if( bounds.isNull() ){
-                bounds.init((Envelope)env);
-            }
-            else {
-            	bounds.include(env);            	
-                // bounds.expandToInclude(env);
-            }
-        }
-        requests.clear();        
+    	try{
+    		for( ReferencedEnvelope env : requests ) {
+    			CoordinateReferenceSystem envCRS = env.getCoordinateReferenceSystem();
+    			if( env.isNull() || env.isEmpty() || envCRS == null){
+    				// these are "invalid" requests and we will skip them
+    				System.out.println("We are skipping an empty request");
+    				continue; // skip!
+    			}
+    			
+    			//Vitalus: fix for deadlock in RenderJob because of MismatchedReferenceSystemException
+    			//during transforming from DefaultEngineeringCRS.GENERIC_2D
+    			//to EPSG projection.  (DefaultEngineeringCRS.GENERIC_2D to EPSG 2393 e.g.)
+    			if (envCRS != DefaultEngineeringCRS.GENERIC_2D
+    					&& envCRS != DefaultEngineeringCRS.GENERIC_3D
+    					&& envCRS != DefaultEngineeringCRS.CARTESIAN_2D
+    					&& envCRS != DefaultEngineeringCRS.CARTESIAN_3D) {
+
+    				if (!CRS.equalsIgnoreMetadata(envCRS, targetCRS)) {
+    					env = env.transform(targetCRS, true);
+    				}
+    			}
+    			if( bounds.isNull() ){
+    				bounds.init((Envelope)env);
+    			}
+    			else {
+    				bounds.include(env);            	
+    				// bounds.expandToInclude(env);
+    			}
+    		}
+    	}finally{
+    		requests.clear();
+    	}
         return bounds;
     }
 

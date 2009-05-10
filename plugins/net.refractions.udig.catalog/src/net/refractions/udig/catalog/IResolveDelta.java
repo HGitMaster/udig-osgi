@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * Constants used to communicate Catalog Deltas.
  * <p>

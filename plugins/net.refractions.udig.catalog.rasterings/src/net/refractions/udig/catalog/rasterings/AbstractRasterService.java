@@ -19,12 +19,10 @@ package net.refractions.udig.catalog.rasterings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
 
@@ -34,7 +32,6 @@ import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.data.DataUtilities;
-import org.opengis.coverage.grid.GridCoverageReader;
 
 /**
  * Provides a handle to a raster service allowing the service to be lazily loaded.
@@ -46,7 +43,7 @@ import org.opengis.coverage.grid.GridCoverageReader;
  * @since 0.6.0
  */
 public abstract class AbstractRasterService extends IService {
-    private URL id;
+    private ID id;
     
     /** <code>status</code> field describes the status of the service */
     protected Status status = Status.NOTCONNECTED;
@@ -67,8 +64,8 @@ public abstract class AbstractRasterService extends IService {
      * @param id
      * @param factory
      */
-    public AbstractRasterService( URL id, GridFormatFactorySpi factory ) {
-        this.id = id;
+    public AbstractRasterService( URL url, GridFormatFactorySpi factory ) {
+        this.id = new ID( url );
         this.factory = factory;
     }
 
@@ -89,7 +86,11 @@ public abstract class AbstractRasterService extends IService {
     }
 
     public URL getIdentifier() {
-        return this.id;
+        return id.toURL();
+    }
+    
+    public ID getID() {
+        return id;
     }
 
     /**
@@ -115,7 +116,7 @@ public abstract class AbstractRasterService extends IService {
             try {
                 AbstractGridFormat frmt = (AbstractGridFormat) getFormat();
                 URL id = getIdentifier();
-                if( "file".equals(id.getProtocol()) ){
+                if( "file".equals(id.getProtocol()) ){ //$NON-NLS-1$
 //	                if( id.toExternalForm().startsWith("C:/")){
 //	                    id = new URL("file:///"+id.toExternalForm());
 //	                }
@@ -175,5 +176,5 @@ public abstract class AbstractRasterService extends IService {
             throws IOException;
 
 
-    public abstract IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException;
+    protected abstract IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException;
 }

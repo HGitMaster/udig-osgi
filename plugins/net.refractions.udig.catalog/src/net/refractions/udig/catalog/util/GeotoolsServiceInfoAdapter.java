@@ -19,9 +19,9 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
-import org.geotools.data.ServiceInfo;
-
 import net.refractions.udig.catalog.IServiceInfo;
+
+import org.geotools.data.ServiceInfo;
 
 /**
  * Adapts the geotools {@link ServiceInfo} info to a IServiceInfo

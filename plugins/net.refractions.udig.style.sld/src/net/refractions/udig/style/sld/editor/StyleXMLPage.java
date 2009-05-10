@@ -6,13 +6,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import javax.xml.transform.TransformerException;
-
 import net.refractions.udig.catalog.IGeoResource;
-import net.refractions.udig.project.internal.SetDefaultStyleProcessor;
 import net.refractions.udig.style.internal.StyleLayer;
 import net.refractions.udig.style.sld.SLDContent;
-import net.refractions.udig.style.sld.SLDPlugin;
 import net.refractions.udig.style.sld.internal.Messages;
 import net.refractions.udig.ui.graphics.SLDs;
 
@@ -36,16 +32,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.geotools.data.FeatureSource;
-import org.geotools.renderer.style.SLDStyleFactory;
 import org.geotools.styling.SLDParser;
-import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.opengis.coverage.grid.GridCoverage;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * This is the "advanced" page that shows the raw SLD file.
@@ -54,7 +46,7 @@ public class StyleXMLPage extends StyleEditorPage {
 
     SashForm sash;
     Text sldTextBox;
-    Text errorsTextBox;
+    Text errTextBox;
     SLDValidator validator;
     Label validateStatus;
     Button validateButton;
@@ -98,9 +90,9 @@ public class StyleXMLPage extends StyleEditorPage {
             }
         });
         
-        errorsTextBox = new Text(sash, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        errorsTextBox.setVisible(false);
-        errorsTextBox.setEditable(false);
+        errTextBox = new Text(sash, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        errTextBox.setVisible(false);
+        errTextBox.setEditable(false);
 
         validateStatus = new Label(comp, SWT.LEFT);
         validateStatus.setText(Messages.StyleEditor_xml_validation_needed); 
@@ -159,6 +151,7 @@ public class StyleXMLPage extends StyleEditorPage {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public void validateSLD() {
         Cursor waitCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
         setDisplayCursor(waitCursor);
@@ -179,19 +172,19 @@ public class StyleXMLPage extends StyleEditorPage {
         Object result = validator.validateSLD(is, "http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"); //$NON-NLS-1$
         
         if (result instanceof List) {
-            List errors = (List) result; 
-            if (errors.size() == 0) {
+            List errorList = (List) result; 
+            if (errorList.size() == 0) {
             	validSLD = true;
-                this.errorsTextBox.setText("");  //$NON-NLS-1$
+                this.errTextBox.setText("");  //$NON-NLS-1$
                 this.validateStatus.setText(Messages.StyleEditor_xml_validation_success); 
-                this.errorsTextBox.setVisible(false);
+                this.errTextBox.setVisible(false);
             } else {
             	validSLD = false;
-                this.errorsTextBox.setText(SLDValidator.getErrorMessage(is, errors));
+                this.errTextBox.setText(SLDValidator.getErrorMessage(is, errorList));
                 this.validateStatus.setText(Messages.StyleEditor_xml_validation_failure); 
-                this.errorsTextBox.setVisible(true);
+                this.errTextBox.setVisible(true);
             }
-            this.errorsTextBox.getParent().layout();
+            this.errTextBox.getParent().layout();
             getContainer().updateMessage();
         }
         try {

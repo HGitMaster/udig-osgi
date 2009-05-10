@@ -18,6 +18,9 @@ package net.refractions.udig.catalog.google;
 
 import java.net.URL;
 
+/**
+ * A description of an open web service layer.
+ */
 public class OGCLayer {
     protected java.lang.String name;
     protected java.lang.String title;

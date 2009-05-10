@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
@@ -57,7 +58,7 @@ public class BarStyleConfigurator extends IStyleConfigurator
     private Spinner divSpinner = null;
     private ColorEditor chooser = null;
     private TableViewer tViewer;
-
+    private Combo cmbUnits;
     @Override
     public boolean canStyle( Layer layer ) {
         return layer.hasResource(MapGraphic.class)
@@ -128,6 +129,16 @@ public class BarStyleConfigurator extends IStyleConfigurator
         label.setLayoutData(new GridData());
         chooser = new ColorEditor(parent);
         chooser.addSelectionListener(this);
+        
+        label = new Label(parent, SWT.RIGHT);
+        label.setText(Messages.BarStyleConfigurator_UnitsLabel);
+        label.setLayoutData(new GridData());
+        
+        cmbUnits = new Combo(parent, SWT.DROP_DOWN);
+        cmbUnits.setItems(new String[]{UnitPolicy.AUTO.getLabel(), UnitPolicy.METRIC.getLabel(), UnitPolicy.IMPERIAL.getLabel()});
+        cmbUnits.select(0);
+        cmbUnits.setLayoutData(new GridData());
+        cmbUnits.addSelectionListener(this);
     }
 
     @Override
@@ -148,6 +159,14 @@ public class BarStyleConfigurator extends IStyleConfigurator
         if (chooser != null) {
             Color c = barStyle.getColor();
             chooser.setColorValue(new RGB(c.getRed(), c.getGreen(), c.getBlue()));
+        }
+        
+        if (barStyle.getUnits() == UnitPolicy.METRIC){
+            cmbUnits.select(1);
+        }else if (barStyle.getUnits() == UnitPolicy.IMPERIAL){
+            cmbUnits.select(2);
+        }else{
+            cmbUnits.select(0);
         }
     }
 
@@ -174,5 +193,12 @@ public class BarStyleConfigurator extends IStyleConfigurator
             barStyle.setType((BarStyle.BarType) tViewer.getTable().getSelection()[0].getData());
         }
 
+        if (cmbUnits.getSelectionIndex() == 1) {
+            barStyle.setUnits(UnitPolicy.METRIC);
+        } else if (cmbUnits.getSelectionIndex() == 2) {
+            barStyle.setUnits(UnitPolicy.IMPERIAL);
+        } else {
+            barStyle.setUnits(UnitPolicy.AUTO);
+        }
     }
 }

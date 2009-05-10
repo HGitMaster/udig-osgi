@@ -17,13 +17,13 @@ package net.refractions.udig.legend.internal;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveAdapterFactory;
 import net.refractions.udig.legend.ui.LegendGraphic;
 import net.refractions.udig.mapgraphic.internal.MapGraphicResource;
 import net.refractions.udig.mapgraphic.style.LocationStyleContent;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Resolved LegendGraphic Resources

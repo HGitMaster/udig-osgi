@@ -5,7 +5,6 @@ Bundle-SymbolicName: net.refractions.udig.render.feature.basic.test
 Bundle-Version: 1.0.0
 Bundle-Activator: net.refractions.udig.render.feature.basic.test.Activator
 Bundle-Vendor: Refractions Research Inc.
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  net.refractions.udig.render.feature.basic,
@@ -13,4 +12,5 @@ Require-Bundle: org.eclipse.core.runtime,
  net.refractions.udig.project,
  net.refractions.udig.project.tests,
  net.refractions.udig.ui.tests
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

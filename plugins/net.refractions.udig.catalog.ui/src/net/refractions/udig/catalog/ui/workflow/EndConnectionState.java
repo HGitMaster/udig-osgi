@@ -51,7 +51,7 @@ public class EndConnectionState extends State {
     Collection<IService> services=new HashSet<IService>();
 
     /***********************************************************************************************
-     * 52¡North added next State
+     * 52ï¿½North added next State
      **********************************************************************************************/
     EndConnectionState nextState;
 
@@ -179,7 +179,9 @@ public class EndConnectionState extends State {
                 monitor.beginTask("Disposing dereferenced services", toDispose.size());
                 // dispose old services
                 for( IService service : toDispose ) {
-                    service.dispose(SubMonitor.convert(monitor));
+                    if( service.parent(monitor)==null){
+                        service.dispose(SubMonitor.convert(monitor));
+                    }
                     monitor.worked(1);
                 }
             }
@@ -249,7 +251,7 @@ public class EndConnectionState extends State {
     }
 
     /**
-     * 52¡North added return true, if there are no errors and there is a successor state(which can
+     * 52ï¿½North added return true, if there are no errors and there is a successor state(which can
      * be the same state)
      */
     @Override
@@ -258,7 +260,7 @@ public class EndConnectionState extends State {
     }
 
     /**
-     * 52¡North changed Method returns null if there is not a succesor state. Method returns a
+     * 52ï¿½North changed Method returns null if there is not a succesor state. Method returns a
      * ConnectionErrorState, if any errors have occured. Method returns a State, if there are no
      * errors and there is a successor state
      */
@@ -310,7 +312,7 @@ public class EndConnectionState extends State {
     }
 
     /**
-     * 52¡North added
+     * 52ï¿½North added
      * 
      * @param state
      */

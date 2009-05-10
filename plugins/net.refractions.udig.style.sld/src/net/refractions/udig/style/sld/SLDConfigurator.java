@@ -59,47 +59,10 @@ public class SLDConfigurator extends IStyleConfigurator {
     /** This is the data structure the extention point is processed into */
     SortedMap<Class, List<SLDEditorPart>> classToEditors;
 
-    // /** The sld editor parts **/
-    // private Map<Class, SLDEditorPart> editors;
-    //	
-    // /** The cool bars **/
-    // private Map<Class, CoolBar> coolBars;
-    //	
-    // /** page book pages **/
-    // private Map<Class, Composite> pages;
-    //	
-    // private Map<Class, TabFolder> tabs;
-    //	
-    // /** the cool bar / tool bar **/
-    // //private CoolBar coolBar;
-    //	
-    // /** the dynamic part of the ui **/
-    // private PageBook pageBook;
-    //
-    // /** blank page **/
-    // private Composite blank;
-    //	
-    // /** current page **/
-    // private Composite currentPage;
-    //	
-    // /** current tab folder **/
-    // private TabFolder currentTabFolder;
-    //	
-    // /** toolbar listener **/
-    // private SelectionListener toolListener;
-    //	
-    // /** checkbox listener **/
-    // private SelectionListener checkListener;
-    //	
-    // private Class geometryClass;
-
     /**
      * Creates the configurator.
      */
     public SLDConfigurator() {
-        // editors = new HashMap<Class, SLDEditorPart>();
-        // pages = new HashMap<Class, Composite>();
-        // tabs = new HashMap<Class, TabFolder>();
     }
 
     /**
@@ -248,63 +211,6 @@ public class SLDConfigurator extends IStyleConfigurator {
         
     }
 
-    
-    // public void focus(Layer layer, StyleBlackboard styleBlackboard) {
-    // //pull the sld style off the blackboard, and initialize the cm
-    // Style style = (Style) styleBlackboard.get(SLDContent.ID);
-    //		
-    // //if no style information, create default
-    // if (style == null) {
-    // style = SLDContent.createDefaultStyle();
-    // getStyleBlackboard().put(SLDContent.ID, style);
-    // }
-    // sldContentManager.init(SLDContent.getStyleBuilder(), style);
-    //		
-    // //pull the feature type name out of the layer
-    // if (layer.getResource(FeatureSource.class, null) != null) {
-    // SimpleFeatureType featureType = layer.getResource(FeatureSource.class, null).getSchema();
-    // String name = featureType.getTypeName();
-    //			
-    // sldContentManager.getDefaultFeatureTypeStyle().setFeatureTypeName(name);
-    // }
-    // }
-
-    //	
-    // /**
-    // * Updates the SLD style on the blackboard. Subclasses overriding must call
-    // * this method in the last statement.
-    // */
-    // public void apply() {
-    //		
-    // //update the blackboard
-    // getStyleBlackboard().put(SLDContent.ID, sldContentManager.getStyle());
-    // }
-    //	
-    // /**
-    // * @return Returns the contentManager.
-    // */
-    // public SLDContentManager getContentManager() {
-    // return sldContentManager;
-    // }
-    //	
-
-    //	
-    //	
-    // /* (non-Javadoc)
-    // * @see
-    // net.refractions.udig.style.AbstractStyleConfigurator#createControl(org.eclipse.swt.widgets.Composite)
-    // */
-    // protected Control create(Composite parent) {
-    // createActions();
-    // pageBook = new PageBook(parent, SWT.NONE);
-    // blank = new Composite(pageBook, SWT.NONE);
-    //		
-    // currentPage = blank;
-    // pageBook.showPage(blank);
-    //		
-    // return pageBook;
-    // }
-    //
     protected void createToolbarItems() {
         toolbarItems = new ArrayList<SLDEditorMenuAction>(); // FIXME!
         for( Class contentClass : classToEditors.keySet() ) {

@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.refractions.udig.location.AddressSeeker;
 import net.refractions.udig.location.Location;
 import net.refractions.udig.location.LocationUIPlugin;
 import net.refractions.udig.location.USGLocation;
@@ -12,7 +11,6 @@ import net.refractions.udig.location.internal.Images;
 import net.refractions.udig.location.internal.Messages;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.command.NavCommand;
-import net.refractions.udig.project.command.NavigationCommandFactory;
 import net.refractions.udig.project.internal.command.navigation.SetViewportBBoxCommand;
 import net.refractions.udig.project.ui.ApplicationGIS;
 import net.refractions.udig.ui.SearchPart;

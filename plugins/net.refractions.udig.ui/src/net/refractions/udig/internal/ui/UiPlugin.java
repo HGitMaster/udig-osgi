@@ -113,7 +113,9 @@ public class UiPlugin extends AbstractUIPlugin  {
         }
     }
 
-    // this is completely temporary.  It allows SSL and HTTPS connections to just accept all certificates.
+    /**
+     * this is completely temporary.  It allows SSL and HTTPS connections to just accept all certificates.
+     */
     private static void disableCerts() {
 //      Create a trust manager that does not validate certificate chains
         TrustManager[] trustAllCerts = new TrustManager[]{
@@ -145,8 +147,12 @@ public class UiPlugin extends AbstractUIPlugin  {
         } catch (MalformedURLException e) {
         }
     }
-	private void loadVersion() throws IOException {
-        
+    /**
+     * This method hunts down the version recorded in the current product.
+     * 
+     * @throws IOException
+     */
+	private void loadVersion() {        
 		IProduct product = Platform.getProduct();
 		if( product == null || !(UDIG_PRODUCT_ID.equals(product.getId()))){
 		    // chances are someone is using the SDK with their own
@@ -159,9 +165,15 @@ public class UiPlugin extends AbstractUIPlugin  {
         Bundle pluginBundle = product.getDefiningBundle();
         
 		URL mappingsURL = FileLocator.find(pluginBundle, new Path(MAPPINGS_FILENAME), null);
-		if (mappingsURL != null)
-			mappingsURL = FileLocator.resolve(mappingsURL);
-		
+		if (mappingsURL != null){
+			try {
+                mappingsURL = FileLocator.resolve(mappingsURL);
+            } catch (IOException e) {
+                mappingsURL = null;
+                String message = "Unable to find "+mappingsURL +" Defaulting to a blank string."; //$NON-NLS-1$
+                this.getLog().log(new Status(IStatus.ERROR, ID, 0, message, e));
+            }
+		}		
 		PropertyResourceBundle bundle = null;
 		if (mappingsURL != null) {
 			InputStream is = null;
@@ -185,7 +197,12 @@ public class UiPlugin extends AbstractUIPlugin  {
 			this.version = bundle.getString(UDIG_VERSION_KEY);
 		}
 	}
-
+	/**
+	 * This is the version of uDig being deployed; obtained from the current product
+	 * if available.
+	 *
+	 * @return
+	 */
     public String getVersion() {
 		return version;
 	}

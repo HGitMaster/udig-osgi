@@ -57,8 +57,6 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 0.6.0
  */
 public class WorldImageGeoResourceImpl extends AbstractRasterGeoResource {
-	private IGeoResourceInfo info;
-
 	private URL prjURL;
 
 	String name;
@@ -80,7 +78,7 @@ public class WorldImageGeoResourceImpl extends AbstractRasterGeoResource {
 		this.prjURL = prjURL;
 	}
 
-	public IGeoResourceInfo getInfo(IProgressMonitor monitor)
+	protected IGeoResourceInfo createInfo(IProgressMonitor monitor)
 			throws IOException {
 		this.lock.lock();
 		try {

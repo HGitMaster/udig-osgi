@@ -8,6 +8,5 @@ Bundle-Vendor: Student
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.project.ui,
- net.refractions.udig.mapgraphic,
- net.refractions.udig.tutorials.tool.coordinate
-Eclipse-LazyStart: true
+ net.refractions.udig.mapgraphic
+Bundle-ActivationPolicy: lazy

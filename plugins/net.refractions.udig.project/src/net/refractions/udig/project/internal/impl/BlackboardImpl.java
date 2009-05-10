@@ -2,17 +2,10 @@
  * <copyright>
  * </copyright>
  *
- * $Id: BlackboardImpl.java 30898 2008-10-16 16:01:34Z egouge $
+ * $Id: BlackboardImpl.java 31043 2009-01-08 21:53:16Z jgarnett $
  */
 package net.refractions.udig.project.internal.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -36,7 +29,6 @@ import net.refractions.udig.project.internal.Blackboard;
 import net.refractions.udig.project.internal.BlackboardEntry;
 import net.refractions.udig.project.internal.ProjectPackage;
 import net.refractions.udig.project.internal.ProjectPlugin;
-import net.refractions.udig.project.internal.StyleEntry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -51,6 +43,8 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.ui.XMLMemento;
+
+import com.sun.org.apache.bcel.internal.generic.BALOAD;
 
 /**
  * 
@@ -290,6 +284,29 @@ public class BlackboardImpl extends EObjectImpl implements Blackboard {
         }
     }
 
+    public Object remove( String key ) {
+        if( key == null )
+            return null;
+        
+        // look up the entry
+        BlackboardEntry entry = blackboard.remove(key);
+        if (entry == null) {
+            return null;
+        }        
+        Object oldValue=entry.getObject();
+        entry.setMemento(null);
+        entry.setObject(null);
+        
+        BlackboardEvent event=new BlackboardEvent(this, key, oldValue, null);
+        for( IBlackboardListener l : listeners ) {
+            try{
+                l.blackBoardChanged(event);
+            } catch (Exception e) {
+                ProjectPlugin.log("", e); //$NON-NLS-1$
+            }
+        }
+        return oldValue;
+    }
     /*
      * (non-Javadoc)
      * 

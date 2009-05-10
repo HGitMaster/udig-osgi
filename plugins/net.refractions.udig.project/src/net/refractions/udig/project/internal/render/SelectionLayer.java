@@ -8,22 +8,18 @@
  */
 package net.refractions.udig.project.internal.render;
 
-import java.io.IOException;
-
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.LayerDecorator;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.ProjectFactory;
 import net.refractions.udig.project.internal.ProjectPackage;
-import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.StyleBlackboard;
 import net.refractions.udig.project.internal.impl.LayerImpl;
 import net.refractions.udig.ui.graphics.SLDs;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.geotools.data.FeatureSource;
 import org.geotools.styling.Style;
 import org.opengis.filter.Filter;
 

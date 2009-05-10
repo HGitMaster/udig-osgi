@@ -68,10 +68,10 @@ abstract class GoogleResource extends IGeoResource {
     }
     
     protected Throwable msg = null;
-    protected IGeoResourceInfo info = null;
     private URL id = null;
     
     public GoogleResource(OGCLayer layer) {
+        service = null; // we do not have a service (you will need to connect first!)
         id = layer.getId();
         info = new IGeoResourceInfo(layer.getTitle(), layer.getName(), layer.getDescription(), getSchema(), 
                 new Envelope(), null, new String[] {layer.getServertype(), layer.getName(), layer.getTitle()}, getIcon() );
@@ -97,27 +97,18 @@ abstract class GoogleResource extends IGeoResource {
             return real.resolve(adaptee,monitor);
         
         if(adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast( this.getInfo(monitor));
+            return adaptee.cast( this.createInfo(monitor));
         
         loadReal(monitor);
         if(real != null)
             return real.resolve(adaptee,monitor);
         return super.resolve(adaptee, monitor);
     }
-    public IService service(IProgressMonitor monitor) throws IOException{
-        if(service == null)
-            loadReal(monitor);
-        //System.out.println("SERVICE == NULL? "+(service==null));
-        if(service!=null)
-            return service;
-        return null;
-    }
-    public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException{
+    protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
         if(real!=null)
             return real.getInfo(monitor);
         return info;
     }
-    protected IService service = null;
     protected IGeoResource real = null;
     protected abstract void loadReal(IProgressMonitor monitor) throws IOException;
     
@@ -198,7 +189,7 @@ static class GoogleWMSResource extends GoogleResource{
      * @see net.refractions.udig.catalog.google.GoogleResource#loadReal(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void loadReal( IProgressMonitor monitor ) throws IOException {
-        getInfo(monitor); // load me
+        createInfo(monitor); // load me
         if(info == null || url == null|| info.getName() == null)
             return;
         
@@ -272,7 +263,7 @@ static class GoogleWFSResource extends GoogleResource{
      * @see net.refractions.udig.catalog.google.GoogleResource#loadReal(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void loadReal( IProgressMonitor monitor ) throws IOException {
-        getInfo(monitor); // load me
+        createInfo(monitor); // load me
         if(info == null || url == null|| info.getName() == null)
             return;
         

@@ -12,8 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.refractions.udig.catalog.internal.ui.ImageConstants;
-import net.refractions.udig.catalog.internal.ui.Images;
 import net.refractions.udig.catalog.ui.ResolveLabelProviderSimple;
 import net.refractions.udig.catalog.ui.ResolveTitlesDecorator;
 import net.refractions.udig.catalog.ui.internal.Messages;
@@ -21,7 +19,6 @@ import net.refractions.udig.catalog.ui.workflow.WorkflowWizard;
 import net.refractions.udig.catalog.ui.workflow.WorkflowWizardPage;
 import net.refractions.udig.ui.CRSDialogCellEditor;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;

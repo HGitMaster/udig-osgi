@@ -122,6 +122,11 @@ public class Messages extends NLS {
 	public static String SimpleStyleConfigurator_line_label        ;
 	public static String SimpleStyleConfigurator_label_label       ;
 	public static String SimpleStyleConfigurator_fill_label        ;
+    public static String SimpleStyleConfigurator_GeometryLabel;
+    public static String SimpleStyleConfigurator_LineMode;
+    public static String SimpleStyleConfigurator_ModeLabel;
+    public static String SimpleStyleConfigurator_PointMode;
+    public static String SimpleStyleConfigurator_PolygonMode;
 	public static String ScaleViewer_minscaleden_tooltip ;
 	public static String ScaleViewer_maxscaleden_tooltip ;
 	public static String SLDTextEditorPart_label_label ;

@@ -19,7 +19,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import net.refractions.udig.core.TransparencyRemovingVisitor;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.ProjectPlugin;

@@ -16,7 +16,6 @@ package net.refractions.udig.catalog.ui.workflow;
 
 import java.io.IOException;
 
-
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**

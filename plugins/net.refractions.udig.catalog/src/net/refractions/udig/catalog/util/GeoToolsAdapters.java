@@ -1,7 +1,6 @@
 package net.refractions.udig.catalog.util;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -173,7 +172,6 @@ public class GeoToolsAdapters {
         };
     }
 	
-    @SuppressWarnings("deprecation")
     static public IProgressMonitor progress(final ProgressListener monitor) {
         if( monitor == null ) return null;
         return new IProgressMonitor(){

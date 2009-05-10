@@ -81,6 +81,7 @@ public class Messages extends NLS {
 	public static String DropFilterAction_taskname;
 	public static String PaletteDefaultChooserPanel_check;
 	public static String PaletteDefaultChooserPanel_colours;
+    public static String PaletteDefaultChooserPanel_MapBackgroundColor;
 	public static String PaletteDefaultChooserPanel_palette;
 	public static String PaletteDefaultChooserPanel_title;
 	public static String MapFactory_error;

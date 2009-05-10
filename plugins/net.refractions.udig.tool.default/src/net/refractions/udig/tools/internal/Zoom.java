@@ -21,7 +21,6 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 
 import net.refractions.udig.project.command.NavCommand;
-import net.refractions.udig.project.command.factory.NavigationCommandFactory;
 import net.refractions.udig.project.internal.command.navigation.NavComposite;
 import net.refractions.udig.project.internal.command.navigation.SetViewportCenterCommand;
 import net.refractions.udig.project.internal.command.navigation.ZoomCommand;

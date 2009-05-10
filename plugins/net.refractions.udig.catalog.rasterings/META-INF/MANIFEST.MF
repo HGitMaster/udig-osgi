@@ -4,7 +4,6 @@ Bundle-Name: uDig Rasterings Plug-in
 Bundle-SymbolicName: net.refractions.udig.catalog.rasterings;singleton:=true
 Bundle-Version: 1.2.0
 Bundle-Activator: net.refractions.udig.catalog.rasterings.RasteringsPlugin
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
@@ -17,8 +16,9 @@ Require-Bundle: org.eclipse.ui,
  org.geotools.imagemosaic;bundle-version="2.6.0",
  org.geotools.main;bundle-version="2.6.0",
  org.opengis.geoapi;bundle-version="2.2.0"
-Eclipse-LazyStart: true
 Export-Package: net.refractions.udig.catalog.rasterings
 Import-Package: com.vividsolutions.jts.geom,
  javax.measure.unit
 Bundle-Vendor: udig.refractions.net
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

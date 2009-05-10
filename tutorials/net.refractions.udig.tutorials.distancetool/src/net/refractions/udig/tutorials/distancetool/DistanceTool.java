@@ -43,6 +43,11 @@ public class DistanceTool extends SimpleTool {
 		        }
 		});
 	  }
+	
+	/**
+	 * 
+	 * @param distance is in meters
+	 */
 	private void displayOnStatusBar(double distance) {
 	    final IStatusLineManager statusBar =
 	        getContext().getActionBars().getStatusLineManager ();

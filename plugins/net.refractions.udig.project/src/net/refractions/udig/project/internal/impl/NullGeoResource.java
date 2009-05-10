@@ -1,12 +1,10 @@
 package net.refractions.udig.project.internal.impl;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
-import net.refractions.udig.catalog.IService;
 import net.refractions.udig.project.internal.Messages;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,9 +23,6 @@ public class NullGeoResource extends IGeoResource {
     @Override
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) {
         return null;
-    }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return null; // where is NullService ?
     }
     public <T> boolean canResolve( Class<T> adaptee ) {
         return false;
@@ -52,7 +47,7 @@ public class NullGeoResource extends IGeoResource {
     }
 
     @Override
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) {
+	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) {
         // TODO Auto-generated method stub
         return new IGeoResourceInfo(){
             @Override

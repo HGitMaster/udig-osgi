@@ -65,7 +65,6 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.SchemaException;
-import org.geotools.feature.collection.DecoratingFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.CompareFilter;
 import org.geotools.filter.Expression;
@@ -76,11 +75,12 @@ import org.geotools.filter.IllegalFilterException;
 import org.geotools.filter.function.FilterFunction_geometryType;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.transform.IdentityTransform;
+import org.geotools.referencing.wkt.UnformattableObjectException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.geotools.referencing.wkt.UnformattableObjectException;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -259,7 +259,7 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
     			source = data.getResource().resolve(FeatureSource.class, new NullProgressMonitor());
     			typeName = source.getSchema().getTypeName();
             }
-			URLUtils.cleanFilename(typeName);
+			typeName = URLUtils.cleanFilename(typeName);
 			
             final File[] destination = new File[]{addSuffix(new File(exportDir, typeName))};
             if (destination[0].exists()) {
@@ -510,13 +510,14 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
             AttributeDescriptor attribute = schema.getDescriptor(i);
             if (!(attribute instanceof GeometryDescriptor)) {
             	builder.add( attribute );
+            }else{
+                GeometryDescriptor geom = schema.getGeometryDescriptor();
+                builder.crs( crs ).defaultValue(null).
+                restrictions( geom.getType().getRestrictions() ).
+                nillable( geom.isNillable() ).
+                add( geom.getLocalName(), geomBinding );
             }
         }
-        GeometryDescriptor geom = schema.getGeometryDescriptor();
-        builder.crs( crs ).defaultValue(null).
-                                     restrictions( geom.getType().getRestrictions() ).
-                                     nillable( geom.isNillable() ).
-                                     add( geom.getLocalName(), geomBinding );
         
         return builder.buildFeatureType();
     }
@@ -580,7 +581,9 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
         ShapefileDataStore ds = new IndexedShapefileDataStore(shpFileURL);
         ds.createSchema(type);
         
-        return ((FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource()).addFeatures(fc).size()>0;
+        FeatureStore<SimpleFeatureType, SimpleFeature> featureSource = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds.getFeatureSource();
+        List<FeatureId> features = featureSource.addFeatures(fc);
+        return features.size()>0;
     }
 
     private boolean canWrite( File file ) throws IOException {

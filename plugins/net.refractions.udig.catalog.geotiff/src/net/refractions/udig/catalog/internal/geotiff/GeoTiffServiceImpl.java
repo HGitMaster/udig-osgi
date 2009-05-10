@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.gce.geotiff.GeoTiffFormat;
-import org.opengis.coverage.grid.GridCoverageReader;
 
 /**
  * Provides a handle to a geotiff service allowing the service to be lazily 
@@ -43,8 +42,6 @@ import org.opengis.coverage.grid.GridCoverageReader;
  * @since 0.6.0
  */
 public class GeoTiffServiceImpl extends AbstractRasterService {
-    private GeoTiffServiceInfo info;
-
     /**
      * Construct <code>GeoTiffServiceImpl</code>.
      *
@@ -58,7 +55,7 @@ public class GeoTiffServiceImpl extends AbstractRasterService {
     @Override
     public synchronized  List<AbstractRasterGeoResource> resources( IProgressMonitor monitor ) 
             throws IOException {
-        if(monitor != null) {
+         if(monitor != null) {
             String msg = MessageFormat.format(
                     Messages.GeoTiffServiceImpl_connecting_to, 
                     new Object[] {});
@@ -98,7 +95,7 @@ public class GeoTiffServiceImpl extends AbstractRasterService {
         return this.reader;
     }
     
-    public synchronized IServiceInfo getInfo(IProgressMonitor monitor) {
+    protected synchronized IServiceInfo createInfo(IProgressMonitor monitor) {
          if(monitor != null)
             monitor.beginTask(Messages.GeoTiffServiceImpl_loading_task_title, 2); 
         if(this.info == null) {

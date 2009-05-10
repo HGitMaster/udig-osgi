@@ -17,19 +17,15 @@
 package net.refractions.udig.render.internal.wms.basic;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import net.refractions.udig.project.ProjectBlackboardConstants;
-import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.AbstractRenderMetrics;
+import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.IRenderMetricsFactory;
-import net.refractions.udig.style.sld.SLDContent;
-import net.refractions.udig.style.wms.WMSStyleContent;
 
 import org.geotools.data.ows.Layer;
 import org.geotools.data.wms.WebMapServer;

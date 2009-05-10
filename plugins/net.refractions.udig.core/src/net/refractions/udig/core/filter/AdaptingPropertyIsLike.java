@@ -34,5 +34,9 @@ class AdaptingPropertyIsLike extends AdaptingFilter implements PropertyIsLike {
     public String getWildCard() {
         return ((PropertyIsLike)wrapped).getWildCard();
     }
+
+    public boolean isMatchingCase() {
+        return ((PropertyIsLike)wrapped).isMatchingCase();
+    }
     
 }

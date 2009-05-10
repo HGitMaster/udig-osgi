@@ -19,8 +19,6 @@ package net.refractions.udig.catalog.google;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -30,9 +28,8 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import net.refractions.udig.catalog.CatalogPlugin;
-import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.ICatalogInfo;
-import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
 import net.refractions.udig.catalog.IResolveChangeListener;
@@ -133,7 +130,7 @@ public class GoogleCatalog extends ISearch {
     /*
      * @see net.refractions.udig.catalog.ICatalog#find(java.net.URL)
      */
-    public List<IResolve> find( URI id, IProgressMonitor monitor ) {
+    public List<IResolve> find( ID id, IProgressMonitor monitor ) {
         return new LinkedList<IResolve>();
     }
 
@@ -255,13 +252,10 @@ public class GoogleCatalog extends ISearch {
     public URL getIdentifier() {
         return url;
     }
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+    	return new ID( getIdentifier() );		
     }
+    
     void fire( IResolveChangeEvent event ) {
         Object[] listeners = catalogListeners.getListeners();        
         if( listeners.length == 0 ) return;
@@ -294,7 +288,7 @@ public class GoogleCatalog extends ISearch {
         catalogListeners.remove(listener);
     }
 	@Override
-	public <T extends IResolve> T getById(Class<T> type, URI id, IProgressMonitor monitor) {
+	public <T extends IResolve> T getById(Class<T> type, ID id, IProgressMonitor monitor) {
 		return null;
 	}
         
@@ -303,4 +297,8 @@ public class GoogleCatalog extends ISearch {
         // do nothing
         catalogListeners.clear();
     }
+
+	public String getTitle() {
+		return info != null ? info.getTitle() : null;
+	}
 }

@@ -32,11 +32,15 @@ public class CSVRenderMetricsFactory implements IRenderMetricsFactory {
         }
         return false;
     }
-
+    /** 
+     * Used to create an object of class net.refractions.udig.project.render.IRenderMetrics.
+     * <p>
+     * This class will evaulate how well our renderer can handle the provided context.
+     * @param context Content of a Layer and GeoResource to be drawn
+     * @return AbstractRenderMetrics indicating how well we can draw the provided context
+     */
     public AbstractRenderMetrics createMetrics( IRenderContext context ) {
-        ArrayList<String> styleIds = new ArrayList<String>();
-        //we support no styles
-        return new CSVRenderMetrics(context, this, styleIds);
+        return new CSVRenderMetrics(context, this);
     }
 
     public Class< ? extends IRenderer> getRendererType() {

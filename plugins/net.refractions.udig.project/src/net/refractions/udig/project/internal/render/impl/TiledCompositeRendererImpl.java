@@ -25,6 +25,7 @@ import net.refractions.udig.project.internal.render.RenderExecutor;
 import net.refractions.udig.project.internal.render.RenderFactory;
 import net.refractions.udig.project.internal.render.RenderListenerAdapter;
 import net.refractions.udig.project.internal.render.Renderer;
+import net.refractions.udig.project.internal.render.SelectionLayer;
 import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.render.AbstractRenderMetrics;
 import net.refractions.udig.project.render.ILabelPainter;
@@ -76,7 +77,7 @@ public class TiledCompositeRendererImpl extends CompositeRendererImpl implements
     /**
      * Creates a new Renderer
      * 
-     * @generated NOT
+     * @generated NOT   
      */
     protected TiledCompositeRendererImpl() {
         super();
@@ -292,8 +293,14 @@ public class TiledCompositeRendererImpl extends CompositeRendererImpl implements
                     executors = new TreeSet<RenderExecutor>(comparator);
                     executors.addAll(getRenderExecutors());
                 }
+                
+                ILabelPainter cache = getContext().getLabelPainter();
                 RENDERERS: for( RenderExecutor executor : executors ) {
                     if (!executor.getContext().isVisible()){
+                        if(paintLabels && !(executor.getContext().getLayer() instanceof SelectionLayer)){
+                            //disable layer from label cache
+                              cache.disableLayer(executor.getContext().getLayer().getID().toString());
+                          }
                         continue RENDERERS;
                     }
                     if (executor.getState() == NEVER || executor.getState() == STARTING || executor.getState() == RENDER_REQUEST) {
@@ -309,7 +316,8 @@ public class TiledCompositeRendererImpl extends CompositeRendererImpl implements
                     g.drawRenderedImage(executor.getContext().getImage(), IDENTITY);
                 }
                 if(paintLabels){
-                    ILabelPainter cache = getContext().getLabelPainter();
+                    RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setRenderingHints(hints);
                     Dimension displaySize = getContext().getMapDisplay().getDisplaySize();
                     cache.end(g, new Rectangle(displaySize));
                 }

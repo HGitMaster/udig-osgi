@@ -55,6 +55,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
+import org.opengis.filter.identity.FeatureId;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -243,19 +244,32 @@ public class FeatureTableControl implements ISelectionProvider {
     /**
      * show the warning about loading features into memory.
      * 
+     * @returns true if the user wishes to continue to load features; false otherwise.
+     * 
      */
-    public void showWarning( Display display ) {
+    public boolean showWarning( Display display ) {
         
         IPreferenceStore preferenceStore = UiPlugin.getDefault().getPreferenceStore();
         if (!preferenceStore.getBoolean(CACHING_WARNING) && !shown) {
             shown=true;
-            MessageDialogWithToggle dialog = MessageDialogWithToggle.openWarning(display
+           
+            MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(display
                     .getActiveShell(), Messages.FeatureTableControl_warningTitle,
                     Messages.FeatureTableControl_warningMessage,
                     Messages.FeatureTableControl_warningToggle, false, null, null);
+//            MessageDialogWithToggle dialog = MessageDialogWithToggle.openWarning(display
+//                    .getActiveShell(), Messages.FeatureTableControl_warningTitle,
+//                    Messages.FeatureTableControl_warningMessage,
+//                    Messages.FeatureTableControl_warningToggle, false, null, null);
             preferenceStore.setValue(CACHING_WARNING, dialog.getToggleState());
+            if (dialog.getReturnCode() ==MessageDialogWithToggle.OK){
+                return true;
+            }else{
+                return false;
+            }
 
         }
+        return true;
 
     }
 
@@ -821,43 +835,60 @@ public class FeatureTableControl implements ISelectionProvider {
         return selectionProvider.getSelectionFids().size();
     }
     
-    public void select( String cql, boolean selectAll ) throws RuntimeException {
-        try {
-            Filter filter = (Filter) CQL.toFilter( cql );
-            FeatureTableContentProvider provider = (FeatureTableContentProvider) this.tableViewer.getContentProvider();
-            List<SimpleFeature> toSearch = provider.features;
-    
-            IProgressMonitor progressMonitor = getSelectionProvider().progressMonitor;
-            if( progressMonitor!=null ){
-                progressMonitor.setCanceled(true);
+    public void select( Set<FeatureId> selection ) {
+        getSelectionProvider().getSelectionFids().clear();
+        int j=0;
+        int firstMatch=-1;
+        for( FeatureId id : selection ){
+            selectionProvider.getSelectionFids().add(id.getID());                                        
+            if( firstMatch==-1 ){
+                firstMatch=j;            
             }
-            getSelectionProvider().getSelectionFids().clear();
-            int j=0;
-            int firstMatch=-1;
-            OUTER: for( SimpleFeature feature : toSearch ) {
-                if( filter.evaluate( feature ) ){
-                    selectionProvider.getSelectionFids().add(feature.getID());                                        
-                    if( firstMatch==-1 )
-                        firstMatch=j;
-                    if( !selectAll )
-                        break OUTER;
-                }
-                j++;
-            }
-    
-            Table table = tableViewer.getTable();
-            if( firstMatch != -1 ){
-                // display the selected item
-                table.setTopIndex(firstMatch);
-            }
-            // trigger a refresh of table
-            table.clearAll();
-            // tell the world..
-            selectionProvider.notifyListeners();
+            j++;
         }
-        catch( CQLException syntaxError ){
-            throw new RuntimeException( syntaxError.getMessage(), syntaxError );
+        Table table = tableViewer.getTable();
+        if( firstMatch != -1 ){
+            // display the selected item
+            table.setTopIndex(firstMatch);
         }
+        // trigger a refresh of table
+        table.clearAll();
+        // tell the world..
+        selectionProvider.notifyListeners();
+    }
+    public void select( String cql, boolean selectAll ) throws CQLException {
+        Filter filter = (Filter) CQL.toFilter( cql );
+
+        FeatureTableContentProvider provider = (FeatureTableContentProvider) this.tableViewer.getContentProvider();
+        List<SimpleFeature> toSearch = provider.features;
+
+        IProgressMonitor progressMonitor = getSelectionProvider().progressMonitor;
+        if( progressMonitor!=null ){
+            progressMonitor.setCanceled(true);
+        }
+        getSelectionProvider().getSelectionFids().clear();
+        int j=0;
+        int firstMatch=-1;
+        OUTER: for( SimpleFeature feature : toSearch ) {
+            if( filter.evaluate( feature ) ){
+                selectionProvider.getSelectionFids().add(feature.getID());                                        
+                if( firstMatch==-1 )
+                    firstMatch=j;
+                if( !selectAll )
+                    break OUTER;
+            }
+            j++;
+        }
+
+        Table table = tableViewer.getTable();
+        if( firstMatch != -1 ){
+            // display the selected item
+            table.setTopIndex(firstMatch);
+        }
+        // trigger a refresh of table
+        table.clearAll();
+        // tell the world..
+        selectionProvider.notifyListeners();
     }
     
     /**

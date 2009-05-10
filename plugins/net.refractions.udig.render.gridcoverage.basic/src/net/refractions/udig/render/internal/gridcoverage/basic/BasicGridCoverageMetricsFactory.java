@@ -35,11 +35,11 @@ import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 public class BasicGridCoverageMetricsFactory implements IRenderMetricsFactory {
 
     /**
-     * TODO summary sentence for canRender ...
+     * Ensures that we can get an AbstractGridCoverage2DReader out of this class.
      * 
      * @see net.refractions.udig.project.render.RenderMetricsFactory#canRender(net.refractions.udig.project.render.RenderTools)
      * @param context
-     * @return
+     * @return true if we can render the provided context using BasicGridCoverageRenderer
      */
     public boolean canRender( IRenderContext context ) {
         if( context instanceof ICompositeRenderContext ){

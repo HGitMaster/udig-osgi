@@ -29,7 +29,16 @@ public class TileRangeOnDisk extends AbstractTileRange {
 
 	private TileImageReadWriter tileReadWriter;
 	private TileWorkerQueue writeTileWorkQueue;
-	
+	/**
+	 * TileRange implementation that saves tiles out to disk.
+	 * 
+     * @param server The Server to fetch the tiles from
+     * @param tileset TileSet of rendered content
+     * @param bounds Optional bounds (may be null) that contain the provided tiles
+     * @param tiles The tiles that we wish to fetch; must be from the provided tileset
+     * @param requestTileWorkQueue Queue of worker threads that can be used to fetch tiles
+     * @param writeTileWorkQueue Queue used to write tiles out to disk
+	 */
 	public TileRangeOnDisk(TiledWebMapServer server, TileSet tileset,
 			Envelope bounds, Map<String, Tile> tiles, TileWorkerQueue requestTileWorkQueue,
 			TileWorkerQueue writeTileWorkQueue) {
@@ -76,14 +85,6 @@ public class TileRangeOnDisk extends AbstractTileRange {
 	        for( Iterator<Entry<String, Tile>> iterator = tilesToRemove.entrySet().iterator(); iterator.hasNext(); ) {
 	            Entry<String, Tile> tileentry = (Entry<String, Tile>) iterator.next();
 	            tilesWaitingToLoad.remove(tileentry.getKey());
-	            //System.out.println("loaded tile from disk");
-//	            File file = new File(tileentry.getValue().getPosition()+"."+filetype);
-//	            try {
-//					ImageIO.write(tileentry.getValue().getBufferedImage(), filetype, file);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 	        }
 	        
         } finally {

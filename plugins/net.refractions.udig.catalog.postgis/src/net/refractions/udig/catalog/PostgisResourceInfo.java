@@ -82,9 +82,9 @@ class PostgisResourceInfo extends IGeoResourceInfo {
 
                     if (envelope != null) {
                         bounds = new ReferencedEnvelope(new Envelope(envelope.getLowerCorner()
-                                .getOrdinate(0), envelope.getLowerCorner().getOrdinate(1), envelope
-                                .getUpperCorner().getOrdinate(0), envelope.getUpperCorner()
-                                .getOrdinate(1)), crs);
+                                .getOrdinate(0), envelope.getUpperCorner().getOrdinate(0), 
+                                envelope.getLowerCorner().getOrdinate(1), 
+                                envelope.getUpperCorner().getOrdinate(1)), crs);
                     } else {
                         // TODO: perhaps access a preference which indicates
                         // whether to do a full table scan

@@ -17,8 +17,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -99,7 +97,7 @@ public abstract class ISearch implements IResolve {
 	 *            used to show the progress of the find.
 	 * @return List (possibly empty) of matching Resolves
 	 */
-	public abstract List<IResolve> find(URI resourceId, IProgressMonitor monitor);
+	public abstract List<IResolve> find(ID resourceId, IProgressMonitor monitor);
 
 	/**
 	 * Check for an exact match with provided id.
@@ -111,7 +109,7 @@ public abstract class ISearch implements IResolve {
 	 * @param monitor
 	 * @return Resolve or null if not found
 	 */
-	public abstract <T extends IResolve> T getById(Class<T> type, URI id, IProgressMonitor monitor);
+	public abstract <T extends IResolve> T getById(Class<T> type, ID id, IProgressMonitor monitor);
     
 	/**
 	 * Performs a search on this catalog based on the specified inputs.

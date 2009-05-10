@@ -22,19 +22,12 @@ import javax.swing.Icon;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IResourceInterceptor;
-import net.refractions.udig.project.internal.ProjectPlugin;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultEngineeringCRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Intercepts the IGeoResource Info and wraps it with a decorator that modifies getCRS and getBounds if the CRS has been set on the layer.

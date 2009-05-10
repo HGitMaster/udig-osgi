@@ -14,11 +14,11 @@
  */
 package net.refractions.udig.catalog;
 
-import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.DATABASE;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.HOST;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.PASSWD;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.PORT;
+import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
 import static org.geotools.data.postgis.PostgisDataStoreFactory.USER;
 
 import java.io.IOException;
@@ -34,8 +34,8 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
-import net.refractions.udig.catalog.internal.postgis.ui.LookUpSchemaRunnable;
-import net.refractions.udig.catalog.internal.postgis.ui.PostgisTableDescriptor;
+import net.refractions.udig.catalog.internal.postgis.ui.PostgisLookUpSchemaRunnable;
+import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -88,11 +88,16 @@ public class PostgisService2 extends IService {
             builder.append(folder.getSchemaName());
         }
         params.put(SCHEMA.key, builder.toString());
+        
+        // for wkt for a moment!
+        // params.put( PostgisDataStoreFactory.WKBENABLED.key, Boolean.FALSE );
+        
+        params.put( PostgisDataStoreFactory.LOOSEBBOX.key, Boolean.TRUE );
         return params;
     }
 
     @Override
-    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         // make sure members are loaded cause they're needed for info
         members(monitor);
         return new PostgisServiceInfo(this);
@@ -141,7 +146,7 @@ public class PostgisService2 extends IService {
         String user = (String) params.get(USER.key);
         String pass = (String) params.get(PASSWD.key);
         
-        LookUpSchemaRunnable runnable = new LookUpSchemaRunnable(host, port, user, pass, database);
+        PostgisLookUpSchemaRunnable runnable = new PostgisLookUpSchemaRunnable(host, port, user, pass, database);
         runnable.run(monitor);
         
         if (runnable.getError()!=null){
@@ -149,9 +154,9 @@ public class PostgisService2 extends IService {
             status = Status.BROKEN;
             return null;
         }
-        Set<PostgisTableDescriptor> tables = runnable.getSchemas();
+        Set<TableDescriptor> tables = runnable.getSchemas();
         Set<String> schemas = new HashSet<String>();
-        for( PostgisTableDescriptor schema : tables ) {
+        for( TableDescriptor schema : tables ) {
             schemas.add(schema.schema);
         }
         return schemas.toArray(new String[0]);

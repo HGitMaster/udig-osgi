@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
-import net.refractions.udig.catalog.IService;
 import net.refractions.udig.core.internal.ExtensionPointList;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IResourceCachingInterceptor;
@@ -73,6 +73,7 @@ public class LayerResource extends IGeoResource {
      * Construct <code>LayerImpl.LayerResource</code>.
      */
     public LayerResource( LayerImpl impl, IGeoResource resource ) {
+        service = null; // we do not have a parent we are a simple wrapper
         layer = impl;
         this.geoResource = resource;
     }
@@ -94,7 +95,11 @@ public class LayerResource extends IGeoResource {
     public URL getIdentifier() {
         return geoResource.getIdentifier();
     }
-
+    
+    @Override
+    public ID getID() {
+        return this.geoResource.getID();
+    }
     /**
      * @see net.refractions.udig.catalog.IResolve#getMessage()
      */
@@ -109,6 +114,10 @@ public class LayerResource extends IGeoResource {
         return geoResource.getStatus();
     }
 
+    public String getTitle() {
+        return geoResource.getTitle();
+    }
+    
     /**
      * @see net.refractions.udig.catalog.IResolve#members(org.eclipse.core.runtime.IProgressMonitor)
      */
@@ -133,9 +142,6 @@ public class LayerResource extends IGeoResource {
             return null;
         resource = processPostResourceInterceptors(resource, adaptee);
         return resource;
-    }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return resolve(IService.class, monitor);
     }
     @Override
     public IResolve parent( IProgressMonitor monitor ) throws IOException {
@@ -286,14 +292,14 @@ public class LayerResource extends IGeoResource {
         }
     }
     @Override
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         return resolve(IGeoResourceInfo.class, monitor);
     }
 
     public LayerImpl getLayer() {
         return layer;
     }
-
+    
     /**
      * ONLY FOR TESTING
      *
@@ -334,7 +340,6 @@ public class LayerResource extends IGeoResource {
         public int compare( Wrapper< ? extends Object> o1, Wrapper< ? extends Object> o2 ) {
             return wrapped.compare(o1.interceptor, o2.interceptor);
         }
-        
     }
 
     /**

@@ -6,8 +6,8 @@ import java.util.List;
 import net.refractions.udig.catalog.tests.DummyGeoResource;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.render.Renderer;
-import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.AbstractRenderMetrics;
+import net.refractions.udig.project.render.IRenderContext;
 import net.refractions.udig.project.render.IRenderMetricsFactory;
 import net.refractions.udig.project.render.IRenderer;
 

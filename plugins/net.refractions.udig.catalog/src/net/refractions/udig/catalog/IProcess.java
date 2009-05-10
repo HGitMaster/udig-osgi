@@ -17,8 +17,6 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -105,7 +103,7 @@ public abstract class IProcess implements IResolve {
             try {
                 monitor.beginTask("service info", 100); //$NON-NLS-1$
                 IService service = service( new SubProgressMonitor(monitor,40));
-                IServiceInfo info = service.getInfo( new SubProgressMonitor(monitor,60) );
+                IServiceInfo info = service.createInfo( new SubProgressMonitor(monitor,60) );
                 return adaptee.cast( info );
             }
             finally {
@@ -291,12 +289,8 @@ public abstract class IProcess implements IResolve {
      */
     public abstract URL getIdentifier();
 
-    public URI getID() {
-    	try {
-			return getIdentifier().toURI();
-		} catch (URISyntaxException e) {
-			return null;
-		}
+    public ID getID() {
+        return new ID( getIdentifier() );
     }
     
     /**

@@ -71,7 +71,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * Drawing utitlity package - make your own previes and glyphs!
+ * Drawing utility package - make your own previews and glyphs!
  * 
  * @author jones
  * @since 0.6.0
@@ -392,43 +392,47 @@ public final class Drawing {
     }
 
     /**
-     * Finds the geometric attribute requested by the symbolizer
+     * Finds the geometric attribute requested by the symbolizer.
      * 
-     * @param f The victim
-     * @param s The symbolizer
+     * @param feature The victim
+     * @param symbolizer The symbolizer
      * @param style the resolved style for the specified victim
      * @return The geometry requested in the symbolizer, or the default geometry if none is
      *         specified
      */
-    private com.vividsolutions.jts.geom.Geometry findGeometry( SimpleFeature f, Symbolizer s) {
-        String geomName = getGeometryPropertyName(s);
+    private com.vividsolutions.jts.geom.Geometry findGeometry( SimpleFeature feature, Symbolizer symbolizer) {
+        String geomName = getGeometryPropertyName(symbolizer);
         // get the geometry
-        com.vividsolutions.jts.geom.Geometry geom;
-        if (geomName == null) {
-            geom = (Geometry) f.getDefaultGeometry();
+        com.vividsolutions.jts.geom.Geometry geometry;
+        if (geomName == null || feature.getType().getDescriptor(geomName) == null) {
+            geometry = (Geometry) feature.getDefaultGeometry();
         } else {
-            geom = (com.vividsolutions.jts.geom.Geometry) f.getAttribute(geomName);
+            geometry = (com.vividsolutions.jts.geom.Geometry) feature.getAttribute(geomName);
+        }
+        if( geometry == null ){
+            return null; // nothing to see here
         }
         // if the symbolizer is a point or text symbolizer generate a suitable
         // location to place the
         // point in order to avoid recomputing that location at each rendering
         // step
-        if ((s instanceof PointSymbolizer || s instanceof TextSymbolizer)
-                && !(geom instanceof Point)) {
-            if (geom instanceof LineString && !(geom instanceof LinearRing)) {
+
+        if ((symbolizer instanceof PointSymbolizer || symbolizer instanceof TextSymbolizer)
+                && !(geometry instanceof Point)) {
+            if (geometry instanceof LineString && !(geometry instanceof LinearRing)) {
                 // use the mid point to represent the point/text symbolizer
                 // anchor
-                Coordinate[] coordinates = geom.getCoordinates();
+                Coordinate[] coordinates = geometry.getCoordinates();
                 Coordinate start = coordinates[0];
                 Coordinate end = coordinates[1];
                 Coordinate mid = new Coordinate((start.x + end.x) / 2, (start.y + end.y) / 2);
-                geom = geom.getFactory().createPoint(mid);
+                geometry = geometry.getFactory().createPoint(mid);
             } else {
                 // otherwise use the centroid of the polygon
-                geom = geom.getCentroid();
+                geometry = geometry.getCentroid();
             }
         }
-        return geom;
+        return geometry;
     }
     private String getGeometryPropertyName( Symbolizer s ) {
         String geomName = null;

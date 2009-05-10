@@ -26,7 +26,6 @@ import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.StyleBlackboard;
 import net.refractions.udig.project.internal.StyleEntry;
 import net.refractions.udig.ui.UDIGDisplaySafeLock;
-import net.refractions.udig.ui.graphics.SLDs;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -41,11 +40,6 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyledLayerDescriptor;
-import org.geotools.styling.StyledLayerDescriptorImpl;
-import org.geotools.styling.UserLayer;
-import org.geotools.styling.UserLayerImpl;
 
 /**
  * The default implementation.

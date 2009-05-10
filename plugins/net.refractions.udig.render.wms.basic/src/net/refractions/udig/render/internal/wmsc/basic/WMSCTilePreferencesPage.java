@@ -1,9 +1,9 @@
 package net.refractions.udig.render.internal.wmsc.basic;
 
+import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.internal.PreferenceConstants;
 import net.refractions.udig.catalog.wmsc.server.TileImageReadWriter;
 import net.refractions.udig.catalog.wmsc.server.TileWorkerQueue;
-import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.render.wms.basic.internal.Messages;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -34,7 +34,7 @@ public class WMSCTilePreferencesPage extends FieldEditorPreferencePage implement
 	
     public WMSCTilePreferencesPage() {
         super(GRID); 
-		setPreferenceStore(ProjectPlugin.getPlugin().getPreferenceStore());
+        setPreferenceStore(CatalogPlugin.getDefault().getPreferenceStore());
 		setDescription(Messages.WMSCTilePreferencePage_pageDescription); 
 
     }
@@ -61,7 +61,7 @@ public class WMSCTilePreferencesPage extends FieldEditorPreferencePage implement
                         }, 
                         getFieldEditorParent(), true);
         addField(cachingRadioFieldEditor);
-        String value = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_CACHING);
+        String value = CatalogPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_CACHING);
         boolean diskOn = false;
 		if (value.equals(WMSCTileCaching.ONDISK.toString())) diskOn = true;        
         
@@ -107,7 +107,8 @@ public class WMSCTilePreferencesPage extends FieldEditorPreferencePage implement
 		// value of the disk cache location (even if it is not "set" yet since the current
 		// value is what the user sees) otherwise use the current setting.
 		String dir = diskCacheFieldEditor.getStringValue();
-		String setDir = ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
+		
+		String setDir = CatalogPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
 		if (dir.equals("") && setDir != null && !setDir.equals("") ) {
 			dir = setDir;
 		}

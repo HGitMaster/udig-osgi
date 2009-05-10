@@ -2,6 +2,7 @@ package net.refractions.udig.catalog.ui.workflow;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -43,6 +44,12 @@ public class WorkflowWizardAdapter extends Wizard implements IImportWizard, IExp
             }
 
         };
+    }
+    
+    @Override
+    public void setContainer( IWizardContainer wizardContainer ) {
+        super.setContainer(wizardContainer);
+        getStartingPage();
     }
 
     @Override

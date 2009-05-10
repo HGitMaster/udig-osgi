@@ -21,7 +21,6 @@ import net.refractions.udig.catalog.ui.internal.Messages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.collection.AdaptorFeatureCollection;
-import org.geotools.feature.collection.DecoratingFeatureCollection;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

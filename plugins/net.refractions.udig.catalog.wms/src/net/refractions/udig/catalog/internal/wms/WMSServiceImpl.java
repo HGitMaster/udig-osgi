@@ -72,7 +72,6 @@ public class WMSServiceImpl extends IService {
     private URL url;
 
     private volatile WebMapServer wms = null;
-    private volatile WMSServiceInfo info;
     protected final Lock rLock=new UDIGDisplaySafeLock();
     private volatile List<IResolve> members;
     private int currentFolderID = 0;
@@ -148,7 +147,7 @@ public class WMSServiceImpl extends IService {
         return wms;
     }
 
-    public IServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+    protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
         if (info == null){
             getWMS( monitor );
             rLock.lock();
@@ -172,7 +171,7 @@ public class WMSServiceImpl extends IService {
         }
         
         if (adaptee.isAssignableFrom(IServiceInfo.class)) {
-            return adaptee.cast( getInfo(monitor));
+            return adaptee.cast( createInfo(monitor));
         }
         
         if (adaptee.isAssignableFrom(List.class)) {

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderManagerImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: RenderManagerImpl.java 31200 2009-03-26 09:20:45Z mleslie $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
@@ -416,7 +415,7 @@ public class RenderManagerImpl extends EObjectImpl implements RenderManager {
 
     /**
      * @throws IOException
-     * @see net.refractions.udig.project.internal.render.RenderManager#getInfo(java.awt.Point)
+     * @see net.refractions.udig.project.internal.render.RenderManager#createInfo(java.awt.Point)
      *      public List getInfo(Point screenLocation) throws IOException { return
      *      getRenderExecutor().getInfo(screenLocation); }
      * @uml.property name="renderExecutor"

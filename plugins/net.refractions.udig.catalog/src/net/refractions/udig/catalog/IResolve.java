@@ -17,17 +17,23 @@
 package net.refractions.udig.catalog;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
-
-import net.refractions.udig.core.internal.CorePlugin;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Blocking IAdaptable, used to contact external services.
+ * Represents external services; you can contact the external
+ * service using an API of your choice.
+ * <p>
+ * Quick example:<pre><code>
+ * if( resolve.canResolve( FeatureSource.class ) ){
+ *     FeatureSource source = resolve.resolve( FeatureSource.class, new NullProgressMonitor() );
+ *     FeatureCollection features = source.getFeatures();
+ *     ...
+ * }
+ * </code></pre>
  * 
  * @author David Zwiers, Refractions Research
  * @since 0.7.0
@@ -148,13 +154,13 @@ public interface IResolve {
     public Status getStatus();
 
     /**
-     * Text description for this serice status.
+     * Text description for status of this resource.
      * <p>
      * For a BROKEN status this will contain the error message, null will be returned if there is
      * nothing interesting to report.
      * <p>
      * <p>
-     * Not the Exception is ecpected to be in humar readable, terms.
+     * Not the Exception is expected to be in human readable, terms.
      * </p>
      * 
      * @return Text describing service status
@@ -175,15 +181,35 @@ public interface IResolve {
     public abstract URL getIdentifier();
     
     /**
-     * A unique resource identifier ... this should be unique for each service.
+     * A unique resource ID ... this should be unique for each service.
      * Must Not Block.
-     *
-     * @return ID for this IResolve, should not be null.
+     * <p>
+     * This method is similar to new ID( getIdentifier() ) but is a lot easier to
+     * maintain. We are using a strongly typed ID object since there are so many
+     * restrictions and corner cases when working with URLs, URIs (or even Strings
+     * across platforms).
+     * </p>
+     * @return ID for this object, will not be null.
      */
-    public abstract URI getID();
+    public abstract ID getID();
     
     /**
-     * Clean up after aquired resources - the handle will not function
+     * Non blocking method to retrieve a title - often used as a label
+     * to represent this resource in a user interface.
+     * <p>
+     * Retrieves any readily available title.  This method must not block.
+     * The general algorithm for this is to check any title cache, and then
+     * check for the presents of an Info object to retrieve the title from.
+     * An Info object must not be created in this method.  If no title is 
+     * readily available, return null to indicate that a title must be 
+     * generated.
+     * 
+     * @return title or <code>null</code> if none is readily available
+     */
+    public String getTitle();
+    
+    /**
+     * Clean up after acquired resources - the handle will not function
      * after being disposed.
      * 
      * @param monitor

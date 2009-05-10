@@ -2,21 +2,18 @@ package net.refractions.udig.catalog.rasterings;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
+import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveAdapterFactory;
-import net.refractions.udig.catalog.IResolve.Status;
-import net.refractions.udig.catalog.internal.shp.ShpGeoResourceImpl;
-import net.refractions.udig.catalog.internal.shp.ShpServiceImpl;
+import net.refractions.udig.catalog.IService;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.gce.imagemosaic.ImageMosaicFormat;
 import org.geotools.gce.imagemosaic.ImageMosaicReader;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.type.FeatureType;
 
 /**
  * This class teaches ShpGeoResource a new trick - how to be a GridCoverage.
@@ -43,7 +40,7 @@ public class ShpImageMoasicAdaptorFactory implements IResolveAdapterFactory {
 			IProgressMonitor monitor) throws IOException {
 		
 		if( adapter.isAssignableFrom(ImageMosaicReader.class)){
-			return toGridCoverage2DReader( (ShpGeoResourceImpl) resolve, monitor);
+			return toGridCoverage2DReader( resolve, monitor);
 		}
 		return null;
 	}
@@ -56,25 +53,35 @@ public class ShpImageMoasicAdaptorFactory implements IResolveAdapterFactory {
 	 */
 	public boolean canAdapt(IResolve resolve, Class<? extends Object> adapter) {
 		if (adapter.isAssignableFrom(ImageMosaicReader.class)) {
-			ShpGeoResourceImpl resource = (ShpGeoResourceImpl) resolve;
-			ShpServiceImpl service = resource.service();
-			File file = service.toFile();
-			if( file != null ){
-				return format.accepts( file );
-			}
+			File file = toShpFile(resolve);
+            return file!=null  && format.accepts(file);
         }
         return false;
 	}
-	/**
+	private File toShpFile( IResolve resolve ) {
+	    IGeoResource resource = (IGeoResource) resolve;
+        IService service;
+        try {
+            service = resource.service(new NullProgressMonitor());
+        if (service.canResolve(ShapefileDataStore.class)) {
+            return service.resolve(File.class, new NullProgressMonitor());
+        }
+        } catch (IOException e) {
+            RasteringsPlugin.log("Error obtaining shapefile file", e); //$NON-NLS-1$
+            return null;
+        }
+        return null;
+    }
+
+    /**
 	 * ImageMosaicReader for the provided shapefile or null.
 	 * 
 	 * @param shapefile
 	 * @param monitor
 	 * @return ImageMosaicReader for the provided shapefile, or null 
 	 */
-	AbstractGridCoverage2DReader toGridCoverage2DReader( ShpGeoResourceImpl shapefile, IProgressMonitor monitor ) throws IOException {
-		ShpServiceImpl service = shapefile.service();
-		File file = service.toFile();
+	AbstractGridCoverage2DReader toGridCoverage2DReader( IResolve resolve, IProgressMonitor monitor ) throws IOException {
+	    File file = toShpFile(resolve);
 		if( format.accepts( file )){
 			return new ImageMosaicReader( file, null );		
 		}

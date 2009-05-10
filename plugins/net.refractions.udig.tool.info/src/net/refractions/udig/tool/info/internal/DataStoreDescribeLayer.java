@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public class DataStoreDescribeLayer {
     
     /**
-     * @see net.refractions.udig.project.internal.render.impl.RendererImpl#getInfo(java.awt.Point)
+     * @see net.refractions.udig.project.internal.render.impl.RendererImpl#createInfo(java.awt.Point)
      */
     public static List<LayerPointInfo> info( final ILayer layer, ReferencedEnvelope bbox, IProgressMonitor monitor ) throws Exception{
         List<SimpleFeature> features = info2( layer, bbox, monitor );

@@ -114,7 +114,7 @@ public class ServiceParameterPersisterTest extends TestCase {
 		}
 
 		@Override
-		public IServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+		protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
 			// TODO Auto-generated method stub
 			return null;
 		}

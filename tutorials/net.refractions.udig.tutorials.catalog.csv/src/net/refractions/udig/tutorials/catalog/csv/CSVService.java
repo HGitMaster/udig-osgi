@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.IService;
+import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.URLUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,7 +20,6 @@ public class CSVService extends IService {
     private Map<String, Serializable> params;
     private URL url;
     
-    private CSVServiceInfo info;
     private Throwable msg;
     private File file;
     List<CSVGeoResource> members;
@@ -31,16 +31,11 @@ public class CSVService extends IService {
     public Map<String, Serializable> getConnectionParams() {
         return params;
     }
-    public CSVServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null) { //lazy creation
-            synchronized (this) { //support concurrent access
-                if (info == null) {
-                    info = new CSVServiceInfo( this );
-                }
-            }
-        }
-        return info;
+    
+    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+    	return info = new CSVServiceInfo( this );
     }
+    
     public List<CSVGeoResource> resources( IProgressMonitor monitor ) throws IOException {
         if (members == null) { //lazy creation
             synchronized (this) { //support concurrent access

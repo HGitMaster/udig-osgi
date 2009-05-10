@@ -1,7 +1,7 @@
 
 
 package net.refractions.udig.catalog.internal.postgis.ui;
-
+import static net.refractions.udig.catalog.PostgisServiceExtension2.DIALECT;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -81,7 +81,7 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
             Map params=(Map) context;
             
             try {
-                return PostgisServiceExtension2.toURL(params);
+                return DIALECT.toURL(params);
             } catch (MalformedURLException e) {
                 return null;
             } 
@@ -151,10 +151,10 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
                 : null;
 
         if (!"http".equals(protocol) //$NON-NLS-1$
-                && !"https".equals(protocol) && !"postgis.jdbc".equals(protocol)) { //$NON-NLS-1$ 
+                && !"https".equals(protocol) && !DIALECT.urlPrefix.equals(protocol)) { //$NON-NLS-1$ 
             return null;
         }
-        if (url.toExternalForm().indexOf("postgis.jdbc") != -1) { //$NON-NLS-1$
+        if (url.toExternalForm().indexOf(DIALECT.urlPrefix) != -1) {
             return url;
         }
         return null;
@@ -163,7 +163,7 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
     protected URL toCapabilitiesURL( String string ){
         if (string == null) return null;
 
-        if( !string.contains("postgis.jdbc") && !string.contains("jdbc.postgis") && !string.contains("postgis") ) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        if( !string.contains(DIALECT.urlPrefix) && !string.contains("jdbc.postgis") && !string.contains("postgis") ) { //$NON-NLS-1$ //$NON-NLS-2$ 
             return null;
         }
         //jdbc.postgresql://username:password@host:port/database
@@ -180,13 +180,7 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
         String the_password=string.substring(usernameEnd+1, passwordEnd);
         String the_port;
         String the_database;
-        String the_schema;
-        if( databaseEnd<1 ){
-            databaseEnd=string.length();
-            the_schema="public"; //$NON-NLS-1$
-        }else{
-            the_schema=string.substring(databaseEnd+1);
-        }
+
         if( portEnd < 1 ) {
             the_port = string.substring(hostEnd + 1);
             the_database = ""; //$NON-NLS-1$
@@ -205,7 +199,7 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
         //URL(String protocol, String host, int port, String file)
         URL url = null;
         try {
-            url = PostgisServiceExtension2.toURL( the_username, the_password, the_host, intPort, the_database); 
+            url = DIALECT.toURL( the_username, the_password, the_host, intPort, the_database); 
             
         } catch (MalformedURLException e) {
             // TODO Catch e
@@ -215,7 +209,7 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
     }
     
     /** 'Create' params given the provided url, no magic occurs */
-    @SuppressWarnings("unchecked") //$NON-NLS-1$
+    @SuppressWarnings("unchecked") 
     protected Map<String,Serializable> createParams( URL url ){
         PostgisServiceExtension2 serviceFactory = new PostgisServiceExtension2();
         Map params = serviceFactory.createParams( url );

@@ -13,11 +13,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.render.displayAdapter.IMapDisplay;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import com.vividsolutions.jts.geom.Envelope;
 

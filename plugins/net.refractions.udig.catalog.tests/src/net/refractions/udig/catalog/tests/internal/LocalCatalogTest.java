@@ -81,7 +81,7 @@ public class LocalCatalogTest extends AbstractCatalogTest {
                     return null;
                 }
             }
-            public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+            protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                 try {
                     return new IServiceInfo("Testing 1", "", "", getIdentifier().toURI(), (URI) null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             (URI) null, (new String[]{"Test"}), (ImageDescriptor) null); //$NON-NLS-1$
@@ -105,15 +105,12 @@ public class LocalCatalogTest extends AbstractCatalogTest {
 					public <T> T resolve(Class<T> adaptee, IProgressMonitor monitor) throws IOException {
 						return super.resolve(adaptee, monitor);
 					}
-                    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+                    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                         return new IGeoResourceInfo("Test Title", "Test Name", "description", null,  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                 new Envelope(20,30,0,40), DefaultGeographicCRS.WGS84, new String[0],
                                 null);
                     }
-                    public IService service( IProgressMonitor monitor ) throws IOException {
-                        return null;
-                    }
-					public <T> boolean canResolve(Class<T> adaptee) {
+                    public <T> boolean canResolve(Class<T> adaptee) {
 						return super.canResolve(adaptee);
 					}
 
@@ -156,7 +153,7 @@ public class LocalCatalogTest extends AbstractCatalogTest {
                     return null;
                 }
             }
-            public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+            protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
                 try {
                     return new IServiceInfo("Testing 2", "", "", getIdentifier().toURI(), (URI) null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             (URI) null, (new String[]{"Test"}), (ImageDescriptor) null); //$NON-NLS-1$

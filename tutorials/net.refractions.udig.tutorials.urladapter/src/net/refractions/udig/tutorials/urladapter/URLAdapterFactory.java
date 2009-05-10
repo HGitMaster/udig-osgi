@@ -11,7 +11,7 @@ public class URLAdapterFactory implements IAdapterFactory {
 
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if( adapterType==URL.class ){
-            Class adaptableClass = adaptableObject.getClass();
+            Class<?> adaptableClass = adaptableObject.getClass();
             if(IGeoResource.class.isAssignableFrom(adaptableClass)) {
                 return ((IGeoResource)adaptableObject).getIdentifier();
             } else if(IService.class.isAssignableFrom(adaptableClass)) {
@@ -21,7 +21,7 @@ public class URLAdapterFactory implements IAdapterFactory {
         return null;
     }
 
-    public Class[] getAdapterList() {
+    public Class<?>[] getAdapterList() {
         return new Class[]{URL.class} ;
     }
 

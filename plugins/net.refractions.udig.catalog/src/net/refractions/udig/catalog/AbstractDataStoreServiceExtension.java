@@ -139,7 +139,7 @@ public abstract class AbstractDataStoreServiceExtension implements
     protected ParamInfo parseParamInfo( URL url ) {
         String host = url.getHost();
         if (host != null && !"".equals(host)) { //$NON-NLS-1$
-            if (host.endsWith("postgis.jdbc")||host.endsWith("jdbc.postgis")) { //$NON-NLS-1$
+            if (host.endsWith("postgis.jdbc")||host.endsWith("jdbc.postgis")) { //$NON-NLS-1$ //$NON-NLS-2$
                 host = host.substring(0, host.length() - 12);
             }
         }

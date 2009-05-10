@@ -14,7 +14,10 @@
  */
 package net.refractions.udig.mapgraphic.scalebar;
 
-import static net.refractions.udig.mapgraphic.scalebar.Unit.*;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.CENTIMETER;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.KILOMETER;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.METER;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
@@ -23,6 +26,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import net.refractions.udig.catalog.util.CRSUtil;
 import net.refractions.udig.core.IProviderWithParam;
 import net.refractions.udig.core.Pair;
 import net.refractions.udig.mapgraphic.MapGraphic;
@@ -103,24 +107,36 @@ public class ScalebarMapGraphic implements MapGraphic {
     private void drawScaleDenom( MapGraphicContext context ) {
         double scaleDenom = context.getViewportModel().getScaleDenominator();
         IMapDisplay display = context.getMapDisplay();
-        int dpi = display.getDPI();
+        int dpi = display.getDPI(); // pixels per inch
         int displayHeight = display.getHeight();
 
-        double i = 1 / (double) dpi;
-        double d = i * 25.4;
-        double pixelInMeters = d / 1000;
+        double i = 1 / (double) dpi; // invert to get in per pixel
+        double pixelInMeters = i * .0254; // to meters per pixel 
 
         double inMeters = scaleDenom * pixelInMeters;
 
         Rectangle location = getGraphicLocation(context);
-        BarStyle type = getBarStyle(context);
+        
+        // reserve this area of the screen so labels are not drawn here
+        context.getLabelPainter().put( location );
 
         if (inMeters == 0.0) {
             drawWarning(context.getGraphics(), location, displayHeight);
         } else {
-            Pair<Integer, Pair<Integer, Unit>> result2 = calculateUnitAndLength(inMeters,
-                    location.width / type.getNumintervals(), KILOMETER, METER, CENTIMETER);
-
+            BarStyle type = getBarStyle(context);
+            UnitPolicy scalebarUnits = type.getUnits();
+            if ((scalebarUnits == UnitPolicy.AUTO) && (CRSUtil.isCoordinateReferenceSystemImperial(context.getCRS()))){
+                scalebarUnits = UnitPolicy.IMPERIAL;
+            }
+            Pair<Integer, Pair<Integer, Unit>> result2 = null;
+            if (scalebarUnits == UnitPolicy.IMPERIAL){
+                result2 = calculateUnitAndLength(inMeters,
+                        location.width / type.getNumintervals(), Unit.MILE, Unit.FOOT, Unit.YARD, Unit.INCHES);
+            }else{ /* METRIC and AUTO both treated as metric, since auto is converted above in CRS search */
+                result2 = calculateUnitAndLength(inMeters,
+                        location.width / type.getNumintervals(), KILOMETER, METER, CENTIMETER);                
+            }
+            
             int trueBarLength2 = result2.getLeft() * type.getNumintervals();
             Pair<Integer, Unit> unitMeasure2 = result2.getRight();
             int nice2 = unitMeasure2.getLeft();
@@ -202,6 +218,9 @@ public class ScalebarMapGraphic implements MapGraphic {
     private void doDraw( Unit measurement, MapGraphicContext context, int trueBarLength, int nice ) {
 
         Rectangle location = getGraphicLocation(context);
+        
+        context.getLabelPainter().put( location );
+        
         BarStyle type = getBarStyle(context);
         /*
          * Draw the scale bar

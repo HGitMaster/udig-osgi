@@ -1,6 +1,5 @@
 package net.refractions.udig.catalog.internal.shp;
 
-import java.io.Serializable;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.ConsoleHandler;

@@ -35,9 +35,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 public class MemoryServiceImpl extends IService implements ITransientResolve {
 
-    /** info object * */
-    private ScratchServiceInfo info;
-
     /** the data store * */
     private volatile ActiveMemoryDataStore ds;
 
@@ -124,7 +121,8 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
     }
 
     @Override
-    public synchronized IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected
+    synchronized IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (info == null){
             info = new ScratchServiceInfo();
         }

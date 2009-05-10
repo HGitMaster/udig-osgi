@@ -60,7 +60,7 @@ public class FeatureTypeEditorTest extends TestCase {
             protected Control createDialogArea( Composite parent ) {
                 editor = new FeatureTypeEditor();
                 editor.createFeatureTypeNameText(parent, null);
-                editor.createTable(parent, null,builder,true);
+                editor.createTable(parent, null,builder.buildFeatureType(),true);
                 return editor.getControl();
             }
             @Override

@@ -17,12 +17,9 @@
 package net.refractions.udig.project.render;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.GC;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Responsible for rendering a layer using a Draw2D GC  - this class is

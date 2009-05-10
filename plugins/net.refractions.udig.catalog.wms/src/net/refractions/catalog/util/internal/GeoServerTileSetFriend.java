@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.internal.wms.WMSGeoResourceImpl;
 import net.refractions.udig.catalog.util.IFriend;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class GeoServerTileSetFriend extends IFriend {
 

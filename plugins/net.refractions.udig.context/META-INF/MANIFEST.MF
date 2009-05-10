@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project,
  net.refractions.udig.project.ui,
  net.refractions.udig.catalog.wfs
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.context,
  net.refractions.udig.context.internal,
  net.refractions.udig.ui.dialogs
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

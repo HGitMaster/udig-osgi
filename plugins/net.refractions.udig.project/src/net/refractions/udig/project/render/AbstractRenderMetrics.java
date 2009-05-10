@@ -77,7 +77,15 @@ public abstract class AbstractRenderMetrics {
     protected double resolutionMetric = RES_PIXEL;
     
     
-    
+    /**
+     * Determine how long we expect the data to draw.
+     * For defaults: DRAW_DATA_INDEX, DRAW_DATA_MEMORY, DRAW_DATA_RAW, DRAW_IMAGE_INDEX, DRAW_IMAGE_MEMORY, DRAW_IMAGE_RAW
+     * @return Expected time to draw in milliseconds
+     */
+    public long getTimeToDrawMetric() {
+        return timeToDrawMetric;
+    }
+
     /* LATENCY METRIC DEFAULTS */
     /**
      * The datastore is in memory only.  No disk access is required.
@@ -327,11 +335,10 @@ public abstract class AbstractRenderMetrics {
             }
         }
         
-        double renderMetric = 1;
+        double renderMetric = 1.0;
         if (expectedStyleIDs.size() > 0){
-            renderMetric = numberStylesICanUse / expectedStyleIDs.size();
+            renderMetric = (double) numberStylesICanUse / (double) expectedStyleIDs.size();
         }
-        
        
         return renderMetric;
     }
@@ -364,9 +371,8 @@ public abstract class AbstractRenderMetrics {
         
         double userMetric = 1;
         if (blackboard.keySet().size() > 0){
-            userMetric = numberStylesICanUse / blackboard.keySet().size();
-        }
-        
+            userMetric = (double) numberStylesICanUse / (double) blackboard.keySet().size();
+        }        
         return userMetric;
     }
     /**

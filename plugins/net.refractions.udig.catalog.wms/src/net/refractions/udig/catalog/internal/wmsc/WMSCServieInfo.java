@@ -14,9 +14,9 @@
  */
 package net.refractions.udig.catalog.internal.wmsc;
 
-import org.geotools.data.ows.Service;
-
 import net.refractions.udig.catalog.IServiceInfo;
+
+import org.geotools.data.ows.Service;
 
 /**
  * 

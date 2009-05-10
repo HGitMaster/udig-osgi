@@ -18,7 +18,9 @@ package net.refractions.udig.tool.select;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -62,13 +64,13 @@ import net.refractions.udig.ui.IFeatureTableLoadingListener;
 import net.refractions.udig.ui.PlatformGIS;
 import net.refractions.udig.ui.ProgressManager;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -96,7 +98,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
@@ -114,6 +115,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -126,9 +128,12 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.Schema;
-import org.geotools.feature.collection.DecoratingFeatureCollection;
 import org.geotools.filter.IllegalFilterException;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.referencing.CRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -136,6 +141,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.referencing.FactoryException;
 
@@ -358,24 +364,24 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
                     Filter firstElement = (Filter) structuredSelection.getFirstElement();
                     updateLayerFilter(firstElement);
                 }
-                
-                layer.getMapInternal().getEditManagerInternal().setEditFeature(null, null);
+                //TODO Sprint Mauricio Aritz: The next line provoke the SelectionTool cannot execute the commit operation (acceptChangeBehaviour line 109). 
+                // Actually we do not understand the purpose of this line, but it is the source of problem.  
+                //layer.getMapInternal().getEditManagerInternal().setEditFeature(null, null);
                 
                 fireSelectionChanged();
             }
-
-            private void updateLayerFilter( Filter filter ) {
-                updatingLayerFilter=true;
-                MapCommand createSelectCommand = SelectionCommandFactory.getInstance().createSelectCommand(layer, filter);
-                layer.getMap().sendCommandSync(createSelectCommand);
-                updatingLayerFilter=false;
-
-                setZoomToSelectionToolEnablement();
-            }
-            
         });
     }
 
+    private void updateLayerFilter( Filter filter ) {
+        updatingLayerFilter=true;
+        MapCommand createSelectCommand = SelectionCommandFactory.getInstance().createSelectCommand(layer, filter);
+        layer.getMap().sendCommandSync(createSelectCommand);
+        updatingLayerFilter=false;
+
+        setZoomToSelectionToolEnablement();
+    }
+    
     private void layoutComponents( Composite parent ) {
         FormLayout layout = new FormLayout();
         layout.marginHeight = 0;
@@ -868,8 +874,6 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
             FilterFactory fac=CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
             final List<String> queryAtts = obtainQueryAttributesForFeatureTable(schema);
             final DefaultQuery query=new DefaultQuery(schema.getName().getLocalPart(), Filter.EXCLUDE, queryAtts.toArray(new String[0]));
-            
-        
 
             String name = schema.getGeometryDescriptor().getName().getLocalPart();
 			// add new features
@@ -964,7 +968,10 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         
         Display.getDefault().asyncExec(new Runnable(){
             public void run() {
-                    table.showWarning(table.getControl().getDisplay());
+                    if (!table.showWarning(table.getControl().getDisplay())){
+                        //user doesn't want to show table.
+                        return;
+                    }
 
                     // we don't need to display the geometries, that's what the map is for.
                     queryAtts.add(0,ANY);
@@ -1282,7 +1289,32 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
 		    String item = attributeCombo.getItem(attributeCombo.getSelectionIndex());
 		    boolean selectAll=selectAllCheck.getSelection();                
 		    if( item.equals(CQL) ){
-		        table.select( searchWidget.getText().trim(), selectAll);
+		        try {
+		            String txt = searchWidget.getText().trim();
+		            //table.select( txt, selectAll);
+                    //searchWidget.setToolTipText(null);
+                    Filter filter = (Filter) org.geotools.filter.text.cql2.CQL.toFilter( txt );
+                    //updateLayerFilter( filter );
+                    
+                    FeatureSource<SimpleFeatureType, SimpleFeature> source = layer.getResource(FeatureSource.class, ProgressManager.instance().get());
+                    SimpleFeatureType schema=source.getSchema();                    
+                    FilterFactory fac=CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
+                    final List<String> queryAtts = obtainQueryAttributesForFeatureTable(schema);
+                    final DefaultQuery query=new DefaultQuery(schema.getName().getLocalPart(), filter, Query.NO_NAMES );
+                    
+                    FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures( query );
+                    final Set<FeatureId> selection = new HashSet<FeatureId>();
+                    features.accepts( new FeatureVisitor(){
+                        public void visit( Feature feature) {
+                            selection.add( feature.getIdentifier() );
+                        }                        
+                    }, null );
+                    table.select( selection );
+                } catch (Exception e ){
+                    Status status = new Status(Status.WARNING, "net.refractions.udig.ui", e.getLocalizedMessage(), e );
+                    UIPlugin.getDefault().getLog().log( status );
+                    searchWidget.setToolTipText( e.getLocalizedMessage() );
+                }
 		    }
 		    else {
 		        if( item.equals(ANY) ){

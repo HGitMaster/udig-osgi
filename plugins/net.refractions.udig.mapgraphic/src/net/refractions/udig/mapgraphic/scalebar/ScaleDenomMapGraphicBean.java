@@ -35,7 +35,7 @@ public class ScaleDenomMapGraphicBean {
 
 
     public ScaleDenomMapGraphicBean() {
-        label = "";
+        label = ""; //$NON-NLS-1$
         horizAlignment = ALIGN_CENTER;
     }
     

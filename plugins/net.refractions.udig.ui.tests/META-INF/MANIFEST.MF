@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.junit,
  net.refractions.udig.libs,
  net.refractions.udig.ui
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.ui,
  net.refractions.udig.ui.tests,
  net.refractions.udig.ui.tests.support,
@@ -25,3 +25,4 @@ Bundle-ClassPath: lib/jmock-2.3.0-RC2.jar,
  lib/hamcrest-core-1.1.jar,
  lib/hamcrest-library-1.1.jar,
  lib/objenesis-1.0.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

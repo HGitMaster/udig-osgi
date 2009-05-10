@@ -268,6 +268,11 @@ class FeatureTableContentProvider implements ILazyContentProvider, IProvider<Col
                 error(input, i + " " + Messages.FeatureTableContentProvider_outOfMemory, true); //$NON-NLS-1$
                 UiPlugin.log("Out of memory error in table view", error); //$NON-NLS-1$
                 return;
+            } catch (IndexOutOfBoundsException e) {
+                error(input, Messages.FeatureTableContentProvider_unexpectedErro
+                        + " " + Messages.FeatureTableContentProvider_probablecharseterror, false);
+                UiPlugin.log("error loading features in table view", e); //$NON-NLS-1$
+                return;
             } catch (Throwable t) {
                 error(input, Messages.FeatureTableContentProvider_unexpectedErro
                         + t.getLocalizedMessage(), false);
@@ -275,7 +280,7 @@ class FeatureTableContentProvider implements ILazyContentProvider, IProvider<Col
                 return;
             } finally {
                 if (iterator != null)
-                    iterator.close();
+                    input.close(iterator);
                 UiPlugin.trace(Trace.FEATURE_TABLE, FeatureTableContentProvider.class, 
                         "Ending ContentLoader, Cancel state is:"+monitor.isCanceled(), null); //$NON-NLS-1$
             }

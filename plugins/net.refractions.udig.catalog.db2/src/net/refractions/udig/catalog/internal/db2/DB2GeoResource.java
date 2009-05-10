@@ -55,10 +55,8 @@ public class DB2GeoResource extends IGeoResource {
     /** feature type (table) name * */
     String name;
 
-    /** info object * */
-    volatile DB2GeoResourceInfo info;
-
     DB2GeoResource( DB2Service parent, String name ) {
+        this.service = parent;
         this.parent = parent;
         this.name = name;
     }
@@ -81,7 +79,7 @@ public class DB2GeoResource extends IGeoResource {
             return null;
 
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
-            return adaptee.cast(getInfo(monitor));
+            return adaptee.cast(createInfo(monitor));
 
         if (adaptee.isAssignableFrom(FeatureSource.class)) {
             DataStore ds = parent.getDataStore(monitor);
@@ -105,9 +103,6 @@ public class DB2GeoResource extends IGeoResource {
 
         return super.resolve(adaptee, monitor);
     }
-    public IService service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
     public Status getStatus() {
         return parent.getStatus();
     }
@@ -129,7 +124,7 @@ public class DB2GeoResource extends IGeoResource {
     }
 
     @Override
-    public IGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         parent.rLock.lock();
         try{
             if (info == null) {

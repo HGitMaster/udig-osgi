@@ -23,9 +23,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.refractions.udig.catalog.AbstractDataStoreServiceExtension;
-import net.refractions.udig.catalog.IService;
-import net.refractions.udig.catalog.ServiceExtension2;
 import net.refractions.udig.catalog.internal.mysql.MySQLPlugin;
 import net.refractions.udig.catalog.mysql.internal.Messages;
 import net.refractions.udig.core.internal.CorePlugin;

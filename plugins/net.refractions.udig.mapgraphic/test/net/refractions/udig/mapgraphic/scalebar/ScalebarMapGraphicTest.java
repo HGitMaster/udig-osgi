@@ -1,8 +1,10 @@
 package net.refractions.udig.mapgraphic.scalebar;
 
-import static net.refractions.udig.mapgraphic.scalebar.Unit.*;
-import static org.junit.Assert.*;
-
+import static net.refractions.udig.mapgraphic.scalebar.Unit.FOOT;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.KILOMETER;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.METER;
+import static net.refractions.udig.mapgraphic.scalebar.Unit.YARD;
+import static org.junit.Assert.assertEquals;
 import net.refractions.udig.core.IProviderWithParam;
 import net.refractions.udig.core.Pair;
 

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: CompositeRendererImpl.java 30791 2008-09-19 20:31:56Z egouge $
+ * <copyright></copyright> $Id: CompositeRendererImpl.java 31068 2009-01-19 10:17:31Z jeichar $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -33,6 +33,7 @@ import net.refractions.udig.project.internal.render.RenderListenerAdapter;
 import net.refractions.udig.project.internal.render.RenderManager;
 import net.refractions.udig.project.internal.render.Renderer;
 import net.refractions.udig.project.internal.render.RendererCreator;
+import net.refractions.udig.project.internal.render.SelectionLayer;
 import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.render.ILabelPainter;
 import net.refractions.udig.project.render.IRenderContext;
@@ -141,7 +142,6 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
     /**
      * @param renderer
      */
-    @SuppressWarnings("unchecked")
     protected RenderExecutor createRenderExecutor( Renderer renderer ) {
          final RenderExecutor executor = RenderFactory.eINSTANCE.createRenderExecutor(renderer);
         executor.eAdapters().add(new RenderListenerAdapter(){
@@ -346,10 +346,18 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
                     executors = new TreeSet<RenderExecutor>(comparator);
                     executors.addAll(getRenderExecutors());
                 }
+                ILabelPainter cache = getContext().getLabelPainter();
+                
                 RENDERERS: for( RenderExecutor executor : executors ) {
 
-                    if (!executor.getContext().isVisible())
+                    if (!executor.getContext().isVisible()){
+                        if(paintLabels && !(executor.getContext().getLayer() instanceof SelectionLayer)){
+                          //disable layer from label cache
+                            cache.disableLayer(executor.getContext().getLayer().getID().toString());
+                        }
                         continue RENDERERS;
+                    }
+                        
 
                     if (executor.getState() == NEVER || executor.getState() == STARTING || executor.getState() == RENDER_REQUEST) {
                         continue RENDERERS;
@@ -364,7 +372,8 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
                     g.drawRenderedImage(executor.getContext().getImage(), IDENTITY);
                 }
                 if(paintLabels){
-                    ILabelPainter cache = getContext().getLabelPainter();
+                    RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setRenderingHints(hints);
                     Dimension displaySize = getContext().getMapDisplay().getDisplaySize();
                     cache.end(g, new Rectangle(displaySize));
                 }

@@ -19,7 +19,6 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.geotools.referencing;bundle-version="2.6.0",
  org.geotools.cql;bundle-version="2.6.0",
  org.geotools.brewer;bundle-version="2.6.0"
-Eclipse-LazyStart: true
 Export-Package: net.refractions.udig,
  net.refractions.udig.internal.ui,
  net.refractions.udig.internal.ui.operations,
@@ -45,3 +44,5 @@ Import-Package: com.vividsolutions.jts.geom,
  org.opengis.referencing.operation,
  org.opengis.style,
  org.opengis.util
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

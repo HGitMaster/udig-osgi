@@ -16,8 +16,14 @@
  */
 package net.refractions.udig.internal.ui;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.net.URL;
+import java.text.MessageFormat;
+
 import net.refractions.udig.ui.internal.Messages;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -72,7 +78,44 @@ public class UDIGApplication implements IApplication {
         WorkbenchAdvisor workbenchAdvisor = createWorkbenchAdvisor();
         Display display = PlatformUI.createDisplay();
 
-        if(!login()){
+        String udigNameStr = "udig"; //$NON-NLS-1$
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            udigNameStr = "udig.exe"; //$NON-NLS-1$
+        }
+
+        for( String arg : Platform.getCommandLineArgs() ) {
+            if ("--help".equalsIgnoreCase(arg) || "-h".equalsIgnoreCase(arg)) { //$NON-NLS-1$ //$NON-NLS-2$
+                String helpString = MessageFormat.format(Messages.UDIGApplication_helpstring,
+                        udigNameStr);
+                System.out.println(helpString);
+                return EXIT_OK;
+            }
+            if ("--version".equalsIgnoreCase(arg) || "-v".equalsIgnoreCase(arg)) { //$NON-NLS-1$ //$NON-NLS-2$
+                // get udig version
+                URL mappingsUrl = Platform
+                        .getBundle("net.refractions.udig").getResource("about.mappings"); //$NON-NLS-1$ //$NON-NLS-2$  
+                String mappingsPathPath = FileLocator.toFileURL(mappingsUrl).getPath();
+
+                BufferedReader bR = new BufferedReader(new FileReader(mappingsPathPath));
+                String udigVersion = "version not available";
+                String line = null;
+                while( (line = bR.readLine()) != null ) {
+                    if (line.startsWith("1=")) {
+                        udigVersion = line.split("=")[1];
+                        break;
+                    }
+                }
+
+                System.out.println("Version Information:"); //$NON-NLS-1$
+                System.out.println("uDig version: " + udigVersion); //$NON-NLS-1$ 
+                System.out.println("Java VM: " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out
+                        .println("OS:      " + System.getProperty("os.name") + " " + System.getProperty("os.arch")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                return EXIT_OK;
+            }
+        }
+
+        if (!login()) {
             // user did not login
             return EXIT_OK;
         }
@@ -96,7 +139,7 @@ public class UDIGApplication implements IApplication {
      * routine you may need.
      *
      * @return
-     */ 
+     */
     protected boolean login() {
         return true;
     }
@@ -128,13 +171,13 @@ public class UDIGApplication implements IApplication {
      */
     public void stop() {
         final IWorkbench workbench = PlatformUI.getWorkbench();
-        if (workbench == null){
+        if (workbench == null) {
             return;
         }
         final Display display = workbench.getDisplay();
         display.syncExec(new Runnable(){
             public void run() {
-                if (!display.isDisposed()){
+                if (!display.isDisposed()) {
                     workbench.close();
                 }
             }

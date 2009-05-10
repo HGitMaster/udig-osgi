@@ -8,4 +8,4 @@ Bundle-Vendor: Humble uDig Student
 Require-Bundle: org.eclipse.core.runtime,
  net.refractions.udig.ui,
  org.eclipse.ui
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

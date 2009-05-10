@@ -24,6 +24,7 @@ import java.net.URL;
 
 import javax.swing.Icon;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IService;
@@ -36,11 +37,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
+import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.styling.SLD;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
@@ -56,9 +56,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class ShpGeoResourceImpl extends IGeoResource {
     ShpServiceImpl parent;
-    private volatile GeotoolsResourceInfoAdapter info;
     String typename = null;
     private URL identifier;
+    private ID id;
     
     /**
      * Construct <code>ShpGeoResourceImpl</code>.
@@ -67,9 +67,15 @@ public class ShpGeoResourceImpl extends IGeoResource {
      * @param typename
      */
     public ShpGeoResourceImpl(ShpServiceImpl parent, String typename){
-        this.parent = parent; this.typename = typename;
+        this.service = parent;
+        this.parent = parent;
+        this.typename = typename;
         try {
             identifier= new URL(parent.getIdentifier().toString()+"#"+typename); //$NON-NLS-1$
+            id = new ID( parent.getID(), typename );
+            if( !identifier.equals( id.toURL() )){
+                System.out.println( id + "!= "+identifier );
+            }
         } catch (MalformedURLException e) {
             identifier= parent.getIdentifier();
         }
@@ -95,6 +101,9 @@ public class ShpGeoResourceImpl extends IGeoResource {
     
     public URL getIdentifier() {
         return identifier;
+    }
+    public ID getID() {
+        return id;
     }
 
     /*
@@ -127,7 +136,7 @@ public class ShpGeoResourceImpl extends IGeoResource {
             return adaptee.cast( this );
         }
         if(adaptee.isAssignableFrom(IGeoResourceInfo.class)){
-            return adaptee.cast( getInfo(monitor) );
+            return adaptee.cast( createInfo(monitor) );
         }
         if(adaptee.isAssignableFrom(FeatureStore.class)){
             FeatureSource<SimpleFeatureType, SimpleFeature> fs = featureSource(monitor);
@@ -202,11 +211,6 @@ public class ShpGeoResourceImpl extends IGeoResource {
         return null; // well nothing worked out; make your own style
     }
 
-    @Override
-    public ShpServiceImpl service( IProgressMonitor monitor ) throws IOException {
-        return parent;
-    }
-    
     /**
      * Helper method performing the same function as service( monitor ) without the
      * monitor or chance of IOException. 
@@ -231,7 +235,7 @@ public class ShpGeoResourceImpl extends IGeoResource {
                 adaptee.isAssignableFrom(Style.class)) ||
                 super.canResolve(adaptee);
     }
-    public IGeoResourceInfo getInfo(IProgressMonitor monitor) throws IOException{
+    protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
         return info;
     }
 }

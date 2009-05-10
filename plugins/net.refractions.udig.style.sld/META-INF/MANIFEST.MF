@@ -20,7 +20,6 @@ Require-Bundle: org.eclipse.ui,
  org.geotools.brewer;bundle-version="2.6.0",
  org.geotools.coverage;bundle-version="2.6.0",
  org.geotools.wms;bundle-version="2.6.0"
-Eclipse-LazyStart: true
 Import-Package: com.vividsolutions.jts.geom,
  javax.measure.unit,
  javax.media.jai,
@@ -34,3 +33,4 @@ Import-Package: com.vividsolutions.jts.geom,
  org.opengis.parameter,
  org.opengis.style,
  org.opengis.util
+Bundle-ActivationPolicy: lazy

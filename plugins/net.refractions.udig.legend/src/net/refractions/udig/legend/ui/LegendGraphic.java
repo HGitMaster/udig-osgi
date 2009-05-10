@@ -217,7 +217,7 @@ public class LegendGraphic implements MapGraphic {
         /*
          * Draw the box containing the layers/icons
          */
-        drawOutline(graphics, locationStyle);
+        drawOutline(graphics, context, locationStyle);
         
         /*
          * Draw the layer names/icons
@@ -280,6 +280,8 @@ public class LegendGraphic implements MapGraphic {
                 }
             });
         }
+        //clear the clip so we don't affect other rendering processes
+        graphics.setClip(null);
     }
    
 
@@ -339,7 +341,7 @@ public class LegendGraphic implements MapGraphic {
             x += imageWidth;
         }
         
-        if (text != null || text.length() != 0) {
+        if (text != null && text.length() != 0) {
             graphics.drawString(text, 
                     x+horizontalMargin, 
                     y+graphics.getFontAscent()+textVerticalOffset,
@@ -375,9 +377,12 @@ public class LegendGraphic implements MapGraphic {
         return styles.toArray(new FeatureTypeStyle[0]);
     }
 
-    private void drawOutline(ViewportGraphics graphics, Rectangle locationStyle) {
+    private void drawOutline(ViewportGraphics graphics, MapGraphicContext context, Rectangle locationStyle) {
         Rectangle outline = new Rectangle(locationStyle.x, locationStyle.y, locationStyle.width, locationStyle.height);
-        
+
+        // reserve this area free of labels!
+        context.getLabelPainter().put( outline );
+
         graphics.setColor(backgroundColour);
         graphics.fill(outline);
 

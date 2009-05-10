@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,6 @@ import org.geotools.gce.image.WorldImageFormatFactory;
  * @since 0.6.0
  */
 public class WorldImageServiceImpl extends AbstractRasterService {
-    private WorldImageServiceInfo info;
     private AbstractRasterGeoResource resource;
 
     /**
@@ -80,7 +80,7 @@ public class WorldImageServiceImpl extends AbstractRasterService {
         return list;
     }
  
-    public IServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+    protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
         if(this.info == null) {            
             this.info = new WorldImageServiceInfo();
         }
@@ -89,8 +89,11 @@ public class WorldImageServiceImpl extends AbstractRasterService {
     
     @Override
     public Map<String, Serializable> getConnectionParams() {
-        return new WorldImageServiceExtension().createParams(getIdentifier());
+        Map<String, Serializable> params = new HashMap<String, Serializable>(); 
+        params.put(WorldImageServiceExtension.URL_PARAM, getIdentifier() );
+        return params;
     }
+    
     public void dispose( IProgressMonitor monitor ) {
         // do nothing
     }

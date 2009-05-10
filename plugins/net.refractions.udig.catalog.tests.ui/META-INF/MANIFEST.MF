@@ -11,7 +11,6 @@ Require-Bundle: net.refractions.udig.catalog,
  org.eclipse.jface,
  net.refractions.udig.libs,
  org.eclipse.ui,
- net.refractions.udig.catalog.cgdi,
  net.refractions.udig.catalog.db2,
  net.refractions.udig.catalog.geotiff,
  net.refractions.udig.catalog.gml,
@@ -26,8 +25,9 @@ Require-Bundle: net.refractions.udig.catalog,
  net.refractions.udig.catalog.tests;visibility:=reexport,
  net.refractions.udig.ui.tests;visibility:=reexport,
  org.junit4;bundle-version="4.3.1"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-Activator: net.refractions.udig.catalog.tests.ui.CatalogTestsUIPlugin
 Export-Package: net.refractions.udig.catalog.tests.ui,
  net.refractions.udig.catalog.tests.ui.dnd,
  net.refractions.udig.catalog.tests.ui.workflow
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

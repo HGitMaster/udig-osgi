@@ -7,7 +7,6 @@ import java.util.Map;
 import net.refractions.udig.catalog.AbstractServiceExtention;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IService;
-import net.refractions.udig.catalog.ServiceExtension;
 
 /**
  * Create a MovedService handle recording where a service was moved to 

@@ -1,5 +1,6 @@
 package net.refractions.udig.catalog.internal.ui.actions;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -150,11 +151,12 @@ public class CatalogImportDropAction extends IDropAction {
         }
         if (result == null && !line.contains(":/")) {
             // maybe its a file?
-            try {
-                String string = "file:" + line;
-                result = new URL(string);
-            } catch (MalformedURLException e2) {
-            }
+//            try {
+                result = URLUtils.fileToURL(new File(line));
+//                String string = "file:" + line;
+//                result = new URL(string);
+//            } catch (MalformedURLException e2) {
+//            }
         }
         if (result == null) {
             try {
@@ -175,8 +177,8 @@ public class CatalogImportDropAction extends IDropAction {
      * @return
      */
     private URL formatFileURL( URL result ) {
-        if (result.getProtocol().equalsIgnoreCase("file")) {
-            try {
+        if (result.getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
+            try { 
                 return new URL(result.toExternalForm());
             } catch (MalformedURLException e) {
                 return result;

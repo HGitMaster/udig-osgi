@@ -74,6 +74,7 @@ import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.data.Query;
 import org.geotools.data.ows.Layer;
 import org.geotools.data.ows.Service;
+import org.geotools.data.ows.StyleImpl;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.data.wms.request.GetMapRequest;
 import org.geotools.factory.CommonFactoryFinder;
@@ -206,7 +207,7 @@ public class BasicWMSRenderer2 extends RendererImpl implements IMultiLayerRender
 
                 if (currScale >= minScale && currScale <= maxScale) {
                     // check for a wms style
-                    org.opengis.layer.Style wmsStyle = (org.opengis.layer.Style)ilayer.getStyleBlackboard().get(
+                    StyleImpl wmsStyle = (StyleImpl) ilayer.getStyleBlackboard().get(
                             WMSStyleContent.WMSSTYLE);
                     if (wmsStyle != null) {
                         request.addLayer(layer, wmsStyle);

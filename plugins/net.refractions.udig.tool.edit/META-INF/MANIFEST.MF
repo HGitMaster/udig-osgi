@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.ui,
  net.refractions.udig.mapgraphic,
  net.refractions.udig.style
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.tool.edit,
  net.refractions.udig.tool.edit.internal,
  net.refractions.udig.tools.edit,
@@ -28,3 +28,4 @@ Export-Package: net.refractions.udig.tool.edit,
  net.refractions.udig.tools.edit.preferences,
  net.refractions.udig.tools.edit.support,
  net.refractions.udig.tools.edit.validator
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

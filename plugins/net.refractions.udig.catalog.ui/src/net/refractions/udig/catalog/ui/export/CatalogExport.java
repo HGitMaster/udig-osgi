@@ -134,7 +134,7 @@ public class CatalogExport {
         Display.getDefault().asyncExec(
             new Runnable() {
                 public void run() {
-                    dialog.open();  
+                    getDialog().open();  
                 };
             }
         );

@@ -81,7 +81,7 @@ public class TipDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(400, 250);
+		return new Point(400, 300);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class TipDialog extends Dialog {
 		gridData.verticalAlignment = SWT.END;
 		title.setLayoutData(gridData);
 
-		tip = new Text(composite, SWT.WRAP|SWT.READ_ONLY);
+		tip = new Text(composite, SWT.WRAP|SWT.READ_ONLY| SWT.V_SCROLL);
 		tip.setBackground(getShell().getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
