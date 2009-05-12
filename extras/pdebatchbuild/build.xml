@@ -11,7 +11,7 @@
   <!-- read properties depending on the build machine from an external file -->
   <property file="local.properties" />
 
-  <property name="gt.version" value="2.6.0.osgi1"/>
+  <property name="gt.version" value="2.6.0.osgi2"/>
   <property name="maven.settings" value="settings.xml"/>
   <property name="pluginPath" value="${buildRoot}/dependencies"/>
   <property name="deps.dir" value="${pluginPath}/plugins"/>
@@ -34,6 +34,7 @@
     <maven:dependencies filesetId="platform.fileset" useScope="runtime" verbose="false" settingsFile="${maven.settings}">
       <maven:localRepository path="${maven.repo.local}"/>
 
+      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" version="2.3.0.osgi1"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-api" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-brewer" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-coverage" version="${gt.version}"/>
@@ -56,6 +57,7 @@
       <maven:dependency groupId="javax.media" artifactId="javax.media.jai.osgi" version="1.1.3"/>
       <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.win32.x86" version="1.1.3"/>
       <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.jai_imageio" version="1.1"/>
+      <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.imageio.linux.x86_64" version="1.1"/>
       <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" version="1.3.1"/>
 
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.bridge" version="1.7.0"/>
