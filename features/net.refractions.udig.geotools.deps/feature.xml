@@ -110,6 +110,20 @@
          unpack="false"/>
 
    <plugin
+         id="de.berlios.it.geosolutions.imageio.ext.tiff"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.berlios.it.geosolutions.imageio.ext.utilities"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.apache.batik.osgi.transcoder"
          download-size="0"
          install-size="0"
