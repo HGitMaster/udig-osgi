@@ -70,6 +70,7 @@
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.gvt" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.svggen" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" version="1.6"/>
       <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" version="1.0.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.beanutils" version="1.7.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.collections" version="3.2.0"/>
