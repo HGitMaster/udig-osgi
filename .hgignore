@@ -7,6 +7,7 @@ local.properties
 
 # stuff created by PDE build
 @dot
+@dot.log
 *temp.folder
 features/*/build.xml
 plugins/*/build.xml
