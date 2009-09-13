@@ -31,10 +31,6 @@
          version="0.0.0"/>
 
    <includes
-         id="net.refractions.udig.lite.extradeps"
-         version="0.0.0"/>
-
-   <includes
          id="net.refractions.udig.lite.deps"
          version="0.0.0"/>
 
