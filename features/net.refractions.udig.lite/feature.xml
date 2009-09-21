@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="net.refractions.udig.lite"
+      id="net.refractions.udig"
       label="uDig Lite Feature"
       version="1.2.0.osgi1"
       provider-name="Harman/Becker"
-      plugin="net.refractions.udig.lite">
+      plugin="net.refractions.udig">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -31,11 +31,39 @@
          version="0.0.0"/>
 
    <includes
-         id="net.refractions.udig.lite.extradeps"
+         id="net.refractions.udig.lite.deps"
          version="0.0.0"/>
 
    <includes
-         id="net.refractions.udig.lite.deps"
+         id="org.eclipse.help"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.draw2d"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.common"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.common.ui"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecore"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.edit"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.edit.ui"
          version="0.0.0"/>
 
    <plugin
@@ -158,13 +186,6 @@
 
    <plugin
          id="net.refractions.udig.render.gridcoverage.basic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.lite"
          download-size="0"
          install-size="0"
          version="0.0.0"
