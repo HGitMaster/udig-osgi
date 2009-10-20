@@ -2,7 +2,7 @@
 <feature
       id="net.refractions.udig.lite.extradeps"
       label="Deps Feature"
-      version="1.2.0.osgi1">
+      version="1.2.0.osgi3">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
