@@ -94,9 +94,6 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     protected TileCache tempCache;
 
-
-    private ILabelPainter labelPainter;
-    
     public RenderContextImpl() {
         super();
     }
@@ -456,10 +453,10 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
          * render contexts.
          */
         IBlackboard blackboard = getMap().getBlackboard();
+        ILabelPainter labelPainter = null; 
         synchronized (blackboard)
         {
-            ILabelPainter labelPainter = 
-                (ILabelPainter) blackboard.get(LABEL_PAINTER);
+            labelPainter = (ILabelPainter) blackboard.get(LABEL_PAINTER);
             if (labelPainter == null) {
                 // create a new one and put it on the blackboard for others to
                 // use
@@ -482,7 +479,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * @param labelPainter
      */
     public synchronized void setLabelPainter(ILabelPainter labelPainter){
-        this.labelPainter = labelPainter;
+        getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
     }
     
     /**
