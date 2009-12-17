@@ -79,7 +79,7 @@
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.lang" version="2.4.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.pool" version="1.4.0"/>
       <maven:dependency groupId="org.apache.log4j" artifactId="com.springsource.org.apache.log4j" version="1.2.15"/>
-      <maven:dependency groupId="org.junit" artifactId="com.springsource.org.junit" version="4.4.0"/>
+      <maven:dependency groupId="org.junit" artifactId="com.springsource.org.junit" version="4.7.0"/>
       <maven:dependency groupId="org.hamcrest" artifactId="com.springsource.org.hamcrest.core" version="1.1.0"/>
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" version="1.2.0"/>
       <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>
