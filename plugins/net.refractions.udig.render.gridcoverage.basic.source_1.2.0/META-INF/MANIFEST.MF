@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-Vendor: %providerName
+Eclipse-SourceBundle: net.refractions.udig.render.gridcoverage.basic;v
+ ersion="1.2.0";roots:="."
+Bundle-Version: 1.2.0
+Bundle-Name: %plugin.name
+Bundle-Localization: plugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: net.refractions.udig.render.gridcoverage.basic.so
+ urce
+
