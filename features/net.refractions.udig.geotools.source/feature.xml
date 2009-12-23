@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="net.refractions.udig"
-      label="uDig Lite Feature"
-      version="1.2.0.osgi3"
-      provider-name="Harman/Becker"
-      plugin="net.refractions.udig">
+      id="org.geotools.source"
+      label="Geotools"
+      version="2.6.0.osgi1"
+      provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -19,194 +18,128 @@
    </license>
 
    <includes
-         id="org.eclipse.rcp"
+         id="org.opengis.geoapi.source"
          version="0.0.0"/>
 
    <includes
-         id="org.geotools"
+         id="org.geotools.deps.source"
          version="0.0.0"/>
-
-   <includes
-         id="org.geotools.deps"
-         version="0.0.0"/>
-
-   <includes
-         id="net.refractions.udig.lite.deps"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.help"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.draw2d"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.gef"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.common"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.common.ui"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.ecore"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.edit"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.edit.ui"
-         version="0.0.0"/>
-
+   
    <plugin
-         id="net.refractions.udig"
+         id="org.geotools.api.source"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
-
-
+         version="0.0.0"
+         unpack="false"/>
+   
    <plugin
-         id="net.refractions.udig.catalog"
+         id="org.geotools.brewer.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   
+   <plugin
+         id="org.geotools.coverage.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.geotools.cql.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.geotools.data.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.geotools.epsg.wkt.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.geotools.geotiff.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.geotools.imagemosaic.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
-         id="net.refractions.udig.catalog.ui"
+         id="org.geotools.main.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
-         id="net.refractions.udig.core"
+         id="org.geotools.metadata.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
-         id="net.refractions.udig.project"
+         id="org.geotools.process.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
+   
    <plugin
-         id="net.refractions.udig.project.edit"
+         id="org.geotools.referencing.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
+   
    <plugin
-         id="net.refractions.udig.project.ui"
+         id="org.geotools.render.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
-         id="net.refractions.udig.project.ui.editor"
+         id="org.geotools.shapefile.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
-         id="net.refractions.udig.render.feature.basic"
+         id="org.geotools.wms.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
-         id="net.refractions.udig.style"
+         id="org.geotools.xml.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-
+   
    <plugin
-         id="net.refractions.udig.style.sld"
+         id="org.geotools.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.tool.default"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.tool.info"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.catalog.shp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.catalog.geotiff"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.catalog.rasterings"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-
-   <plugin
-         id="net.refractions.udig.render.gridcoverage.basic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
 
 </feature>

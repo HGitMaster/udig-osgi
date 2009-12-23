@@ -35,56 +35,123 @@
       <maven:localRepository path="${maven.repo.local}"/>
 
       <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" version="2.3.0.osgi2"/>
+      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" classifier="sources" version="2.3.0.osgi2"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-api" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-api" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-brewer" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-brewer" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-coverage" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-coverage" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-cql" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-cql" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-data" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-data" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-epsg-wkt" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-epsg-wkt" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-main" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-main" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-metadata" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-metadata" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-referencing" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-referencing" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-render" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-render" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-shapefile" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-shapefile" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-wms" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-wms" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-xml" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-xml" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-process" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-process" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="org.geotools" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="org.geotools" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="org.geotools.deps" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="org.geotools.deps" classifier="sources" version="${gt.version}"/>
 
       <maven:dependency groupId="javax.media" artifactId="javax.media.jai.osgi" version="1.1.3" scope="runtime"/>
+      <maven:dependency groupId="javax.media" artifactId="javax.media.jai.osgi" version="1.1.3" classifier="sources"  scope="runtime"/>
       <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.win32.x86" version="1.1.3" scope="runtime"/>
+      <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.win32.x86" version="1.1.3" classifier="sources" scope="runtime"/>
       <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.jai_imageio" version="1.1" scope="runtime"/>
+      <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.jai_imageio" version="1.1" classifier="sources" scope="runtime"/>
       <!--maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.imageio.linux.x86_64" version="1.1"/-->
       <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" version="1.3.1"/>
+      <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" classifier="sources" version="1.3.1"/>
       <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" version="1.0.2"/>
-
+      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" classifier="sources" version="1.0.2"/>
       <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" version="1.0.2"/>
+      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" classifier="sources" version="1.0.2"/>
 
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.bridge" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.bridge" classifier="sources" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.parser" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.parser" classifier="sources" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.script" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.script" classifier="sources" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.bcel" artifactId="com.springsource.org.apache.bcel" version="5.1.0"/>
+      <maven:dependency groupId="org.apache.bcel" artifactId="com.springsource.org.apache.bcel" classifier="sources" version="5.1.0"/>
+      <maven:dependency groupId="org.apache.regexp" artifactId="com.springsource.org.apache.regexp" version="1.5.0"/>
+      <maven:dependency groupId="org.apache.regexp" artifactId="com.springsource.org.apache.regexp" classifier="sources" version="1.5.0"/>
+      <maven:dependency groupId="org.apache.xalan" artifactId="com.springsource.org.apache.xalan" version="2.7.0"/>
+      <maven:dependency groupId="org.apache.xalan" artifactId="com.springsource.org.apache.xalan" classifier="sources" version="2.7.0"/>
+      <maven:dependency groupId="org.apache.xerces" artifactId="com.springsource.org.apache.xerces" version="2.8.1"/>
+      <maven:dependency groupId="org.apache.xerces" artifactId="com.springsource.org.apache.xerces" classifier="sources" version="2.8.1"/>
+      <maven:dependency groupId="org.apache.xml" artifactId="com.springsource.org.apache.xml.resolver" version="1.2.0"/>
+      <maven:dependency groupId="org.apache.xml" artifactId="com.springsource.org.apache.xml.resolver" classifier="sources" version="1.2.0"/>
+      <maven:dependency groupId="org.apache.xmlcommons" artifactId="com.springsource.org.apache.xmlcommons" version="1.3.3"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.anim" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.anim" classifier="sources" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.css" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.css" classifier="sources" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.xml" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.xml" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.ext.awt" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.ext.awt" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.dom.svg" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.dom.svg" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.dom" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.dom" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.gvt" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.gvt" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.svggen" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.svggen" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" version="1.6"/>
+      <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" classifier="sources" version="1.6"/>
       <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" version="1.0.0"/>
+      <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" classifier="sources" version="1.0.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.beanutils" version="1.7.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.beanutils" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.collections" version="3.2.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.collections" classifier="sources" version="3.2.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.dbcp" version="1.2.2.osgi"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.dbcp" classifier="sources" version="1.2.2.osgi"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.logging" version="1.1.1"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.logging" classifier="sources" version="1.1.1"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.lang" version="2.4.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.lang" classifier="sources" version="2.4.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.pool" version="1.4.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.pool" classifier="sources" version="1.4.0"/>
       <maven:dependency groupId="org.apache.log4j" artifactId="com.springsource.org.apache.log4j" version="1.2.15"/>
+      <maven:dependency groupId="org.apache.log4j" artifactId="com.springsource.org.apache.log4j" classifier="sources" version="1.2.15"/>
       <maven:dependency groupId="org.junit" artifactId="com.springsource.org.junit" version="4.4.0"/>
+      <maven:dependency groupId="org.junit" artifactId="com.springsource.org.junit" classifier="sources" version="4.4.0"/>
       <maven:dependency groupId="org.hamcrest" artifactId="com.springsource.org.hamcrest.core" version="1.1.0"/>
+      <maven:dependency groupId="org.hamcrest" artifactId="com.springsource.org.hamcrest.core" classifier="sources" version="1.1.0"/>
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" version="1.2.0"/>
+      <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" classifier="sources" version="1.2.0"/>
       <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>
+      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" classifier="sources" version="2.0.8"/>
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.9"/>
+      <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" classifier="sources" version="1.9"/>
 
+      <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr-275" classifier="sources" version="1.0.0.beta-2"/>
     </maven:dependencies>
 
    <copy todir="${deps.dir}" verbose="false">

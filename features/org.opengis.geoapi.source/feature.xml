@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.opengis.geoapi"
+      id="org.opengis.geoapi.source"
       label="OpenGIS GeoAPI"
       version="2.2.0.osgi1">
 
@@ -17,23 +17,22 @@
    </license>
 
    <requires>
-      <import plugin="net.java.dev.osgi.jsr-275"/>  
+        <import plugin="net.java.dev.osgi.jsr-275.source"/>     
    </requires>
 
+  
    <plugin
-         id="org.opengis.geoapi"
+         id="org.opengis.geoapi.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-   
-
    <plugin
-         id="net.java.dev.osgi.jsr-275"
+         id="net.java.dev.osgi.jsr-275.source"   
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
 </feature>

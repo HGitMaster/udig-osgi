@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.geotools.sdk"
+      label="Geotools"
+      version="2.6.0.osgi1"
+      provider-name="Harman/Becker">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="org.opengis.geoapi.sdk"
+         version="0.0.0"/>
+
+   <includes
+         id="org.geotools.deps.sdk"
+         version="0.0.0"/>
+
+   <includes
+         id="org.geotools"
+         version="0.0.0"/>
+
+   <includes
+         id="org.geotools.source"
+         version="0.0.0"/>
+
+</feature>
