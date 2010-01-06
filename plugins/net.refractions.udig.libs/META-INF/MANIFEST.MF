@@ -98,7 +98,7 @@ Bundle-ClassPath: library.jar,
  lib/jaxb-impl-1.3.jar,
  lib/jdom-1.0.jar,
  lib/jsqlparser-0.3.14.jar,
- lib/net.java.dev.osgi.jsr-275-1.0-beta-2.jar 
+ lib/net.java.dev.osgi.jsr275-1.0.0.beta-2.jar 
  lib/com.vividsolutions.osgi.jts-1.9.jar 
  lib/mysql-connector-java-5.1.5.jar,
  lib/net.opengis.ows-2.6-SNAPSHOT.jar,

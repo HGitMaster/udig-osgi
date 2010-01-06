@@ -151,7 +151,7 @@
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.9"/>
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" classifier="sources" version="1.9"/>
 
-      <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr-275" classifier="sources" version="1.0.0.beta-2"/>
+      <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr275" classifier="sources" version="1.0.0.beta-2"/>
     </maven:dependencies>
 
    <copy todir="${deps.dir}" verbose="false">

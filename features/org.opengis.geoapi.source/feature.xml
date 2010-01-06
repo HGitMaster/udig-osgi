@@ -17,7 +17,7 @@
    </license>
 
    <requires>
-        <import plugin="net.java.dev.osgi.jsr-275.source"/>     
+        <import plugin="net.java.dev.osgi.jsr275.source"/>     
    </requires>
 
   
@@ -29,7 +29,7 @@
          unpack="false"/>
 
    <plugin
-         id="net.java.dev.osgi.jsr-275.source"   
+         id="net.java.dev.osgi.jsr275.source"   
          download-size="0"
          install-size="0"
          version="0.0.0"
