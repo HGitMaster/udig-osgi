@@ -81,7 +81,7 @@
       <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.jai_imageio" version="1.1" classifier="sources" scope="runtime"/>
       <!--maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.imageio.linux.x86_64" version="1.1"/-->
       <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" version="1.3.1"/>
-      <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" classifier="sources" version="1.3.1"/>
+      <!-- no sources <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" classifier="sources" version="1.3.1"/-->
       <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" version="1.0.2"/>
       <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" classifier="sources" version="1.0.2"/>
       <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" version="1.0.2"/>
@@ -123,7 +123,7 @@
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" version="1.6"/>
-      <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" classifier="sources" version="1.6"/>
+      <!--no sources <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" classifier="sources" version="1.6"/-->
       <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" version="1.0.0"/>
       <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" classifier="sources" version="1.0.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.beanutils" version="1.7.0"/>
