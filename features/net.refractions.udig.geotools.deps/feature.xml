@@ -276,14 +276,14 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-		 unpack="false"/>
+       unpack="false"/>
 
    <plugin
          id="com.springsource.org.hamcrest.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
-		 unpack="false"/>
+       unpack="false"/>
 
    <plugin
          id="javax.media.jai.osgi.win32.x86"

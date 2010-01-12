@@ -69,7 +69,7 @@
       <maven:dependency groupId="org.geotools" artifactId="gt-process" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-process" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="org.geotools" version="${gt.version}"/>
-      <maven:dependency groupId="org.geotools" artifactId="org.geotools" classifier="sources" version="${gt.version}"/>
+      <!--<maven:dependency groupId="org.geotools" artifactId="org.geotools" classifier="sources" version="${gt.version}"/>-->
       <maven:dependency groupId="org.geotools" artifactId="org.geotools.deps" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="org.geotools.deps" classifier="sources" version="${gt.version}"/>
 

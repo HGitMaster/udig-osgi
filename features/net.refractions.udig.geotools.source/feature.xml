@@ -135,11 +135,12 @@
          unpack="false"/>
 
    
-   <plugin
+   <!-- not a source bundle, skip
+         plugin
          id="org.geotools.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="false"/-->
 
 </feature>

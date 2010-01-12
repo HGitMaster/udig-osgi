@@ -42,7 +42,7 @@
    </plugins>
 
    <features>
-      <feature id="net.refractions.udig" version="1.2.0.osgi3"/>
+      <feature id="net.refractions.udig.sdk" version="1.2.0.osgi3"/>
    </features>
 
 

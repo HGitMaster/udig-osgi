@@ -93,12 +93,12 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   <plugin
+   <!-- no sources plugin
          id="java3d.osgi.vecmath.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="false"/-->
 
    <plugin
          id="javax.media.jai.osgi.jai_imageio.source"
@@ -120,12 +120,12 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   <plugin
+   <!-- no sources plugin
          id="org.apache.batik.osgi.transcoder.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="false"/-->
 
    <plugin
          id="com.springsource.com.lowagie.text.source"
@@ -256,19 +256,19 @@
          unpack="false"/>
 
   
-   <plugin
+   <!-- plugin
          id="com.springsource.org.junit.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-		 unpack="false"/>
+       unpack="false"/-->
 
    <plugin
          id="com.springsource.org.hamcrest.core.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-		 unpack="false"/>
+       unpack="false"/>
 
 
    <plugin
