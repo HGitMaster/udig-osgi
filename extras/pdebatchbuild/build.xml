@@ -27,6 +27,9 @@
   <target name="clean">  
     <delete dir="${deps.dir}"/>
     <delete dir="${buildRoot}/I.udigLite"/>
+    <delete includeEmptyDirs="true">
+      <fileset dir="${buildRoot}/plugins" includes="*source*/**"/>
+    </delete>
   </target>
 
   <target name="platform">
