@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.core.internal.CorePlugin;
@@ -359,15 +360,16 @@ public class SivecoExportMapToImageWizard extends Wizard implements IExportWizar
     	    ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
 
             LayerFactory layerFactory = map.getLayerFactory();
-            URL resourceID = new URL(null, "mapgraphic://localhost/mapgraphic#net.refractions.udig.tutorial.mapgraphic.Whitebox", CorePlugin.RELAXED_HANDLER);
-            IGeoResource resource = localCatalog.getById(IGeoResource.class, resourceID, new NullProgressMonitor());
+            URL resourceID = new URL(null, "mapgraphic://localhost/mapgraphic#net.refractions.udig.tutorial.mapgraphic.Whitebox", CorePlugin.RELAXED_HANDLER); //$NON-NLS-1$
+            ID id = new ID(resourceID);
+            IGeoResource resource = localCatalog.getById(IGeoResource.class, id, new NullProgressMonitor());
             Layer whiteboxLayer = layerFactory.createLayer(resource);
             
             whiteboxLayer.getStyleBlackboard().put(LocationStyleContent.ID, location);
             return whiteboxLayer;
 	    }
 	    catch (Exception e) {
-	        throw new IllegalStateException("failed to create whitebox", e);
+	        throw new IllegalStateException("failed to create whitebox", e); //$NON-NLS-1$
 	    }
    
 	}
@@ -420,7 +422,7 @@ public class SivecoExportMapToImageWizard extends Wizard implements IExportWizar
             
             //put layer info on the mapgraphic's style blackboard
             URL detailsResId = new URL(null, "mapgraphic://localhost/mapgraphic#net.refractions.udig.tutorial.mapgraphic.TitleArea", CorePlugin.RELAXED_HANDLER);
-            IGeoResource detailsRes = localCatalog.getById(IGeoResource.class, detailsResId, new NullProgressMonitor());
+            IGeoResource detailsRes = localCatalog.getById(IGeoResource.class, new ID(detailsResId), new NullProgressMonitor());
              
             Layer titleAreaLayer = layerFactory.createLayer(detailsRes);
             titleAreaLayer.getStyleBlackboard().put(LocationStyleContent.ID, location);

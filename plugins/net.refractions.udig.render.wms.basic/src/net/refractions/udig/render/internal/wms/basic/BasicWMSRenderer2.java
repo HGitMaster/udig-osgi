@@ -41,6 +41,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.naming.OperationNotSupportedException;
 
 import net.refractions.udig.catalog.util.CRSUtil;
@@ -84,7 +85,7 @@ import org.geotools.ows.ServiceException;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
-import org.geotools.renderer.shape.ShapefileRenderer;
+import org.geotools.resources.image.ImageUtilities;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
@@ -121,7 +122,7 @@ public class BasicWMSRenderer2 extends RendererImpl implements IMultiLayerRender
     public BasicWMSRenderer2() {
         ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(ShapefileRenderer.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(WebMapServer.class.getClassLoader());
             Logger logger = Logger.getLogger("org.geotools.data.ows");//$NON-NLS-1$
             if (WMSPlugin.isDebugging(Trace.RENDER)) {
                 logger.setLevel(Level.FINE);

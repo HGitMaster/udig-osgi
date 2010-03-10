@@ -101,36 +101,19 @@ public class FeatureTypeEditorDialog extends Dialog {
     }
 
     private void createButton( Composite composite, final IAction action ) {
-        final Button button=new Button(composite, SWT.PUSH|SWT.FLAT);
+        final Button button = new Button(composite, SWT.PUSH | SWT.FLAT);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
         button.setLayoutData(data);
         button.setToolTipText(action.getToolTipText());
 
         ImageRegistry images = UiPlugin.getDefault().getImageRegistry();
-        Image image=images.get(action.getId());
-      if( image==null || image.isDisposed() ){
-          images.put(action.getId(),
-                  action.getImageDescriptor());
-          image=images.get(action.getId());
-      }
+        Image image = images.get(action.getId());
+        if (image == null || image.isDisposed()) {
+            images.put(action.getId(), action.getImageDescriptor());
+            image = images.get(action.getId());
+        }
         button.setImage(image);
-        
-//        button.addPaintListener(new PaintListener(){
-//            ImageRegistry images = UiPlugin.getDefault().getImageRegistry();
-//            public void paintControl( PaintEvent e ) {
-//                Image image=images.get(action.getId());
-//                if( image==null || image.isDisposed() ){
-//                    images.put(action.getId(),
-//                            action.getImageDescriptor());
-//                    image=images.get(action.getId());
-//                }
-//                
-//                Point size = button.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-//                Rectangle imageBounds = image.getBounds();
-//                e.gc.drawImage(image,0,(size.y-2-imageBounds.height)/2);
-//            } 
-//        });
-        
+
         button.addListener(SWT.Selection, new Listener(){
             public void handleEvent( Event event ) {
                 action.runWithEvent(event);
@@ -166,14 +149,16 @@ public class FeatureTypeEditorDialog extends Dialog {
     
     @Override
     protected void okPressed() {
-        boolean ok = validateFeatureType.validate(editor.getFeatureType());
-        editor.builderChanged();
-        
-        if( ok )
+        String errorMessage = validateFeatureType.validate(editor.getFeatureType());
+        if( errorMessage != null ){
+        	editor.setErrorMessage(errorMessage);
+        }else{
+        	editor.builderChanged();
             super.okPressed();
+        }
     }
     
-    public FeatureTypeEditor getEditor() {
+	public FeatureTypeEditor getEditor() {
         return editor;
     }
 
@@ -248,9 +233,9 @@ public class FeatureTypeEditorDialog extends Dialog {
          * <p>Changes to the builder will be reflected in the dialog.</p>
          *
          * @param featureType the {@link FeatureType} to validate.
-         * @return  true if the feature type is ok and the dialog may close.
+         * @return  null if the feature type is ok and the dialog may close, otherwise an error message
          */
-        boolean validate(SimpleFeatureType featureType);
+        String validate(SimpleFeatureType featureType);
     }
 
 	public SimpleFeatureTypeBuilder getDefaultBuilder() {

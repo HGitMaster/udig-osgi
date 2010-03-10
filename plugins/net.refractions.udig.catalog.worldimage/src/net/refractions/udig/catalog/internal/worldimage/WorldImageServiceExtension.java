@@ -38,6 +38,8 @@ public class WorldImageServiceExtension implements ServiceExtension2 {
     /** <code>URL_PARAM</code> field */
     public final static String URL_PARAM = "URL"; //$NON-NLS-1$
 
+    public static final String TYPE = "world+image"; //$NON-NLS-1$
+
     private static WorldImageFormatFactory factory;
 
     /**
@@ -49,14 +51,13 @@ public class WorldImageServiceExtension implements ServiceExtension2 {
     }
 
     public IService createService(URL id, Map<String, Serializable> params ) {
-        URL id2=id;
+        URL id2 = getID(params);
 
-        if (id2 == null) {
-            id2=getID(params);
-        }
         if (!canProcess(id2)) {
             return null;
         }
+        
+        
         WorldImageServiceImpl service = 
                 new WorldImageServiceImpl(id2, getFactory());
         return service;
@@ -121,7 +122,12 @@ public class WorldImageServiceExtension implements ServiceExtension2 {
         if(id == null) {
             return Messages.WorldImageServiceExtension_noID;
         }
-        String fileExt = id.getFile().substring(id.getFile().lastIndexOf('.') + 1).toLowerCase();
+        File file = URLUtils.urlToFile(id);
+        if(file == null) {
+            return "Not a file";
+        }
+        String path = file.getAbsolutePath();
+        String fileExt = path.substring(path.lastIndexOf('.') + 1).toLowerCase();
         if(fileExt.compareToIgnoreCase("PNG") != 0 &&  //$NON-NLS-1$
                 fileExt.compareToIgnoreCase("GIF") != 0 && //$NON-NLS-1$
                 fileExt.compareToIgnoreCase("JPG") != 0 && //$NON-NLS-1$
@@ -130,7 +136,6 @@ public class WorldImageServiceExtension implements ServiceExtension2 {
                 fileExt.compareToIgnoreCase("TIFF") != 0) { //$NON-NLS-1$
            return Messages.WorldImageServiceExtension_badFileExtension+fileExt;
         }       
-        File file = URLUtils.urlToFile(id);
         Collection<String> endings = new HashSet<String>(WorldImageFormat.getWorldExtension(fileExt));
         endings.add(".wld"); //$NON-NLS-1$
         endings.add(fileExt+"w"); //$NON-NLS-1$

@@ -57,6 +57,7 @@ public class BBoxSelection extends SimpleTool implements ModalTool {
 	 */
 	protected void onMouseDragged(MapMouseEvent e) {
 		Point end = e.getPoint();
+		if(start == null) return; 
 		shapeCommand.setShape(new Rectangle(Math.min(start.x, end.x), Math.min(
 				start.y, end.y), Math.abs(start.x - end.x), Math.abs(start.y
 				- end.y)));
@@ -109,14 +110,11 @@ public class BBoxSelection extends SimpleTool implements ModalTool {
 	protected void sendSelectionCommand(MapMouseEvent e, Envelope bounds) {
 		MapCommand command;
 		if( e.isModifierDown(MapMouseEvent.MOD2_DOWN_MASK) ) {
-            command = getContext().getSelectionFactory()
-                     .createBBoxSelectionCommand(bounds, BBoxSelectionCommand.ADD);
+            command = new BBoxSelectionCommand(bounds, BBoxSelectionCommand.ADD);
         }else if( e.isModifierDown(MapMouseEvent.MOD1_DOWN_MASK) ){
-            command = getContext().getSelectionFactory()
-            .createBBoxSelectionCommand(bounds, BBoxSelectionCommand.SUBTRACT);
+            command = new BBoxSelectionCommand(bounds, BBoxSelectionCommand.SUBTRACT);
         }else{
-        	command = getContext().getSelectionFactory()
-            .createBBoxSelectionCommand(bounds, BBoxSelectionCommand.NONE);
+        	command = new BBoxSelectionCommand(bounds, BBoxSelectionCommand.NONE);
         }
         	
         

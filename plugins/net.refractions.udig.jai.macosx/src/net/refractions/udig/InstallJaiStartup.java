@@ -104,8 +104,13 @@ public class InstallJaiStartup implements IRunnableWithProgress, Runnable {
 			if (Display.getCurrent() != null) {
 				progressDialog.run();
 			} else {
-				final Display display = Display.getCurrent();
-				display.asyncExec(progressDialog);
+				Display display = Display.getCurrent();
+				if( display == null ){
+				    display = Display.getDefault();
+				}
+				if( display != null ){				    
+				    display.asyncExec(progressDialog);
+				}
 			}
 		}
     }

@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension2;
 import net.refractions.udig.catalog.geotiff.internal.Messages;
@@ -44,6 +45,8 @@ import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
 public class GeoTiffServiceExtension implements ServiceExtension2 {
     /** <code>URL_PARAM</code> field */
     public final static String URL_PARAM = "URL"; //$NON-NLS-1$
+
+    public static final String TYPE = "geotiff"; //$NON-NLS-1$
 
     private static GeoTiffFormatFactorySpi factory;
     private static GeoTiffFormat format;
@@ -138,7 +141,8 @@ public class GeoTiffServiceExtension implements ServiceExtension2 {
         
         File file = null;
         try {
-            file = new File(url.getFile());
+            ID id = new ID( url );
+            file = id.toFile();
         } catch (IllegalArgumentException ex) {
             return url.toExternalForm()+Messages.GeoTiffServiceExtension_notFile;
         }

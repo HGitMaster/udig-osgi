@@ -47,6 +47,7 @@ import org.geotools.validation.xml.ValidationException;
 import org.geotools.validation.xml.XMLReader;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.Name;
 
 /**
  * Subclass for the geotools ValidationProcessor, with added methods which allow
@@ -436,16 +437,17 @@ public class ValidationProcessor extends org.geotools.validation.ValidationProce
          FeatureSource<SimpleFeatureType, SimpleFeature> source;
         String nameSpace;
         String typeName;
-        Map<String, FeatureSource<SimpleFeatureType, SimpleFeature>> stores = new HashMap<String, FeatureSource<SimpleFeatureType, SimpleFeature>>();
-        Set<String> typeRefs = new HashSet<String>();
+        Map<Name, FeatureSource<SimpleFeatureType, SimpleFeature>> stores = new HashMap<Name, FeatureSource<SimpleFeatureType, SimpleFeature>>();
+        Set<Name> typeRefs = new HashSet<Name>();
         for (int i = 0; i < layers.length; i++) {
-            nameSpace = layers[i].getSchema().getName().getNamespaceURI();
-            typeName = layers[i].getSchema().getName().getLocalPart();
+            Name name = layers[i].getSchema().getName();
+            nameSpace = name.getNamespaceURI();
+            typeName = name.getLocalPart();
             source = layers[i].getResource(FeatureSource.class, monitor);
             //map = dataStoreID:typeName
             String typeRef = nameSpace.toString()+":"+typeName; //$NON-NLS-1$
-            stores.put(typeRef, source); 
-            typeRefs.add(typeRef);
+            stores.put(name, source); 
+            typeRefs.add(name);
         }
         
 		//run the tests

@@ -25,5 +25,8 @@ class AdaptingId extends AdaptingFilter implements Id {
     public Set<Identifier> getIdentifiers() {
         return ((Id)wrapped).getIdentifiers();
     }
-
+    public String toString() {
+        Id id = (Id) wrapped;
+        return "Adapting:"+id.getIDs();
+    }
 }

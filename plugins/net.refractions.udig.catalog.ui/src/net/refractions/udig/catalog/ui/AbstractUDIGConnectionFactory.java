@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
+import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.ServiceExtension2;
 
 /**
@@ -53,9 +55,13 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
     @Override
     public final boolean canProcess( Object context ) {
         ServiceExtension2 serviceExtension = getServiceExtension();
+        if( context instanceof ID){
+            ID id=(ID) context;
+            return canProcess(serviceExtension, id);
+        }
         if( context instanceof URL){
             URL url=(URL) context;
-            return serviceExtension.reasonForFailure(url)==null;
+            return canProcess(serviceExtension, url);
         }
         if( context instanceof String){
             
@@ -64,7 +70,7 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
             String string=(String) context;
             try{
                 URL url=new URL(string);
-                if ( serviceExtension.reasonForFailure(url)==null )
+                if ( canProcess(serviceExtension, url) )
                     return true;
             }catch (MalformedURLException e) {
                 // continue.
@@ -72,12 +78,49 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
         }
         if( context instanceof Map){
             Map map=(Map) context;
-            return serviceExtension.reasonForFailure(map)==null;
+            return canProcess(serviceExtension, map);
+        }
+        if( context instanceof IResolve){
+            ID id = ((IResolve)context).getID();
+            return canProcess(serviceExtension, id); 
         }
         if( CatalogPlugin.locateURL(context)!=null ){
-            return serviceExtension.reasonForFailure(CatalogPlugin.locateURL(context))==null;
+            return canProcess(serviceExtension, CatalogPlugin.locateURL(context));
         }
         return doOtherChecks(context);
+    }
+
+    /**
+     * Called by canProcess.  By default the method simply calls reasonForFailure on the service extension
+     *
+     * @param serviceExtension 
+     * @param map parameters from {@link AbstractUDIGConnectionFactory#canProcess(Object)}
+     * @return true if can process parameters
+     */
+    protected boolean canProcess( ServiceExtension2 serviceExtension, Map<String, Serializable> map ) {
+        return serviceExtension.reasonForFailure(map)==null;
+    }
+
+    /**
+     * Called by canProcess.  By default the method simply calls reasonForFailure on the service extension
+     *
+     * @param serviceExtension 
+     * @param url url created from {@link AbstractUDIGConnectionFactory#canProcess(Object)}
+     * @return true if can process parameters
+     */
+    protected boolean canProcess( ServiceExtension2 serviceExtension, URL url ) {
+        return serviceExtension.reasonForFailure(url)==null;
+    }
+
+    /**
+     * Called by canProcess.  By default the method simply calls reasonForFailure on the id's url on the service extension
+     *
+     * @param serviceExtension 
+     * @param id id from {@link AbstractUDIGConnectionFactory#canProcess(Object)}
+     * @return true if can process parameters
+     */
+    protected boolean canProcess( ServiceExtension2 serviceExtension, ID id ) {
+        return serviceExtension.reasonForFailure(id.toURL())==null;
     }
     
     /**
@@ -109,7 +152,7 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
         ServiceExtension2 serviceExtension = getServiceExtension();
         if( context instanceof URL){
             URL url=(URL) context;
-            if( serviceExtension.reasonForFailure(url)==null )
+            if( canProcess(serviceExtension, url) )
                 return serviceExtension.createParams(url);
         }
         if( context instanceof String){
@@ -119,7 +162,7 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
             String string=(String) context;
             try{
                 URL url=new URL(string);
-                if ( serviceExtension.reasonForFailure(url)==null )
+                if ( canProcess(serviceExtension, url) )
                     return serviceExtension.createParams(url);;
             }catch (MalformedURLException e) {
                 // continue.
@@ -128,13 +171,13 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
         
         if (context instanceof Map) {
             Map params = (Map) context;
-            if( serviceExtension.reasonForFailure(params)==null )
+            if( canProcess(serviceExtension, params) )
                 return params;
             
         }
         URL locateURL = CatalogPlugin.locateURL(context);
         if( locateURL!=null ){
-            if( serviceExtension.reasonForFailure(locateURL)==null) 
+            if( canProcess(serviceExtension, locateURL)) 
                 return serviceExtension.createParams(locateURL); 
         }
         return doCreateConnectionParameters(context);
@@ -155,7 +198,7 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
         ServiceExtension2 serviceExtension = getServiceExtension();
         if( context instanceof URL){
             URL url=(URL) context;
-            if( serviceExtension.reasonForFailure(url)==null )
+            if( canProcess(serviceExtension, url) )
                 return url;
         }
         if( context instanceof String){
@@ -165,7 +208,7 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
             String string=(String) context;
             try{
                 URL url=new URL(string);
-                if ( serviceExtension.reasonForFailure(url)==null )
+                if ( canProcess(serviceExtension, url) )
                     return url;
             }catch (MalformedURLException e) {
                 // continue.
@@ -173,7 +216,7 @@ public abstract class AbstractUDIGConnectionFactory extends UDIGConnectionFactor
         }
         URL locateURL = CatalogPlugin.locateURL(context);
         if( locateURL!=null ){
-            if( serviceExtension.reasonForFailure(locateURL)==null) 
+            if( canProcess(serviceExtension, locateURL)) 
                 return locateURL; 
         }
         return doCreateConnectionURL(context);

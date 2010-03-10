@@ -50,6 +50,7 @@
                      </and>
                   </enablement>
                </modalTool>
+               <!-- 
                <modalTool
                      categoryId="net.refractions.udig.tool.edit.create"
                      class="net.refractions.udig.tools.edit.impl.FreeHandTool"
@@ -74,7 +75,8 @@
 	                     </or>
                      </and>
                   </enablement>
-               </modalTool>
+               </modalTool> 
+               -->
                <modalTool
                      categoryId="net.refractions.udig.tool.edit.create"
                      class="net.refractions.udig.tools.edit.impl.PointTool"
@@ -456,7 +458,7 @@
             <perspectiveExtension targetID="net.refractions.udig.ui.mapPerspective">
                <actionSet id="net.refractions.udig.tools.edit.mapGraphic.action"/>
             </perspectiveExtension>
-            <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
+            <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
                <actionSet id="net.refractions.udig.tools.edit.mapGraphic.action"/>
             </perspectiveExtension>
          </extension>

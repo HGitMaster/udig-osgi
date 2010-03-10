@@ -22,6 +22,7 @@ import java.util.Map;
 
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResource;
+import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResourceInfo;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -52,21 +53,21 @@ public class ImageGeoResourceImpl extends AbstractRasterGeoResource {
 	 */
 	public ImageGeoResourceImpl(ImageServiceImpl service, String name) {
 		super(service, name);
-		//System.out.println(service.getDescription());
+		// System.out.println(service.getDescription());
 	}
-
+	
 	/**
 	 * Get metadata about a geoResource, represented by instance of
 	 * {@link ImageGeoResourceInfo}.
 	 */
-	protected IGeoResourceInfo createInfo(IProgressMonitor monitor)
+	protected AbstractRasterGeoResourceInfo createInfo(IProgressMonitor monitor)
 			throws IOException {
 		this.lock.lock();
 		try {
-			if (this.info == null && getStatus() != Status.BROKEN) {
-				this.info = new ImageGeoResourceInfo(this);
-			}
-			return this.info;
+		    if( getStatus() == Status.BROKEN) {
+		        return null; // not available
+		    }
+			return new AbstractRasterGeoResourceInfo(this, "ECW", "SID"); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			lock.unlock();
 		}
@@ -85,7 +86,8 @@ public class ImageGeoResourceImpl extends AbstractRasterGeoResource {
 		info1.put("docURL", "http://www.geotools.org/"); //$NON-NLS-1$ //$NON-NLS-2$
 		info1.put("version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		return (ParameterGroup) ((AbstractGridFormat) ImageServiceExtension.getFactory("HFA").createFormat()).getReadParameters();
-	}
+        return (ParameterGroup) ((AbstractGridFormat) ImageServiceExtension
+                .getFactory("HFA").createFormat()).getReadParameters(); //$NON-NLS-1$
+    }
 	
 }

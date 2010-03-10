@@ -25,17 +25,23 @@ import net.refractions.udig.project.ui.internal.ProjectUIPlugin;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.MouseWheelHelper;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
+import org.eclipse.gef.editparts.ViewportMouseWheelHelper;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
@@ -45,7 +51,10 @@ import org.eclipse.gef.ui.parts.TreeViewer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -68,6 +77,7 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
     private Page page;
     private PaletteRoot paletteRoot;
     private PageEditorOutlinePage outlinePage;
+    private ZoomManager zoomManager;
 
     public PageEditor() {
         setEditDomain(new DefaultEditDomain(this));
@@ -76,15 +86,19 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
     protected void configureGraphicalViewer() {
         super.configureGraphicalViewer();
 
-        getGraphicalViewer().setRootEditPart(new ScalableFreeformRootEditPart());
+        GraphicalViewer graphicalViewer = getGraphicalViewer();
+        ScalableFreeformRootEditPart scalableFreeformRootEditPart = new ScalableFreeformRootEditPart();
+        graphicalViewer.setRootEditPart(scalableFreeformRootEditPart);
+        zoomManager = scalableFreeformRootEditPart.getZoomManager();
 
-        getGraphicalViewer().setEditPartFactory(new PartFactory());
+        graphicalViewer.setEditPartFactory(new PartFactory());
 
-        ContextMenuProvider provider = new PageContextMenuProvider(getGraphicalViewer(),
+        ContextMenuProvider provider = new PageContextMenuProvider(graphicalViewer,
                 getActionRegistry());
-        getGraphicalViewer().setContextMenu(provider);
+        graphicalViewer.setContextMenu(provider);
         getSite().registerContextMenu("net.refractions.udig.printing.editor.contextmenu", //$NON-NLS-1$
-                provider, getGraphicalViewer());
+                provider, graphicalViewer);
+
     }
 
     public void commandStackChanged( EventObject event ) {
@@ -111,7 +125,7 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
     protected void initializeGraphicalViewer() {
         getGraphicalViewer().setContents(this.page);
     }
-    
+
     @Override
     protected void createGraphicalViewer( Composite parent ) {
         GraphicalViewer viewer = new PrintingScrollingGraphicalViewer(this);
@@ -120,9 +134,9 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
         configureGraphicalViewer();
         hookGraphicalViewer();
         initializeGraphicalViewer();
-        
+
     }
-    
+
     public void doSave( IProgressMonitor monitor ) {
         // TODO fix this at some point, currently doesn't work
         // Platform.run(new SafeRunnable(){
@@ -148,21 +162,19 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
         return true;
     }
 
-    
     @SuppressWarnings("unchecked")
     protected void createActions() {
         super.createActions();
         ActionRegistry registry = getActionRegistry();
 
-        Collection<BoxAction> actions=PrintingPlugin.getBoxExtensionActions(this);
-        
+        Collection<BoxAction> actions = PrintingPlugin.getBoxExtensionActions(this);
+
         for( IAction action : actions ) {
             registry.registerAction(action);
-            getSelectionActions().add(action.getId());            
+            getSelectionActions().add(action.getId());
         }
-        
-    }
 
+    }
 
     protected PaletteRoot getPaletteRoot() {
 
@@ -208,32 +220,38 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
             return outlinePage;
         }
         if (type.isAssignableFrom(Map.class)) {
-        	Map found = null;
-        	for (Box box : page.getBoxes()) {
-        		if (box instanceof IAdaptable) {
-	        		Object obj2 = ((IAdaptable) box).getAdapter(Map.class);
-	        		if (obj2 instanceof Map) {
-	        			/*
-	        			 * If multiple maps are found, return null. This will prevent entities
-	        			 * that operate only on one map from losing their context.
-	        			 * (Imagine the layers view with two map objects selected. It would 
-	        			 * only display the layers from one of the objects - confusing to user)
-	        			 */
-	        			if (found != null) {
-	        				found = null; 
-	        				break;
-	        			}
-	        			found = (Map) obj2;
-	        		}
-        		}
-        	}
-        	if (found != null) {
-        		return found;
-        	}
+            Map found = null;
+            for( Box box : page.getBoxes() ) {
+                if (box instanceof IAdaptable) {
+                    Object obj2 = ((IAdaptable) box).getAdapter(Map.class);
+                    if (obj2 instanceof Map) {
+                        /*
+                         * If multiple maps are found, return null. This will prevent entities
+                         * that operate only on one map from losing their context.
+                         * (Imagine the layers view with two map objects selected. It would 
+                         * only display the layers from one of the objects - confusing to user)
+                         */
+                        if (found != null) {
+                            found = null;
+                            break;
+                        }
+                        found = (Map) obj2;
+                    }
+                }
+            }
+            if (found != null) {
+                return found;
+            }
         }
+        if (type.isAssignableFrom(GraphicalViewer.class)) {
+            return getGraphicalViewer();
+        }
+        if (type.isAssignableFrom(ZoomManager.class)) {
+            return zoomManager;
+        }
+
         return super.getAdapter(type);
     }
-
     void disposeOutlinePage() {
         this.outlinePage = null;
     }
@@ -283,7 +301,7 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
                             saveAndUnload();
                         }
                     } catch (IOException e) {
-                        ProjectPlugin.log("", e);  //$NON-NLS-1$
+                        ProjectPlugin.log("", e); //$NON-NLS-1$
                     }
 
                     // need to kick the Project so viewers will update
@@ -302,27 +320,27 @@ public class PageEditor extends GraphicalEditorWithFlyoutPalette implements IAda
                 }
             });
         } catch (Exception e) {
-            ProjectPlugin.log("", e);  //$NON-NLS-1$
+            ProjectPlugin.log("", e); //$NON-NLS-1$
         }
         super.dispose();
     }
-    
+
     // declare methods for the PageEditorOutlinePage so it can access them
-    
+
     @Override
     protected SelectionSynchronizer getSelectionSynchronizer() {
         return super.getSelectionSynchronizer();
     }
-    
+
     @Override
     protected DefaultEditDomain getEditDomain() {
         return super.getEditDomain();
     }
-    
+
     @Override
     protected ActionRegistry getActionRegistry() {
         return super.getActionRegistry();
     }
-    
+
     // done declarations for PageEditorOutlinePage
 }

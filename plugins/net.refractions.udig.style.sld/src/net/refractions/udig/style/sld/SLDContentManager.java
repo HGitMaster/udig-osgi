@@ -17,70 +17,103 @@
 package net.refractions.udig.style.sld;
 
 import java.awt.Color;
+import java.util.List;
 
 import net.refractions.udig.ui.graphics.SLDs;
 
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory2;
 import org.geotools.styling.Symbolizer;
+import org.geotools.util.Utilities;
+import org.opengis.style.StyleFactory;
 
 /**
- * A context sensitive SLD content editor.
+ * A helpful class for sifting through an SLD Style object while implementing an
+ * editor. Consider it a wrapper that allows you to easily edit (it will completely write
+ * any and all changes directly to the wrapped style).
  * <p>
- * This class is intended to be used by a StyleConfigurator providing
- * SLD style content.
+ * Used by a StyleConfigurator or IStyledEditorPage working with SLD style
+ * content on the blackboard.
  * <p>
- * An SLD style object can contain any number of FeatureTypeStyle objects, which can in turn contain
+ * A Style object can contain any number of FeatureTypeStyle objects, which can in turn contain
  * any number of Rule objects, which can in turn contain any number of Symbolizer objects.
  * </p>
  * <p>
- * Concepts:
+ * The SLDContentManager provides support for the following concepts:
  * <ul>
  * <li>notion of a default FeatureTypeStyle (with a single rule)
  * <li>notion of a default Rule
  * </ul>
- * This allows Configurators who simply want to add a new symbolizer
+ * This allows IStyleConfigurator implementation who simply want to add a new symbolizer
  * to the style to forgo the creation and setup of the style hierarchy.
  * </p>
- * 
+ * <p>
+ * To help keep everything straight here are a couple of naming conventions:
+ * <ul>
+ * <li>to access something:
+ *    <ul>
+ *    <li>access methods will drill down and provide the requested object or null if not available</li>
+ *    <li>get methods will drill down and return the requested object (creating it if needed)</li>
+ *    </ul>
+ * </li>
+ * <li>Create methods exist and will create the requested object and add it to the style in one go
+ *     (if you want to just create something use the StyleBuilder; or directly use the StyleFactory)
+ * </ul>
  * <p>
  * This class also provides the ability to look up symbolizers by class
- * against the "default rule".
- * This allows configurators interested in a particular symbolizer
+ * against the "default" rule (ie the rule with the name "default").
+ * This allows an SLDConfigurator interested in a particular symbolizer
  * to 'track' the instance of it as the default rule is changed.
  * </p>
- * <h3>Instructions for Subclassing</h3>
- * <p>
- * This base implementation works against the "first" rule in the Style.
- * When providing a SLDConfigurator specific subclass (say for themeing)
- * you may wish to connect the "defaultRule" up to the current rule.
- * </p>
- * <p>
- * You may also supply context sensitive overrrides for color, simply
- * override the methods such as color( LineSymbolizer line ) to return
- * the correct default when a line is null.
- * </p>
- *  
  * @author Justin Deoliveira
  * @since 0.9
  */
 public class SLDContentManager {
-
-    /** the actual SLD style * */
+    /** The actual Style style */
     private Style style;
 
-    /** the style builder * */
+    /**
+     * The actual FeatureTypeStyle we are focused on right now;
+     * usually this is the last one created or searched for.
+     */
+    private FeatureTypeStyle featureTypeStyle;
+    
+    /**
+     * The actual rule we are focused on right now; usualy
+     * the last one added or searched for.
+     */
+    private Rule rule;
+    
+    /**
+     * The actual symbolizer we are focused on right now; usaly
+     * the last one added or searched for.
+     */
+    private Symbolizer symbolizer;
+    
+    /**
+     * The style builder - basically a wrapper around StyleFactory
+     * that knows default values from the SLD specification
+     */
     private StyleBuilder styleBuilder;
 
     /**
-     * Creates the SLD content manager.
+     * Creates an empty SLDContentManager that is set up around a default style.
      */
     public SLDContentManager() {
+        this( new StyleBuilder() );
     }
-
+    /**
+     * Creates an empty SLDContentManager that is setup around a default style
+     * @param styleBuilder StyleBuilder used to create the default style
+     */
+    public SLDContentManager( StyleBuilder styleBuilder ) {
+        init( styleBuilder, styleBuilder.createStyle() );
+    }
     /**
      * Creates the SLD content manager.
      * 
@@ -89,10 +122,12 @@ public class SLDContentManager {
      */
     public SLDContentManager( StyleBuilder styleBuilder, Style style ) {
         init(styleBuilder, style);
-        // styleBuilder = new StyleBuilder(StyleFactory.createStyleFactory());
-        // style = styleBuilder.createStyle();
     }
 
+    public void init( Style style ){
+        init( new StyleBuilder(), style );
+    }
+    
     /**
      * Initializes the content manager with a new style.
      * 
@@ -100,12 +135,22 @@ public class SLDContentManager {
      * @param style The SLD style itself.
      */
     public void init( StyleBuilder styleBuilder, Style style ) {
+        if( styleBuilder == null ){
+            throw new NullPointerException("StyleBuilder required");
+        }
         this.styleBuilder = styleBuilder;
+        
+        if( style == null ){
+            throw new NullPointerException("Style required");   
+        }
         this.style = style;
+        this.featureTypeStyle = null;
+        this.rule = null;
+        this.symbolizer = null;
     }
 
     /**
-     * @return Returns the SLD style.
+     * @return Returns the wrapped Style object
      */
     public Style getStyle() {
         return style;
@@ -117,21 +162,33 @@ public class SLDContentManager {
     public StyleBuilder getStyleBuilder() {
         return styleBuilder;
     }
-
+    public StyleFactory getStyleFactory(){
+        if( styleBuilder.getStyleFactory() instanceof StyleFactory){
+            return (StyleFactory) styleBuilder.getStyleFactory();
+        }
+        else {
+            return (StyleFactory) CommonFactoryFinder.getStyleFactory(null);
+        }
+    }
+    //
+    // Default will check for a style or rule with the name "default"
+    // or will return the first thing in the list - if there is nothing
+    // in the list it will just sit down and make one!
+    //
     /**
-     * Returns the the first feature type style for the SLD style. The feature type style is created
-     * if it does not exist.
+     * Returns the the first feature type style for the SLD style.
+     * <p>
+     * Please note a feature type style is created if it does not exist.
      * 
-     * @return The default (first) feature type style.
+     * @return The default (ie first) feature type style.
      */
     public FeatureTypeStyle getDefaultFeatureTypeStyle() {
-        FeatureTypeStyle[] styles = style.getFeatureTypeStyles();
-        if (styles == null || styles.length == 0 || styles[0].getRules().length == 0) {
+        List<FeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
+        if( featureTypeStyles == null || featureTypeStyles.isEmpty() ){
             // create a feature type style
             return createFeatureTypeStyle("default"); //$NON-NLS-1$
         }
-
-        return styles[0];
+        return featureTypeStyles.get(0);
     }
 
     /**
@@ -142,30 +199,37 @@ public class SLDContentManager {
      * @return the feature type style identified by name, or null.
      */
     public FeatureTypeStyle getFeatureTypeStyle( String name ) {
-        FeatureTypeStyle[] styles = style.getFeatureTypeStyles();
-        if (styles == null)
+        List<FeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
+        if (featureTypeStyles == null ){
             return null;
-
-        for( int i = 0; i < styles.length; i++ ) {
-            if (styles[i].getName().equals(name))
-                return styles[i];
         }
-
-        return null;
+        for( FeatureTypeStyle check : featureTypeStyles ){
+            if( Utilities.equals(check.getName(), name)){
+                return check;
+            }
+        }
+        return null; // not found!
+    }    
+    public FeatureTypeStyle featureTypeStyle( String name ){
+        FeatureTypeStyle featureTypeStyle = getFeatureTypeStyle( name );
+        if( featureTypeStyle != null ) {
+            return featureTypeStyle;
+        }
+        return createFeatureTypeStyle( name );
     }
+    
 
     /**
      * @return the first rule in the default feature type style.
      */
     public Rule getDefaultRule() {
         FeatureTypeStyle ftStyle = getDefaultFeatureTypeStyle();
-        if (ftStyle.getRules() == null || ftStyle.getRules().length == 0) {
+        if (ftStyle.rules() == null || ftStyle.rules().isEmpty()) {
             // create an empty rule
-            Rule rule = createRule(ftStyle);
+            Rule rule = createRule(ftStyle);            
             return rule;
         }
-
-        return ftStyle.getRules()[0];
+        return ftStyle.rules().get(0);
     }
 
     /**
@@ -214,16 +278,19 @@ public class SLDContentManager {
      */
     public <T> T getSymbolizer( Rule rule, Class<T> theClass ) {
         Symbolizer[] symbolizers = rule.getSymbolizers();
-        if (symbolizers == null || theClass == null)
+        if (symbolizers == null || theClass == null){
             return null;
-
-        for( int i = 0; i < symbolizers.length; i++ ) {
-            if (symbolizers[i] == null)
-                continue;
-            if (theClass.isAssignableFrom(symbolizers[i].getClass()))
-                return theClass.cast( symbolizers[i] );
         }
 
+        for( int i = 0; i < symbolizers.length; i++ ) {
+            if (symbolizers[i] == null){
+                continue;
+            }
+            if (theClass.isAssignableFrom(symbolizers[i].getClass())){
+                return theClass.cast( symbolizers[i] );
+            }
+        }
+        
         return null;
     }
 

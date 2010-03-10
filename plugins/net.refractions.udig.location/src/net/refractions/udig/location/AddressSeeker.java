@@ -15,12 +15,15 @@
 package net.refractions.udig.location;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.xmlrpc.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.XmlRpcException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -81,16 +84,24 @@ public class AddressSeeker {
         return keys;
     }
     
+    private XmlRpcClient getGeoCoderClient(String username, String password) throws MalformedURLException {
+        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+        XmlRpcClient geocoder = new XmlRpcClient();
+        
+        if(username != null && password != null){
+            config.setServerURL(new URL("http://"+username+":"+password+"@geocoder.us/service/xmlrpc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }else{
+            config.setServerURL(new URL("http://geocoder.us/service/xmlrpc")); //$NON-NLS-1$
+        }
+        geocoder.setConfig(config);        
+        
+        return geocoder;
+    }
+    
     /** Returns a List<SimpleFeature> of ADDRESS */
     public Point where(String address) throws IOException,XmlRpcException {
-        GeometryFactory fac = new GeometryFactory();
-        
-        XmlRpcClient geocoder;
-        if(username != null && password != null){
-            geocoder = new XmlRpcClient("http://"+username+":"+password+"@geocoder.us/service/xmlrpc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }else{
-            geocoder = new XmlRpcClient("http://geocoder.us/service/xmlrpc"); //$NON-NLS-1$
-        }
+        GeometryFactory fac = new GeometryFactory();        
+        XmlRpcClient geocoder = getGeoCoderClient(username, password);
         
         Vector params = new Vector();
         params.addElement(address);
@@ -107,14 +118,9 @@ public class AddressSeeker {
     }
     
     public List<SimpleFeature> geocode(String address) throws IOException,XmlRpcException {
-        GeometryFactory fac = new GeometryFactory();
+        GeometryFactory fac = new GeometryFactory();      
+        XmlRpcClient geocoder = getGeoCoderClient(username, password);
         
-        XmlRpcClient geocoder;
-        if(username != null && password != null){
-            geocoder = new XmlRpcClient("http://"+username+":"+password+"@geocoder.us/service/xmlrpc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }else{
-            geocoder = new XmlRpcClient("http://geocoder.us/service/xmlrpc"); //$NON-NLS-1$
-        }
         Vector params = new Vector();
         params.addElement(address);
         

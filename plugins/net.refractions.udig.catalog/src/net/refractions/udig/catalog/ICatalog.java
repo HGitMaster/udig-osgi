@@ -18,6 +18,7 @@ package net.refractions.udig.catalog;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.refractions.udig.catalog.internal.Messages;
@@ -101,7 +102,7 @@ public abstract class ICatalog extends IRepository {
      * @param replacement Replacement IService handle; indicating where the service has moved to
      * @throws UnsupportedOperationException
      */
-    public abstract void replace( URL id, IService replacement ) throws UnsupportedOperationException;
+    public abstract void replace( ID id, IService replacement ) throws UnsupportedOperationException;
 
     /**
      * Will attempt to morph into the adaptee, and return that object. Required adaptions:
@@ -147,14 +148,31 @@ public abstract class ICatalog extends IRepository {
     public abstract List<IResolve> find( URL resourceId, IProgressMonitor monitor );
 
     /**
-     * Find Service matching this id directly from this Catalog.  This method is guaranteed to be non-blocking.
-     * 
-     * @deprecated This method cannot be guaranteed to be non blocking for external catalogs, please use getById instead
-     * @param id used to match resolves
-     * @param monitor TODO
+     * Find resources for this resourceId from the Catalog.
+     * <p>
+     * Please note that a List of resources Services, Resources, and friends
+     * are returned by this method. While the first result returned
+     * may be the most appropriate; you may need to try some of the other
+     * values (if for example the first service is unavailable).
+     * <p>
+     * @param type filter the list to only contain instances of type
+     * @param resource used to match resolves
+     * @param monitor used to show the progress of the find.
      * @return List (possibly empty) of matching Resolves
      */
-    public abstract List<IService> findService( URL query );
+    public <T extends IResolve> List<T> find(Class<T> type, URL resourceId, IProgressMonitor monitor ){
+        List<IResolve> resolves = find(resourceId, monitor);
+        
+        ArrayList<T> result = new ArrayList<T>();
+        for( IResolve iResolve : resolves ) {
+            if (type.isAssignableFrom(iResolve.getClass())) {
+                T desired = type.cast(iResolve);
+                result.add(desired);
+            }
+        }
+        
+        return result;
+    }
     
     /**
      * Look in catalog for exact match with provided id.
@@ -164,7 +182,7 @@ public abstract class ICatalog extends IRepository {
      * @param monitor
      * @return Resolve or null if not found
      */
-    public abstract <T extends IResolve> T getById( Class<T> type, URL id, IProgressMonitor monitor );
+//    public abstract <T extends IResolve> T getById( Class<T> type, URL id, IProgressMonitor monitor );
     
     /**
      * Performs a search on this catalog based on the specified inputs.

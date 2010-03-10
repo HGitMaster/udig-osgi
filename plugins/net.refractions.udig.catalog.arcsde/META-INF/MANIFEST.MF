@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.libs
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- lib/jsde_sdk-XX.jar,
- lib/jsde-jpe-XX.jar
+ lib/jsde_sdk-9.2+.jar,
+ lib/jpe_sdk-9.2+.jar,
+ lib/icu4j-3.2+.jar
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

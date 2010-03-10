@@ -17,7 +17,10 @@ package net.refractions.udig.style.sld.editor;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.refractions.udig.style.sld.SLDPlugin;
 import net.refractions.udig.style.sld.internal.Messages;
@@ -33,6 +36,8 @@ import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.PaletteSuitability;
 import org.geotools.brewer.color.SampleScheme;
 import org.geotools.brewer.color.StyleGenerator;
+import org.geotools.filter.function.ExplicitClassifier;
+import org.geotools.filter.function.RangedClassifier;
 import org.geotools.styling.Fill;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
@@ -117,39 +122,57 @@ final class IPaletteCellEditor implements ICellModifier {
 		            String newExpr = (String) value;
 		            TreeItem item = (TreeItem) element;
 		            Object data = item.getData();
-		            //create/modify the custom break and regen		            
-		            this.styleThemePage.customBreak = null; // new RangedClassifier();
+		            //create/modify the custom break 		            
+		            this.styleThemePage.customBreak = null; 
 		            
 		            //TODO: set expression?
 		            //figure out which rule has changed
 		            int ruleIndex = Integer.parseInt(((Rule) data).getName().substring(4))-1;
 		            //fill the custom classifier with the rule boundary values
-		            Rule[] rules = this.styleThemePage.getFTS().getRules();
-		            for (int i = 0; i < rules.length; i++) {
-		                String thisExpr;
-		                if (i == ruleIndex) { //use the new value
+		            List<Rule> rules =  this.styleThemePage.getFTS().rules();
+		            
+		            //track items
+		            ArrayList<Double> min = new ArrayList<Double>();
+		            ArrayList<Double> max = new ArrayList<Double>();		            
+		            Set<String>[] values = new Set[rules.size()];
+		            
+		            for(int i = 0; i < rules.size(); i ++){
+		                String thisExpr = null;
+		                if (i == ruleIndex){
+		                    //use the new value
 		                    thisExpr = newExpr;
-		                } else { //use the fts value
-		                    if (rules[i].getFilter() == null) {
-		                        thisExpr = null; //probably an else filter
-		                    } else {
-		                        thisExpr = StyleGenerator.toStyleExpression(rules[i].getFilter());
+		                }else{
+		                    //use existing value
+		                    if (rules.get(i).getFilter() != null){
+		                        thisExpr = StyleGenerator.toStyleExpression(rules.get(i).getFilter());
 		                    }
 		                }
+		                
 		                if (thisExpr == null) {
-		                    //TODO: mark as "else"
-		                } else if (StyleGenerator.isRanged(thisExpr)) {
-		                    //String[] minMax = thisExpr.split("\\.\\."); //$NON-NLS-1$
-		                    //Double min = new Double(minMax[0]);
-		                    //Double max = new Double(minMax[1]);
-		                    //this.styleThemePage.customBreak.setRangedValues(i, min, max);
-		                } else {
-		                    String[] values = thisExpr.split(", "); //$NON-NLS-1$
-		                    for (int j = 0; j < values.length; j++) {
-		                        //this.styleThemePage.customBreak.setExplicitValues(i, values[j]);
-		                    }
-		                }
+                            //TODO: mark as "else"
+                        } else if (StyleGenerator.isRanged(thisExpr)) {
+                            String[] minMax = thisExpr.split("\\.\\."); //$NON-NLS-1$
+                            min.add(new Double(minMax[0]));
+                            max.add(new Double(minMax[1]));
+                        } else {
+                            String[] myvalues = thisExpr.split(","); //$NON-NLS-1$
+                            values[i] = new HashSet<String>();
+                            for (int j = 0; j < myvalues.length; j++) {
+                                values[i].add(myvalues[j].trim());
+                            }
+                        }
 		            }
+		            if (min.size() > 0){
+		                //lets make a range (this will ignore explicit classifiers)
+		                //really you can't mix the two so the ui
+		                //should probably be made smarter.
+		                this.styleThemePage.customBreak = new RangedClassifier(min.toArray(new Double[min.size()]), max.toArray(new Double[max.size()]));
+		            }else{
+		                //lets make a explicit classifier
+		                this.styleThemePage.customBreak = new ExplicitClassifier(values);
+		            }
+		            
+		            
 		            Combo breaks = this.styleThemePage.getCombo(StyleThemePage.COMBO_BREAKTYPE);
 		            String[] allBreaks = breaks.getItems();
 		            int hasCustom = -1;

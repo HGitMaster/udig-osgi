@@ -24,7 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.refractions.udig.catalog.internal.CatalogImpl;
 import net.refractions.udig.catalog.internal.Messages;
+import net.refractions.udig.catalog.internal.ResolveChangeEvent;
+import net.refractions.udig.catalog.internal.ResolveDelta;
 import net.refractions.udig.ui.ErrorManager;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,16 +49,14 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * NOTE: This may be the result of communications with a metadata service, and as such this service
  * described may not be running right now. Remember to check the service status.
  * </p>
- * 
- * <h2>Implementing an IService</h2>
- * 
- * Implement the abstract methods and you are good to go.
- * 
- * <h2>Extending an IService</h2>
- * 
- * You may want to implement your own IService in order to provide a handle for a new kind of <i>API</i>.
+ * <h2>Implementing an IService</h2> Implement the abstract methods and you are good to go. <h2>
+ * Extending an IService</h2> You may want to implement your own IService in order to provide a
+ * handle for a new kind of <i>API</i>.
  * <ol>
- * <li>New method:<pre><code>
+ * <li>New method:
+ * 
+ * <pre>
+ * <code>
  *  public API getAPI( ProgressMonitor monitor){
  *      if (monitor == null) monitor = new NullProgressMonitor();
  *      
@@ -69,11 +70,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *          monitor.done();
  *      }
  *  }
- *  </pre></code>
- *  (note the use of NullProgressMonitor)
- *  </li>
+ * </pre>
  * 
- * <li>Optional: Customize resolve method to advertise your new API "dynamically"<pre><code>
+ * </code> (note the use of NullProgressMonitor)</li>
+ * <li>Optional: Customize resolve method to advertise your new API "dynamically"
+ * 
+ * <pre>
+ * <code>
  * public &lt;T&gt; boolean canResolve( Class&lt;T&gt; adaptee ) {
  *     return adaptee != null
  *             &amp;&amp; (adaptee.isAssignableFrom(API.class) || super.canResolve(adaptee));
@@ -88,10 +91,14 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *     }
  *     return super.resolve(adaptee, monitor);
  * }
- * </code></pre>
- * (note the call to super)
- * </li>
- * <li>Optional: cache your API as the "connection"<pre><code>
+ * </code>
+ * </pre>
+ * 
+ * (note the call to super)</li>
+ * <li>Optional: cache your API as the "connection"
+ * 
+ * <pre>
+ * <code>
  *  API api = null;
  *  Throwable msg = null;
  *  public synchronized API getAPI( ProgressMonitor monitor){
@@ -124,26 +131,34 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *      }
  *      if( msg != null ) msg = null;
  *  }
- * </code></pre>
- * (Note the use of getMessage and getStatus)
- * </li>
+ * </code>
+ * </pre>
+ * 
+ * (Note the use of getMessage and getStatus)</li>
  * </ol>
  * 
  * @author David Zwiers, Refractions Research
  * @since 0.6
+ * @version 1.2
  * @see IServiceInfo
  * @see IServiceFactory
  */
 public abstract class IService implements IResolve {
+    /**
+     * Placeholder used to mark info field as unavailable; often the case
+     * where we were unable to connect to a service using createInfo.
+     */
+    protected static IServiceInfo INFO_UNAVAILABLE = new IServiceInfo();
     
     /**
      * Used to save persisted properties; please see ServiceParameterPersister for details.
      */
-    private Map<String, Serializable> properties = Collections.synchronizedMap(new HashMap<String, Serializable>());
+    private Map<String, Serializable> properties = Collections
+            .synchronizedMap(new HashMap<String, Serializable>());
     /**
      * This is a protected field; that is laziy created when getInfo is called.
      */
-	protected volatile IServiceInfo info = null;
+    protected volatile IServiceInfo info = null;
 
     /**
      * Will attempt to morph into the adaptee, and return that object. Harded coded to capture the
@@ -157,12 +172,15 @@ public abstract class IService implements IResolve {
      * </ul>
      * Recomended adaptations:
      * <ul>
-     * <li>ImageDescriptor.class: for a custom icon 
+     * <li>ImageDescriptor.class: for a custom icon
      * <li>List.class: members
      * </ul>
      * May Block.
      * <p>
-     * Example implementation:<pre><code>
+     * Example implementation:
+     * 
+     * <pre>
+     * <code>
      * public &lt;T&gt; T resolve( Class&lt;T&gt; adaptee, IProgressMonitor monitor ) throws IOException {
      *     if (monitor == null) monitor = new NullProgressMonitor(); 
      *     if (adaptee == null)
@@ -173,11 +191,13 @@ public abstract class IService implements IResolve {
      *     }
      *     return super.resolve(adaptee, monitor);
      * }
-     * </code></pre>
+     * </code>
+     * </pre>
+     * 
      * @param adaptee
      * @param monitor
-     * @return instance of adaptee, or null if unavailable (IServiceInfo and List<IGeoResource>
-     *         must be supported)
+     * @return instance of adaptee, or null if unavailable (IServiceInfo and List<IGeoResource> must
+     *         be supported)
      * @see IServiceInfo
      * @see IGeoResource
      * @see IResolve#resolve(Class, IProgressMonitor)
@@ -205,7 +225,7 @@ public abstract class IService implements IResolve {
         }
         return null; // no adapter found (check to see if ResolveAdapter is registered?)
     }
-    
+
     /**
      * Harded coded to capture the IService contract.
      * <p>
@@ -219,12 +239,14 @@ public abstract class IService implements IResolve {
      * <p>
      * Here is an implementation example (for something that can adapt to DataStore):
      * 
-     * <pre><code>
+     * <pre>
+     * <code>
      * public &lt;T&gt; boolean canResolve( Class&lt;T&gt; adaptee ) {
      *     return adaptee != null
      *             &amp;&amp; (adaptee.isAssignableFrom(DataStore.class) || super.canResolve(adaptee));
      * }
-     * </code></pre>
+     * </code>
+     * </pre>
      */
     public <T> boolean canResolve( Class<T> adaptee ) {
         return adaptee != null && (adaptee.isAssignableFrom(IService.class) || // this
@@ -238,19 +260,19 @@ public abstract class IService implements IResolve {
      * Returns LocalCatalog by defaul, subclass must override iff a custom catalog is used.
      */
     public ICatalog parent( IProgressMonitor monitor ) {
-    	ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
-    	if(localCatalog.getById(IService.class, getIdentifier(), monitor)!=null ) {
-			return localCatalog;
-		} else {
-			return null;
-		}
+        ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
+        if (localCatalog.getById(IService.class, getID(), monitor) != null) {
+            return localCatalog;
+        } else {
+            return null;
+        }
     }
     /**
      * List of concrete resources (IE with data) managed by this service.
      * <p>
-     * Many file based services will just contain a single IGeoResource. Services
-     * that arrange their data into folders will (like WMS) will return a list of
-     * all the actual data made available by the service.
+     * Many file based services will just contain a single IGeoResource. Services that arrange their
+     * data into folders will (like WMS) will return a list of all the actual data made available by
+     * the service.
      * </p>
      * The IService.resources() method is the inverse of GeoResource.service().
      */
@@ -260,16 +282,15 @@ public abstract class IService implements IResolve {
     /**
      * The contents of this IService presented as a list of members.
      * <p>
-     * For many simple services this will be the same as the the resources, however
-     * some services may choose to organize their resources into folders or schemas,
-     * or even a tree (as is the case for WMS layers).
+     * For many simple services this will be the same as the the resources, however some services
+     * may choose to organize their resources into folders or schemas, or even a tree (as is the
+     * case for WMS layers).
      */
-    public List<IResolve> members( IProgressMonitor monitor )
-            throws IOException{
+    public List<IResolve> members( IProgressMonitor monitor ) throws IOException {
         List<IResolve> resolves = new ArrayList<IResolve>(resources(monitor));
         return resolves;
     }
-    
+
     /**
      * Responsible for creation of an appropriate IServiceInfo object.
      * 
@@ -277,83 +298,128 @@ public abstract class IService implements IResolve {
      * @throws IOException
      */
     protected abstract IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException;
-    
+
     /**
      * Information about this service.
-     * 
+     * <p>
+     * Subclasses are encouraged to overrride this to type narrow to the specific ServiceInfo class
+     * returned.
+     * </p>
+     * Example:
+     * <pre><code>
+     *     public CSVServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+     *     		return (CSVServiceInfo) super.getInfo(monitor);
+     *     }
+     *     protected CSVServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+     *     	return new CSVServiceInfo( this );
+     *     }</code>
+     * </pre>
+     * <p>
+     * Please do call super.getInfo( monitor ) as the base IService implementation provides a cache
+     * so createInfo( monitor ) is only called once.
+     * </p>
+     * @see IService#INFO_UNAVAILABLE
      * @return IServiceInfo resolve(IServiceInfo.class,IProgressMonitor monitor);
      * @see IService#resolve(Class, IProgressMonitor)
      */
-    public final IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null) { //lazy creation
-            synchronized (this) { //support concurrent access
+    public IServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        if (info == null) { // lazy creation
+            synchronized (this) {
+                // support concurrent access
+                // however createInfo implementors should know about this
                 if (info == null) {
-                	info = createInfo(monitor);
+                    info = createInfo(monitor);
+                    
+                    if( info == null ){
+                        info = INFO_UNAVAILABLE;
+                    }
+                    else {
+                        // broadcast the change - code taken from ArcServiceImpl
+                        
+                        // this delta describes what has changed
+                        IResolveDelta delta = new ResolveDelta(this, IResolveDelta.Kind.CHANGED);
+                        
+                        // fire the change
+                        CatalogImpl localCatalog = (CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog();
+                        localCatalog.fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
+                    }
+
                 }
             }
         }
-        return info;
+        if (info == INFO_UNAVAILABLE) {
+            return null; // info was not available
+        }
+       return info;        
     }
 
     public ID getID() {
-        return new ID( getIdentifier() );
+        return new ID(getIdentifier());
     }
-    
+
     /**
-     * Accessor to the set of params used to create this entry. There is no guarantee that these
-     * params created a usable service (@see getStatus() ). These params may have been modified
-     * within the factory during creation. This method is intended to be used for cloning (@see
-     * IServiceFactory) or for persistence between sessions.
-     * 
+     * Map of parameters used to create this entry. There is no guarantee that these params created
+     * a usable service (@see getStatus() ). These params may have been modified within the factory
+     * during creation. This method is intended to be used for cloning (@see IServiceFactory) or for
+     * persistence between sessions.
      * <p>
-     * <b>IMPORTANT:</b> Because of the serialization currently used only types that can be reconstructed from their toString() representation
-     * can be used.  For example:
-     * <pre><code>
+     * <b>IMPORTANT:</b> Because of the serialization currently used only types that can be
+     * reconstructed from their toString() representation can be used. For example:
+     * 
+     * <pre>
+     * <code>
      * valueThatIsSaved=url.toString().
      * URL restoredValue=new URL(valueThatIsSaved);
-     * </code></pre>
-     * Also only classes that this plugin can load can be loaded so custom classes from downstream plugins cannot be used.  
-     * It is recommended that only "normal" types be used like Integer, URL, Float, etc...
+     * </code>
+     * </pre>
      * 
+     * Also only classes that this plugin can load can be loaded so custom classes from downstream
+     * plugins cannot be used. It is recommended that only "normal" types be used like Integer, URL,
+     * Float, etc...
      * </p>
-     * This restriction will be lifted in the future.  (Except for the loading issue that is a design issue that we will live with.)
+     * This restriction will be lifted in the future. (Except for the loading issue that is a design
+     * issue that we will live with.)
+     * 
      * @see IServiceFactory
      * @return
      */
     public abstract Map<String, Serializable> getConnectionParams();
 
     /**
-     * Returns a copy of the map of this resource's persistent properties. Returns an empty map if this resource has no persistent properties.
-     * @return The map containing the persistent properties where the key is the {@link QualifiedName} of the property and the value is the {@link String} value of the property.
+     * Returns a copy of the map of this resource's persistent properties. Returns an empty map if
+     * this resource has no persistent properties.
+     * 
+     * @return The map containing the persistent properties where the key is the
+     *         {@link QualifiedName} of the property and the value is the {@link String} value of
+     *         the property.
      */
-    public Map<String,Serializable> getPersistentProperties() {
+    public Map<String, Serializable> getPersistentProperties() {
         return properties;
     }
-    
+
     /**
-	 * Retrieves the title from the IService cache, or from the ServiceInfo
-	 * object iff it is present.  Returns null if either of these are not
-	 * available.  If the title is fetched from ServiceInfo, it is added to the
-	 * cache before returning.
-	 * 
-	 * @returns the service title or null if non is readily available
-	 */
-	public String getTitle() {
-	    String title = null;
-	    if( info != null ){
-	        // we are connected and can use the real title
-	        title = info.getTitle();
-	        
-	        // cache title for when we are next offline
-	        getPersistentProperties().put("title", title); //$NON-NLS-1$
-	    }
-	    if( title == null ){
-	        Serializable s = properties.get("title"); //$NON-NLS-1$
-	        title = (s != null ? s.toString() : null);	        
-	    }
-		return title;
-	}
-    
+     * Retrieves the title from the IService cache, or from the ServiceInfo object iff it is
+     * present. Returns null if either of these are not available. If the title is fetched from
+     * ServiceInfo, it is added to the cache before returning.
+     * 
+     * @returns the service title or null if non is readily available
+     */
+    public String getTitle() {
+        String title = null;
+        if (info != null) {
+            // we are connected and can use the real title
+            title = info.getTitle();
+
+            // cache title for when we are next offline
+            getPersistentProperties().put("title", title); //$NON-NLS-1$
+        }
+        if (title == null) {
+            Serializable s = properties.get("title"); //$NON-NLS-1$
+            title = (s != null ? s.toString() : null);
+        }
+        return title;
+    }
+
     /**
      * This should represent the identifier
      * 
@@ -364,9 +430,8 @@ public abstract class IService implements IResolve {
     public final boolean equals( Object obj ) {
         if (obj != null && obj instanceof IService) {
             IService service = (IService) obj;
-            if (getIdentifier() != null && service.getIdentifier() != null)
-                return URLUtils.urlToString(getIdentifier(), false).equals(
-                        URLUtils.urlToString(service.getIdentifier(), false));
+            if (getID() != null && service.getID() != null)
+                return getID().equals(service.getID());
         }
         return false;
     }
@@ -378,9 +443,9 @@ public abstract class IService implements IResolve {
      */
     public final int hashCode() {
         int value = 31;
-        
-        if (getIdentifier() != null)
-            value += 31 + URLUtils.urlToString(getIdentifier(), false).hashCode();
+
+        if (getID() != null)
+            value += 31 + getID().hashCode();
         value += 31 + getClass().getName().hashCode();
         return value;
     }
@@ -403,12 +468,16 @@ public abstract class IService implements IResolve {
 
     public void dispose( IProgressMonitor monitor ) {
         monitor.beginTask(Messages.IService_dispose, 100);
-        List< ? extends IResolve> members;
+        List< ? extends IResolve> members = Collections.emptyList();
         try {
-            members = members(new SubProgressMonitor(monitor, 1));
+            if (getStatus() == Status.CONNECTED) {
+                // only ask for members if we are connected (if not we just get an error trying to
+                // connect again)
+                members = members(new SubProgressMonitor(monitor, 1));
+            }
         } catch (Throwable e) {
             ErrorManager.get().displayException(e,
-                    "Error disposing members of service: " + getIdentifier(), CatalogPlugin.ID); //$NON-NLS-1$
+                    "Cleaning up memebers of service: " + getIdentifier(), CatalogPlugin.ID); //$NON-NLS-1$
             return;
         }
         int steps = (int) ((double) 99 / (double) members.size());
@@ -418,11 +487,13 @@ public abstract class IService implements IResolve {
                 resolve.dispose(subProgressMonitor);
                 subProgressMonitor.done();
             } catch (Throwable e) {
-                ErrorManager.get().displayException(e,
-                        "Error disposing members of service: " + getIdentifier(), CatalogPlugin.ID); //$NON-NLS-1$
+                ErrorManager
+                        .get()
+                        .displayException(
+                                e,
+                                "Error disposing member of service: " + resolve.getIdentifier(), CatalogPlugin.ID); //$NON-NLS-1$
             }
         }
     }
-
 
 }

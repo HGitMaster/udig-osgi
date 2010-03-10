@@ -216,7 +216,7 @@ public class StrokeViewer {
                 enabled=false;
             }
             this.enabled =  enabled && (mode != Mode.NONE && line != null);
-            this.color = SLDs.strokeColor(line);
+            this.color = SLDs.color(line);
             this.width = SLDs.width(line);
             this.opacity = SLDs.opacity(line);
 

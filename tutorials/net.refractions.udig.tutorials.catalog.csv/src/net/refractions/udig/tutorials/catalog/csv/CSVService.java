@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.IService;
-import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.URLUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,8 +31,12 @@ public class CSVService extends IService {
         return params;
     }
     
-    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-    	return info = new CSVServiceInfo( this );
+    @Override
+    public CSVServiceInfo getInfo(IProgressMonitor monitor) throws IOException {
+    	return (CSVServiceInfo) super.getInfo(monitor);
+    }
+    protected CSVServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+    	return new CSVServiceInfo( this );
     }
     
     public List<CSVGeoResource> resources( IProgressMonitor monitor ) throws IOException {

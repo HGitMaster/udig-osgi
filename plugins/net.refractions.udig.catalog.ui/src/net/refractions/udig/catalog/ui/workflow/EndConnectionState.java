@@ -19,6 +19,7 @@ import java.util.Set;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
 import net.refractions.udig.catalog.ui.CatalogUIPlugin;
@@ -99,20 +100,28 @@ public class EndConnectionState extends State {
                 // use the context object to try to build connection info
             Object context = getWorkflow().getContext();
     
-            Map<String, Serializable> params = factory.createConnectionParameters(context);
-            if (params != null && params.isEmpty())
-                params = null;
+            if( context instanceof IService ){
+                services = Collections.singleton((IService)context);
+            }else if (context instanceof IGeoResource){
+                IService service = ((IGeoResource) context).service(monitor);
+                services = Collections.singleton(service);
+            }else{
             
-            URL url = factory.createConnectionURL(context);
-            HashSet<URL> urls = new HashSet<URL>();
-            if (url != null) {
-                urls.add(url);
-            }
+                Map<String, Serializable> params = factory.createConnectionParameters(context);
+                if (params != null && params.isEmpty())
+                    params = null;
+                
+                URL url = factory.createConnectionURL(context);
+                HashSet<URL> urls = new HashSet<URL>();
+                if (url != null) {
+                    urls.add(url);
+                }
+        
+                if (params == null && urls.isEmpty())
+                    return false; // could not build connection info
     
-            if (params == null && urls.isEmpty())
-                return false; // could not build connection info
-
-            services = constructServices(monitor, params, urls);
+                services = constructServices(monitor, params, urls);
+            }
         } catch (Throwable t) {
             CatalogPlugin.log(t.getLocalizedMessage(), t);
             return false;
@@ -131,26 +140,26 @@ public class EndConnectionState extends State {
 
                     if (true || !validateServices)
                         continue;
-                    try {
-                        SubProgressMonitor infoMonitor = new SubProgressMonitor(monitor, 8);
-                        try {
-                            for( IGeoResource resource : resources ) {
-                                try {
-                                    monitor.setTaskName(MessageFormat.format(
-                                            Messages.ConnectionState_loadingLayer,
-                                            new Object[]{resource.getIdentifier().getRef()}));
-                                    resource.getInfo(infoMonitor);
-                                } catch (Exception e) {
-                                    CatalogUIPlugin.log("", e); //$NON-NLS-1$
-                                }
-                            }
-                        } finally {
-                            infoMonitor.done();
-                        }
-
-                    } finally {
-                        membersMonitor.done();
-                    }
+//                    try {
+//                        SubProgressMonitor infoMonitor = new SubProgressMonitor(monitor, 8);
+//                        try {
+//                            for( IGeoResource resource : resources ) {
+//                                try {
+//                                    monitor.setTaskName(MessageFormat.format(
+//                                            Messages.ConnectionState_loadingLayer,
+//                                            new Object[]{resource.getIdentifier().getRef()}));
+//                                    resource.getInfo(infoMonitor);
+//                                } catch (Exception e) {
+//                                    CatalogUIPlugin.log("", e); //$NON-NLS-1$
+//                                }
+//                            }
+//                        } finally {
+//                            infoMonitor.done();
+//                        }
+//
+//                    } finally {
+//                        membersMonitor.done();
+//                    }
                 } catch (Throwable t) {
                     t.printStackTrace();
                     errors.put(service, t);
@@ -210,11 +219,11 @@ public class EndConnectionState extends State {
         Collection<IService> services = new HashSet<IService>();
         if (urls != null) {
             for( URL url : urls ) {
-                IService service = searchLocalCatalog(url, monitor);
-                if (service == null ) {
+                Collection<IService> searchResult = searchLocalCatalog(url, monitor);
+                if (searchResult.isEmpty()) {
                     services.addAll(sFactory.createService(url));
                 } else {
-                    services.add(service);
+                    services.addAll(searchResult);
                 }
             }
         } 
@@ -222,11 +231,11 @@ public class EndConnectionState extends State {
         if( params!=null ){
             Set<IService> results = new HashSet<IService>(sFactory.createService(params));
             for( IService service : results ) {
-                IService tmp = searchLocalCatalog(service.getIdentifier(), monitor);
-                if (tmp == null ) {
+                Collection<IService> searchResult = searchLocalCatalog(service.getIdentifier(), monitor);
+                if (searchResult.isEmpty() ) {
                     services.add(service);
                 } else {
-                    services.add(tmp);
+                    services.addAll(searchResult);
                 }
             }
         }
@@ -234,9 +243,19 @@ public class EndConnectionState extends State {
         return services;
     }
 
-    private static IService searchLocalCatalog( URL url, IProgressMonitor monitor ) {
+    private static Collection<IService> searchLocalCatalog( URL url, IProgressMonitor monitor ) {
         ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
-        return localCatalog.getById(IService.class, url, monitor);
+        
+        List<IResolve> resolves = localCatalog.find(url, monitor);
+        ArrayList<IService> services = new ArrayList<IService>();
+        for( IResolve iResolve : resolves ) {
+            if (iResolve instanceof IService) {
+                IService service = (IService) iResolve;
+                services.add(service);
+            }
+        }
+        
+        return services;
 
     }
 

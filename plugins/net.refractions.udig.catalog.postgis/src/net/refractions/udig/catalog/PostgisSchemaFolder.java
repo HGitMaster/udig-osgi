@@ -14,7 +14,7 @@
  */
 package net.refractions.udig.catalog;
 
-import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.SCHEMA;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,8 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.geotools.data.DataStore;
-import org.geotools.data.postgis.PostgisDataStore;
-
+import org.geotools.jdbc.JDBCDataStore;
 /**
  * A Folder that represents a schema in a postgis folder. Its members are the tables and are
  * featurestores. This resolves to a PostgisDataStore
@@ -45,7 +44,7 @@ import org.geotools.data.postgis.PostgisDataStore;
 public class PostgisSchemaFolder implements IResolveFolder {
 
     private final String schema;
-    private final PostgisDataStore datastore;
+    private final JDBCDataStore datastore;
     private final ArrayList<IResolve> members;
     private final PostgisService2 service;
     private final URL identifier;
@@ -66,7 +65,7 @@ public class PostgisSchemaFolder implements IResolveFolder {
         HashMap<String, Serializable> params = new HashMap<String, Serializable>(service
                 .getConnectionParams());
         params.put(SCHEMA.key, schema);
-        datastore = (PostgisDataStore) PostgisServiceExtension2.getFactory().createDataStore(params);
+        datastore = PostgisServiceExtension2.getFactory().createDataStore(params);
         members = new ArrayList<IResolve>();
 
         String[] typenames = datastore.getTypeNames();
@@ -98,7 +97,7 @@ public class PostgisSchemaFolder implements IResolveFolder {
         boolean isResolveFolder = adaptee.isAssignableFrom(IResolveFolder.class);
         boolean isIService = adaptee.isAssignableFrom(IService.class);
         boolean isConnection = adaptee.isAssignableFrom(Connection.class);
-        boolean isDataStore = adaptee.isAssignableFrom(PostgisDataStore.class);
+        boolean isDataStore = adaptee.isAssignableFrom(JDBCDataStore.class);
         IResolveManager resolveManager = CatalogPlugin.getDefault().getResolveManager();
         return isResolveFolder || isIService || isConnection || isDataStore
                 || resolveManager.canResolve(this, adaptee);
@@ -148,7 +147,7 @@ public class PostgisSchemaFolder implements IResolveFolder {
         return CatalogPlugin.getDefault().getResolveManager().resolve(this, adaptee, monitor);
     }
 
-    public PostgisDataStore getDataStore() {
+    public JDBCDataStore getDataStore() {
         return datastore;
     }
 

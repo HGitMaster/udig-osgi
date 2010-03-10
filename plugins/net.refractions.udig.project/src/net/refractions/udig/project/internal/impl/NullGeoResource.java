@@ -14,7 +14,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * Indicates that no georesources were found for the layer
+ * Placeholder indicating that GeoResources was found.
+ * <p>
+ * This is often used by a Layer when there was no resource found for the layer.
  * 
  * @author Jesse
  */

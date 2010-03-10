@@ -8,6 +8,7 @@ import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
 import net.refractions.udig.catalog.IServiceInfo;
@@ -75,7 +76,7 @@ public class ResetService extends ActionDelegate {
 
         for( IService original : servers ) {
             try {
-                final URL ID = original.getIdentifier();
+                final ID id = original.getID();
                 CatalogUIPlugin.trace("Reset service " + original.getIdentifier()); //$NON-NLS-1$
 
                 Map<java.lang.String, java.io.Serializable>
@@ -84,22 +85,22 @@ public class ResetService extends ActionDelegate {
                 IService replacement = null; // unknown
                 TEST: for( IService candidate : serviceFactory.createService(connectionParams) ) {
                     try {
-                        CatalogUIPlugin.trace(ID + " : connecting"); //$NON-NLS-1$
+                        CatalogUIPlugin.trace(id + " : connecting"); //$NON-NLS-1$
                         IServiceInfo info = candidate.getInfo(monitor);
                         
-                        CatalogUIPlugin.trace(ID + " : found " + info.getTitle()); //$NON-NLS-1$
+                        CatalogUIPlugin.trace(id + " : found " + info.getTitle()); //$NON-NLS-1$
                         replacement = candidate;
                         
                         break TEST;
                     } catch (Throwable t) {
-                        CatalogUIPlugin.trace(ID + " : ... " + t.getLocalizedMessage()); //$NON-NLS-1$
+                        CatalogUIPlugin.trace(id + " : ... " + t.getLocalizedMessage()); //$NON-NLS-1$
                     }
                 }
                 if (replacement == null) {
-                    CatalogUIPlugin.log("Could not reset "+ID+" - as we could not connect!",null); //$NON-NLS-1$
+                    CatalogUIPlugin.log("Could not reset "+id+" - as we could not connect!",null); //$NON-NLS-1$ //$NON-NLS-2$
                     continue; // skip - too bad we cannot update status the original
                 }
-                catalog.replace(ID, replacement);                
+                catalog.replace(id, replacement);                
             } catch (Throwable failed) {
                 CatalogUIPlugin.log("Reset failed", failed); //$NON-NLS-1$
             }

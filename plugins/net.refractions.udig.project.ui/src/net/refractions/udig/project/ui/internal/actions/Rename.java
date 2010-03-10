@@ -42,21 +42,23 @@ public class Rename extends UDIGGenericAction {
 
     protected void operate( Layer layer ) {
         layer.setName(getNewName(layer.getName()));
-        layer.getContextModel().getMap().getProjectInternal().eResource().setModified(true);
+        layer.getMapInternal().getProjectInternal().eResource().setModified(true);
     }
 
     @Override
-    protected void operate( Layer[] layers ) {
+    protected void operate( Layer[] layers, Object context ) {
         if (layers != null)
             operate(layers[0]);
     }
-
-    protected void operate( ProjectElement element ) {
+    
+    @Override
+    protected void operate( ProjectElement element, Object context ) {
         element.setName(getNewName(element.getName()));
         element.getProjectInternal().eResource().setModified(true);
     }
-
-    protected void operate( Project project ) {
+    
+    @Override
+    protected void operate( Project project, Object context ) {
         project.setName(getNewName(project.getName()));
         project.eResource().setModified(true);
     }

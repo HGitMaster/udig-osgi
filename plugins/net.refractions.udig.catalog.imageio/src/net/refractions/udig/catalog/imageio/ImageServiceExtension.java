@@ -54,6 +54,8 @@ public class ImageServiceExtension implements ServiceExtension2 {
 	/** The inner MrSID Format factory*/
 	static final Map<String,GridFormatFactorySpi> factories;
 	static final Map<String,List<String>>	fileExtensions;
+
+    public static final String TYPE = "imageio"; //$NON-NLS-1$
 	static{
 		// 
 		factories= new HashMap<String, GridFormatFactorySpi>();

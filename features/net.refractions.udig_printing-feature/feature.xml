@@ -22,22 +22,25 @@
    </url>
 
    <requires>
-      <import feature="net.refractions.udig_application" version="1.0.0"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.emf.common"/>
       <import plugin="net.refractions.udig.project"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.draw2d"/>
       <import plugin="net.refractions.udig.project.ui"/>
-      <import plugin="net.refractions.udig.ui"/>
+      <import plugin="net.refractions.udig.mapgraphic"/>
       <import plugin="net.refractions.udig.project.edit"/>
+      <import plugin="net.refractions.udig.ui"/>
       <import plugin="org.eclipse.gef"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.emf.edit"/>
       <import plugin="net.refractions.udig.catalog.ui"/>
       <import plugin="net.refractions.udig.catalog"/>
       <import plugin="net.refractions.udig.style"/>
-      <import plugin="net.refractions.udig.mapgraphic"/>
+      <import feature="net.refractions.udig_application" version="1.0.0"/>
+      <import plugin="net.refractions.udig.legend"/>
+      <import plugin="net.refractions.udig.style.sld"/>
+      <import plugin="com.lowagie.itext"/>
    </requires>
 
    <plugin

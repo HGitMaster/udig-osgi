@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 
 import net.refractions.udig.printing.model.Box;
+import net.refractions.udig.printing.model.PropertyListener;
 import net.refractions.udig.ui.PlatformGIS;
 import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
 
@@ -75,10 +76,12 @@ public class BoxFigure extends Figure {
         this.repaint();
     }
 
-    public void setBox( Box box ) {
-        this.box = box;
+    public void setBox( Box newBox ) {
+        this.box = newBox;
+
         this.repaint();
     }
+    
     public void setBounds( Rectangle rect ) {
         super.setBounds(rect);
         this.rectangleFigure.setBounds(rect);

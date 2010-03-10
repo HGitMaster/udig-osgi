@@ -55,6 +55,13 @@
                icon="icons/etool16/newmap_wiz.gif"
                id="net.refractions.udig.project.ui.newMap"
                label="%map.new.label"/>
+         <action
+               class="net.refractions.udig.project.ui.internal.actions.OpenMapAction"
+               enablesFor="+"
+               icon="icons/obj16/project_obj.gif"
+               id="net.refractions.udig.project.ui.action2"
+               label="%map.action.open.name">
+         </action>
       </objectContribution>
      <objectContribution
             adaptable="true"
@@ -151,7 +158,7 @@
          <actionSet id="net.refractions.udig.project.ui.renameSet"/>
          <actionSet id="net.refractions.udig.project.ui.OpenProjectSet"/>
       </perspectiveExtension>
-      <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
+      <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
          <actionSet id="net.refractions.udig.project.ui.LayerActions"/>
          <actionSet id="net.refractions.udig.project.ui.renameSet"/>
          <actionSet id="net.refractions.udig.project.ui.OpenProjectSet"/>
@@ -399,6 +406,7 @@
      </action>
      <action
            class="net.refractions.udig.project.ui.internal.actions.LayerDropAction"
+           enablesFor="+"
            name="%LayerDropAction.name">
         <destination class="net.refractions.udig.project.ILayer"/>
         <acceptedType class="net.refractions.udig.project.ILayer"/>
@@ -452,6 +460,12 @@
         <acceptedType
               adapt="true"
               class="net.refractions.udig.catalog.IService"/>
+        <acceptedType
+              adapt="true"
+              class="java.lang.String"/>
+              <acceptedType
+              adapt="true"
+              class="java.io.File"/>
      </action>
      <action
            class="net.refractions.udig.project.ui.internal.dragdrop.MoveLayerDropAction"
@@ -686,6 +700,12 @@
            class="net.refractions.udig.project.ui.preferences.StylePreferencePage"
            id="net.refractions.udig.project.ui.preferences.style"
            name="%style.preferences.name"/>
+     <page
+           category="net.refractions.udig.project.ui.preferences.tool"
+           class="net.refractions.udig.project.ui.MousePreferences"
+           id="net.refractions.udig.project.ui.preferences.mouse"
+           name="%tool.mouse.preferences.name">
+     </page>
    </extension>
    <extension
         point="org.eclipse.ui.exportWizards">
@@ -711,9 +731,9 @@
            class="net.refractions.udig.project.ui.wizard.export.project.ExportProjectWizard"
            icon="icons/etool16/exportproject_wiz.png"
            id="net.refractions.udig.project.ui.export.project"
-           name="Export Project">
+           name="%exportProject.name">
         <description>
-           Export selected project to specified location
+           %exportProject.desc
         </description>
      </wizard>
    </extension>
@@ -856,7 +876,7 @@
                class="net.refractions.udig.project.ui.operations.SyncProjection"
                enablesFor="1"
                id="net.refractions.udig.project.ui.syncProjection"
-               name="Synchronize Projection"
+               name="%Layer.SetMapProjection"
                targetClass="net.refractions.udig.project.ILayer">
          </operation>      
  	</extension>
@@ -896,7 +916,7 @@
                class="net.refractions.udig.project.ui.operations.MakeHole"
                enablesFor="1"
                id="net.refractions.udig.project.ui.operations.MakeHole"
-               name="Make Hole"
+               name="%Selection.MakeHole"
                targetClass="net.refractions.udig.project.ILayer">
          </operation>         
          <!--operation
@@ -959,7 +979,51 @@
         <action
         	  id="reshape.addtomap"
               class="net.refractions.udig.project.ui.internal.AddReshapedToMap"
-              name="Add to Map">
+              name="%AddToMap">
         </action>
+     </extension>
+     <extension
+           id="net.refractions.udig.project.ui.map"
+           point="org.eclipse.ui.actionSets">
+        <actionSet
+              id="net.refractions.udig.project.ui.OpenProjectSet"
+              label="%OpenProjectSet.label"
+              visible="false">
+           <action
+                 class="net.refractions.udig.project.ui.internal.actions.OpenMapAction"
+                 definitionId="net.refractions.udig.project.ui.openMapCommand"
+                 icon="icons/obj16/project_obj.gif"
+                 id="net.refractions.udig.project.ui.openMapAction"
+                 label="%map.action.open.name"
+                 menubarPath="file/project.ext"
+                 style="push"
+                 tooltip="%project.action.open.tooltip">
+           </action>
+           <action
+                 allowLabelUpdate="true"
+                 class="net.refractions.udig.project.ui.internal.actions.CloseProject"
+                 enablesFor="+"
+                 id="net.refractions.udig.project.ui.closeProject"
+                 label="%project.close.label"
+                 menubarPath="file/project.ext"
+                 style="push"
+                 tooltip="%project.close.tooltip">
+              <enablement>
+                 <objectClass
+                       name="net.refractions.udig.project.IProject">
+                 </objectClass>
+              </enablement>
+           </action>
+           <action
+                 class="net.refractions.udig.project.ui.internal.actions.OpenProject"
+                 definitionId="net.refractions.udig.project.ui.openProjectCommand"
+                 icon="icons/obj16/project_obj.gif"
+                 id="net.refractions.udig.project.ui.openProject"
+                 label="%project.action.open.name"
+                 menubarPath="file/project.ext"
+                 style="push"
+                 tooltip="%project.action.open.tooltip">
+           </action>
+        </actionSet>
      </extension>
    </plugin>

@@ -56,7 +56,7 @@ public class ControlPointPathIterator implements PathIterator {
             x=next.getX();
             y=next.getY();
         }else{
-            rectPos=5;
+            rectPos=6;
         }
     }
     
@@ -93,7 +93,7 @@ public class ControlPointPathIterator implements PathIterator {
         case 5:
             return PathIterator.SEG_CLOSE;
         default:
-            break;
+        	return PathIterator.SEG_MOVETO;
         }
         
         if( rectPos==0 ){

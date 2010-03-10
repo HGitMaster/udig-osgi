@@ -117,7 +117,7 @@ public class BrowserInfoDisplay extends InfoDisplay {
             try {
                 browser.setText((String) info.acquireValue());
             } catch (IOException e) {
-                InfoPlugin.log("Could not acquire info value", e);
+                InfoPlugin.trace("Could not acquire info value", e);
             }
         }
     }

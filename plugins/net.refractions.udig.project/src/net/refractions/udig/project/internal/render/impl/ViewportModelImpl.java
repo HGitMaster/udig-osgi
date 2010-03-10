@@ -1,18 +1,24 @@
 /**
- * <copyright></copyright> $Id: ViewportModelImpl.java 31078 2009-01-26 21:51:54Z simboss $
+ * <copyright></copyright> $Id: ViewportModelImpl.java 31434 2009-08-11 11:30:27Z aantonello $
  */
 package net.refractions.udig.project.internal.render.impl;
 
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.ProjectPackage;
+import net.refractions.udig.project.internal.render.RenderFactory;
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.render.RenderManager;
 import net.refractions.udig.project.internal.render.RenderPackage;
@@ -27,17 +33,21 @@ import net.refractions.udig.ui.ProgressManager;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.joda.time.DateTime;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultEngineeringCRS;
 import org.opengis.geometry.DirectPosition;
@@ -61,11 +71,14 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
     /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
+     * The default value of the '{@link #getCRS() <em>CRS</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getCRS()
      * @generated
+     * @ordered
      */
-    public static final String copyright = "uDig - User Friendly Desktop Internet GIS client http://udig.refractions.net (C) 2004, Refractions Research Inc. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of the License. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details."; //$NON-NLS-1$
+    protected static final CoordinateReferenceSystem CRS_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getCRS() <em>CRS</em>}' attribute. <!-- begin-user-doc -->
@@ -156,14 +169,83 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
     protected static final Coordinate PIXEL_SIZE_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getRenderManagerInternal() <em>Render Manager Internal</em>}'
-     * reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
+     * The cached value of the '{@link #getRenderManagerInternal() <em>Render Manager Internal</em>}' reference.
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @see #getRenderManagerInternal()
      * @generated
      * @ordered
      */
-    protected RenderManager renderManagerInternal = null;
+    protected RenderManager renderManagerInternal;
+
+    /**
+     * The cached value of the '{@link #getPreferredScaleDenominators() <em>Preferred Scale Denominators</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPreferredScaleDenominators()
+     * @generated
+     * @ordered
+     */
+    protected SortedSet<Double> preferredScaleDenominators;
+
+    /**
+     * The cached value of the '{@link #getAvailableTimesteps() <em>Available Timesteps</em>}' attribute list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getAvailableTimesteps()
+     * @generated
+     * @ordered
+     */
+    protected EList<DateTime> availableTimesteps;
+
+    /**
+     * The default value of the '{@link #getCurrentTimestep() <em>Current Timestep</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getCurrentTimestep()
+     * @generated
+     * @ordered
+     */
+    protected static final DateTime CURRENT_TIMESTEP_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getCurrentTimestep() <em>Current Timestep</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getCurrentTimestep()
+     * @generated
+     * @ordered
+     */
+    protected DateTime currentTimestep = CURRENT_TIMESTEP_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getAvailableElevation() <em>Available Elevation</em>}' attribute list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getAvailableElevation()
+     * @generated
+     * @ordered
+     */
+    protected EList<Double> availableElevation;
+
+    /**
+     * The default value of the '{@link #getCurrentElevation() <em>Current Elevation</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getCurrentElevation()
+     * @generated
+     * @ordered
+     */
+    protected static final Double CURRENT_ELEVATION_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getCurrentElevation() <em>Current Elevation</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getCurrentElevation()
+     * @generated
+     * @ordered
+     */
+    protected Double currentElevation = CURRENT_ELEVATION_EDEFAULT;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -176,16 +258,15 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
+    @Override
     protected EClass eStaticClass() {
-        return RenderPackage.eINSTANCE.getViewportModel();
+        return RenderPackage.Literals.VIEWPORT_MODEL;
     }
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public CoordinateReferenceSystem getCRS() {
@@ -199,7 +280,7 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
         if (newCRS.equals(cRS))
             return;
         CoordinateReferenceSystem oldCRS = getCRS();
-        if (getBounds().isNull() || !validState() ) {
+        if (getBounds().isNull() || !validState()) {
             setCRSGen(newCRS);
 
         } else {
@@ -214,7 +295,8 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
                         && oldCRS != DefaultEngineeringCRS.CARTESIAN_2D
                         && oldCRS != DefaultEngineeringCRS.CARTESIAN_3D) {
                     MathTransform transform = CRS.findMathTransform(oldCRS, newCRS, true);
-                    DirectPosition newCenter = transform.transform(position, new DirectPosition2D());
+                    DirectPosition newCenter = transform
+                            .transform(position, new DirectPosition2D());
                     setCenter(new Coordinate(newCenter.getOrdinate(0), newCenter.getOrdinate(1)));
                     setScale(scale);
                 }
@@ -264,7 +346,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public boolean isSetCRS() {
@@ -277,23 +358,23 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
      * @generated NOT
      */
     public synchronized ReferencedEnvelope getBounds() {
-        if( bounds == null ){
+        if (bounds == null) {
             return getMapInternal().getBounds(ProgressManager.instance().get());
         }
-      
+
         return bounds;
     }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void setBounds(ReferencedEnvelope newBounds) {
-		setCRS(newBounds.getCoordinateReferenceSystem());
-		setBounds((Envelope)newBounds);
-	}
-    
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void setBounds( ReferencedEnvelope newBounds ) {
+        setCRS(newBounds.getCoordinateReferenceSystem());
+        setBounds((Envelope) newBounds);
+    }
+
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -308,20 +389,21 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
             if (Double.isNaN(nRatio))
                 nRatio = 0.0;
             double dRatio = getAspectRatio();
-            if (validState()
-            		&& Math.abs(nRatio - dRatio) > ACCURACY) {
+            if (validState() && Math.abs(nRatio - dRatio) > ACCURACY) {
                 // Returning the same newBounds box is ok, but sometimes causes an infinite loop if
                 // zoomToBox's calculations don't affect the size. Making this arbitrary change to
                 // the
                 // x-axis solves the problem.
                 final double arbitraryChange = 2 * 0.0000001;
-				newBounds.init(newBounds.getMinX() - (arbitraryChange), (newBounds.getMaxX() + arbitraryChange), newBounds.getMinY(), newBounds.getMaxY());
+                newBounds.init(newBounds.getMinX() - (arbitraryChange),
+                        (newBounds.getMaxX() + arbitraryChange), newBounds.getMinY(), newBounds
+                                .getMaxY());
 
                 zoomToBox(newBounds);
                 return;
             }
         }
-        bounds = new ReferencedEnvelope(newBounds,getCRS());
+        bounds = new ReferencedEnvelope(newBounds, getCRS());
         fireNotification(oldBounds);
     }
 
@@ -410,34 +492,42 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public Map getMapInternal() {
-        if (eContainerFeatureID != RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL)
+        if (eContainerFeatureID() != RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL)
             return null;
-        return (Map) eContainer;
+        return (Map) eContainer();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain basicSetMapInternal( Map newMapInternal, NotificationChain msgs ) {
+        msgs = eBasicSetContainer((InternalEObject) newMapInternal,
+                RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL, msgs);
+        return msgs;
     }
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public void setMapInternalGen( Map newMapInternal ) {
-        if (newMapInternal != eContainer
-                || (eContainerFeatureID != RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL && newMapInternal != null)) {
-            if (EcoreUtil.isAncestor(this, (EObject) newMapInternal))
+        if (newMapInternal != eInternalContainer()
+                || (eContainerFeatureID() != RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL && newMapInternal != null)) {
+            if (EcoreUtil.isAncestor(this, newMapInternal))
                 throw new IllegalArgumentException(
                         "Recursive containment not allowed for " + toString()); //$NON-NLS-1$
             NotificationChain msgs = null;
-            if (eContainer != null)
+            if (eInternalContainer() != null)
                 msgs = eBasicRemoveFromContainer(msgs);
             if (newMapInternal != null)
                 msgs = ((InternalEObject) newMapInternal).eInverseAdd(this,
                         ProjectPackage.MAP__VIEWPORT_MODEL_INTERNAL, Map.class, msgs);
-            msgs = eBasicSetContainer((InternalEObject) newMapInternal,
-                    RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL, msgs);
+            msgs = basicSetMapInternal(newMapInternal, msgs);
             if (msgs != null)
                 msgs.dispatch();
         } else if (eNotificationRequired())
@@ -480,7 +570,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public RenderManager getRenderManagerInternal() {
@@ -489,7 +578,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public NotificationChain basicSetRenderManagerInternal( RenderManager newRenderManagerInternal,
@@ -510,7 +598,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     public void setRenderManagerInternal( RenderManager newRenderManagerInternal ) {
@@ -686,201 +773,9 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public NotificationChain eInverseAdd( InternalEObject otherEnd, int featureID, Class baseClass,
-            NotificationChain msgs ) {
-        if (featureID >= 0) {
-            switch( eDerivedStructuralFeatureID(featureID, baseClass) ) {
-            case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-                if (eContainer != null)
-                    msgs = eBasicRemoveFromContainer(msgs);
-                return eBasicSetContainer(otherEnd, RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL,
-                        msgs);
-            case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
-                if (renderManagerInternal != null)
-                    msgs = ((InternalEObject) renderManagerInternal).eInverseRemove(this,
-                            RenderPackage.RENDER_MANAGER__VIEWPORT_MODEL_INTERNAL,
-                            RenderManager.class, msgs);
-                return basicSetRenderManagerInternal((RenderManager) otherEnd, msgs);
-            default:
-                return eDynamicInverseAdd(otherEnd, featureID, baseClass, msgs);
-            }
-        }
-        if (eContainer != null)
-            msgs = eBasicRemoveFromContainer(msgs);
-        return eBasicSetContainer(otherEnd, featureID, msgs);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public NotificationChain eInverseRemove( InternalEObject otherEnd, int featureID,
-            Class baseClass, NotificationChain msgs ) {
-        if (featureID >= 0) {
-            switch( eDerivedStructuralFeatureID(featureID, baseClass) ) {
-            case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-                return eBasicSetContainer(null, RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL, msgs);
-            case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
-                return basicSetRenderManagerInternal(null, msgs);
-            default:
-                return eDynamicInverseRemove(otherEnd, featureID, baseClass, msgs);
-            }
-        }
-        return eBasicSetContainer(null, featureID, msgs);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public NotificationChain eBasicRemoveFromContainer( NotificationChain msgs ) {
-        if (eContainerFeatureID >= 0) {
-            switch( eContainerFeatureID ) {
-            case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-                return eContainer.eInverseRemove(this, ProjectPackage.MAP__VIEWPORT_MODEL_INTERNAL,
-                        Map.class, msgs);
-            default:
-                return eDynamicBasicRemoveFromContainer(msgs);
-            }
-        }
-        return eContainer.eInverseRemove(this, EOPPOSITE_FEATURE_BASE - eContainerFeatureID, null,
-                msgs);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public Object eGet( EStructuralFeature eFeature, boolean resolve ) {
-        switch( eDerivedStructuralFeatureID(eFeature) ) {
-        case RenderPackage.VIEWPORT_MODEL__CRS:
-            return getCRS();
-        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
-            return getBounds();
-        case RenderPackage.VIEWPORT_MODEL__CENTER:
-            return getCenter();
-        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
-            return new Double(getHeight());
-        case RenderPackage.VIEWPORT_MODEL__WIDTH:
-            return new Double(getWidth());
-        case RenderPackage.VIEWPORT_MODEL__ASPECT_RATIO:
-            return new Double(getAspectRatio());
-        case RenderPackage.VIEWPORT_MODEL__PIXEL_SIZE:
-            return getPixelSize();
-        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-            return getMapInternal();
-        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
-            return getRenderManagerInternal();
-        }
-        return eDynamicGet(eFeature, resolve);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public void eSet( EStructuralFeature eFeature, Object newValue ) {
-        switch( eDerivedStructuralFeatureID(eFeature) ) {
-        case RenderPackage.VIEWPORT_MODEL__CRS:
-            setCRS((CoordinateReferenceSystem) newValue);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
-            setBounds((Envelope) newValue);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__CENTER:
-            setCenter((Coordinate) newValue);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
-            setHeight(((Double) newValue).doubleValue());
-            return;
-        case RenderPackage.VIEWPORT_MODEL__WIDTH:
-            setWidth(((Double) newValue).doubleValue());
-            return;
-        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-            setMapInternal((Map) newValue);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
-            setRenderManagerInternal((RenderManager) newValue);
-            return;
-        }
-        eDynamicSet(eFeature, newValue);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public void eUnset( EStructuralFeature eFeature ) {
-        switch( eDerivedStructuralFeatureID(eFeature) ) {
-        case RenderPackage.VIEWPORT_MODEL__CRS:
-            unsetCRS();
-            return;
-        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
-            setBounds(BOUNDS_EDEFAULT);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__CENTER:
-            setCenter(CENTER_EDEFAULT);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
-            setHeight(HEIGHT_EDEFAULT);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__WIDTH:
-            setWidth(WIDTH_EDEFAULT);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-            setMapInternal((Map) null);
-            return;
-        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
-            setRenderManagerInternal((RenderManager) null);
-            return;
-        }
-        eDynamicUnset(eFeature);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public boolean eIsSet( EStructuralFeature eFeature ) {
-        switch( eDerivedStructuralFeatureID(eFeature) ) {
-        case RenderPackage.VIEWPORT_MODEL__CRS:
-            return isSetCRS();
-        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
-            return BOUNDS_EDEFAULT == null ? bounds != null : !BOUNDS_EDEFAULT.equals(bounds);
-        case RenderPackage.VIEWPORT_MODEL__CENTER:
-            return CENTER_EDEFAULT == null ? getCenter() != null : !CENTER_EDEFAULT
-                    .equals(getCenter());
-        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
-            return getHeight() != HEIGHT_EDEFAULT;
-        case RenderPackage.VIEWPORT_MODEL__WIDTH:
-            return getWidth() != WIDTH_EDEFAULT;
-        case RenderPackage.VIEWPORT_MODEL__ASPECT_RATIO:
-            return getAspectRatio() != ASPECT_RATIO_EDEFAULT;
-        case RenderPackage.VIEWPORT_MODEL__PIXEL_SIZE:
-            return PIXEL_SIZE_EDEFAULT == null ? getPixelSize() != null : !PIXEL_SIZE_EDEFAULT
-                    .equals(getPixelSize());
-        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
-            return getMapInternal() != null;
-        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
-            return renderManagerInternal != null;
-        }
-        return eDynamicIsSet(eFeature);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
+    @Override
     public String toString() {
         if (eIsProxy())
             return super.toString();
@@ -893,6 +788,16 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
             result.append("<unset>"); //$NON-NLS-1$
         result.append(", bounds: "); //$NON-NLS-1$
         result.append(bounds);
+        result.append(", preferredScaleDenominators: "); //$NON-NLS-1$
+        result.append(preferredScaleDenominators);
+        result.append(", availableTimesteps: "); //$NON-NLS-1$
+        result.append(availableTimesteps);
+        result.append(", currentTimestep: "); //$NON-NLS-1$
+        result.append(currentTimestep);
+        result.append(", availableElevation: "); //$NON-NLS-1$
+        result.append(availableElevation);
+        result.append(", currentElevation: "); //$NON-NLS-1$
+        result.append(currentElevation);
         result.append(')');
         return result.toString();
     }
@@ -900,26 +805,38 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
     /**
      * @see net.refractions.udig.project.render.displayAdapter.IMapDisplayListener#sizeChanged(net.refractions.udig.project.render.displayAdapter.MapDisplayEvent)
      */
-    public void sizeChanged( MapDisplayEvent event ) {
+    public void sizeChanged( final MapDisplayEvent event ) {
         if (event.getSize().width < 1 || event.getSize().height < 1)
             return;
 
-        Envelope oldBounds = getBounds();
+        Runnable handler = new Runnable(){
+            public void run() {
+                Envelope oldBounds = getBounds();
 
-        if (newSizeIsSmaller(event)) {
-            calculateNewBounds(event, oldBounds);
-            return;
-        }
+                if (newSizeIsSmaller(event)) {
+                    calculateNewBounds(event, oldBounds);
+                    return;
+                }
 
-        if (oldBounds.isNull()) {
-            zoomToExtent();
-        } else {
-            if (oldSizeIsValid(event)) {
-                calculateNewBounds(event, oldBounds);
-                fireNotification(oldBounds);
-            } else {
-                zoomToBox(getBounds());
+                if (oldBounds.isNull()) {
+                    zoomToExtent();
+                } else {
+                    if (oldSizeIsValid(event)) {
+                        calculateNewBounds(event, oldBounds);
+                        fireNotification(oldBounds);
+                    } else {
+                        zoomToBox(getBounds());
+                    }
+                }
             }
+        };
+
+        if (Display.getCurrent() != null) {
+            Thread thread = new Thread(handler);
+            thread.setDaemon(true);
+            thread.start();
+        } else {
+            handler.run();
         }
     }
 
@@ -980,6 +897,246 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
             newbbox.init(x - dw, x + dw, y - dh, y + dh);
         }
         this.setBounds(newbbox);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseAdd( InternalEObject otherEnd, int featureID,
+            NotificationChain msgs ) {
+        switch( featureID ) {
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            if (eInternalContainer() != null)
+                msgs = eBasicRemoveFromContainer(msgs);
+            return basicSetMapInternal((Map) otherEnd, msgs);
+        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
+            if (renderManagerInternal != null)
+                msgs = ((InternalEObject) renderManagerInternal).eInverseRemove(this,
+                        RenderPackage.RENDER_MANAGER__VIEWPORT_MODEL_INTERNAL, RenderManager.class,
+                        msgs);
+            return basicSetRenderManagerInternal((RenderManager) otherEnd, msgs);
+        }
+        return super.eInverseAdd(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove( InternalEObject otherEnd, int featureID,
+            NotificationChain msgs ) {
+        switch( featureID ) {
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            return basicSetMapInternal(null, msgs);
+        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
+            return basicSetRenderManagerInternal(null, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eBasicRemoveFromContainerFeature( NotificationChain msgs ) {
+        switch( eContainerFeatureID() ) {
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            return eInternalContainer().eInverseRemove(this,
+                    ProjectPackage.MAP__VIEWPORT_MODEL_INTERNAL, Map.class, msgs);
+        }
+        return super.eBasicRemoveFromContainerFeature(msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object eGet( int featureID, boolean resolve, boolean coreType ) {
+        switch( featureID ) {
+        case RenderPackage.VIEWPORT_MODEL__CRS:
+            return getCRS();
+        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
+            return getBounds();
+        case RenderPackage.VIEWPORT_MODEL__CENTER:
+            return getCenter();
+        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
+            return getHeight();
+        case RenderPackage.VIEWPORT_MODEL__WIDTH:
+            return getWidth();
+        case RenderPackage.VIEWPORT_MODEL__ASPECT_RATIO:
+            return getAspectRatio();
+        case RenderPackage.VIEWPORT_MODEL__PIXEL_SIZE:
+            return getPixelSize();
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            return getMapInternal();
+        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
+            return getRenderManagerInternal();
+        case RenderPackage.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS:
+            return getPreferredScaleDenominators();
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS:
+            return getAvailableTimesteps();
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_TIMESTEP:
+            return getCurrentTimestep();
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_ELEVATION:
+            return getAvailableElevation();
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_ELEVATION:
+            return getCurrentElevation();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void eSet( int featureID, Object newValue ) {
+        switch( featureID ) {
+        case RenderPackage.VIEWPORT_MODEL__CRS:
+            setCRS((CoordinateReferenceSystem) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
+            setBounds((ReferencedEnvelope) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__CENTER:
+            setCenter((Coordinate) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
+            setHeight((Double) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__WIDTH:
+            setWidth((Double) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            setMapInternal((Map) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
+            setRenderManagerInternal((RenderManager) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS:
+            setPreferredScaleDenominators((SortedSet<Double>) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS:
+            getAvailableTimesteps().clear();
+            getAvailableTimesteps().addAll((Collection< ? extends DateTime>) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_TIMESTEP:
+            setCurrentTimestep((DateTime) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_ELEVATION:
+            getAvailableElevation().clear();
+            getAvailableElevation().addAll((Collection< ? extends Double>) newValue);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_ELEVATION:
+            setCurrentElevation((Double) newValue);
+            return;
+        }
+        super.eSet(featureID, newValue);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void eUnset( int featureID ) {
+        switch( featureID ) {
+        case RenderPackage.VIEWPORT_MODEL__CRS:
+            unsetCRS();
+            return;
+        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
+            setBounds(BOUNDS_EDEFAULT);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__CENTER:
+            setCenter(CENTER_EDEFAULT);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
+            setHeight(HEIGHT_EDEFAULT);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__WIDTH:
+            setWidth(WIDTH_EDEFAULT);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            setMapInternal((Map) null);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
+            setRenderManagerInternal((RenderManager) null);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS:
+            setPreferredScaleDenominators((SortedSet<Double>) null);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS:
+            getAvailableTimesteps().clear();
+            return;
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_TIMESTEP:
+            setCurrentTimestep(CURRENT_TIMESTEP_EDEFAULT);
+            return;
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_ELEVATION:
+            getAvailableElevation().clear();
+            return;
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_ELEVATION:
+            setCurrentElevation(CURRENT_ELEVATION_EDEFAULT);
+            return;
+        }
+        super.eUnset(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public boolean eIsSet( int featureID ) {
+        switch( featureID ) {
+        case RenderPackage.VIEWPORT_MODEL__CRS:
+            return isSetCRS();
+        case RenderPackage.VIEWPORT_MODEL__BOUNDS:
+            return BOUNDS_EDEFAULT == null ? bounds != null : !BOUNDS_EDEFAULT.equals(bounds);
+        case RenderPackage.VIEWPORT_MODEL__CENTER:
+            return CENTER_EDEFAULT == null ? getCenter() != null : !CENTER_EDEFAULT
+                    .equals(getCenter());
+        case RenderPackage.VIEWPORT_MODEL__HEIGHT:
+            return getHeight() != HEIGHT_EDEFAULT;
+        case RenderPackage.VIEWPORT_MODEL__WIDTH:
+            return getWidth() != WIDTH_EDEFAULT;
+        case RenderPackage.VIEWPORT_MODEL__ASPECT_RATIO:
+            return getAspectRatio() != ASPECT_RATIO_EDEFAULT;
+        case RenderPackage.VIEWPORT_MODEL__PIXEL_SIZE:
+            return PIXEL_SIZE_EDEFAULT == null ? getPixelSize() != null : !PIXEL_SIZE_EDEFAULT
+                    .equals(getPixelSize());
+        case RenderPackage.VIEWPORT_MODEL__MAP_INTERNAL:
+            return getMapInternal() != null;
+        case RenderPackage.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL:
+            return renderManagerInternal != null;
+        case RenderPackage.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS:
+            return preferredScaleDenominators != null;
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS:
+            return availableTimesteps != null && !availableTimesteps.isEmpty();
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_TIMESTEP:
+            return CURRENT_TIMESTEP_EDEFAULT == null
+                    ? currentTimestep != null
+                    : !CURRENT_TIMESTEP_EDEFAULT.equals(currentTimestep);
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_ELEVATION:
+            return availableElevation != null && !availableElevation.isEmpty();
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_ELEVATION:
+            return CURRENT_ELEVATION_EDEFAULT == null
+                    ? currentElevation != null
+                    : !CURRENT_ELEVATION_EDEFAULT.equals(currentElevation);
+        }
+        return super.eIsSet(featureID);
     }
 
     /**
@@ -1049,6 +1206,104 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
                 .getDPI());
 
     }
+    public SortedSet<Double> getPreferredScaleDenominators() {
+        SortedSet<Double> preferred = new TreeSet<Double>();
+        preferred.add(1000000.0);
+        preferred.add(100000.0);
+        preferred.add(50000.0);
+        preferred.add(20000.0);
+        preferred.add(10000.0);
+        preferred.add(5000.0);
+        preferred.add(2500.0);
+        preferred.add(1000.0);
+        return Collections.unmodifiableSortedSet(preferred); // we need a good default from preferences or something?
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setPreferredScaleDenominators( SortedSet<Double> newPreferredScaleDenominators ) {
+        SortedSet<Double> oldPreferredScaleDenominators = preferredScaleDenominators;
+        preferredScaleDenominators = newPreferredScaleDenominators;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET,
+                    RenderPackage.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS,
+                    oldPreferredScaleDenominators, preferredScaleDenominators));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public List<DateTime> getAvailableTimesteps() {
+        if (availableTimesteps == null) {
+            availableTimesteps = new EDataTypeUniqueEList<DateTime>(DateTime.class, this,
+                    RenderPackage.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS);
+        }
+        return availableTimesteps;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public DateTime getCurrentTimestep() {
+        return currentTimestep;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setCurrentTimestep( DateTime newCurrentTimestep ) {
+        DateTime oldCurrentTimestep = currentTimestep;
+        currentTimestep = newCurrentTimestep;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET,
+                    RenderPackage.VIEWPORT_MODEL__CURRENT_TIMESTEP, oldCurrentTimestep,
+                    currentTimestep));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public List<Double> getAvailableElevation() {
+        if (availableElevation == null) {
+            availableElevation = new EDataTypeUniqueEList<Double>(Double.class, this,
+                    RenderPackage.VIEWPORT_MODEL__AVAILABLE_ELEVATION);
+        }
+        return availableElevation;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Double getCurrentElevation() {
+        return currentElevation;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setCurrentElevation( Double newCurrentElevation ) {
+        Double oldCurrentElevation = currentElevation;
+        currentElevation = newCurrentElevation;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET,
+                    RenderPackage.VIEWPORT_MODEL__CURRENT_ELEVATION, oldCurrentElevation,
+                    currentElevation));
+    }
 
     /**
      * This method will calculate the current width based on ScaleUtils and 
@@ -1066,12 +1321,12 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
      * Calculates new map bounds according to the given scale, DPI, and display dimensions
      */
     public void setScale( double scaleDenominator, int dpi, int displayWidth, int displayHeight ) {
-        
+
         ReferencedEnvelope newExtents = ScaleUtils.calculateBoundsFromScale(scaleDenominator,
                 new Dimension(displayWidth, displayHeight), dpi, getBounds());
         setWidth(newExtents.getWidth());
     }
-    
+
     CopyOnWriteArraySet<IViewportModelListener> listeners = new CopyOnWriteArraySet<IViewportModelListener>();
 
     public void addViewportModelListener( IViewportModelListener listener ) {
@@ -1100,5 +1355,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
 
     public boolean isBoundsChanging() {
         return this.boundsChanging;
-    } 
+    }
+
 }

@@ -67,14 +67,7 @@ public class UDIGStartup implements IStartup {
         // potential fix for win32 (occasionally blocks in Drawing.feature(Point/etc) during first
         // render)
         new UID(); // seed the random number generator
-
-        load(ReferencingFactoryFinder.getCoordinateOperationAuthorityFactories(null));
-        load(ReferencingFactoryFinder.getCoordinateOperationAuthorityFactories(null));
-        load(ReferencingFactoryFinder.getCRSFactories(null));
-        load(ReferencingFactoryFinder.getCSFactories(null));
-        load(ReferencingFactoryFinder.getDatumAuthorityFactories(null));
-        load(ReferencingFactoryFinder.getDatumFactories(null));
-        load(ReferencingFactoryFinder.getMathTransformFactories(null));
+        
         @SuppressWarnings("unused")
         Object o = SI.BIT;
         o = SI.GRAM;
@@ -83,13 +76,6 @@ public class UDIGStartup implements IStartup {
         o = SI.RADIAN;
         o = SI.SECOND;
         o = SI.STERADIAN;
-    }
-
-    @SuppressWarnings("unchecked")
-    static private void load( Set coordinateOperationAuthorityFactories ) {
-        for( Iterator iter = coordinateOperationAuthorityFactories.iterator(); iter.hasNext(); ) {
-            iter.next();
-        }
     }
 
     /**

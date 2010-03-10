@@ -19,15 +19,17 @@ package net.refractions.udig.catalog.internal.oracle.ui;
 
 import java.net.URL;
 
+import net.refractions.udig.catalog.internal.oracle.OracleServiceExtension;
 import net.refractions.udig.catalog.oracle.internal.Messages;
 import net.refractions.udig.catalog.ui.preferences.AbstractProprietaryJarPreferencePage;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.geotools.data.oracle.OracleDataStoreFactory;
+import org.geotools.data.oracle.OracleNGDataStoreFactory;
 
 /**
+ * Oracle Database wizard page allowing people to install the correct drivers.
  * @author jones
  */
 public class OracleSpatialPreferences extends AbstractProprietaryJarPreferencePage implements IWorkbenchPreferencePage {
@@ -62,8 +64,8 @@ public class OracleSpatialPreferences extends AbstractProprietaryJarPreferencePa
     }
     
     public static boolean isInstalled() {
-        OracleDataStoreFactory factory=new OracleDataStoreFactory();
-        return factory.isAvailable();
+        OracleNGDataStoreFactory factory = OracleServiceExtension.getFactory();
+        return factory != null && factory.isAvailable();
     }
 
     @Override

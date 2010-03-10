@@ -6,11 +6,11 @@
       provider-name="Udig.Refractions.net">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      Feature gathering up tutorials and example code, in addition to required udig plugins; to form a complete SDK for use as a target platform for development.
    </description>
 
    <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+      2010 Refractions Research
    </copyright>
 
    <license url="http://www.example.com/license">
@@ -57,128 +57,19 @@
          id="org.eclipse.platform.source"
          version="0.0.0"/>
 
+   <includes
+         id="net.refractions.udig_tutorials"
+         version="0.0.0"/>
+
+   <includes
+         id="net.refractions.udig_tutorials.source"
+         version="0.0.0"/>
+
    <plugin
          id="org.junit"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="net.refractions.udig.code.examples"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.distanceTool"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.shpexport"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.template"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.tool.coordinate"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.urladapter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.customapp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.featureeditor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.mapgraphic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.tool.coverage"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.catalog.csv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.rcp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.render.csv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.tracking"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.cvsreader"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.genericprojectelement"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.tutorials.style.color"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.junit4"
@@ -194,14 +85,14 @@
          unpack="false"/>
 
    <plugin
-         id="net.refractions.udig.tutorials.raster"
+         id="org.eclipse.jdt.junit.runtime"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="net.refractions.udig.tutorials.workbench"
+         id="org.hamcrest.core"
          download-size="0"
          install-size="0"
          version="0.0.0"

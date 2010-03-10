@@ -123,6 +123,22 @@
             id="xml"
             label="%xmlPage.label"
             requires="org.opengis.coverage.grid.GridCoverage"/>
+<!--
+      <StyleEditorPage
+            class="net.refractions.udig.style.sld.editor.PointEditorPage"
+            contentType="net.refractions.udig.project.ILayer"
+            id="net.refractions.udig.style.sld.PointStyleEditorPage"
+            label="Default Point"
+            requires="org.geotools.data.FeatureSource">
+      </StyleEditorPage>
+      <StyleEditorPage
+            class="net.refractions.udig.style.sld.editor.LineEditorPage"
+            contentType="net.refractions.udig.project.ILayer"
+            id="net.refractions.udig.style.sld.LineStyleEditorPage"
+            label="Default Line"
+            requires="org.geotools.data.FeatureSource">
+      </StyleEditorPage>
+-->      
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -149,7 +165,7 @@
       <perspectiveExtension targetID="net.refractions.udig.ui.mapPerspective">
          <actionSet id="net.refractions.udig.style.sld.editor.layerAction"/>
       </perspectiveExtension>
-      <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
+      <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
          <actionSet id="net.refractions.udig.style.sld.editor.layerAction"/>
       </perspectiveExtension>
    </extension>

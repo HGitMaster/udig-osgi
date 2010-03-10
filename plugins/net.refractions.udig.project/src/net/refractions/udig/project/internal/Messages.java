@@ -114,6 +114,15 @@ public class Messages extends NLS {
 	public static String DeleteFeatureCommand_deleteFeature;
 	public static String RenderExecutorImpl_1;
 	public static String RenderExecutorImpl_2;
+	public static String ExportProjectWizard_Title;
+	public static String ExportProjectWizard_Destination2;
+	public static String ExportProjectWizard_Exporting;
+	public static String ExportSelectionPage_Destination;
+	public static String ExportSelectionPage_MissingDir;
+	public static String ExportSelectionPage_Project;
+	public static String ExportSelectionPage_SelectProject;
+	public static String ExportSelectionPage_ExportProject;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

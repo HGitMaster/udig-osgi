@@ -5,10 +5,10 @@ import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.IStyleBlackboard;
 import net.refractions.udig.project.ProjectBlackboardConstants;
+import net.refractions.udig.project.command.AbstractCommand;
 import net.refractions.udig.project.command.Command;
 import net.refractions.udig.project.command.MapCommand;
 import net.refractions.udig.project.internal.Layer;
-import net.refractions.udig.project.internal.command.navigation.AbstractNavCommand;
 import net.refractions.udig.ui.operations.IOp;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,7 +43,7 @@ public class MakeHole implements IOp {
         //get all selected features
         Query query = new DefaultQuery(layer.getSchema().getTypeName(), layer.getFilter());
         
-         FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = layer.getResource(FeatureSource.class, new SubProgressMonitor(monitor, 1)); 
+        FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = layer.getResource(FeatureSource.class, new SubProgressMonitor(monitor, 1)); 
         FeatureCollection<SimpleFeatureType, SimpleFeature>  features = featureSource.getFeatures(query);
         
         //combine them into one large polygon
@@ -63,10 +63,9 @@ public class MakeHole implements IOp {
         
         final Geometry hole = union[0];
         
-        MapCommand drillHoleCommand = new AbstractNavCommand() {
-
-            @Override
-            protected void runImpl( IProgressMonitor monitor ) throws Exception {
+        MapCommand drillHoleCommand = new AbstractCommand(){
+            
+            public void run( IProgressMonitor monitor ) throws Exception {
                 for( Layer targetLayer : getMap().getLayersInternal() ){
                     //make hole filter for target layer
                     if( targetLayer == layer ){
@@ -90,11 +89,11 @@ public class MakeHole implements IOp {
             }
 
             public Command copy() {
-                return null;
+                return this;
             }
 
             public String getName() {
-                return null;
+                return "Create Hole Command"; //$NON-NLS-1$
             }
             
         };

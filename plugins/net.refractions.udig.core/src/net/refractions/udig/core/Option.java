@@ -14,6 +14,10 @@
  */
 package net.refractions.udig.core;
 
+import java.util.NoSuchElementException;
+
+import org.opengis.feature.simple.SimpleFeature;
+
 
 
 /**
@@ -37,6 +41,22 @@ public abstract class Option<T> {
     private Option() {
     }
 
+    public boolean isDefined(){return false;}
+    public T value(){ throw new NoSuchElementException(); }
+
+	public boolean isNone() {
+		return !isDefined();
+	}
+
+    @SuppressWarnings("unchecked")
+	public static <V> None<V> none() {
+    	return (None<V>) NONE;
+    }
+
+	public static Option<SimpleFeature> some(SimpleFeature next) {
+		return new Some(next);
+	}
+    
     /**
      * Indicates a none or null value.
      * 
@@ -44,7 +64,7 @@ public abstract class Option<T> {
      * @since 1.1.0
      * @param <V>
      */
-    public final static class None<V> extends Option<V> {
+    private final static class None<V> extends Option<V> {
     }
 
     public final static class Some<V> extends Option<V> {
@@ -53,6 +73,10 @@ public abstract class Option<T> {
         public Some( V value ) {
             this.value = value;
         }
+
+
+        public boolean isDefined(){return true;}        
+
         public V value() {
             return value;
         }

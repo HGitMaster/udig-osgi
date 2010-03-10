@@ -8,6 +8,8 @@
  */
 package net.refractions.udig.project.element;
 
+import java.util.List;
+
 import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.internal.ProjectElement;
 
@@ -74,4 +76,21 @@ public interface IGenericProjectElement extends IAdaptable{
 	 * @param listener the listener to remove
 	 */
 	public void removePropertyChangeListener( IPropertyChangeListener listener);
+	
+    /**
+     * Returns an unmodifiable list of the type requested.
+     * <p>
+     * Some currently valid options are IMap and Page
+     */
+    public <E> List<E> getElements( Class<E> type );
+
+    /**
+     * Returns a List with all elements in the project
+     * <p>
+     * This is an immutable list
+     * </p>
+     * 
+     * @return a list with all in the project
+     */
+    public List<?> getElements();
 }

@@ -15,27 +15,37 @@
 package net.refractions.udig.catalog.internal.postgis.ui;
 
 import static java.text.MessageFormat.format;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.PORT;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DATABASE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.HOST;
+import static org.geotools.jdbc.JDBCDataStoreFactory.PASSWD;
+import static org.geotools.jdbc.JDBCDataStoreFactory.USER;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DBTYPE;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
+import net.refractions.udig.catalog.PostgisServiceExtension2;
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.catalog.service.database.LookUpSchemaRunnable;
 import net.refractions.udig.catalog.service.database.TableDescriptor;
 import net.refractions.udig.core.Pair;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.data.DataSourceException;
-import org.geotools.data.postgis.PostgisDataStoreFactory;
+import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 
 /**
  * A runnable that looks up all the schemas in the provided database using the provided username and
@@ -84,10 +94,21 @@ public class PostgisLookUpSchemaRunnable implements LookUpSchemaRunnable {
     }
 
     private void loadTableDescriptors() throws SQLException, DataSourceException {
-        DataSource source = PostgisDataStoreFactory.getDefaultDataSource(host, username, password,
-                port, database, 10, 4, true);
-        Connection connection = source.getConnection();
+
+        PostgisNGDataStoreFactory factory = PostgisServiceExtension2.getFactory();
+        Map<String, Serializable> params = new HashMap<String, Serializable>();
+        params.put(DBTYPE.key, (Serializable)DBTYPE.sample);        
+        params.put(HOST.key, host);
+        params.put(PORT.key, port);
+        params.put(USER.key, username);
+        params.put(PASSWD.key, password);
+        params.put(DATABASE.key, database);
+
+        BasicDataSource dataSource = null;
+        Connection connection = null;
         try {
+            dataSource = factory.createDataSource(params);
+            connection = dataSource.getConnection();
 
             Statement statement = connection.createStatement();
 
@@ -116,8 +137,17 @@ public class PostgisLookUpSchemaRunnable implements LookUpSchemaRunnable {
         } catch (SQLException e) {
             error = "An error occurred when querying the database about the data it contains. Please talk to the administrator: "
                     + e.getMessage();
+        }
+        catch (IOException io ){
+            error = "An error occurred when querying the database about the data it contains. Please talk to the administrator: "
+                + io.getMessage();
         } finally {
-            connection.close();
+            if( connection != null ){
+                connection.close();
+            }
+            if( dataSource != null ){
+                dataSource.close();
+            }
         }
     }
     private boolean hasWritableTable( String tablename, String column, Statement statement ) {

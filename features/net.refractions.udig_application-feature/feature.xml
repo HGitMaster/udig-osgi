@@ -22,30 +22,27 @@
    </url>
 
    <requires>
-      <import feature="net.refractions.udig_platform" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="net.refractions.udig.libs"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="net.refractions.udig.catalog"/>
       <import plugin="net.refractions.udig.ui"/>
       <import plugin="net.refractions.udig.catalog.ui"/>
       <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="net.refractions.udig.libs"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="net.refractions.udig.core"/>
       <import plugin="org.eclipse.emf.ecore.xmi"/>
       <import plugin="org.eclipse.emf.edit.ui"/>
       <import plugin="org.eclipse.gef"/>
-      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.cheatsheets"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="net.refractions.udig.catalog.wms"/>
       <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="net.refractions.udig.catalog.rasterings"/>
+      <import feature="net.refractions.udig_platform" version="1.2.0"/>
+      <import plugin="org.eclipse.ui.forms"/>
    </requires>
-
-   <plugin
-         id="net.refractions.udig.feature.editor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="net.refractions.udig.mapgraphic"
@@ -77,13 +74,6 @@
 
    <plugin
          id="net.refractions.udig.render.feature.basic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.render.feature.shapefile"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -139,20 +129,6 @@
          unpack="false"/>
 
    <plugin
-         id="net.refractions.udig.validation"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.location"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="net.refractions.udig.tools.edit"
          download-size="0"
          install-size="0"
@@ -161,20 +137,6 @@
 
    <plugin
          id="net.refractions.udig.browser"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.context"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.tcat.citd.sim.udig.bookmarks"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -195,13 +157,6 @@
          unpack="false"/>
 
    <plugin
-         id="net.refractions.udig.issues"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.lowagie.itext"
          download-size="0"
          install-size="0"
@@ -209,6 +164,13 @@
 
    <plugin
          id="net.refractions.udig.project.ui.editor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.tcat.citd.sim.udig.bookmarks"
          download-size="0"
          install-size="0"
          version="0.0.0"

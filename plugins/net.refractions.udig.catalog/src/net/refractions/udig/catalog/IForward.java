@@ -42,7 +42,7 @@ public interface IForward extends IResolve {
      * This is the ID of the replacement resource.
      * @return ID of the replacement resource
      */
-    public URL getForward();
+    public ID getForward();
     
     /** 
      * IForward cannot connect; ever.

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension;
+import net.refractions.udig.catalog.ServiceExtension2;
 import net.refractions.udig.catalog.wms.internal.Messages;
 
 /**
@@ -32,7 +33,7 @@ import net.refractions.udig.catalog.wms.internal.Messages;
  * @author Emily Gouge (Refractions Research, Inc)
  * @since 1.1.0
  */
-public class WMSCServiceExtension implements ServiceExtension {
+public class WMSCServiceExtension implements ServiceExtension2 {
 
     /**
      * Creates a new service
@@ -136,11 +137,17 @@ public class WMSCServiceExtension implements ServiceExtension {
         if (PROTOCOL==null || PROTOCOL.indexOf("http") == -1) { //$NON-NLS-1$ supports 'https' too.
             return Messages.WMSServiceExtension_protocol + "'"+PROTOCOL+"'"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        
-        if( QUERY != null && QUERY.toUpperCase().indexOf( "TILED=TRUE" ) != -1){ //$NON-NLS-1$
-            return null;
+        int found = QUERY == null ? -1 : QUERY.toUpperCase().indexOf( "TILED=TRUE" );
+        if( found != -1){ //$NON-NLS-1$
+            return null; // this is a WMSC URL :-)
         }
         return Messages.WMSCServiceExtension_nottiled;
+    }
+
+
+    public String reasonForFailure( Map<String, Serializable> params ) {
+        URL url = extractId( params );
+        return reasonForFailure( url );
     }
 
     /* 

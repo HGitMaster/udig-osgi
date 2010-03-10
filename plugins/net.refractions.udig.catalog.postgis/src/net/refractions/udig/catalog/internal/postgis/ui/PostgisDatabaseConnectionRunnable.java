@@ -14,23 +14,31 @@
  */
 package net.refractions.udig.catalog.internal.postgis.ui;
 
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.PORT;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DATABASE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.HOST;
+import static org.geotools.jdbc.JDBCDataStoreFactory.PASSWD;
+import static org.geotools.jdbc.JDBCDataStoreFactory.USER;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DBTYPE;
+
+import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
+import net.refractions.udig.catalog.PostgisServiceExtension2;
 import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.catalog.service.database.DatabaseConnectionRunnable;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.geotools.data.DataSourceException;
-import org.geotools.data.postgis.PostgisDataStoreFactory;
-
 /**
  * A runnable that attempts to connect to a postgis database. If it does it will get a list of all
  * the databases and store them for later access. If it does not then it will store an error
@@ -61,7 +69,16 @@ public class PostgisDatabaseConnectionRunnable implements DatabaseConnectionRunn
             InterruptedException {
 
         try {
-            DataSource source = PostgisDataStoreFactory.getDefaultDataSource(host, username, password, port, "template1", 10, 4, true);
+            
+            Map<String,Serializable> params = new HashMap<String,Serializable>();
+            params.put( DBTYPE.key, (Serializable) new PostgisServiceDialect().dbType );
+            params.put( HOST.key, host );            
+            params.put( PORT.key, port );
+            params.put( USER.key, username );
+            params.put( PASSWD.key, password );
+            params.put( DATABASE.key, "template1");
+            
+            BasicDataSource source = PostgisServiceExtension2.getFactory().createDataSource(params );
             Connection connection = source.getConnection();
             try {
                 
@@ -74,12 +91,17 @@ public class PostgisDatabaseConnectionRunnable implements DatabaseConnectionRunn
                 }
                 statement.close();
             } finally {
-                connection.close();
+                if( connection != null ){
+                    connection.close();
+                }
+                if( source != null ){
+                    source.close();
+                }
             }
-
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             checkSqlException(e);
-        } catch (DataSourceException e) {
+        } catch (IOException e) {
             if( e.getCause() instanceof SQLException){
                 checkSqlException((SQLException) e.getCause());
             }else{

@@ -24,8 +24,7 @@ import org.geotools.data.DataAccessFactory.Param;
  * @author jeichar
  */
 public abstract class DatabaseServiceDialect {
-
-	// The parameter information required for creating a Geotools Datastore.
+    // The parameter information required for creating a Geotools Datastore.
 	// Postgis was used as the template
 	/**
 	 * The key of the parameter that (at least in Postgis) identifies the schema
@@ -64,6 +63,8 @@ public abstract class DatabaseServiceDialect {
 	 */
     public final Param typeParam;
     
+    public final String dbType;
+    
     /**
      * The prefix/host to put in a url that identifies this type of database.
      * 
@@ -76,7 +77,7 @@ public abstract class DatabaseServiceDialect {
     
     public DatabaseServiceDialect(Param schemaParam, Param databaseParam,
             Param hostParam, Param portParam, Param usernameParam,
-            Param passwordParam, Param typeParam, String urlPrefix, DatabaseWizardLocalization localization) {
+            Param passwordParam, Param typeParam, String dbType, String urlPrefix, DatabaseWizardLocalization localization) {
         this.schemaParam = schemaParam;
         this.databaseParam = databaseParam;
         this.hostParam = hostParam;
@@ -84,6 +85,7 @@ public abstract class DatabaseServiceDialect {
         this.usernameParam = usernameParam;
         this.passwordParam = passwordParam;
         this.typeParam = typeParam;
+        this.dbType = dbType != null ? dbType : (String) typeParam.sample;
         this.urlPrefix = urlPrefix;
         this.localization = localization;
     }

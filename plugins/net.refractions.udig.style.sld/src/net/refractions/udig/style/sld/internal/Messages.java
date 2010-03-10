@@ -28,6 +28,7 @@ public class Messages extends NLS {
 	public static String FilteredEditorDialog_very_informative_error;
 	public static String FilteredTree_clear;
 	public static String FilteredTree_type_filter_text_here;
+	public static String FontEditor_SetFont;
 	public static String ImportSLD_title;
 	public static String ImportFrom_finished;
 	public static String ImportFrom_reading;
@@ -174,6 +175,18 @@ public class Messages extends NLS {
 	public static String SLDLineEditorPart_border_opacity_tooltip;
     public static String StyleEditorDialog_defaults;
     public static String StyleThemePage_13;
+    public static String PointEditorPage_fancyCombo_default;
+    public static String PointEditorPage_fancyCombo_unselected;
+    public static String StylingConstants_label_opacity;
+    public static String StylingConstants_tooltip_opacity;
+    public static String StylingConstants_label_size;
+    public static String StylingConstants_tooltip_size;
+    public static String StylingConstants_label_rotation;
+    public static String StylingConstants_tooltip_rotation;
+    public static String StylingConstants_label_anchor;
+    public static String StylingConstants_tooltip_anchor;
+    public static String StylingConstants_label_displacement;
+    public static String StylingConstants_tooltip_displacement;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -17,50 +17,62 @@
 package net.refractions.udig.catalog.internal.db2;
 
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import net.refractions.udig.catalog.AbstractDataStoreServiceExtension;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension;
+import net.refractions.udig.catalog.db2.DB2Plugin;
 import net.refractions.udig.catalog.db2.internal.Messages;
 
+import org.eclipse.core.runtime.Platform;
+import org.geotools.data.DataAccessFactory;
+import org.geotools.data.DataAccessFinder;
 import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.db2.DB2DataStoreFactory;
-
+import org.geotools.data.db2.DB2NGDataStoreFactory;
+import static org.geotools.data.db2.DB2NGDataStoreFactory.*;
 /**
- * DB2 service extension implementation
+ * DB2 service extension implementation.
  * 
  * @author Justin Deoliveira,Refractions Research Inc.,jdeolive@refractions.net
  * @since 1.0.1
  */
 public class DB2ServiceExtension extends AbstractDataStoreServiceExtension implements ServiceExtension {
-    private static DB2DataStoreFactory factory = null;
+    private static DB2NGDataStoreFactory factory = null;
+    private static boolean avaialble = true;
     
     /**
      * Factory describing connection parameters.
      * @return factory describing DB2 connection parameters
      */
-    public static DB2DataStoreFactory getFactory() {
-        if (factory == null) {
-            factory = new DB2DataStoreFactory();
+    public synchronized static DB2NGDataStoreFactory getFactory() {
+        if (avaialble && factory == null ) {
+        	// factory = new DB2NGDataStoreFactory(); // this was a bad idea
+        	Iterator<DataAccessFactory> available = DataAccessFinder.getAvailableDataStores();
+        	while( available.hasNext() ){
+        		DataAccessFactory access = available.next();
+        		if( access instanceof DB2NGDataStoreFactory){
+        			factory = (DB2NGDataStoreFactory) access;
+        			break;
+        		}
+        	}
+        	if( factory == null ){
+        		avaialble = false; // not available! oh no!        		
+        	}
         }
         return factory;
     }
 
-    public IService createService( URL id2, Map<String, Serializable> params ) {
-        URL id=id2;
-        if( !getFactory().isAvailable() )
-            return null;
+    public IService createService( URL id, Map<String, Serializable> params ) {
+        
         // We expect the port value (key '3') to be a String but some of the extensions (ArcServiceExtension)
         // change this from a String to an Integer which causes us to fail.
         // In order to cope with this, we make a local copy of the parameters and force the port
         // value to be a String.
+        /*
         Map<String, Serializable> paramsLocal = new HashMap<String, Serializable>();      
         Set<Entry<String, Serializable>> entries = params.entrySet();
         Iterator<Entry<String, Serializable>> it = entries.iterator();
@@ -68,31 +80,54 @@ public class DB2ServiceExtension extends AbstractDataStoreServiceExtension imple
             Entry<String, Serializable> entry = it.next();
             paramsLocal.put(entry.getKey(), entry.getValue().toString());
         }
-        if (!getFactory().canProcess(paramsLocal))
-            return null;
+        */
+        try {
+            if( getFactory() == null || !getFactory().isAvailable() ){
+                return null; // factory not available
+            }
+            if (!getFactory().canProcess(params)) {
+                return null; // the factory cannot use these parameters
+            }
+        } catch (Exception unexpected) {
+            if (Platform.inDevelopmentMode()) {
+                // this should never happen
+                DB2Plugin.log("DB2ServiceExtension.canProcess errored out with: "
+                        + unexpected, unexpected);
+            }
+            return null; // the factory cannot really use these parameters
+        }
+        
+        // generate an id if needed (this is only required the first time)
         if (id == null) {
-            id = paramsToUrl(paramsLocal);
+            id = paramsToUrl(params);
         }
         if (id == null) {
             return null;    // should we actually throw an exception?
         }       
         return new DB2Service(id, params);
     }
+
     /**
      * Returns the database parameter values as a pseudo-URL.
+     * <p>
+     * This appears to be used to create an ID.
+     * </p>
+     * 
      * @param params
      * @return a pseudo-URL value
      */
     protected URL paramsToUrl(Map<String, Serializable> params) {
-        URL dbUrl = null;
-        String host = (String) params.get(getFactory().getParametersInfo()[1].key);
-        String port = (String) params.get(getFactory().getParametersInfo()[2].key);
-        String db = (String) params.get(getFactory().getParametersInfo()[3].key);
+        URL dbUrl = null;        
         try {
+            Object host = DB2NGDataStoreFactory.HOST.lookUp( params );
+            Object port = DB2NGDataStoreFactory.PORT.lookUp( params );
+            Object db = DB2NGDataStoreFactory.DATABASE.lookUp( params );
+            
             dbUrl = new URL("http://" + host + ".db2.jdbc:" + port + "/" + db); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        } catch (MalformedURLException e) {
-            // log this?
-            e.printStackTrace();
+        } catch (Exception e) {
+            if( Platform.inDevelopmentMode()){
+                e.printStackTrace();
+            }
         }
         return dbUrl;
     }
@@ -100,17 +135,17 @@ public class DB2ServiceExtension extends AbstractDataStoreServiceExtension imple
     public Map<String,Serializable> createParams( URL url ) {
         if (!isDB2URL(url)) {
             return null;
-        }
-    
+        }    
         ParamInfo info = parseParamInfo(url);
         
         Map<String,Serializable> params = new HashMap<String,Serializable>();
-        params.put(getFactory().getParametersInfo()[0].key,"db2"); // dbtype //$NON-NLS-1$
-        params.put(getFactory().getParametersInfo()[1].key,info.host); // host
-        params.put(getFactory().getParametersInfo()[2].key,info.the_port); // port
-        params.put(getFactory().getParametersInfo()[3].key,info.the_database); // database
-        params.put(getFactory().getParametersInfo()[4].key,info.username); // user
-        params.put(getFactory().getParametersInfo()[5].key,info.password); // pass
+        params.put(DBTYPE.key, (Serializable)DBTYPE.sample); // dbtype //$NON-NLS-1$
+        params.put(HOST.key,info.host); // host
+        params.put(PORT.key,info.the_port); // port
+        params.put(DATABASE.key,info.the_database); // database
+        params.put(USER.key,info.username); // user
+        params.put(PASSWD.key,info.password); // pass
+        
         return params;
     }
     /** A couple quick checks on the url 

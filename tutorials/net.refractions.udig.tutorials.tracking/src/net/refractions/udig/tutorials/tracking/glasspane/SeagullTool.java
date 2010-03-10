@@ -116,7 +116,6 @@ public class SeagullTool extends SimpleTool {
     protected void onMouseMoved( MapMouseEvent e ) {
         int x = e.x;
         int y = e.y;
-
         for( Iterator<Seagull> iterator = gulls.iterator(); iterator.hasNext(); ) {
             Seagull gull = (Seagull) iterator.next();
             gull.setTargetCoordinate(gp.getSite().pixelToWorld(x, y));

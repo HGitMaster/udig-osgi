@@ -52,7 +52,7 @@ public class MapPerspective implements IPerspectiveFactory {
         layout.addView("net.refractions.udig.catalog.ui.CatalogView", IPageLayout.BOTTOM, 0.65f, editorArea);         //$NON-NLS-1$
         layout.addActionSet("net.refractions.udig.helpMenuItems");
         layout.addActionSet("net.refractions.udig.ui.default");
-        layout.addPerspectiveShortcut(AlternateMapPerspective.ID_PERSPECTIVE);
+        layout.addPerspectiveShortcut(StylePerspective.ID_PERSPECTIVE);
     }
     
      

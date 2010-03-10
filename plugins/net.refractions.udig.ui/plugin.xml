@@ -27,11 +27,11 @@
             id="net.refractions.udig.ui.mapPerspective">
       </perspective>
       <perspective
-            class="net.refractions.udig.internal.ui.AlternateMapPerspective"
+            class="net.refractions.udig.internal.ui.StylePerspective"
             fixed="false"
             icon="icons/obj16/map_obj.gif"
-            id="net.refractions.udig.ui.alternateMapPerspective"
-            name="%alternate.perspective.name"/>
+            id="net.refractions.udig.ui.stylePerspective"
+            name="%style.perspective.name"/>
    </extension>
       <extension
          point="org.eclipse.ui.preferencePages">
@@ -46,7 +46,7 @@
       </page>
       <page
             category="net.refractions.udig.ui.page.general"
-            class="net.refractions.udig.ui.preferences.RunntimePreferences"
+            class="net.refractions.udig.ui.preferences.RuntimePreferences"
             id="net.refractions.udig.ui.runntimepreferences"
             name="%runntimePreferences">
          <keywordReference
@@ -365,7 +365,7 @@
        <perspectiveExtension targetID="net.refractions.udig.ui.mapPerspective">
           <actionSet id="net.refractions.udig.helpMenuItems"/>
        </perspectiveExtension>
-       <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
+       <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
           <actionSet id="net.refractions.udig.helpMenuItems"/>
        </perspectiveExtension>
     </extension>

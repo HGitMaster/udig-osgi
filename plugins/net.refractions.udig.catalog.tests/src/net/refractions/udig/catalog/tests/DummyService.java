@@ -118,6 +118,10 @@ public class DummyService extends IService {
 	}
 	
 	@Override
+	public DummyServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+	    return (DummyServiceInfo) super.getInfo(monitor);
+	}
+	@Override
 	protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
 		return new DummyServiceInfo();
 	}

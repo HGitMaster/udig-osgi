@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ProjectEditPlugin.java 30934 2008-10-29 11:00:29Z jeichar $
+ * $Id: ProjectEditPlugin.java 31424 2009-08-07 11:12:23Z aantonello $
  */
 package net.refractions.udig.project.internal.provider;
 
@@ -24,12 +24,6 @@ public final class ProjectEditPlugin extends EMFPlugin {
      * @generated NOT
      */
     public static final String ID = "net.refractions.udig.project.edit"; //$NON-NLS-1$
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public static final String copyright = "uDig - User Friendly Desktop Internet GIS client http://udig.refractions.net (C) 2004, Refractions Research Inc. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of the License. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details."; //$NON-NLS-1$
-
     /**
      * Keep track of the singleton.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -60,6 +54,7 @@ public final class ProjectEditPlugin extends EMFPlugin {
      * @return the singleton instance.
      * @generated
      */
+    @Override
     public ResourceLocator getPluginResourceLocator() {
         return plugin;
     }

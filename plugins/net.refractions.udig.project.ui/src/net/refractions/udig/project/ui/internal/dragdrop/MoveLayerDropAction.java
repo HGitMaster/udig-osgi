@@ -14,9 +14,11 @@
  */
 package net.refractions.udig.project.ui.internal.dragdrop;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
@@ -48,17 +50,16 @@ public class MoveLayerDropAction extends IDropAction {
         return layer.getMap()!=destination2;
     }
 
-    @SuppressWarnings("unchecked")
      static Layer toLayer(IDropAction action) {
         Layer layer;
         if ( action.getData() instanceof Layer ){
             layer=(Layer) action.getData();
         }else {
-           Collection<Layer> layers=(Collection<Layer>) action.getData();
-           layer=layers.iterator().next();
+           Object[] layers= (Object[])action.getData();
+           layer=(Layer) layers[0];
            // check that all layers are from same map
-           for( Layer layer2 : layers ) {
-               if (layer2.getMap()!=layer )
+           for( Object layer2 : layers ) {
+               if (((ILayer) layer2).getMap()!=layer.getMap() )
                    return null;
            }
         }
@@ -81,12 +82,19 @@ public class MoveLayerDropAction extends IDropAction {
     }
 
     @SuppressWarnings("unchecked")
+    public
      static Collection<Layer> toCollection( Object data2 ) {
         Collection<Layer> layers;
         if ( data2 instanceof Layer ){
             layers=Collections.singleton((Layer) data2);
         }else {
-           layers=(Collection<Layer>) data2;
+            layers = new ArrayList<Layer>();
+           Object[] array = (Object[]) data2;
+           for( Object object : array ) {
+            if( object instanceof Layer){
+                layers.add((Layer) object);
+            }
+        }
         }
         return layers;
     }

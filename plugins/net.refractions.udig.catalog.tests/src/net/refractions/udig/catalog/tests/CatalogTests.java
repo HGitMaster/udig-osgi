@@ -57,7 +57,7 @@ public class CatalogTests {
     	List<? extends IGeoResource> resources = service.resources(null);
     	for (IGeoResource resource : resources) {
     		if( resource.resolve(FeatureSource.class, null).getSchema().getName().getLocalPart().
-    				equals(features[0].getName().getLocalPart()))
+    				equals(features[0].getFeatureType().getTypeName()))
     			return resource;
     	}
     	// hopefully will never happen.
@@ -103,13 +103,13 @@ public class CatalogTests {
     		if( deleteService ){
                 if( service.resolve(MemoryDataStore.class, null) instanceof ActiveMemoryDataStore ){
                 	ActiveMemoryDataStore ds=(ActiveMemoryDataStore) service.resolve(MemoryDataStore.class, null);
-                    ds.removeSchema(features[0].getName().getLocalPart());
+                    ds.removeSchema(features[0].getFeatureType().getTypeName());
                 } else {
                     List< ? extends IGeoResource> members = service.resources(new NullProgressMonitor());
                     for( IGeoResource resource : members ) {
                         FeatureStore<SimpleFeatureType, SimpleFeature> s = resource
                                 .resolve(FeatureStore.class, new NullProgressMonitor());
-                        if (s.getSchema().getName().getLocalPart().equals(
+                        if (s.getSchema().getTypeName().equals(
                                 features[0].getName().getLocalPart()))
                             s.removeFeatures(Filter.INCLUDE);
                     }
@@ -118,7 +118,7 @@ public class CatalogTests {
     		
     		MemoryDataStore ds=service.resolve(MemoryDataStore.class, null);
     		try{
-    			ds.getSchema(features[0].getName().getLocalPart());
+    			ds.getSchema(features[0].getFeatureType().getTypeName());
     //			if( deleteService)
     //				throw new IOException("SimpleFeatureType already exists in Service"); //$NON-NLS-1$
     		}catch( SchemaNotFoundException exception){

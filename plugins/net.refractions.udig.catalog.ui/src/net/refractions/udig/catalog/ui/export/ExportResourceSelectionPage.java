@@ -90,7 +90,7 @@ public class ExportResourceSelectionPage extends WorkflowWizardPage implements I
         createExportDirComponent(composite);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText("Resource List:");
+        label.setText(Messages.ExportPage_ResourceList);
         GridData layoutData = new GridData(SWT.FILL, SWT.NONE, true, false);
         //layoutData.horizontalSpan = 3;
         label.setLayoutData(layoutData);
@@ -162,7 +162,7 @@ public class ExportResourceSelectionPage extends WorkflowWizardPage implements I
     	
         createExportLabel(comp);
 
-        String tooltip = "Select the export directory";
+        String tooltip = Messages.ExportPage_ExportDir;
 
         createExportText(comp, tooltip);
 
@@ -173,7 +173,7 @@ public class ExportResourceSelectionPage extends WorkflowWizardPage implements I
 
     private void createExportBrowseButton(Composite comp, String tooltip) {
         Button select = new Button(comp, SWT.PUSH);
-        select.setText("Browse...");
+        select.setText(Messages.ExportPage_Browse);
         select.setToolTipText(tooltip);
         GridData gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
         gridData.horizontalAlignment = SWT.FILL;
@@ -211,7 +211,7 @@ public class ExportResourceSelectionPage extends WorkflowWizardPage implements I
 
     private void createExportLabel(Composite comp) {
         Label scaleLabel = new Label(comp, SWT.NONE);
-        scaleLabel.setText("Destination:");
+        scaleLabel.setText(Messages.ExportPage_Destination);
         scaleLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
                 false));
     }

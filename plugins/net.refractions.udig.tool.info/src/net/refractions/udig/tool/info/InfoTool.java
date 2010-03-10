@@ -16,6 +16,7 @@
  */
 package net.refractions.udig.tool.info;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import net.refractions.udig.project.ui.ApplicationGIS;
@@ -85,15 +86,22 @@ public class InfoTool extends AbstractModalTool implements ModalTool {
     
     SelectionBoxCommand draw = new SelectionBoxCommand();
     
+    /** This is the "previous" square so we can refresh the screen correctly */
+	private Rectangle previous;
+    
     /**
      * Provides user feedback
      * @param e 
      */
-    public void feedback( MapMouseEvent e ) {        
-        draw.setShape( new Rectangle( e.x-3, e.y-3, 5, 5) );        
-        context.getViewportPane().repaint( e.x-4, e.y-4, 7, 7 );
-        
-        super.mouseDragged(e);
+    public void feedback( MapMouseEvent e ) {
+    	Rectangle square = new Rectangle(e.x-3, e.y-3, 5, 5); 
+        draw.setShape( square );
+        if( previous != null ){
+        	context.getViewportPane().repaint(previous.x-4, previous.y-4, previous.width+8, previous.height+8);
+        }
+        previous = square;
+        context.getViewportPane().repaint(square.x-4, square.y-4, square.width+8, square.height+8);        
+        //context.getViewportPane().repaint();
     }
 
 

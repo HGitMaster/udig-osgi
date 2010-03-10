@@ -5,9 +5,11 @@ import java.io.IOException;
 import net.crischan.udig.arcgrid.internal.Messages;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResource;
+import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResourceInfo;
 import net.refractions.udig.catalog.rasterings.AbstractRasterService;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 
 public class ArcGridGeoResourceImplementation extends AbstractRasterGeoResource {
@@ -15,23 +17,17 @@ public class ArcGridGeoResourceImplementation extends AbstractRasterGeoResource 
 		super(service, name);
 	}
 
-	@Override
-	protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException {
-		if (monitor != null) {
-			monitor.beginTask(Messages.ArcGridGeoResourceImplementation_Connecting, 2);
-			monitor.worked(1);
+	protected AbstractRasterGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException {
+	    if( monitor == null ) monitor = new NullProgressMonitor();
+	    
+		monitor.beginTask(Messages.ArcGridGeoResourceImplementation_Connecting, 2);
+		try {
+		    monitor.worked(1);	
+		    return new AbstractRasterGeoResourceInfo(this, "asc", "grd");  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		
-		if (this.info == null) {
-			this.info = new ArcGridGeoResourceInfo(this);
-			if (monitor != null)
-				monitor.worked(1);
+		finally {
+            monitor.done();
 		}
-		
-		if (monitor != null)
-			monitor.done();
-		
-		return this.info;
 	}
 	
 	public ArcGridServiceImplementation getService(){

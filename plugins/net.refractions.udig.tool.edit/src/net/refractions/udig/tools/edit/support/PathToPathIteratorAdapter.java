@@ -16,6 +16,7 @@ package net.refractions.udig.tools.edit.support;
 
 import java.awt.geom.PathIterator;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.PathData;
 
@@ -47,15 +48,15 @@ public class PathToPathIteratorAdapter implements PathIterator {
 
     private int getSegType() {
         switch(data.types[typeIndex]){
-        case 1: // moveTo
+        case SWT.PATH_MOVE_TO: // moveTo
             return SEG_MOVETO;
-        case 2: // lineTo
+        case SWT.PATH_LINE_TO: // lineTo
             return SEG_LINETO;
-        case 3: // quadTo
+        case SWT.PATH_QUAD_TO: // quadTo
            return SEG_QUADTO;
-        case 4: // cubeTo
+        case SWT.PATH_CUBIC_TO: // cubeTo
             return SEG_CUBICTO;
-        case 5: // close
+        case SWT.PATH_CLOSE: // close
             return SEG_CLOSE;
         }
         throw new IllegalArgumentException(data.types[typeIndex]+" is an unknown value"); //$NON-NLS-1$
@@ -84,15 +85,15 @@ public class PathToPathIteratorAdapter implements PathIterator {
 
     private int getNumPoints() {
         switch(data.types[typeIndex]){
-        case 1: // moveTo
+        case SWT.PATH_MOVE_TO: // moveTo
             return 2;
-        case 2: // lineTo
+        case SWT.PATH_LINE_TO: // lineTo
             return 2;
-        case 3: // quadTo
+        case SWT.PATH_QUAD_TO: // quadTo
            return 4;
-        case 4: // cubeTo
+        case SWT.PATH_CUBIC_TO: // cubeTo
             return 6;
-        case 5: // close
+        case SWT.PATH_CLOSE: // close
             return 0;
         }
         throw new IllegalArgumentException(data.types[typeIndex]+" is an unknown value"); //$NON-NLS-1$

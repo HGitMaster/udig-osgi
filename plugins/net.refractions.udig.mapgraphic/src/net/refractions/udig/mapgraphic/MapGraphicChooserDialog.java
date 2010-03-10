@@ -143,7 +143,11 @@ public final class MapGraphicChooserDialog extends TitleAreaDialog {
 
                 String title = null;
                 try {
-                    title = ((IGeoResource) s.getFirstElement()).getInfo(null).getTitle();
+                    IGeoResource resource = (IGeoResource) s.getFirstElement();
+                    title = resource.getTitle();
+                    if( title == null ){
+                        title = resource.getInfo(null).getTitle();
+                    }
                 } catch (IOException e) {
                     MapGraphicPlugin.log("", e); //$NON-NLS-1$
                 }
@@ -215,7 +219,7 @@ public final class MapGraphicChooserDialog extends TitleAreaDialog {
      */
     public static MapGraphicService getMapGraphicService() {
         return CatalogPlugin.getDefault().getLocalCatalog().getById(MapGraphicService.class,
-                MapGraphicService.SERVICE_URL, ProgressManager.instance().get());
+                MapGraphicService.SERVICE_ID, ProgressManager.instance().get());
     }
 
 }

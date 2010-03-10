@@ -251,19 +251,6 @@
                relationship="stack"
                id="net.refractions.udig.catalog.ui.Search"/>               
       </perspectiveExtension>
-      <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
-         <viewShortcut id="net.refractions.udig.catalog.ui.CatalogView"/>
-         <viewShortcut id="net.refractions.udig.catalog.ui.Search"/>
-  		 <view
-               closeable="true"
-               standalone="true"
-               moveable="true"
-               visible="true"
-               showTitle="true"
-               relative="net.refractions.udig.catalog.ui.CatalogView"
-               relationship="stack"
-               id="net.refractions.udig.catalog.ui.Search"/>               
-      </perspectiveExtension>
    </extension>
    
 
@@ -326,8 +313,9 @@
   <extension
         point="net.refractions.udig.ui.dropAction">
         <action
-           class="net.refractions.udig.catalog.internal.ui.actions.CatalogImportDropAction"
-           name="%import.action.name">
+              class="net.refractions.udig.catalog.internal.ui.actions.CatalogImportDropAction"
+              enablesFor="+"
+              name="%import.action.name">
 	       <acceptedType class="java.net.URL"/>
 	       <acceptedType class="java.lang.String"/>
 	       <acceptedType class="java.io.File"/>
@@ -369,7 +357,7 @@
            class="net.refractions.udig.catalog.internal.ui.ops.NewFeatureTypeOp"
            enablesFor="1"
            id="net.refractions.udig.catalog.ui.addFeatureType"
-           name="Add Feature Type"
+           name="%AddFeatureType"
            targetClass="net.refractions.udig.catalog.IService">
         <enablement>
            <adaptsTo target="org.geotools.data.DataStore"/>
@@ -379,7 +367,7 @@
              categoryId="net.refractions.udig.catalog.ui.operation.resourceCategory"
              class="net.refractions.udig.catalog.ui.operation.ReshapeOperation"
              id="net.refractions.udig.catalog.ui.operation.operationReshape"
-             name="Reshape"
+             name="%Reshape"
              targetClass="net.refractions.udig.catalog.IGeoResource">
           <enablement>
              <adaptsTo

@@ -72,13 +72,13 @@ public class Messages extends NLS {
 	public static String OperationLabelProvider_unknown;
     public static String PlatformGIS_background;
 	public static String RunOperationDialog_run_operation;
-	public static String RunntimeFieldEditor_error;
-    public static String RunntimeFieldEditor_locale;
-    public static String RunntimeFieldEditor_maxheap;
-    public static String RunntimeFieldEditor_memory_positive;
-    public static String RunntimeFieldEditor_path_not_existing;
-    public static String RunntimeFieldEditor_restart;
-    public static String RunntimeFieldEditor_workspace_path;
+	public static String RuntimeFieldEditor_error;
+    public static String RuntimeFieldEditor_locale;
+    public static String RuntimeFieldEditor_maxheap;
+    public static String RuntimeFieldEditor_memory_positive;
+    public static String RuntimeFieldEditor_path_not_existing;
+    public static String RuntimeFieldEditor_restart;
+    public static String RuntimeFieldEditor_workspace_path;
     public static String SendLogDialog_contact;
     public static String SendLogDialog_contact_message;
     public static String SendLogDialog_description;
@@ -156,6 +156,7 @@ public class Messages extends NLS {
     public static String UDIGApplication_helpstring;
     public static String UDIGWorkbenchWindowAdvisor_classNotFound;
     public static String UDIGWorkbenchWindowAdvisor_specifiedButNotFound;
+	public static String RuntimePreferences_desc;
 	public static String UiPreferences_advancedGraphics_label;
     public static String UiPreferences_charset;
 	public static String UiPreferences_description;
@@ -196,6 +197,9 @@ public class Messages extends NLS {
     public static String orientation_automatic_description;
     public static String orientation_automatic_tooltip;
     
+    public static String addAttributeAction_label;
+
+    public static String ExceptionDetailsEditorMessage;
     
 	static {
 		// initialize resource bundle

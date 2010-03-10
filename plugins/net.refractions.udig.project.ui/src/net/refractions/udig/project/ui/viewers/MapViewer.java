@@ -62,7 +62,8 @@ public class MapViewer implements MapPart {
      * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
      * viewer has no input, no content provider, a default label provider, no
      * sorter, and no filters. The table has no columns.
-     * 
+     * <p>
+     * The default SWT.DOUBLE_BUFFERED for the canvas and SWT.MULTI for a tiled renderer
      * @param parent
      *      the parent control
      */

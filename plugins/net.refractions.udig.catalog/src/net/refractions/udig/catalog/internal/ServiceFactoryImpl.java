@@ -152,8 +152,7 @@ public class ServiceFactoryImpl implements IServiceFactory {
 								IConfigurationElement element) throws Exception {
 							ServiceExtension se = (ServiceExtension) element
 									.createExecutableExtension("class"); //$NON-NLS-1$                   
-							IService service = se.createService(null,
-									connectionParameters);
+							IService service = se.createService(null, connectionParameters);
 							if (service != null) {
 								services.add(service);
 							}

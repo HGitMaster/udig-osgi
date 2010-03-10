@@ -21,16 +21,15 @@ import net.refractions.udig.tool.edit.internal.Messages;
 import net.refractions.udig.tools.edit.AbstractEditTool;
 import net.refractions.udig.tools.edit.Activator;
 import net.refractions.udig.tools.edit.Behaviour;
+import net.refractions.udig.tools.edit.DefaultEditToolBehaviour;
 import net.refractions.udig.tools.edit.EditToolConfigurationHelper;
 import net.refractions.udig.tools.edit.EnablementBehaviour;
 import net.refractions.udig.tools.edit.activator.AdvancedBehaviourCommandHandlerActivator;
 import net.refractions.udig.tools.edit.activator.DeleteGlobalActionSetterActivator;
-import net.refractions.udig.tools.edit.activator.DrawCurrentGeomVerticesActivator;
 import net.refractions.udig.tools.edit.activator.DrawGeomsActivator;
-import net.refractions.udig.tools.edit.activator.EditStateListenerActivator;
 import net.refractions.udig.tools.edit.activator.GridActivator;
-import net.refractions.udig.tools.edit.activator.SetRenderingFilter;
 import net.refractions.udig.tools.edit.activator.SetSnapBehaviourCommandHandlerActivator;
+import net.refractions.udig.tools.edit.activator.DrawGeomsActivator.DrawType;
 import net.refractions.udig.tools.edit.behaviour.AcceptBehaviour;
 import net.refractions.udig.tools.edit.behaviour.CursorControlBehaviour;
 import net.refractions.udig.tools.edit.behaviour.DefaultCancelBehaviour;
@@ -69,13 +68,13 @@ public class PointTool extends AbstractEditTool {
 
     @Override
     protected void initActivators( Set<Activator> activators ) {
-        activators.add(new EditStateListenerActivator());
+        
+        DrawType type = DrawGeomsActivator.DrawType.POINT;
+        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultCreateActivators(type);
+        activators.addAll(defaults);
         activators.add(new DeleteGlobalActionSetterActivator());
-        activators.add(new DrawGeomsActivator(DrawGeomsActivator.DrawType.POINT));
-        activators.add(new DrawCurrentGeomVerticesActivator());
         activators.add(new SetSnapBehaviourCommandHandlerActivator());
         activators.add(new AdvancedBehaviourCommandHandlerActivator());
-        activators.add(new SetRenderingFilter());
         activators.add(new GridActivator());
     }
 

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.refractions.udig.tools.edit.activator.ClearCurrentSelectionActivator;
 import net.refractions.udig.tools.edit.activator.DrawCurrentGeomVerticesActivator;
 import net.refractions.udig.tools.edit.activator.DrawGeomsActivator;
 import net.refractions.udig.tools.edit.activator.EditStateListenerActivator;
@@ -41,7 +42,7 @@ import com.vividsolutions.jts.geom.Polygon;
 /**
  * Provides some methods for adding basic/common behaviours to a tools.
  * <p>
- * This is NOT a complete set of behaviours.  
+ * This is NOT a complete set of behaviours.
  * </p>
  * 
  * @author jesse
@@ -49,13 +50,35 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public final class DefaultEditToolBehaviour {
 
+
     /**
-     * Adds the activators that almost all tools use.
+     * Adds the activators that almost all edit tools use.
+     * Used by the tools that creates new geometries, and not the ones that edit existent ones.
      * 
      * @param geometryType the type of geometries drawn. If all types then default to POLYGON
      * @return
      */
-    public static Set<Activator> createDefaultActivators( DrawType geometryType ) {
+    public static Set<Activator> createDefaultCreateActivators( DrawType geometryType ) {
+        if (geometryType == null) {
+            throw new NullPointerException("geomType cannot be null"); //$NON-NLS-1$
+        }
+        Set<Activator> activators = new HashSet<Activator>();
+        activators.add(new EditStateListenerActivator());
+        activators.add(new DrawGeomsActivator(geometryType));
+        activators.add(new DrawCurrentGeomVerticesActivator());
+        activators.add(new SetRenderingFilter());
+        activators.add(new ClearCurrentSelectionActivator());
+        return activators;
+    }
+    
+    /**
+     * Adds the activators that almost all edit tools use.
+     * Used by the tools that edit, and not the ones that creates.
+     * 
+     * @param geometryType the type of geometries drawn. If all types then default to POLYGON
+     * @return
+     */
+    public static Set<Activator> createDefaultEditActivators( DrawType geometryType ) {
         if (geometryType == null) {
             throw new NullPointerException("geomType cannot be null"); //$NON-NLS-1$
         }
@@ -135,7 +158,7 @@ public final class DefaultEditToolBehaviour {
 
     /**
      * Creates the default cancel behaviour
-     *
+     * 
      * @return the default cancel behaviour
      */
     public static List<Behaviour> createDefaultCancelBehaviours() {
@@ -146,10 +169,10 @@ public final class DefaultEditToolBehaviour {
     }
 
     /**
-     * Create a EnablementBehaviour that verifies that the tool is valid for the currently selected layer.
-     * The behaviour checks the GeometryType of the layer and if it is one of the classes passed in as a parameter
-     * it will permit the tool to be enabled otherwise it won't.   
-     *
+     * Create a EnablementBehaviour that verifies that the tool is valid for the currently selected
+     * layer. The behaviour checks the GeometryType of the layer and if it is one of the classes
+     * passed in as a parameter it will permit the tool to be enabled otherwise it won't.
+     * 
      * @param classes the geometry types that are legal for the tool
      * @return the enablement behaviour in a list
      */
@@ -161,8 +184,9 @@ public final class DefaultEditToolBehaviour {
     }
 
     /**
-     * Calls {@link #createValidToolEnablementBehaviour(Class[])} with a array of all geometry types.
-     *
+     * Calls {@link #createValidToolEnablementBehaviour(Class[])} with a array of all geometry
+     * types.
+     * 
      * @return the enablement behaviour in a list
      */
     @SuppressWarnings("unchecked")

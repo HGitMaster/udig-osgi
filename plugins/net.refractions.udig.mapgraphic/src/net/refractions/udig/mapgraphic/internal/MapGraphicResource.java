@@ -49,12 +49,12 @@ public class MapGraphicResource extends IGeoResource {
      *
      */
     private MapGraphic createMapGraphic() {
-            return MapGraphicFactory.getInstance().createMapGraphic(id);
+        return MapGraphicFactory.getInstance().createMapGraphic(id);
     }
 
     /*
      * @see net.refractions.udig.catalog.IGeoResource#resolve(java.lang.Class,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * org.eclipse.core.runtime.IProgressMonitor)
      */
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
         if (adaptee == null)
@@ -81,18 +81,19 @@ public class MapGraphicResource extends IGeoResource {
 
     /**
      * Returns the MapGraphic
-     *
+     * 
      * @return the mapgraphic
      */
     public MapGraphic getMapGraphic() {
         return mapgraphic;
     }
 
-    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null) {
-            info = new MapGraphicResourceInfo(element);
-        }
-        return info;
+    @Override
+    public MapGraphicResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (MapGraphicResourceInfo) super.getInfo(monitor);
+    }
+    protected MapGraphicResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        return new MapGraphicResourceInfo(element);
     }
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
@@ -104,8 +105,8 @@ public class MapGraphicResource extends IGeoResource {
                         || adaptee.isAssignableFrom(IService.class)
                         || adaptee.isAssignableFrom(IGeoResource.class)
                         || adaptee.isAssignableFrom(MapGraphic.class)
-                        || adaptee.isAssignableFrom(MapGraphicFactory.class) 
-                        || (getMapGraphic() != null && adaptee.isAssignableFrom(getMapGraphic().getClass())))
+                        || adaptee.isAssignableFrom(MapGraphicFactory.class) || (getMapGraphic() != null && adaptee
+                        .isAssignableFrom(getMapGraphic().getClass())))
                 || super.canResolve(adaptee);
     }
 
@@ -183,8 +184,8 @@ public class MapGraphicResource extends IGeoResource {
     }
 
     /**
-     * Returns the MapGraphic for this 
-     *
+     * Returns the MapGraphic for this
+     * 
      * @return
      */
     public MapGraphic getGraphic() {

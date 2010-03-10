@@ -70,9 +70,6 @@ public abstract class AbstractActionTool implements ActionTool {
 	}
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		
-		
-		
 	}
 
 	public void addListener(ToolLifecycleListener listener) {

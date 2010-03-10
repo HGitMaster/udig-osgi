@@ -43,12 +43,12 @@ public class GeometryCreationUtilTest extends TestCase {
         builder.setBinding(Geometry.class);
         builder.setName("geom");
         GeometryDescriptor at = (GeometryDescriptor) builder.buildDescriptor("geom", builder.buildGeometryType()); //$NON-NLS-1$
-        Map<String, Bag> result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        Map<String, Bag> result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         
         assertEquals(1, result.get(fid).jts.size());
 
         bb.addPoint(100,100, geom2.getShell());
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         
         assertEquals(1, result.size());
         assertEquals(2, result.get(fid).jts.size());
@@ -59,7 +59,7 @@ public class GeometryCreationUtilTest extends TestCase {
         EditGeom differentGeom=bb.newGeom(fid2, null);
         bb.addPoint(200,200, differentGeom.getShell());
         
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(2, result.size());
         assertEquals(2, result.get(fid).jts.size());
         assertEquals(Point.class, result.get(fid).jts.get(0).getClass());
@@ -67,7 +67,7 @@ public class GeometryCreationUtilTest extends TestCase {
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Point.class, result.get(fid2).jts.get(0).getClass());
         
-        result = GeometryCreationUtil.createAllGeoms(geom, LineString.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, LineString.class, at, false);
         assertEquals(2, result.size());
         assertEquals(2, result.get(fid).jts.size());
         assertEquals(LineString.class, result.get(fid).jts.get(0).getClass());
@@ -75,7 +75,7 @@ public class GeometryCreationUtilTest extends TestCase {
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Point.class, result.get(fid2).jts.get(0).getClass());
         
-        result = GeometryCreationUtil.createAllGeoms(geom, Polygon.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Polygon.class, at, false);
         assertEquals(2, result.size());
         assertEquals(2, result.get(fid).jts.size());
         assertEquals(Polygon.class, result.get(fid).jts.get(0).getClass());
@@ -86,7 +86,7 @@ public class GeometryCreationUtilTest extends TestCase {
         geom.getFeatureIDRef().set(null);
         geom2.getFeatureIDRef().set(null);
 
-        result = GeometryCreationUtil.createAllGeoms(geom, Polygon.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Polygon.class, at, false);
         assertEquals(2, result.size());
         assertEquals(2, result.get(null).jts.size());
         assertEquals(Polygon.class, result.get(null).jts.get(0).getClass());
@@ -113,40 +113,40 @@ public class GeometryCreationUtilTest extends TestCase {
         bb.addPoint(200,200, differentGeom.getShell());
         
         
-        Map<String, Bag> result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        Map<String, Bag> result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Point.class, result.get(fid2).jts.get(0).getClass());
 
         differentGeom.setShapeType(ShapeType.LINE);
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(LineString.class, result.get(fid2).jts.get(0).getClass());
 
         differentGeom.setShapeType(ShapeType.POLYGON);
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Polygon.class, result.get(fid2).jts.get(0).getClass());
 
         differentGeom.setShapeType(ShapeType.UNKNOWN);
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Point.class, result.get(fid2).jts.get(0).getClass());
         
         bb.addPoint(200,200, differentGeom.getShell());
 
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Point.class, result.get(fid2).jts.get(0).getClass());
 
         bb.addPoint(200,210, differentGeom.getShell());
 
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(LineString.class, result.get(fid2).jts.get(0).getClass());
 
         bb.addPoint(200,200, differentGeom.getShell());
 
-        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at);
+        result = GeometryCreationUtil.createAllGeoms(geom, Point.class, at, false);
         assertEquals(1, result.get(fid2).jts.size());
         assertEquals(Polygon.class, result.get(fid2).jts.get(0).getClass());
 

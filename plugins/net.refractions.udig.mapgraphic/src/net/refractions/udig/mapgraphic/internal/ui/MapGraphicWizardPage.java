@@ -56,7 +56,7 @@ public class MapGraphicWizardPage extends AbstractUDIGImportPage implements UDIG
 
     @Override
     public Collection<IService> getServices() {
-        IService service = CatalogPlugin.getDefault().getLocalCatalog().getById(IService.class, MapGraphicService.SERVICE_URL, new NullProgressMonitor());
+        IService service = CatalogPlugin.getDefault().getLocalCatalog().getById(IService.class, MapGraphicService.SERVICE_ID, new NullProgressMonitor());
         return Collections.singleton(service);
     }
 

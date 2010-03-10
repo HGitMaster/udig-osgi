@@ -66,7 +66,7 @@
       <perspectiveExtension targetID="net.refractions.udig.ui.mapPerspective">
          <actionSet id="net.refractions.udig.mapgraphic.actionSet1"/>
       </perspectiveExtension>
-      <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
+      <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
          <actionSet id="net.refractions.udig.mapgraphic.actionSet1"/>
       </perspectiveExtension>
    </extension>
@@ -134,15 +134,17 @@
             name="%mapgraphic.grid.name"/>
       <mapGraphic
             class="net.refractions.udig.mapgraphic.northarrow.NorthArrowMapGraphic"
+            icon="icons/obj16/graphic_obj.gif"
             id="net.refractions.udig.mapgraphic.NorthArrowMapGraphic"
-            name="North Arrow">
+            name="%mapgraphic.northarrow.name">
       </mapGraphic>
-      <mapGraphic
+    <!--  <mapGraphic
             class="net.refractions.udig.mapgraphic.scalebar.ScaleDenomMapGraphic"
             id="net.refractions.udig.mapgraphic.scalebar.ScaleDenomMapGraphic"
-            name="Scale Denominator">
-      </mapGraphic>
+            name="%mapgraphic.scale.name">
+      </mapGraphic> -->
    </extension>
+   <!--
    <extension
          point="net.refractions.udig.project.ui.tool">
       <modalTool
@@ -153,5 +155,5 @@
             onToolbar="true">
       </modalTool>
    </extension>
-   
+   -->
 </plugin>

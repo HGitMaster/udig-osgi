@@ -18,8 +18,10 @@ package net.refractions.udig.project.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -94,6 +96,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.coverage.grid.GridCoverage;
 
 /**
  * A facade into udig to simplify operations such as getting the active map and
@@ -634,6 +637,7 @@ public class ApplicationGIS {
         final SelectionStyle selectionStyle;
         final int dpi;
         final boolean transparent;
+        final boolean doBufferedImageForGrids;
 
         /**
          * New instance
@@ -648,11 +652,12 @@ public class ApplicationGIS {
          */
         public DrawMapParameter(Graphics2D graphics, Dimension destinationSize,
                 IMap toDraw, BoundsStrategy boundsStrategy, int dpi, SelectionStyle selectionStyle,
-                IProgressMonitor monitor, boolean transparent) {
+                IProgressMonitor monitor, boolean transparent, boolean doBufferedImageForGrids) {
             this.graphics = graphics;
             this.destinationSize = destinationSize;
             this.toDraw = toDraw;
             this.dpi = dpi;
+            this.doBufferedImageForGrids = doBufferedImageForGrids;
             if (boundsStrategy == null) {
                 this.boundsStrategy = new BoundsStrategy(toDraw.getViewportModel().getScaleDenominator());
             }
@@ -685,7 +690,7 @@ public class ApplicationGIS {
                     dpi, 
                     selectionStyle, 
                     monitor, 
-                    false);
+                    false, false);
         }
 
         /**
@@ -732,7 +737,7 @@ public class ApplicationGIS {
          */
         public DrawMapParameter(Graphics2D graphics, Dimension destinationSize,
                 IMap toDraw, IProgressMonitor monitor, boolean transparent) {
-            this(graphics, destinationSize, toDraw, new BoundsStrategy(toDraw.getViewportModel().getScaleDenominator()), 90, SelectionStyle.OVERLAY, monitor, transparent);            
+            this(graphics, destinationSize, toDraw, new BoundsStrategy(toDraw.getViewportModel().getScaleDenominator()), 90, SelectionStyle.OVERLAY, monitor, transparent, false);            
         }
 
         /**
@@ -743,7 +748,7 @@ public class ApplicationGIS {
 			this((Graphics2D) params2.graphics.create(), new Dimension(
 					params2.destinationSize), params2.toDraw,
 					params2.boundsStrategy, params2.dpi,  params2.selectionStyle,
-					params2.monitor);
+					params2.monitor,params2.transparent, params2.doBufferedImageForGrids);
 		}
 		
     }
@@ -757,12 +762,12 @@ public class ApplicationGIS {
 	 *             
 	 * @return the map that was rendered.  It will not be saved or and is not part of any project.
 	 */
-    public static IMap drawMap(final DrawMapParameter params2) throws RenderException {
-    	final DrawMapParameter params = new DrawMapParameter( params2 );
+    public static IMap drawMap(final DrawMapParameter drawMapParams) throws RenderException {
+    	final DrawMapParameter params = new DrawMapParameter( drawMapParams );
     	IProgressMonitor monitor = params.monitor;
         final Map map = (Map) EcoreUtil.copy((EObject) params.toDraw);
         
-        map.getBlackboard().addAll(params2.toDraw.getBlackboard());
+        map.getBlackboard().addAll(drawMapParams.toDraw.getBlackboard());        
         for (int i = 0; i < map.getMapLayers().size(); i++) {
             ILayer source = params.toDraw.getMapLayers().get(i);
             Layer dest = map.getLayersInternal().get(i);
@@ -776,7 +781,7 @@ public class ApplicationGIS {
                     throws InvocationTargetException, InterruptedException {
                 // Load IGeoResources using original map. The new map can't do this because it doesn't have a
             	// Resource(file) and therefore can't resolve relative URIs
-            	List<ILayer> layers = params2.toDraw.getMapLayers();
+            	List<ILayer> layers = drawMapParams.toDraw.getMapLayers();
             	for (ILayer layer : layers) {
 					layer.getGeoResources();
 				}
@@ -785,7 +790,7 @@ public class ApplicationGIS {
 						ProjectBlackboardConstants.MAP__BACKGROUND_COLOR);
 				
             	params.graphics.setBackground(background);
-				if (!params2.transparent) {
+				if (!drawMapParams.transparent) {
 				    params.graphics.clearRect(0, 0, params.destinationSize.width, params.destinationSize.height);
 				}
                 List<Layer> layersToRender = params.selectionStyle.handleSelection(map.getLayersInternal());
@@ -826,10 +831,12 @@ public class ApplicationGIS {
                 while (iter.hasNext()) {
 					RenderContext context = (RenderContext) iter.next();
 
-					String layerId = getLayerId(context.getLayer());
+					ILayer layer = context.getLayer();
+					boolean isLayerFromGrid = layer.getGeoResource().canResolve(GridCoverage.class);
+                    String layerId = getLayerId(layer);
 
-					if( !(context.getLayer() instanceof SelectionLayer) ||
-					        ((context.getLayer() instanceof SelectionLayer) && params.selectionStyle.getShowLabels()) ){
+					if( !(layer instanceof SelectionLayer) ||
+					        ((layer instanceof SelectionLayer) && params.selectionStyle.getShowLabels()) ){
 						labelPainter.startLayer(layerId);
 					}
 					try {
@@ -837,12 +844,12 @@ public class ApplicationGIS {
 							CompositeRenderContext compositeContext = (CompositeRenderContext) context;
 							List<ILayer> layers = compositeContext.getLayers();
 							boolean visible = false;
-							for (ILayer layer : layers) {
-								visible = visible || layer.isVisible();
+							for (ILayer tmpLayer : layers) {
+								visible = visible || tmpLayer.isVisible();
 							}
 							if (!visible)
 								continue;
-						} else if (!context.getLayer().isVisible())
+						} else if (!layer.isVisible())
 							continue;
 						Renderer renderer = decisive.getRenderer(context);
 						ProjectUIPlugin
@@ -850,8 +857,19 @@ public class ApplicationGIS {
 										ApplicationGIS.class,
 										"Issuing render call to " + renderer.getName(), null); //$NON-NLS-1$
 						try {
-						    Graphics2D graphics = (Graphics2D) params.graphics.create();
-							renderer.render(graphics, monitor);
+                            Graphics2D graphics = (Graphics2D) params.graphics.create();
+                            if (params.doBufferedImageForGrids && isLayerFromGrid) {
+                                Rectangle clipBounds = graphics.getClipBounds();
+                                BufferedImage bi = new BufferedImage(clipBounds.width,
+                                        clipBounds.height, BufferedImage.TYPE_INT_ARGB);
+                                Graphics2D biG2D = (Graphics2D) bi.getGraphics();
+                                renderer.render(biG2D, monitor);
+                                graphics.drawImage(bi, null, 0, 0);
+                                biG2D.dispose();
+                            }else{
+                                renderer.render(graphics, monitor);
+                            }
+						    
 						} catch (RenderException e) {
 							throw new InvocationTargetException(e);
 						}

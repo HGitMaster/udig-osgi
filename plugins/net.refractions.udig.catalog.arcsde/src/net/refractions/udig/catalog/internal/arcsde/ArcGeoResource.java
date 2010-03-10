@@ -31,11 +31,13 @@ import net.refractions.udig.catalog.internal.ResolveChangeEvent;
 import net.refractions.udig.catalog.internal.ResolveDelta;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
 
 /**
  * Provides ...TODO summary sentence
@@ -56,7 +58,7 @@ public class ArcGeoResource extends IGeoResource {
      * @param typename
      */
     public ArcGeoResource( ArcServiceImpl service, String typename ) {
-        this.service = service ;
+        this.service = service;
         this.typename = typename;
     }
 
@@ -84,9 +86,8 @@ public class ArcGeoResource extends IGeoResource {
 
     /*
      * Required adaptions: <ul> <li>IGeoResourceInfo.class <li>IService.class </ul>
-     * 
      * @see net.refractions.udig.catalog.IResolve#resolve(java.lang.Class,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * org.eclipse.core.runtime.IProgressMonitor)
      */
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
         if (adaptee == null)
@@ -98,14 +99,16 @@ public class ArcGeoResource extends IGeoResource {
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
             return adaptee.cast(createInfo(monitor));
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs = service(monitor).getDS(monitor).getFeatureSource(typename);
+            FeatureSource<SimpleFeatureType, SimpleFeature> fs = service(monitor).getDS(monitor)
+                    .getFeatureSource(typename);
             if (fs instanceof FeatureStore)
                 return adaptee.cast(fs);
             if (adaptee.isAssignableFrom(FeatureSource.class))
                 return adaptee.cast(service(monitor).getDS(null).getFeatureSource(typename));
         }
-        return super.resolve( adaptee, monitor);
+        return super.resolve(adaptee, monitor);
     }
+
     /*
      * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
      */
@@ -117,21 +120,26 @@ public class ArcGeoResource extends IGeoResource {
                 || adaptee.isAssignableFrom(FeatureSource.class) || adaptee
                 .isAssignableFrom(IService.class));
     }
-    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null && getStatus() != Status.BROKEN) {
-            synchronized (service(monitor).getDS(monitor)) {
-                if (info == null) {
-                    info = new ArcGeoResourceInfo(this);
-                }
-            }
-            IResolveDelta delta = new ResolveDelta(this, IResolveDelta.Kind.CHANGED);
-            ((CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog())
-                    .fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
-        }
-        return info;
+
+    @Override
+    public ArcGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (ArcGeoResourceInfo) super.getInfo(monitor);
     }
-    
+    protected ArcGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        if (getStatus() == Status.BROKEN) {
+            return null; // could not connect
+        }
+        if( monitor == null ) monitor = new NullProgressMonitor();
+        
+        ArcServiceImpl arcService = service( new SubProgressMonitor( monitor, 50 ));
+        DataStore dataStore = arcService.getDS( new SubProgressMonitor( monitor, 50 ));
+        
+        synchronized ( dataStore ) {
+            return new ArcGeoResourceInfo(this, dataStore );
+        }
+    }
+
     public ArcServiceImpl service( IProgressMonitor monitor ) throws IOException {
-    	return (ArcServiceImpl) super.service(monitor);
+        return (ArcServiceImpl) super.service(monitor);
     }
 }

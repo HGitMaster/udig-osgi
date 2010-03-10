@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.internal.wmsc.WMSCGeoResourceImpl;
@@ -69,11 +70,6 @@ public class WMSCConnectionFactory extends UDIGConnectionFactory {
                 return params;
         }
         URL url = toCapabilitiesURL(context);
-        if (url == null) {
-            // so we are not sure it is a wms url
-            // lets guess
-            url = CatalogPlugin.locateURL(context);
-        }
         if (url != null) {
             // well we have a url - lets try it!
             List<IResolve> list = CatalogPlugin.getDefault().getLocalCatalog().find(url, null);
@@ -123,7 +119,7 @@ public class WMSCConnectionFactory extends UDIGConnectionFactory {
 
    
     /**
-    * Convert "data" to a wmsc capabilities url
+    * Convert "data" to a wmsc capabilities url.
     * <p>
     * Candidates for conversion are:
     * <ul>
@@ -141,19 +137,17 @@ public class WMSCConnectionFactory extends UDIGConnectionFactory {
     * @param data IService, URL, or something else
     * @return URL considered a possibility for a WMS Capabilities, or null
     */
-   static URL toCapabilitiesURL( Object data ) {
+	static URL toCapabilitiesURL( Object data ) {
        if( data instanceof IResolve ){
            return toCapabilitiesURL( (IResolve) data );
        }
-       else if( data instanceof URL ){
-           return toCapabilitiesURL( (URL) data );
+       else if( ID.cast(data) != null ){
+           ID id = ID.cast( data );
+           if( id.toURL() != null ){
+               return toCapabilitiesURL( id.toURL() );
+           }
        }
-       else if( CatalogPlugin.locateURL(data) != null ){
-           return toCapabilitiesURL( CatalogPlugin.locateURL(data) );
-       }
-       else {
-           return null; // no idea what this should be
-       }
+       return null; // no idea what this should be       
    }
 
    static URL toCapabilitiesURL( IResolve resolve ){

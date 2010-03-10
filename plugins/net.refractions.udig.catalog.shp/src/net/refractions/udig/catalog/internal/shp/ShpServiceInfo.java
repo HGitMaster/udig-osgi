@@ -27,6 +27,8 @@ class ShpServiceInfo extends IServiceInfo {
 			ShpPlugin.log(null, e);
 			schema = null;
 		}
+		title = service.getID().toString();
+		title = title.replace("%20"," ");        		  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public String getDescription() {
@@ -34,6 +36,6 @@ class ShpServiceInfo extends IServiceInfo {
 	}
 
 	public String getTitle() {
-		return service.getIdentifier().getFile();
+	    return title;
 	}
 }

@@ -89,7 +89,7 @@ public class GeotoolsResourceInfoAdapter extends IGeoResourceInfo implements Res
     
     @Override
     public String getTitle() {
-        return super.getTitle();
+        return toAdapt.getTitle();
     }
     
     public ResourceInfo getToAdapt() {

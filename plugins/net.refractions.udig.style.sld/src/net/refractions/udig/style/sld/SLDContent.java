@@ -76,8 +76,22 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * Style content for Style Layer Descriptor (SLD).
- * This class is not intended for extension (jg: so I marked it final).
+ * StyleContent allowing a Style Layer Descriptor (SLD) document to be saved on the style blackboard.
+ * <p>
+ * This class is final and not intended for extension.
+ * </p>
+ * We have added several utility methods to this class to assist programmers in working with
+ * the Style data structure.
+ * <p>
+ * Other recommended utility classes are:
+ * <ul>
+ * <li>net.refractions.udig.graphics.SLDs - a utility class for handling the "Default" rule in a style</li>
+ * <li>org.geotools.styling.SLD - a port of our SLDs class to GeoTools/li>
+ * <li>net.refractions.udig.style.sld.SLD - an enum with methods for checking for POINT, LINE, POLYGON
+ * <li>SLDContentManager 
+ * <li>StyleFactory, StyleFactory2 - direct creation of style objects
+ * <li>StyleBuilder - creation of style objects; but allowing for default values
+ * </ul>
  * 
  * @author Justin Deoliveira, Refractions Research Inc.
  */

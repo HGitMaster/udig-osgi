@@ -5,8 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,10 +48,10 @@ public class CatalogImportDropAction extends IDropAction {
             Object[] objects = ((Object[]) data);
             for( Object object : objects ) {
                 if (canAccept(object)) {
-                    return false;
+                    return true;
                 }
             }
-            return true;
+            return false;
         } else if (canAccept(data)) {
             return true;
         }
@@ -98,7 +99,21 @@ public class CatalogImportDropAction extends IDropAction {
     @Override
     public void perform( IProgressMonitor monitor ) {
         Object data = getData();
-        if (data instanceof String) {
+
+        if (data.getClass().isArray()) {
+        	Object[] array = (Object[]) data;
+        	for (Object object : array) {
+        		if( canAccept(object)){
+        			doImportSingleItem(monitor, object);
+        		}
+			}
+        }else{
+        	doImportSingleItem(monitor, data);
+        }
+    }
+
+	private void doImportSingleItem(IProgressMonitor monitor, Object data) {
+		if (data instanceof String) {
             URL url = extractURL((String) data);
             if (url != null) {
                 data = url;
@@ -107,7 +122,7 @@ public class CatalogImportDropAction extends IDropAction {
 
         CatalogImport catalogImport = new CatalogImport();
         catalogImport.run(monitor, data);
-    }
+	}
     /**
      * Searches a String looking for URLs and returns the first one it can find.
      * 
@@ -251,7 +266,7 @@ public class CatalogImportDropAction extends IDropAction {
     static class PageProcessor implements ExtensionPointProcessor {
 
         Object data;
-        List<String> ids = new ArrayList<String>();
+        Set<String> ids = new LinkedHashSet<String>();
 
         PageProcessor( Object data ) {
             this.data = data;
@@ -269,10 +284,9 @@ public class CatalogImportDropAction extends IDropAction {
                     // get the id
                     IConfigurationElement[] elements = extension.getConfigurationElements();
                     for( int i = 0; i < elements.length; i++ ) {
-                        // if ("wizardPage".equals(elements[i].getName())) { //$NON-NLS-1$
-                        ids.add(elements[i].getAttribute("id")); //$NON-NLS-1$
-                        // break;
-                        // }
+                    	if( elements[i].getAttribute("id") != null){
+                    		ids.add(elements[i].getAttribute("id")); //$NON-NLS-1$
+                    	}
                     }
                 }
             } catch (Throwable t) {

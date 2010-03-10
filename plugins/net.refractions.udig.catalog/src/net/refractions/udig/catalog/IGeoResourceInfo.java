@@ -243,9 +243,10 @@ public class IGeoResourceInfo {
      * @return CRS of the resource, or <code>null</code> if unknown.
      */
     public CoordinateReferenceSystem getCRS() { // part of Coverage
-        if (bounds == null) {
+        if (getBounds() == null) {
             return null;
         }
         return getBounds().getCoordinateReferenceSystem();
     }
+
 }

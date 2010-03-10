@@ -42,6 +42,13 @@ public class LabelCacheDecorator implements LabelCache{
     private final LabelCache wrapped;
     private final Point origin;
     private final String layerId;
+    
+    /**
+     * 
+     * @param wrapped 
+     * @param origin huh
+     * @param layerId Target layer id
+     */
     public LabelCacheDecorator( final LabelCache wrapped, Point origin, String layerId ) {
         super();
         this.wrapped = wrapped;

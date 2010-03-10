@@ -25,6 +25,7 @@ import java.util.List;
 import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
+import net.refractions.udig.catalog.URLUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -32,6 +33,7 @@ import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.data.DataUtilities;
+import org.geotools.factory.Hints;
 
 /**
  * Provides a handle to a raster service allowing the service to be lazily loaded.
@@ -64,8 +66,8 @@ public abstract class AbstractRasterService extends IService {
      * @param id
      * @param factory
      */
-    public AbstractRasterService( URL url, GridFormatFactorySpi factory ) {
-        this.id = new ID( url );
+    public AbstractRasterService( URL url, String typeQualifier, GridFormatFactorySpi factory ) {
+        this.id = new ID( url, typeQualifier );
         this.factory = factory;
     }
 
@@ -115,21 +117,24 @@ public abstract class AbstractRasterService extends IService {
         if (this.reader == null) {
             try {
                 AbstractGridFormat frmt = (AbstractGridFormat) getFormat();
-                URL id = getIdentifier();
-                if( "file".equals(id.getProtocol()) ){ //$NON-NLS-1$
+                ID id = getID();
+                if( id.isFile() ){
 //	                if( id.toExternalForm().startsWith("C:/")){
 //	                    id = new URL("file:///"+id.toExternalForm());
 //	                }
-	                File file = DataUtilities.urlToFile(id);
+	                File file = id.toFile();
 	                if( file != null ){
-	                	this.reader = (AbstractGridCoverage2DReader) frmt.getReader( file );
+	                	// to force  crs
+//	                	Hints hints = new Hints();
+//	                	hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, )
+						this.reader = (AbstractGridCoverage2DReader) frmt.getReader( file );
 	                	return this.reader;
 	                }
 	                else {
-	                	throw new FileNotFoundException( id.toExternalForm() );
+	                	throw new FileNotFoundException( id.toFile().toString() );
 	                }
                 }
-                this.reader = (AbstractGridCoverage2DReader) frmt.getReader( id );
+                this.reader = (AbstractGridCoverage2DReader) frmt.getReader( id.toURL() );
             } catch (Exception ex) {
                 this.message = ex;
             }
@@ -147,13 +152,12 @@ public abstract class AbstractRasterService extends IService {
         return getIdentifier().toString();
     }
 
-    /**
-     * Retrieves a relatively human readable title for this service.
-     * 
-     * @return Title of this service
-     */
-    public String getTitle() {
-        return getIdentifier().getFile();
+    /** Retrieves a relatively human readable title for this service. */     
+    public String getHandle(){
+    	// we should check the Reader in order to reveal any internal content
+    	// or assume "raster" to agree with Symbology encoding specification
+    	// for now we will use the filename.    	
+    	return getID().toBaseFile();
     }
 
     @Override
@@ -176,5 +180,8 @@ public abstract class AbstractRasterService extends IService {
             throws IOException;
 
 
-    protected abstract IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException;
+    @Override
+    public AbstractRasterServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (AbstractRasterServiceInfo) super.getInfo(monitor);
+    }
 }

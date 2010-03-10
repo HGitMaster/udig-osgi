@@ -315,33 +315,6 @@
          </action>
       </actionSet>
       <actionSet
-            label="%OpenProjectSet.label"
-            visible="false"
-            id="net.refractions.udig.project.ui.OpenProjectSet">
-         <action
-               label="%project.action.open.name"
-               icon="icons/obj16/project_obj.gif"
-               class="net.refractions.udig.project.ui.internal.actions.OpenProject"
-               tooltip="%project.action.open.tooltip"
-               definitionId="net.refractions.udig.project.ui.openProjectCommand"
-               style="push"
-               menubarPath="file/project.ext"
-               id="net.refractions.udig.project.ui.openProject"/>
-         <action
-               allowLabelUpdate="true"
-               enablesFor="+"
-               label="%project.close.label"
-               tooltip="%project.close.tooltip"
-               class="net.refractions.udig.project.ui.internal.actions.CloseProject"
-               style="push"
-               menubarPath="file/project.ext"
-               id="net.refractions.udig.project.ui.closeProject">
-            <enablement>
-               <objectClass name="net.refractions.udig.project.IProject"/>
-            </enablement>
-         </action>
-      </actionSet>
-      <actionSet
             description="%Layer.Query.Description"
             id="net.refractions.udig.project.ui.layerQuerySet"
             label="%Layer.Query.Name"

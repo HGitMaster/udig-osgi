@@ -59,7 +59,7 @@ public class RemoveVertexTool extends AbstractEditTool {
 
     @Override
     protected void initActivators( Set<Activator> activators ) {
-        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultActivators(DrawGeomsActivator.DrawType.POLYGON);
+        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultEditActivators(DrawGeomsActivator.DrawType.POLYGON);
         activators.addAll(defaults);
    }
 

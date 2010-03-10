@@ -39,7 +39,9 @@ import org.osgi.service.prefs.Preferences;
  * @author Jesse
  */
 public class ServiceParameterPersister {
-	private static final String PROPERTIES_KEY = "_properties"; //$NON-NLS-1$
+	private static final String COLON_ENCODING = "@col@";
+	private static final String TYPE_QUALIFIER = "@type@"; //$NON-NLS-1$
+    private static final String PROPERTIES_KEY = "_properties"; //$NON-NLS-1$
     private static final String VALUE_ID = "value"; //$NON-NLS-1$
 	private static final String TYPE_ID = "type"; //$NON-NLS-1$
     private static final String ENCODING = "UTF-8"; //$NON-NLS-1$
@@ -69,14 +71,12 @@ public class ServiceParameterPersister {
 		try {
 			for (String id : node.childrenNames()) {
 				try {
-					URL url = toURL(id);
-					Preferences servicePref = node.node(id);
+				    Preferences servicePref = node.node(id);
+					ID url = toId(id);
 					
-					// BACKWARDS COMPATIBILITY
-					Map<String, Serializable> connectionParams = backwardCompatibleRestore(servicePref);
-					
+					Map<String, Serializable> connectionParams = new HashMap<String, Serializable>();
 					String[] nodes = servicePref.childrenNames();
-					for (String childName : nodes) {
+                    for (String childName : nodes) {
 					    if( PROPERTIES_KEY.equals(childName)) {
 					        // slip properties entry
 					        continue;
@@ -104,44 +104,31 @@ public class ServiceParameterPersister {
 	 * This method will decode the string based ENCODING
 	 * @param id Persisted id string
 	 * @return URL based on provided id string
-	 * @throws MalformedURLException If the id could not be decoded into a valid URL
 	 */
-    private URL toURL( String id ) throws MalformedURLException {
-        URL url;
+	private ID toId( String encodedId )  {
+        ID id;
         try {
-        	url = new URL(null, URLDecoder.decode(id, ENCODING), CorePlugin.RELAXED_HANDLER);
+        	String decodeId = URLDecoder.decode(encodedId, ENCODING);
+        	String[] parts = decodeId.split(TYPE_QUALIFIER);
+        	String qualifier = null;
+        	if( parts.length==2){
+        	    qualifier = parts[1];
+        	}
+        	try {
+        		URL url = new URL(null, parts[0], CorePlugin.RELAXED_HANDLER);
+        		id= new ID(url, qualifier);
+        	} catch (MalformedURLException e) {
+        		String path = parts[0].replaceAll(COLON_ENCODING, ":");
+				id = new ID(new File(path), qualifier);
+        	}        
+        	
         } catch (UnsupportedEncodingException e) {
         	CatalogPlugin.log("Could not code preferences URL", e); //$NON-NLS-1$
-        	throw new MalformedURLException(e.toString());
+        	throw new RuntimeException(e);
         }
-        return url;
+        return id;
     }
 
-	/**
-	 * Helper method that will unpack a servicePreference node
-	 * into a map of connection parameters.
-	 * @param service
-	 * @param keys
-	 * @return Connection parameters
-	 */
-	private Map<String, Serializable> backwardCompatibleRestore(Preferences preference ) {
-	    Map<String, Serializable> map = new HashMap<String, Serializable>();
-	    String[] keys;
-        try {
-            keys = preference.keys();
-    		for( int j = 0; j < keys.length; j++ ) {
-    			String currentKey = keys[j];
-    			if( PROPERTIES_KEY.equals( currentKey )) {
-    			    continue;
-    			}
-    			map.put(currentKey, preference.get(currentKey, null));
-    		}
-        } catch (BackingStoreException e) {
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
-        }               
-		return map;
-	}
-		
 	/**
 	 * Create an IService from the provided connection parameters
 	 * and add them to the provided catalog.
@@ -149,25 +136,31 @@ public class ServiceParameterPersister {
 	 * @Param targetID In the event of a tie favour the provided targetID
 	 * @param connectionParameters Used to to ask the ServiceFactory for list of candidates 
 	 */
-	protected void locateService(URL targetID, Map<String, Serializable> connectionParameters,  Map<String,Serializable> properties) {
+	protected void locateService(ID targetID, Map<String, Serializable> connectionParameters,  Map<String,Serializable> properties) {
+        IService found = localCatalog.getById( IService.class,targetID, null );
+	    
+        if( found!=null ){
+            return;
+        }
+        
 		List<IService> newServices = serviceFactory.createService(connectionParameters);
 		if( !newServices.isEmpty() ){
 			for( IService service : newServices ) {
 			    // should we check the local catalog to see if it already
 			    // has an entry for this service?
-			    IService found = localCatalog.getById( IService.class,service.getIdentifier(), null );
-			    if( found == null ){
+			    found = localCatalog.getById( IService.class,service.getID(), null );
+			    if( found == null && service.getID().equals(targetID)){
 			        localCatalog.add(service);
+			        try {
+			            // restore persisted properties			        
+			            service.getPersistentProperties().putAll( properties );
+			        } catch (Exception e) {
+			            // could not restore propreties
+			        }
 			    }
 			    else {
 			        // Service was already available
 			    }
-			    try {
-			        // restore persisted properties			        
-                    service.getPersistentProperties().putAll( properties );
-                } catch (Exception e) {
-                    // could not restore propreties
-                }
 		    }
 		} else {
 			CatalogPlugin.log("Nothing was able to be loaded from saved preferences: "+connectionParameters, null); //$NON-NLS-1$
@@ -274,6 +267,15 @@ public class ServiceParameterPersister {
 	}
 	
 
+	/**
+	 * Stores the files into the preferences node.
+	 * 
+	 * @param monitor Progress monitor 
+	 * @param node the preferences to write to
+	 * @param resolves the resolves to commit
+	 * @throws BackingStoreException
+	 * @throws IOException
+	 */
 	public void store(IProgressMonitor monitor, Preferences node,
 			Collection<? extends IResolve> resolves ) throws BackingStoreException, IOException {
 		clearPreferences(node);
@@ -293,15 +295,27 @@ public class ServiceParameterPersister {
                 	continue;
                 
                 String id;
-				try {
-                    id = URLEncoder.encode(service.getIdentifier().toExternalForm(), ENCODING);
+				ID iD = service.getID();
+                try {
+				    if( iD.isFile() ){
+				    	
+				        String path = iD.toFile().getAbsolutePath();
+				        path = path.replace(":", COLON_ENCODING);
+						id = URLEncoder.encode(path, ENCODING);
+				    }
+				    else {
+				        id = URLEncoder.encode( iD.toString(), ENCODING);
+				    }
+				    if(iD.getTypeQualifier()!=null){
+				        id = id+TYPE_QUALIFIER+URLEncoder.encode( iD.getTypeQualifier(), ENCODING);
+				    }
                 } catch (UnsupportedEncodingException e1) {
                     // should never happen
                     CatalogPlugin.log(null, e1);
                     throw new BackingStoreException(e1.toString());
                 }
 
-                Preferences serviceNode = node.node(id);
+                    Preferences serviceNode = node.node(id);
 
                 for ( Map.Entry<String, Serializable> entry : service.getConnectionParams().entrySet()) {
                     String key = entry.getKey().toString();
@@ -312,8 +326,7 @@ public class ServiceParameterPersister {
                     	url = (URL) object;
                     }else if( object instanceof File ){
                         File file = (File) object;
-                        
-                        URL old=file.toURL();
+                        URL old=file.toURI().toURL();
                     	url=file.toURI().toURL();
                     	if( !old.equals(url)){
                     	    CatalogPlugin.trace("old url:"+old,null); //$NON-NLS-1$
@@ -325,7 +338,7 @@ public class ServiceParameterPersister {
                     // if reference is null then we can only encode the absolute path
                     if( reference!=null && url !=null ){
                     	URL relativeURL = URLUtils.toRelativePath(this.reference, url);
-                    	value = relativeURL.toExternalForm();
+                    	value = URLUtils.urlToString(relativeURL, true);
                     }else{
                     	value = object == null ? null : object.toString();
                     }

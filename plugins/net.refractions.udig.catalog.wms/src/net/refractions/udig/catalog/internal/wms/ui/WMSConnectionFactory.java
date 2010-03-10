@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.internal.wms.WMSGeoResourceImpl;
@@ -23,7 +24,7 @@ import org.geotools.data.wms.WebMapServer;
 public class WMSConnectionFactory extends UDIGConnectionFactory {
 
 	public boolean canProcess(Object context) {
-		 if( context instanceof IResolve ){
+		if( context instanceof IResolve ){
            IResolve resolve = (IResolve) context;
            return resolve.canResolve( WebMapServer.class );
        }
@@ -36,11 +37,6 @@ public class WMSConnectionFactory extends UDIGConnectionFactory {
 	            if( !params.isEmpty() ) return params;            
 	        } 
 	        URL url = toCapabilitiesURL( context );
-	        if( url == null ){
-	            // so we are not sure it is a wms url
-	            // lets guess
-	            url = CatalogPlugin.locateURL(context);
-	        }
 	        if( url != null ) {
 	            // well we have a url - lets try it!            
 	            List<IResolve> list = CatalogPlugin.getDefault().getLocalCatalog().find( url, null );
@@ -114,8 +110,11 @@ public class WMSConnectionFactory extends UDIGConnectionFactory {
         else if( data instanceof URL ){
             return toCapabilitiesURL( (URL) data );
         }
-        else if( CatalogPlugin.locateURL(data) != null ){
-            return toCapabilitiesURL( CatalogPlugin.locateURL(data) );
+//        else if( CatalogPlugin.locateURL(data) != null ){
+//            return toCapabilitiesURL( CatalogPlugin.locateURL(data) );
+//        }
+        else if (ID.cast(data) != null ){
+        	return toCapabilitiesURL(ID.cast(data).toURL());
         }
         else {
             return null; // no idea what this should be
@@ -175,6 +174,10 @@ public class WMSConnectionFactory extends UDIGConnectionFactory {
     /** Check that any trailing #layer is removed from the url */
     static public URL checkedURL( URL url ){
         String check = url.toExternalForm();
+        int tiled = check.toUpperCase().indexOf("TILED=TRUE");
+        if( tiled != -1 ){
+            return null; // we do not support tiled WMS here
+        }
         int hash = check.indexOf('#');
         if ( hash == -1 ){
             return url;            
@@ -187,7 +190,9 @@ public class WMSConnectionFactory extends UDIGConnectionFactory {
     }
     
 	public URL createConnectionURL(Object context) {
-		// TODO Auto-generated method stub
+	    if( context instanceof URL ){
+	        return (URL) context;
+	    }
 		return null;
 	}
 

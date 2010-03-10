@@ -11,29 +11,28 @@ import java.util.Map;
 import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResource;
 import net.refractions.udig.catalog.rasterings.AbstractRasterService;
+import net.refractions.udig.catalog.rasterings.AbstractRasterServiceInfo;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class ArcGridServiceImplementation extends AbstractRasterService {	
 	public ArcGridServiceImplementation(URL id, org.geotools.coverage.grid.io.GridFormatFactorySpi factory) {
-		super(id, factory);
+		super(id, ArcGridServiceExtension.TYPE, factory);
 	}
 
 	@Override
-	protected IServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
-		if (monitor != null)
-			monitor.beginTask("ArcGrid loading", 2);
+	protected AbstractRasterServiceInfo createInfo(IProgressMonitor monitor) throws IOException {
+	    if( monitor == null) monitor = new NullProgressMonitor();
 
-		if (this.info == null) {
-			if (monitor != null)
-				monitor.worked(1);
-			this.info = new ArcGridServiceInfo(this);
-		}
-		
-		if (monitor != null)
+	    monitor.beginTask("ArcGrid loading", 2);
+	    try {
+	        monitor.worked(1);
+	        return  new AbstractRasterServiceInfo(this, ".asc", ".grd");  //$NON-NLS-1$//$NON-NLS-2$
+	    }
+	    finally {
 			monitor.done();
-		
-		return this.info;
+	    }
 	}
 
     @Override
@@ -51,7 +50,7 @@ public class ArcGridServiceImplementation extends AbstractRasterService {
 			monitor.worked(3);
 		}
 		
-		ArcGridGeoResourceImplementation res = new ArcGridGeoResourceImplementation(this, getTitle());
+		ArcGridGeoResourceImplementation res = new ArcGridGeoResourceImplementation(this, getHandle());
 
 		List<AbstractRasterGeoResource> list = new ArrayList<AbstractRasterGeoResource>();
 		list.add(res);

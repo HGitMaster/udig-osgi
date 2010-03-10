@@ -105,9 +105,10 @@ abstract class GoogleResource extends IGeoResource {
         return super.resolve(adaptee, monitor);
     }
     protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
-        if(real!=null)
-            return real.getInfo(monitor);
-        return info;
+        if(real==null){
+            return null; // could not connect
+        }
+        return real.getInfo(monitor);
     }
     protected IGeoResource real = null;
     protected abstract void loadReal(IProgressMonitor monitor) throws IOException;

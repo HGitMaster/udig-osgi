@@ -39,8 +39,16 @@ public interface IBoxEditAction {
     public void perform();
     /**
      * Called by framework to determine if the command can be executed.  
+     * 
+     * This should always return true unless an operation continues to run in the background after
+     * {@link #perform()}. In that case it should return false until the action is done.
+     * 
+     * Note this is how to do heavy processing in an action.  The command is ran in the
+     * UI thread so don't do serious processing in a command
+     * 
      */
     public boolean isDone();
+    
     /**
      * Creates the command that will change the model.  
      *

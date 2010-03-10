@@ -27,10 +27,11 @@ import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResource;
 import net.refractions.udig.catalog.rasterings.AbstractRasterService;
+import net.refractions.udig.catalog.rasterings.AbstractRasterServiceInfo;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
-
 
 /**
  * Provides a handle to an imageio-ext based image service allowing the service to be lazily loaded.
@@ -51,7 +52,7 @@ public class ImageServiceImpl extends AbstractRasterService {
      * @param factory
      */
     public ImageServiceImpl( URL id, GridFormatFactorySpi factory ) {
-        super(id, factory);
+        super(id, ImageServiceExtension.TYPE, factory);
     }
 
     /**
@@ -59,11 +60,10 @@ public class ImageServiceImpl extends AbstractRasterService {
      */
     public synchronized AbstractRasterGeoResource getGeoResource( IProgressMonitor monitor ) {
         if (resource == null) {
-            resource = new ImageGeoResourceImpl(this, getTitle());
+            resource = new ImageGeoResourceImpl(this, getHandle());
         }
         return resource;
     }
-
 
     public List<IResolve> members( IProgressMonitor monitor ) throws IOException {
         List<IResolve> list = new ArrayList<IResolve>();
@@ -75,14 +75,20 @@ public class ImageServiceImpl extends AbstractRasterService {
         list.add(getGeoResource(monitor));
         return list;
     }
+
     /**
      * Get metadata about an Image Service, represented by instance of {@link ImageServiceInfo}.
      */
-    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (this.info == null) {
-            this.info = new ImageServiceInfo(this);
+    protected AbstractRasterServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        if (monitor == null)
+            monitor = new NullProgressMonitor();
+        try {
+            monitor.beginTask("MrSID/ECW", 2);
+            monitor.worked(1);
+            return new AbstractRasterServiceInfo(this, "MrSID", "ECW"); //$NON-NLS-1$ //$NON-NLS-2$
+        } finally {
+            monitor.done();
         }
-        return this.info;
     }
 
     public Map<String, Serializable> getConnectionParams() {

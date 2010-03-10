@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.geotools.data.db2.DB2DataStoreFactory;
+import org.geotools.data.db2.DB2NGDataStoreFactory;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -53,7 +53,7 @@ public class DB2Plugin extends AbstractUIPlugin {
         super.start(context);
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try{
-            Thread.currentThread().setContextClassLoader(DB2DataStoreFactory.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(DB2NGDataStoreFactory.class.getClassLoader());
             Logger.getLogger("org.geotools.data.db2").setLevel(Level.SEVERE); //$NON-NLS-1$
         }finally{
             Thread.currentThread().setContextClassLoader(loader);

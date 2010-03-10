@@ -112,7 +112,7 @@ public class PrintWizard extends Wizard implements IExportWizard {
         
         Paper paper = new Paper();
         Rectangle pageSize = getITextPageSize(page1.getPageSize());
-        paper.setSize(pageSize.width(), pageSize.height());
+        paper.setSize(pageSize.getWidth(), pageSize.getHeight());
         //paper.setSize(11.7*72, 16.5*72);
         //double imageableWidth = paper.getWidth() - MARGIN*2;
         //double imageableHeight = paper.getHeight() - MARGIN*2;

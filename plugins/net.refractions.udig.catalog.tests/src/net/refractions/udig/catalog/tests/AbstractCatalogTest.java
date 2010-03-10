@@ -227,7 +227,7 @@ public abstract class AbstractCatalogTest extends AbstractResolveTest {
 
             };
             getResolve().add(service1);
-            getResolve().replace(service1.getIdentifier(), service2);
+            getResolve().replace(service1.getID(), service2);
             List<IResolve> services = getResolve().find(service2.getIdentifier(), null);
             assertFalse("Shouldn't contain the service", services.contains(service1)); //$NON-NLS-1$
             assertTrue("Should contain the service", services.contains(service2)); //$NON-NLS-1$

@@ -15,9 +15,12 @@
          <appinfo>
             <meta.element />
          </appinfo>
+         <documentation>
+            Allows the definition of a StyleConfigurator - presenting a user interface to items on the StyleBlackboard.
+         </documentation>
       </annotation>
       <complexType>
-         <sequence>
+         <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="styleConfigurator" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -40,20 +43,19 @@
    <element name="styleConfigurator">
       <annotation>
          <documentation>
-            Configures a style object. Responsibilities include:
-&lt;ul&gt;
-&lt;li&gt;Creating a ui to allow user configuration of a style object.
-&lt;li&gt;Placing style object information onto the style blackboard of a layer.
-&lt;li&gt;Determining if a style configurator can be used to configure the style
-of a particular layer.
+            Configures a IStyleConfigurator with responsibilities for:&lt;ul&gt;
+&lt;li&gt;Creating a ui to allow user configuration of a style object.&lt;/li&gt;
+&lt;li&gt;Placing style object information onto the style blackboard of a layer.&lt;/li&gt;
+&lt;li&gt;Determining if a style configurator can be used to configure the style of a particular layer.&lt;/li&gt;
 &lt;/ul&gt;
+The user interface provided here will be shown in both the Style View and in the Style Dialog Editor.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  Optional identifier used to indicate the ui in error and log messages.
                </documentation>
             </annotation>
          </attribute>
@@ -82,7 +84,7 @@ If defined, the selected layer must resolve this class in order for this configu
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  This is the class that manages the configuration of the Style class. It is an instance of IStyleConfigurator.
+                  Aninstance of IStyleConfigurator providing a user interface for editing the indicated styleId.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="net.refractions.udig.style.IStyleConfigurator"/>

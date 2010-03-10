@@ -13,5 +13,6 @@ To recompile the installer for a new version of uDig, you'll need to do the foll
 
 - Create a fresh install of the new version of uDig, and make sure to include a JRE directory as a subfolder to the eclipse directory.
 
-- Next, open up uDigInstallScript.nsi, and edit the parts that state the version of uDig.  Taking a quick look, I see reference to the
-version made at line numbers 43, and 44.  I think that's it.
+- Next, open up uDigInstallScript.nsi, and edit the parts that state the version of uDig. This includes the following lines: 44,45,50,55,125,163,218,270,303
+-- (Replace VersionXXXX with whatever version you are working with for example 1.2-M4)
+

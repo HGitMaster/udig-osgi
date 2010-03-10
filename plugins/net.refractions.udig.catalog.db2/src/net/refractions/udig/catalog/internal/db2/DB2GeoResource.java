@@ -124,17 +124,17 @@ public class DB2GeoResource extends IGeoResource {
     }
 
     @Override
-	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        parent.rLock.lock();
-        try{
-            if (info == null) {
-                info = new DB2GeoResourceInfo(monitor, name);
-            }
-        }finally{
+    public DB2GeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (DB2GeoResourceInfo) super.getInfo(monitor);
+    }
+    @Override
+	protected DB2GeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        try {
+            parent.rLock.lock();
+            return  new DB2GeoResourceInfo(monitor, name);
+        } finally {
             parent.rLock.unlock();
         }
-
-        return info;
     }
 
     class DB2GeoResourceInfo extends IGeoResourceInfo {

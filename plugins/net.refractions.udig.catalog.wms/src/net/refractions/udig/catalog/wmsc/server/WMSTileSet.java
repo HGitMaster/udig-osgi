@@ -107,7 +107,7 @@ public class WMSTileSet implements TileSet {
         try {
             this.crs = CRS.decode(epsg);
         } catch (Exception ex) {
-            WmsPlugin.log("Cannot decode tile epsg code: " + epsg, ex); //$NON-NLS-1$
+            // WmsPlugin.trace("Cannot decode tile epsg code: " + epsg, ex); //$NON-NLS-1$
         }
         updateID();
     }
@@ -127,7 +127,7 @@ public class WMSTileSet implements TileSet {
         try {
             crs = CRS.decode(bbox.getEPSGCode());
         } catch (Exception ex) {
-            WmsPlugin.log("Cannot decode tile epsg code: " + bbox.getEPSGCode(), ex); //$NON-NLS-1$
+            WmsPlugin.trace("Cannot decode tile epsg code: " + bbox.getEPSGCode(), ex); //$NON-NLS-1$
         }
         bboxSrs = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(), bbox
                 .getMaxY(), crs);

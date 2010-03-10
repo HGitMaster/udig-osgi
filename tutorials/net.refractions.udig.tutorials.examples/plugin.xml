@@ -4,7 +4,7 @@
    <extension
          point="net.refractions.udig.project.ui.tool">
       <modalTool
-            class="net.refractions.udig.code.examples.PickTool"
+            class="net.refractions.udig.tutorials.examples.PickTool"
             icon="icons/etool16/pick_mode.gif"
             id="net.refractions.udig.code.examples.pick"
             name="Pick Features"
@@ -15,7 +15,7 @@
    <extension
          point="net.refractions.udig.mapgraphic.mapgraphic">
       <mapGraphic
-            class="net.refractions.udig.code.examples.AnimationMapGraphic"
+            class="net.refractions.udig.tutorials.examples.AnimationMapGraphic"
             id="net.refractions.udig.code.examples.runAnimationMapGraphic">
       </mapGraphic>
    </extension>

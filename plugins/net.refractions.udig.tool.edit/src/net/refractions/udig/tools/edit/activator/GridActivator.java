@@ -93,7 +93,7 @@ public class GridActivator implements Activator {
     }
 
     private void addLayer( IMap map ) {
-        MapGraphicService service=CatalogPlugin.getDefault().getLocalCatalog().getById(MapGraphicService.class, MapGraphicService.SERVICE_URL, ProgressManager.instance().get());
+        MapGraphicService service=CatalogPlugin.getDefault().getLocalCatalog().getById(MapGraphicService.class, MapGraphicService.SERVICE_ID, ProgressManager.instance().get());
         try {
             List< ? extends IGeoResource> members = service.resources(ProgressManager.instance().get());
             for( IGeoResource resource : members ) {

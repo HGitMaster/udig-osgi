@@ -57,13 +57,13 @@ public class SelectNeightborsStrategy implements SelectionStrategy {
 
 @SuppressWarnings("unchecked")
 private FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatureIterator( IProgressMonitor monitor, ILayer editLayer, BoundingBox bounds ) throws IOException {
-    FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(null);
+    FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
     
     SimpleFeatureType featureType = editLayer.getSchema();    
     String geomName = featureType.getGeometryDescriptor().getLocalName();
     
-    PropertyName attributeExpr = factory.property(geomName);
-    BBOX filter = factory.bbox(attributeExpr, bounds);
+    PropertyName attributeExpr = ff.property(geomName);
+    BBOX filter = ff.bbox(attributeExpr, bounds);
     
     FeatureSource<SimpleFeatureType, SimpleFeature> source = editLayer.getResource(FeatureSource.class, monitor);    
     return source.getFeatures(filter);

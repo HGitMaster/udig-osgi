@@ -27,6 +27,7 @@ import net.refractions.udig.project.internal.ProjectFactory;
 import net.refractions.udig.project.internal.ProjectPlugin;
 import net.refractions.udig.project.internal.render.ViewportModel;
 import net.refractions.udig.project.ui.ApplicationGIS;
+import net.refractions.udig.ui.ProgressManager;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -249,14 +250,15 @@ public class ContextImportWizard extends Wizard implements IImportWizard {
      * @param type
      * @return
      */
-    static final private URL service( URL url, Class type ) {
+    static final private URL service( URL url, Class<?> type ) {
         ICatalog local = CatalogPlugin.getDefault().getLocalCatalog();
-        List<IService> found = local.findService(url);
-        for( IService service : found ) {
+        List<IResolve> services = local.find(url, ProgressManager.instance().get());
+        for( IResolve service : services ) {
             if (service.canResolve(type)) {
                 return service.getIdentifier();
             }
         }
+
         for( IService candidate : CatalogPlugin.getDefault().getServiceFactory().createService(url) ) {
             if (candidate.canResolve(type)) {
                 local.add(candidate);

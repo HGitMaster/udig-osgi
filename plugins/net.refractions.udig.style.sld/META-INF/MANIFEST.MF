@@ -14,5 +14,6 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project,
  net.refractions.udig.style,
  net.refractions.udig.catalog,
- net.refractions.udig.ui
+ net.refractions.udig.ui,
+ org.eclipse.ui.forms
 Bundle-ActivationPolicy: lazy

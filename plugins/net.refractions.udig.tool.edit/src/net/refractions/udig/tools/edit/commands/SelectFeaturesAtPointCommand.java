@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
-import net.refractions.udig.core.Pair;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.command.AbstractCommand;
 import net.refractions.udig.project.command.UndoableComposite;
@@ -83,17 +83,6 @@ public class SelectFeaturesAtPointCommand extends AbstractCommand implements Und
     // report
     boolean warned = false;
 
-    /**
-     * @deprecated Use {@link #SelectFeaturesAtPointCommand(SelectionParameter)} instead
-     */
-    public SelectFeaturesAtPointCommand( EditToolHandler handler, MapMouseEvent e,
-            Class< ? extends Geometry>[] acceptableClasses, Class<? extends Filter> filterType, boolean permitClear,
-            boolean onlyAdd ) {
-        this(
-                new SelectionParameter(handler, e, acceptableClasses, filterType, permitClear,
-                        onlyAdd));
-    }
-
     public SelectFeaturesAtPointCommand( SelectionParameter parameterObject ) {
         this.parameters = parameterObject;
         this.handler = parameterObject.handler;
@@ -115,46 +104,69 @@ public class SelectFeaturesAtPointCommand extends AbstractCommand implements Und
             editBlackboard.startBatchingEvents();
             BlockingSelectionAnim animation = new BlockingSelectionAnim(event.x, event.y);
             AnimationUpdater.runTimer(context.getMapDisplay(), animation);
-            Pair<FeatureIterator<SimpleFeature>, Boolean> state = getFeatureIterator();
+            FeatureIterator<SimpleFeature> iter = getFeatureIterator();
             try {
 
-                boolean hasFeature = state.getRight();
-                if (hasFeature) {
-                    runSelectionStrategies(monitor, state.getLeft());
+                if (iter.hasNext()) {
+                    runSelectionStrategies(monitor, iter);
                 } else {
                     runDeselectionStrategies(monitor);
                 }
 
                 setAndRun(monitor, command);
-            } finally {
-                if (state != null) {
-                    state.getLeft().close();
-                }
-                if (animation != null) {
-                    animation.setValid(false);
-                    animation = null;
-                }
-                editBlackboard.fireBatchedEvents();
-            }
+			} finally {
+				try {
+					if (iter != null) {
+						iter.close();
+					}
+				} finally {
+					if (animation != null) {
+						animation.setValid(false);
+						animation = null;
+					}
+				}
+				editBlackboard.fireBatchedEvents();
+			}
         }
     }
 
-    private Pair<FeatureIterator<SimpleFeature>, Boolean> getFeatureIterator() throws IOException {
+    /**
+     * Gets a feature iterator on the results of a BBox query.   BBox is used because intersects occasionally throws a 
+     * Side-conflict error so it is not a good query.  
+     * 
+     * However maybe a better way is to try intersects then if that fails do a bbox?
+     * For now we do bbox and test it with intersects
+     * 
+     * @return Pair of an option containing the first feature if it exists, and an iterator with the rest
+     */
+    private FeatureIterator<SimpleFeature> getFeatureIterator() throws IOException {
         ILayer editLayer = parameters.handler.getEditLayer();
-        FeatureStore<SimpleFeatureType, SimpleFeature> store = editLayer.getResource(FeatureStore.class, null);
+        FeatureStore<SimpleFeatureType, SimpleFeature> store = getResource(editLayer);
+        
+        // transforms the bbox to the layer crs 
         ReferencedEnvelope bbox = handler.getContext().getBoundingBox(event.getPoint(), SEARCH_SIZE);
+        try {
+        	bbox = bbox.transform(parameters.handler.getEditLayer().getCRS(), true);
+        } catch (TransformException e) {
+        	logTransformationWarning(e);
+        } catch (FactoryException e) {
+        	logTransformationWarning(e);
+        }
+        // creates a bbox filter using the bbox in the layer crs and grabs the features present in this bbox
         Filter createBBoxFilter = createBBoxFilter(bbox, editLayer, filterType);
         FeatureCollection<SimpleFeatureType, SimpleFeature> collection = store.getFeatures(createBBoxFilter);
-        FeatureIterator<SimpleFeature> reader = collection.features();
-        boolean hasFeature = false;
-        try {
-            hasFeature = reader.hasNext();
-        } catch (Exception e) {
-            EditPlugin.log("Failed to find selected features", e); //$NON-NLS-1$
-        }
 
-        return new Pair<FeatureIterator<SimpleFeature>, Boolean>(reader, hasFeature);
+        FeatureIterator<SimpleFeature> reader = new IntersectTestingIterator(bbox, collection.features());
+        
+        return reader;
     }
+
+	@SuppressWarnings("unchecked")
+	private FeatureStore<SimpleFeatureType, SimpleFeature> getResource(
+			ILayer editLayer) throws IOException {
+		FeatureStore<SimpleFeatureType, SimpleFeature> store = editLayer.getResource(FeatureStore.class, null);
+		return store;
+	}
 
     private void runDeselectionStrategies( IProgressMonitor monitor ) {
 
@@ -171,28 +183,19 @@ public class SelectFeaturesAtPointCommand extends AbstractCommand implements Und
         List<SelectionStrategy> strategies = parameters.selectionStrategies;
         UndoableComposite compositeCommand = new UndoableComposite();
         compositeCommand.setName(Messages.SelectGeometryCommand_name);
-
-        boolean firstFeature = true;
-
-        ReferencedEnvelope bbox = handler.getContext().getBoundingBox(event.getPoint(), SEARCH_SIZE);
-        try {
-            bbox = bbox.transform(parameters.handler.getEditLayer().getCRS(), true);
-        } catch (TransformException e) {
-            logTransformationWarning(e);
-        } catch (FactoryException e) {
-            logTransformationWarning(e);
+        
+        for( SelectionStrategy selectionStrategy : strategies ) {
+        	selectionStrategy.run(monitor, compositeCommand, parameters, reader.next(),
+        			true);
         }
         
-        do {
-            SimpleFeature feature = reader.next();
-            if (bboxIntersects(bbox, feature)) {
-                for( SelectionStrategy selectionStrategy : strategies ) {
-                    selectionStrategy.run(monitor, compositeCommand, parameters, feature,
-                            firstFeature);
-                }
-                firstFeature = false;
+        while (reader.hasNext()){
+        	SimpleFeature feature = reader.next();
+            for( SelectionStrategy selectionStrategy : strategies ) {
+            	selectionStrategy.run(monitor, compositeCommand, parameters, feature,
+            			false);
             }
-        } while (reader.hasNext());
+        }
 
         this.command = compositeCommand;
     }
@@ -200,24 +203,6 @@ public class SelectFeaturesAtPointCommand extends AbstractCommand implements Und
     private void logTransformationWarning( Exception e ) {
         if(!warned){
             EditPlugin.log("Error transforming bbox from viewportmodel CRS to LayerCRS", e); //$NON-NLS-1$
-        }
-    }
-
-    private boolean bboxIntersects( ReferencedEnvelope bbox, SimpleFeature feature ) {
-        GeometryDescriptor geomDescriptor = getGeometryAttDescriptor(feature.getFeatureType());
-        
-        Geometry bboxGeom = new GeometryFactory().toGeometry(bbox);
-
-        Geometry geom = (Geometry) feature.getAttribute(geomDescriptor.getName());
-
-        try{
-            return geom.intersects(bboxGeom);
-        }catch (Exception e) {
-            // ok so exception happened during intersection.  This usually means geometry is a little crazy
-            // what to do?...
-            // for now I'm saying we can't use the geometry.
-            EditPlugin.log("Can't do intersection so I'm assuming they intersect", e); //$NON-NLS-1$
-            return true;
         }
     }
 
@@ -246,10 +231,6 @@ public class SelectFeaturesAtPointCommand extends AbstractCommand implements Und
         }
     }
 
-    private GeometryDescriptor getGeometryAttDescriptor( SimpleFeatureType schema ) {
-        return schema.getGeometryDescriptor();
-    }
-
     private void setAndRun( IProgressMonitor monitor, UndoableMapCommand undoableComposite )
             throws Exception {
         undoableComposite.setMap(getMap());
@@ -264,4 +245,64 @@ public class SelectFeaturesAtPointCommand extends AbstractCommand implements Und
         command.rollback(monitor);
     }
 
+    private static GeometryDescriptor getGeometryAttDescriptor( SimpleFeatureType schema ) {
+        return schema.getGeometryDescriptor();
+    }
+    
+    private static class IntersectTestingIterator implements FeatureIterator<SimpleFeature>{
+    	private final FeatureIterator<SimpleFeature> wrappedIter;
+    	private final ReferencedEnvelope bbox;
+    	private SimpleFeature next;
+    	
+		public IntersectTestingIterator(ReferencedEnvelope bbox, FeatureIterator<SimpleFeature> wrapped) {
+			this.wrappedIter = wrapped;
+			this.bbox=bbox;
+		}
+
+		public void close() {
+			wrappedIter.close();
+		}
+
+		public boolean hasNext() {
+			if( next!=null ){
+				return true;
+			}
+			
+			while (wrappedIter.hasNext() && next==null ){
+				SimpleFeature feature=wrappedIter.next();
+				if(intersects(feature)){
+					next=feature;
+				}
+			}
+			
+			// TODO Auto-generated method stub
+			return next!=null;
+		}
+
+	    private boolean intersects( SimpleFeature feature ) {
+	        GeometryDescriptor geomDescriptor = getGeometryAttDescriptor(feature.getFeatureType());
+	        
+	        Geometry bboxGeom = new GeometryFactory().toGeometry(bbox);
+
+	        Geometry geom = (Geometry) feature.getAttribute(geomDescriptor.getName());
+
+	        try{
+	            return geom.intersects(bboxGeom);
+	        }catch (Exception e) {
+	            // ok so exception happened during intersection.  This usually means geometry is a little crazy
+	            // what to do?...
+	            EditPlugin.log("Can't do intersection so I'm assuming they intersect", e); //$NON-NLS-1$
+	            return false;
+	        }
+	    }
+		public SimpleFeature next() throws NoSuchElementException {
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			SimpleFeature f = next;
+			next=null;
+			return f;
+		}
+    	
+    }
 }

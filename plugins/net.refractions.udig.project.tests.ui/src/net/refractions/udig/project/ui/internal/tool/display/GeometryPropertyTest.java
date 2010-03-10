@@ -5,6 +5,7 @@ import java.net.URL;
 import junit.framework.TestCase;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.tests.CatalogTests;
@@ -59,9 +60,9 @@ public class GeometryPropertyTest extends TestCase {
         
         URL id = layer.getID();
         ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
-        IGeoResource resource = localCatalog.getById(IGeoResource.class, id, new NullProgressMonitor());
+        IGeoResource resource = localCatalog.getById(IGeoResource.class, new ID(id), new NullProgressMonitor());
         IService parent = resource.service(new NullProgressMonitor());
-        localCatalog.replace(parent.getIdentifier(), parent);
+        localCatalog.replace(parent.getID(), parent);
         
         assertEquals(0, changed[0]);
         
@@ -70,13 +71,13 @@ public class GeometryPropertyTest extends TestCase {
         assertTrue(prop.isTrue(layer, "Polygon")); //$NON-NLS-1$
         assertTrue(prop.isTrue(layer, "Polygon")); //$NON-NLS-1$
 
-        localCatalog.replace(parent.getIdentifier(), parent);
+        localCatalog.replace(parent.getID(), parent);
         
         assertEquals(1, changed[0]);
         
         parent=CatalogTests.createResource(null, "ResolveTo").service(new NullProgressMonitor()); //$NON-NLS-1$
 
-        localCatalog.replace(parent.getIdentifier(), parent);
+        localCatalog.replace(parent.getID(), parent);
         changed[0]=0;
         assertEquals(0, changed[0]);
     }

@@ -221,11 +221,11 @@ public class MapBoxPrinter extends AbstractBoxPrinter implements IAdaptable {
             IMap modifiedMap = null;
             if (scaleDenom == -1) {
                 //ApplicationGIS.drawMap(new DrawMapParameter(graphics, awtSize, getMap(), monitor, true));
-                modifiedMap = ApplicationGIS.drawMap(new DrawMapParameter(graphics, awtSize, getMap(), null /*use current scale*/, 90, selectionStyle, monitor, true));
+                modifiedMap = ApplicationGIS.drawMap(new DrawMapParameter(graphics, awtSize, getMap(), null /*use current scale*/, 90, selectionStyle, monitor, true, true));
             }
             else {
                 BoundsStrategy boundsStrategy = new BoundsStrategy(scaleDenom);
-                modifiedMap = ApplicationGIS.drawMap(new DrawMapParameter(graphics, awtSize, getMap(), boundsStrategy, 90, selectionStyle, monitor, true));
+                modifiedMap = ApplicationGIS.drawMap(new DrawMapParameter(graphics, awtSize, getMap(), boundsStrategy, 90, selectionStyle, monitor, true, true));
             }
 
             //ApplicationGIS.drawMap makes a copy of the map, and may change its bounds.  If it does change

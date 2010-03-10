@@ -8,14 +8,75 @@
 
    <extension
          point="net.refractions.udig.printing.ui.templateFactories">
-      <templateFactory
-            class="net.refractions.udig.printing.ui.internal.template.LandscapeTemplateFactory"
-            id="landScape">
-      </templateFactory>
+            <template
+            class="net.refractions.udig.printing.ui.internal.template.A4LandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A4LandscapeTemplate"
+            name="%A4.landscape.template">
+      </template>
       <template
-            class="net.refractions.udig.printing.ui.internal.BasicTemplate"
-            id="net.refractions.udig.printing.ui.template.basic"
-            name="Basic Template">
+            class="net.refractions.udig.printing.ui.internal.template.A3LandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A3LandscapeTemplate"
+            name="%A3.landscape.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A2LandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A2LandscapeTemplate"
+            name="%A2.landscape.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A1LandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A1LandscapeTemplate"
+            name="%A1.landscape.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A0LandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A0LandscapeTemplate"
+            name="%A0.landscape.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A4PortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A4PortraitTemplate"
+            name="%A4.portrait.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A3PortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A3PortraitTemplate"
+            name="%A3.portrait.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A2PortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A2PortraitTemplate"
+            name="%A2.portrait.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A1PortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A1PortraitTemplate"
+            name="%A1.portrait.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.A0PortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.A0PortraitTemplate"
+            name="%A0.portrait.template">
+      </template>
+    	<template
+            class="net.refractions.udig.printing.ui.internal.template.LetterLandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.LetterLandscapeTemplate"
+            name="%Letter.landscape.template">
+      </template>
+    	<template
+            class="net.refractions.udig.printing.ui.internal.template.LegalLandscapeTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.LegalLandscapeTemplate"
+            name="%Legal.landscape.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.LetterPortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.LetterPortraitTemplate"
+            name="%Letter.portrait.template">
+      </template>
+      <template
+            class="net.refractions.udig.printing.ui.internal.template.LegalPortraitTemplate"
+            id="net.refractions.udig.printing.ui.internal.template.LegalPortraitTemplate"
+            name="%Legal.portrait.template">
       </template>
    </extension>
    
@@ -41,38 +102,15 @@
             name="%graphic.label"
             visible="true">
       </boxprinter>
+      <boxprinter
+            class="net.refractions.udig.printing.model.impl.RectangleEllipseBoxPrinter"
+            defaultAction="net.refractions.udig.printing.ui.simpleStyleAction"
+            description="%box.box.printer.description"
+            name="%box.box.printer"
+            visible="true">
+      </boxprinter>
    </extension>
    
-      <extension
-        point="org.eclipse.ui.exportWizards">
-      <wizard
-            class="net.refractions.udig.printing.ui.pdf.SivecoExportMapToImageWizard"
-            icon="icons/obj16/grid_obj.gif"
-            id="net.refractions.udig.printing.ui.pdf"
-            name="Siveco Export">
-         <description>
-            %exportToImage.desc
-         </description>
-      </wizard>
-      <wizard
-            class="net.refractions.udig.printing.ui.pdf.ExportPDFWizard"
-            icon="icons/obj16/exportpdf_obj.gif"
-            id="net.refractions.udig.printing.ui.pdf.ExportPDFWizard"
-            name="Export as PDF">
-         <description>
-            %exportToImage.desc
-         </description>
-      </wizard>  
-      <wizard
-            class="net.refractions.udig.printing.ui.pdf.PrintWizard"
-            icon="icons/obj16/exportpdf_obj.gif"
-            id="net.refractions.udig.printing.ui.pdf.PrintWizard"
-            name="Print">
-         <description>
-            %exportToImage.desc
-         </description>
-      </wizard>  
-   </extension>
 
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -85,11 +123,11 @@
    <extension
          point="org.eclipse.ui.editors">
          <editor
-            icon="icons/obj16/page_obj.gif"
-            class="net.refractions.udig.printing.ui.internal.editor.PageEditor"
-            default="true"
-            name="%printing.ui.pageEditor.name"
-            id="net.refractions.udig.printing.ui.internal.editor.pageEditor"/>
+               class="net.refractions.udig.printing.ui.internal.editor.PageEditor"
+               default="true"
+               icon="icons/obj16/page_obj.gif"
+               id="net.refractions.udig.printing.ui.internal.editor.pageEditor"
+               name="%printing.ui.pageEditor.name"/>
    </extension>
    <extension
          point="net.refractions.udig.project.ui.editorInputs">
@@ -116,17 +154,41 @@
                id="net.refractions.udig.printing.ui.printAction"/>
       </editorContribution>
       <editorContribution
-            targetID="net.refractions.udig.printing.ui.internal.editor.pageEditor"
-            id="net.refractions.udig.printing.ui.pageEditorContribution">
+            id="net.refractions.udig.printing.ui.pageEditorContribution"
+            targetID="net.refractions.udig.printing.ui.internal.editor.pageEditor">
          <action
-               disabledIcon="icons/dtool16/print_tsk.gif"
-               toolbarPath="global/additions"
-               label="%printing.ui.action.printFromPage.label"
                class="net.refractions.udig.printing.ui.internal.PrintAction"
-               icon="icons/etool16/print_tsk.gif"
-               tooltip="%printing.ui.action.printFromPage.label"
+               disabledIcon="icons/etool16/pdf.png"
+               icon="icons/etool16/pdf.png"
+               id="net.refractions.udig.printing.ui.printPdfAction"
+               label="%printing.ui.action.printFromPage.label"
+               menubarPath="file/print.ext"
                style="push"
-               id="net.refractions.udig.printing.ui.printAction"/>
+               toolbarPath="global/additions"
+               tooltip="%printing.ui.action.printFromPage.label">
+         </action>
+         <!--
+         <action
+               class="net.refractions.udig.printing.ui.internal.ZoomInAction"
+               disabledIcon="icons/etool16/zoom_in_co.gif"
+               icon="icons/etool16/zoom_in_co.gif"
+               id="net.refractions.udig.printing.ui.action.zoomin"
+               label="Zoom In Page"
+               style="push"
+               toolbarPath="global/additions"
+               tooltip="Zoom In Page">
+         </action>
+         <action
+               class="net.refractions.udig.printing.ui.internal.ZoomOutAction"
+               disabledIcon="icons/etool16/zoom_out_co.gif"
+               icon="icons/etool16/zoom_out_co.gif"
+               id="net.refractions.udig.printing.ui.action.zoomout"
+               label="Zoom Out Page"
+               style="push"
+               toolbarPath="global/additions"
+               tooltip="Zoom Out Page">
+         </action> 
+         -->
       </editorContribution>
    </extension>
          <extension
@@ -134,7 +196,7 @@
             <perspectiveExtension targetID="net.refractions.udig.ui.mapPerspective">
                <actionSet id="net.refractions.udig.printing.ui.mapGraphic.action"/>
             </perspectiveExtension>
-            <perspectiveExtension targetID="net.refractions.udig.ui.alternateMapPerspective">
+            <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
                <actionSet id="net.refractions.udig.printing.ui.mapGraphic.action"/>
             </perspectiveExtension>
          </extension>
@@ -183,6 +245,38 @@
                 class="net.refractions.udig.printing.ui.internal.editor.RefreshAction"
                 id="refreshAction"
                 name="%refreshAction.label">
+          </editAction>
+          <editAction
+                class="net.refractions.udig.printing.ui.internal.editor.BringToFrontAction"
+                id="bringtofrontAction"
+                image="icons/obj16/bringtofront.png"
+                name="%bringtofrontAction.label">
+          </editAction>
+          <editAction
+                class="net.refractions.udig.printing.ui.internal.editor.BringForwardAction"
+                id="bringforwardAction"
+                image="icons/obj16/bringforward.png"
+                name="%bringforwardAction.label">
+          </editAction>
+          <editAction
+                class="net.refractions.udig.printing.ui.internal.editor.BringBackwardAction"
+                id="bringbackwardAction"
+                image="icons/obj16/bringbackward.png"
+                name="%bringbackwardAction.label">
+          </editAction>
+          <editAction
+                class="net.refractions.udig.printing.ui.internal.editor.BringToBackAction"
+                id="bringtobackAction"
+                image="icons/obj16/bringtoback.png"
+                name="%bringtobackAction.label">
+          </editAction>
+       </editActionGroup>
+       <editActionGroup
+             acceptable="net.refractions.udig.printing.model.impl.RectangleEllipseBoxPrinter">
+          <editAction
+                class="net.refractions.udig.printing.ui.internal.editor.SimpleStyleAction"
+                id="simplestyleAction"
+                name="%simplestyle.label">
           </editAction>
        </editActionGroup>
      </extension>

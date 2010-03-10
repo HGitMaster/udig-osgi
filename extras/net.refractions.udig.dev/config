@@ -4,35 +4,41 @@
 ### how to use this file.
 
 ### Section for authentication and authorization customizations.
-### Set store-auth-creds to 'no' to avoid storing your subversion
+[auth]
+### Set store-passwords to 'no' to avoid storing passwords in the
+### auth/ area of your config directory.  It defaults to 'yes'.
+### Note that this option only prevents saving of *new* passwords;
+### it doesn't invalidate existing passwords.  (To do that, remove
+### the cache files by hand as described in the Subversion book.)
+# store-passwords = no
+### Set store-auth-creds to 'no' to avoid storing any subversion
 ### credentials in the auth/ area of your config directory.
 ### It defaults to 'yes'.  Note that this option only prevents
 ### saving of *new* credentials;  it doesn't invalidate existing
 ### caches.  (To do that, remove the cache files by hand.)
-# [auth]
 # store-auth-creds = no
 
 ### Section for configuring external helper applications.
+[helpers]
 ### Set editor to the command used to invoke your text editor.
 ###   This will override the environment variables that Subversion
 ###   examines by default to find this information ($EDITOR, 
 ###   et al).
+# editor-cmd = editor (vi, emacs, notepad, etc.)
 ### Set diff-cmd to the absolute path of your 'diff' program.
 ###   This will override the compile-time default, which is to use
 ###   Subversion's internal diff implementation.
+# diff-cmd = diff_program (diff, gdiff, etc.)
 ### Set diff3-cmd to the absolute path of your 'diff3' program.
 ###   This will override the compile-time default, which is to use
 ###   Subversion's internal diff3 implementation.
+# diff3-cmd = diff3_program (diff3, gdiff3, etc.)
 ### Set diff3-has-program-arg to 'true' or 'yes' if your 'diff3'
 ###   program accepts the '--diff-program' option.
-# [helpers]
-# editor-cmd = editor (vi, emacs, notepad, etc.)
-# diff-cmd = diff_program (diff, gdiff, etc.)
-# diff3-cmd = diff3_program (diff3, gdiff3, etc.)
 # diff3-has-program-arg = [true | false]
 
 ### Section for configuring tunnel agents.
-# [tunnels]
+[tunnels]
 ### Configure svn protocol tunnel schemes here.  By default, only
 ### the 'ssh' scheme is defined.  You can define other schemes to
 ### be used with 'svn+scheme://hostname/path' URLs.  A scheme
@@ -60,15 +66,19 @@
 ### Section for configuring miscelleneous Subversion options.
 [miscellany]
 ### Set global-ignores to a set of whitespace-delimited globs
-### which Subversion will ignore in its 'status' output.
+### which Subversion will ignore in its 'status' output, and
+### while importing or adding files and directories.
 
-global-ignores = *.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* *.class
+global-ignores = *.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store *.class
 
 ### Set log-encoding to the default encoding for log messages
 # log-encoding = latin1
 ### Set use-commit-times to make checkout/update/switch/revert
 ### put last-committed timestamps on every file touched.
 # use-commit-times = yes
+### Set no-unlock to prevent 'svn commit' from automatically
+### releasing locks on files.
+# no-unlock = yes
 ### Set enable-auto-props to 'yes' to enable automatic properties
 ### for 'svn add' and 'svn import', it defaults to 'no'.
 ### Automatic properties are defined in the section 'auto-props'.
@@ -76,13 +86,14 @@ global-ignores = *.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* *.class
 enable-auto-props = yes
 
 ### Section for configuring automatic properties.
+[auto-props]
+
 ### The format of the entries is:
 ###   file-name-pattern = propname[=value][;propname[=value]...]
 ### The file-name-pattern can contain wildcards (such as '*' and
 ### '?').  All entries which match will be applied to the file.
 ### Note that auto-props functionality must be enabled, which
 ### is typically done by setting the 'enable-auto-props' option.
-[auto-props]
 *.java       = svn:mime-type=text/plain;svn:eol-style=native;svn:keywords=Id
 *.sql        = svn:mime-type=text/plain;svn:eol-style=native;svn:keywords=Id
 *.c          = svn:mime-type=text/plain;svn:eol-style=native;svn:keywords=Id

@@ -100,8 +100,8 @@ public class UdigMementoTest {
 
     private void assertDataEquals( IMemento expected, IMemento actual, boolean textValNotNull ) {
         assertEquals(expected.getID(), actual.getID());
-        assertEquals(FLOAT_VAL, actual.getFloat(FLOAT));
-        assertEquals(INT_VAL, actual.getInteger(INT));
+        assertEquals(FLOAT_VAL, (float) actual.getFloat(FLOAT),0.0);
+        assertEquals(INT_VAL, (int) actual.getInteger(INT));
         assertEquals(STRING_VAL, actual.getString(STRING));
         assertEquals(BOOL_VAL, actual.getBoolean(BOOLEAN));
         assertEquals("", actual.getString(EMPTY)); //$NON-NLS-1$

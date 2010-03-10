@@ -17,7 +17,8 @@ public class ArcGridServiceExtension implements ServiceExtension {
 	private static ArcGridFormat format;
 	private static ArcGridFormatFactory factory;
 	
-	public final static String URL_PARAM = "URL";
+	public final static String URL_PARAM = "URL"; //$NON-NLS-1$
+    public static final String TYPE = "arcgrid"; //$NON-NLS-1$
 	
 	public ArcGridServiceExtension() {
 		super();

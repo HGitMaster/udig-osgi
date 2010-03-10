@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Provides access to the connection Factories and their wizardpages.
+ * Provides access to the connection Factories and their wizard pages.
  * 
  * @author jeichar
  */

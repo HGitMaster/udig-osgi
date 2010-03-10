@@ -17,13 +17,6 @@
 package net.refractions.udig.catalog;
 
 import static java.text.MessageFormat.format;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.DATABASE;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.DBTYPE;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.HOST;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.PASSWD;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.PORT;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.USER;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -38,13 +31,17 @@ import net.refractions.udig.catalog.internal.postgis.ui.PostgisServiceDialect;
 import net.refractions.udig.catalog.postgis.internal.Messages;
 import net.refractions.udig.core.Pair;
 
+import org.eclipse.core.runtime.Platform;
 import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.postgis.PostgisDataStoreFactory;
+import org.geotools.data.DataAccessFactory.Param;
+import org.geotools.data.postgis.PostgisNGDataStoreFactory;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.*;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DBTYPE;
 
 /**
- * PostGis ServiceExtension that has a hierarchy. It represents a Database and has folders within it.
- * One for each Schema that is known. The params object is the same as a normal Postgis except that
- * the schema parameter can be a list of comma separated string.
+ * PostGis ServiceExtension that has a hierarchy. It represents a Database and has folders within
+ * it. One for each Schema that is known. The params object is the same as a normal Postgis except
+ * that the schema parameter can be a list of comma separated string.
  * 
  * @author Jesse Eichar, Refractions Research
  * @since 1.2
@@ -52,12 +49,32 @@ import org.geotools.data.postgis.PostgisDataStoreFactory;
 public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         implements
             ServiceExtension2 {
-
+    /** Constant to use with DBTYPE */
+    public static final String TYPE = (String)DBTYPE.sample;
+    /** Key used to test connection */
     private static final String IN_TESTING = "testing"; //$NON-NLS-1$
+    /**
+     * Common SQL functionalty needed for the user interface
+     */
     public static final PostgisServiceDialect DIALECT = new PostgisServiceDialect();
 
-    public IService createService( URL id, Map<String, Serializable> params ) {
-        if( reasonForFailure(params)!=null ){
+    public PostgisService2 createService( URL id, Map<String, Serializable> params ) {
+        try {
+            if (getFactory() == null || !getFactory().isAvailable()) {
+                return null; // factory not available
+            }
+            if (!getFactory().canProcess(params)) {
+                return null; // the factory cannot use these parameters
+            }
+        } catch (Exception unexpected) {
+            if (Platform.inDevelopmentMode()) {
+                // this should never happen
+                PostgisPlugin.log("PostGISExtension canProcess errored out with: " + unexpected,
+                        unexpected);
+            }
+            return null; // the factory cannot really use these parameters
+        }
+        if (reasonForFailure(params) != null) {
             return null;
         }
         Map<String, Serializable> params2 = params;
@@ -98,7 +115,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         ParamInfo info = parseParamInfo(url);
 
         Map<String, Serializable> postGISParams = new HashMap<String, Serializable>();
-        postGISParams.put(DBTYPE.key, "postgis"); // dbtype //$NON-NLS-1$
+        postGISParams.put(DBTYPE.key, (Serializable)DBTYPE.sample); // dbtype //$NON-NLS-1$
         postGISParams.put(USER.key, info.username); // user
         postGISParams.put(PASSWD.key, info.password); // pass
         postGISParams.put(HOST.key, info.host); // host
@@ -109,23 +126,40 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         return postGISParams;
     }
 
-    private static PostgisDataStoreFactory factory;
+    private static PostgisNGDataStoreFactory factory;
 
-    public static PostgisDataStoreFactory getFactory() {
-    	if( factory == null ){
-    		factory = new PostgisDataStoreFactory();
-    	}
+    public synchronized static PostgisNGDataStoreFactory getFactory() {
+        if (factory == null) {
+            factory = new PostgisNGDataStoreFactory();
+            // TODO look up in factory SPI in order to avoid
+            // duplicate instances
+        }
         return factory;
+    }
+    /**
+     * Look up Param by key; used to access the correct sample
+     * value for DBTYPE.
+     *
+     * @param key
+     * @return
+     */
+    public static Param getPram( String key ){
+        for( Param param : getFactory().getParametersInfo()){
+            if( key.equals( param.key )){
+                return param;
+            }
+        }
+        return null;
     }
 
     /** A couple quick checks on the url */
     public static final boolean isPostGIS( URL url ) {
-        if (url == null)
+        if (url == null) {
             return false;
+        }
         return url.getProtocol().toLowerCase().equals("postgis") || url.getProtocol().toLowerCase().equals("postgis.jdbc") || //$NON-NLS-1$ //$NON-NLS-2$
                 url.getProtocol().toLowerCase().equals("jdbc.postgis"); //$NON-NLS-1$
     }
-
 
     public String reasonForFailure( URL url ) {
         if (!isPostGIS(url))
@@ -135,17 +169,17 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
 
     @Override
     protected String doOtherChecks( Map<String, Serializable> params ) {
-        if( !DBTYPE.sample.equals(params.get(DBTYPE.key)) ){
+        if (!"postgisng".equals(params.get(DBTYPE.key))) {
             return format("Parameter DBTYPE is required to be \"{0}\"", DBTYPE.key);
         }
-        
-        // if the testing parameter is in params then this is 
+
+        // if the testing parameter is in params then this is
         // a recursive call originating in processParams and should be shorted
         // to prevent infinate loop.
-        if( params.containsKey(IN_TESTING)){
+        if (params.containsKey(IN_TESTING)) {
             return null;
         }
-        
+
         Pair<Map<String, Serializable>, String> resultOfSplit = processParams(params);
         if (resultOfSplit.getRight() != null) {
             String reason = resultOfSplit.getRight();
@@ -160,7 +194,7 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         Set<String> goodSchemas = new HashSet<String>();
 
         HashMap<String, Serializable> testedParams = new HashMap<String, Serializable>(params);
-        testedParams.put(SCHEMA.key, "public");  //$NON-NLS-1$
+        testedParams.put(SCHEMA.key, "public"); //$NON-NLS-1$
         testedParams.put(IN_TESTING, true);
         String reason = super.reasonForFailure(testedParams);
 
@@ -171,11 +205,11 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         String[] schemas = schemasString.split(","); //$NON-NLS-1$
 
         for( String string : schemas ) {
-            if( !goodSchemas.contains(string) ){
+            if (!goodSchemas.contains(string)) {
                 testedParams = new HashMap<String, Serializable>(testedParams);
-                String trimmedSchema = string.trim();    
+                String trimmedSchema = string.trim();
                 testedParams.put(SCHEMA.key, trimmedSchema);
-    
+
                 String reasonForFailure = super.reasonForFailure(testedParams);
                 if (reasonForFailure == null) {
                     goodSchemas.add(string);
@@ -190,16 +224,17 @@ public class PostgisServiceExtension2 extends AbstractDataStoreServiceExtension
         }
 
         testedParams.remove(IN_TESTING);
-        
+
         Pair<Map<String, Serializable>, String> result;
         result = new Pair<Map<String, Serializable>, String>(testedParams, reason);
         return result;
     }
 
-    @Override protected DataStoreFactorySpi getDataStoreFactory() {
+    @Override
+    protected DataStoreFactorySpi getDataStoreFactory() {
         return getFactory();
     };
-    
+
     private Serializable combineSchemaStrings( Set<String> goodSchemas ) {
         StringBuilder builder = new StringBuilder();
         for( String string : goodSchemas ) {

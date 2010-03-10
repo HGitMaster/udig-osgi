@@ -9,6 +9,10 @@ import javax.swing.JFrame;
 
 import junit.framework.TestCase;
 
+/**
+ * Tests the case where a polygon is just starting to be created.  There are only 2 lines
+ * @author jeichar
+ */
 public class ControlPointPathIteratorTest extends TestCase {
 
     private static final boolean DO_SHOW = true;
@@ -36,8 +40,9 @@ public class ControlPointPathIteratorTest extends TestCase {
     }
 
     public void testDraw() throws Exception {
-        ControlPointPathIterator pathIterator = new ControlPointPathIterator(editGeom, false, 5, 5);
+        ControlPointPathIterator pathIterator = new ControlPointPathIterator(editGeom, true, 5, 5);
         
+
         assertCorrectPath(pathIterator, false);
 
         show( new ControlPointPathIterator(editGeom, false, 5, 5) );

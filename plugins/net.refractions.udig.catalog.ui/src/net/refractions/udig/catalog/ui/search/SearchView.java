@@ -402,7 +402,8 @@ public class SearchView extends SearchPart {
         if (cache.keys != null && cache.keys.length > 0) {
             summary.append(Messages.SearchView_keywords); 
             for( int i = 0; i < cache.keys.length; i++ ) {
-                String keyword = (cache.keys[i]).trim();
+                String keyword = cache.keys[i];
+                keyword = keyword == null ? null : keyword.trim();
 
                 if (keyword != null && !(keyword).equalsIgnoreCase("")) { //$NON-NLS-1$
                     if (i == cache.keys.length - 1) {

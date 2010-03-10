@@ -18,7 +18,6 @@ package net.refractions.udig.tool.select;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -108,6 +107,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -128,9 +128,8 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.Schema;
+import org.geotools.filter.FilterAttributeExtractor;
 import org.geotools.filter.IllegalFilterException;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
@@ -186,7 +185,52 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
     /** Toolbar entry used to turn on selection mode */
     private IAction select;
 
-    private ISelectionListener workbenchSelectionListener;
+    /**
+     * This listener watches the workbench selection and reports
+     * back anything that.
+     */
+    private ISelectionListener workbenchSelectionListener = new ISelectionListener(){
+        public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
+            if (part instanceof MapEditor) {
+                editorActivated((MapPart) part);
+                return; // we already have sorted out map / layer
+            }
+            if (!(selection instanceof IStructuredSelection)){
+                return;
+            }
+            if( part == getSite().getPart() ){
+                // we are swapping to ourself!
+                return; // ignore
+            }
+            
+            Object selected = ((IStructuredSelection) selection).getFirstElement();
+
+            final Layer selectedLayer;
+            // this is horribly inelegant. is there not some other way?
+            if (selected instanceof Map) {
+                selectedLayer = ((Map) selected).getEditManagerInternal().getSelectedLayer();
+            } else if (selected instanceof Layer) {
+                selectedLayer = (Layer) selected;
+            } else if (selected instanceof IAdaptable) {
+                // This is often an AdaptableFilter
+                IAdaptable adaptable = (IAdaptable) selected;
+                selectedLayer = (Layer) adaptable.getAdapter(Layer.class);
+            } else {
+                return;
+            }
+
+            if (selectedLayer != null) {
+                PlatformGIS.run(new ISafeRunnable(){
+                    public void handleException( Throwable exception ) {
+                        SelectPlugin.log("error selecting layer", exception); //$NON-NLS-1$
+                    }
+                    public void run() throws Exception {
+                        layerSelected(selectedLayer);
+                    }
+                });
+            }
+        }
+    };
     
     /**
      * page that the part listener and the workbenchSelectionListener are listening to.
@@ -333,13 +377,11 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         }
         
         addTableSelectionListener();
-        addSelectionListener();
+        addWorkbenchSelectionListener();
         addPageListener();        
         
         //provide workbench selections
         getSite().setSelectionProvider( this );
-        
-
 
         ApplicationGIS.getToolManager().registerActionsWithPart(this);
     }
@@ -424,48 +466,10 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
     /**
      * Adds a post selection listener that listens to the workbench's selection for maps, layers or MapEditor.
      */
-    private void addSelectionListener( ) {
-        workbenchSelectionListener = new ISelectionListener(){
-                    public void selectionChanged( IWorkbenchPart part, ISelection selection ) {  
-                        if (part instanceof MapEditor ){
-                            editorActivated((MapPart) part);
-                            return;
-                        }
-                        if (!(selection instanceof IStructuredSelection)) return;
-                                        
-                        Object selected = ((IStructuredSelection) selection).getFirstElement();
-        
-                        final Layer selectedLayer;
-                        // this is horribly inelegant.  is there not some other way?
-                        if (selected instanceof Map) {
-                            selectedLayer = ((Map) selected).getEditManagerInternal().getSelectedLayer();
-                        } else if (selected instanceof Layer) {
-                            selectedLayer = (Layer) selected;
-                        } else if (selected instanceof IAdaptable ) {
-                            // This is often an AdaptableFilter
-                            IAdaptable adaptable = (IAdaptable) selected;
-                            selectedLayer = (Layer) adaptable.getAdapter(Layer.class);
-                        } else {
-                            return;
-                        }
-        
-                        if (selectedLayer != null) {
-                            PlatformGIS.run(new ISafeRunnable(){
-
-                                public void handleException( Throwable exception ) {
-                                    SelectPlugin.log("error selecting layer", exception); //$NON-NLS-1$
-                                }
-
-                                public void run() throws Exception {
-                                    layerSelected(selectedLayer);
-                                }
-                                
-                            });
-                        }
-                    }
-                };
-        // listen to selections
-        page.addPostSelectionListener(workbenchSelectionListener);
+    private void addWorkbenchSelectionListener() {
+        // page.addPostSelectionListener(workbenchSelectionListener);        
+        ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
+        selectionService.addPostSelectionListener(workbenchSelectionListener);
     }
 
     /**
@@ -473,28 +477,28 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
      * visible.  This is to prevent a bunch of featurestore accesses when view is not visible. 
      */
     private void addPageListener( ) {
-        activePartListener = new IPartListener2(){            
-                    public void partActivated( IWorkbenchPartReference partRef ) {
-                    }
-                    public void partBroughtToTop( IWorkbenchPartReference partRef ) {
-                    }
-                    public void partClosed( IWorkbenchPartReference partRef ) {
-                    }
-                    public void partDeactivated( IWorkbenchPartReference partRef ) {
-                    }
-                    public void partOpened( IWorkbenchPartReference partRef ) {
-                    }
-                    public void partHidden( IWorkbenchPartReference partRef ) {
-                        if( partRef.getPart(false)==TableView.this )
-                            deactivate();
-                    }
-                    public void partVisible( IWorkbenchPartReference partRef ) {
-                        if( partRef.getPart(false)==TableView.this )
-                            activate();
-                    }
-                    public void partInputChanged( IWorkbenchPartReference partRef ) {
-                    }
-                };
+        activePartListener = new IPartListener2(){
+            public void partActivated( IWorkbenchPartReference partRef ) {
+            }
+            public void partBroughtToTop( IWorkbenchPartReference partRef ) {
+            }
+            public void partClosed( IWorkbenchPartReference partRef ) {
+            }
+            public void partDeactivated( IWorkbenchPartReference partRef ) {
+            }
+            public void partOpened( IWorkbenchPartReference partRef ) {
+            }
+            public void partHidden( IWorkbenchPartReference partRef ) {
+                if (partRef.getPart(false) == TableView.this)
+                    deactivate();
+            }
+            public void partVisible( IWorkbenchPartReference partRef ) {
+                if (partRef.getPart(false) == TableView.this)
+                    activate();
+            }
+            public void partInputChanged( IWorkbenchPartReference partRef ) {
+            }
+        };
         // listen for editor changes
         page.addPartListener(activePartListener);
     }
@@ -556,8 +560,9 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
 
     /* Called when a Layer is selected - will need to check if we care */
     void layerSelected( ILayer selected ){
-        if( layer == selected ) return; // we already know
-        
+        if( layer == selected ) {
+            return; // we already know
+        }        
         if( layer!=null ){
             layer.removeListener(layerListener);
             if( layer.getMap()!=null ){
@@ -617,36 +622,39 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
      * The list of updates that have occurred but have not yet been applied to the FeatureTable
      */
     private List<FeatureEvent> updates=Collections.synchronizedList(new ArrayList<FeatureEvent>());
-    private ILayerListener layerListener=new ILayerListener(){
+    
+    /**
+     * Listener that watches the current layer; and will update the table selection to match
+     */
+    private ILayerListener layerListener = new ILayerListener(){
 
         public void refresh( LayerEvent event ) {
-          final ILayer notifierLayer = event.getSource();
-          assert layer==notifierLayer;
+            final ILayer notifierLayer = event.getSource();
+            assert layer == notifierLayer;
 
-        switch (event.getType()) {
-          case EDIT_EVENT:
-              if( !editing ){
-                  if( event.getNewValue()==null )
-                      return;
-                  
-                  updates.add((FeatureEvent) event.getNewValue());
-                  if( active ){
-                      updateTable(notifierLayer);
-                  }
-              }
-              break;
-          case FILTER:
-              if( active )
-                updateSelection(notifierLayer);
-            else{
-                  filterChange=true;
-              }
-              break;
-          }
+            switch( event.getType() ) {
+            case EDIT_EVENT:
+                if (!editing) {
+                    if (event.getNewValue() == null) {
+                        return;
+                    }
+                    updates.add((FeatureEvent) event.getNewValue());
+                    if (active) {
+                        updateTable(notifierLayer);
+                    }
+                }
+                break;
+            case FILTER:
+                if (active) {
+                    updateSelection(notifierLayer);
+                } else {
+                    filterChange = true;
+                }
+                break;
+            }
 
         }
 
-        
     };
     
     private IMapCompositionListener compositionListener=new IMapCompositionListener(){
@@ -658,7 +666,7 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
                     layerSelected(null);
                 }
             }else if( event.getType()==MapCompositionEvent.EventType.MANY_REMOVED ){
-                if( ((List)event.getNewValue()).contains(layer) )
+                if( ((List<?>)event.getNewValue()).contains(layer) )
                     layerSelected(null);
             }
         }
@@ -781,8 +789,10 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         super.dispose();
         if( activePartListener!=null )
             page.removePartListener(activePartListener);
-        if( workbenchSelectionListener!=null )
-            page.removePostSelectionListener(this.workbenchSelectionListener);
+        if( workbenchSelectionListener!=null ){
+            ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
+            selectionService.removePostSelectionListener(workbenchSelectionListener);
+        }
         if( layer!=null && layerListener!=null )
             layer.removeListener(layerListener);
         table = null;
@@ -793,33 +803,38 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
     }
 
     protected void updateSelection( final ILayer notifierLayer ) {
-        if( !active ){
-            filterChange=true;
+        if (!active) {
+            filterChange = true;
             return;
         }
-        if( updatingLayerFilter )
-            return; 
-        try{
-        final  FeatureSource<SimpleFeatureType, SimpleFeature> featureSource=notifierLayer.getResource(FeatureSource.class, null);
-        filterChange=false;
-        Display.getDefault().asyncExec(
-              new Runnable() {
-                  public void run() {
-                      updatingSelection=true;
-                      if( updatingLayerFilter )
-                          return;
-                      Filter filter = (Filter) notifierLayer.getFilter();
-                      if( filter == Filter.EXCLUDE ){
-                          table.setSelection(new StructuredSelection());
-                          return;
-                      }
-                      AdaptingFilter adaptingFilter = AdaptingFilterFactory.createAdaptingFilter(filter);
-                      adaptingFilter.addAdapter(featureSource);
-                      
-                      table.setSelection(new StructuredSelection(adaptingFilter));
-                  }
-              }
-          );
+        if (updatingLayerFilter) {
+            return; // our own table view is updating the selection (so we can ignore this
+                    // notification)
+        }
+
+        try {
+            final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = notifierLayer
+                    .getResource(FeatureSource.class, null);
+            filterChange = false;
+            Display.getDefault().asyncExec(new Runnable(){
+                public void run() {
+                    updatingSelection = true;
+                    if (updatingLayerFilter){
+                        return; // we are updating table so please ignore this one
+                    }
+                    Filter filter = (Filter) notifierLayer.getFilter();
+                    if (filter == Filter.EXCLUDE) {
+                        table.setSelection(new StructuredSelection());
+                        return;
+                    }
+                    AdaptingFilter adaptingFilter = AdaptingFilterFactory
+                            .createAdaptingFilter(filter);
+                    adaptingFilter.addAdapter(featureSource);
+
+                    StructuredSelection selection = new StructuredSelection(adaptingFilter);
+                    table.setSelection(selection);
+                }
+            });
         } catch (IOException e) {
             SelectPlugin.log("", e); //$NON-NLS-1$
         }
@@ -1043,8 +1058,8 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
         AdaptingFilter filter = AdaptingFilterFactory.createAdaptingFilter(firstElement, layer);
         if (layer.getGeoResource().canResolve(FeatureSource.class)) {
             try {
-                FeatureSource resolve = layer.getGeoResource().resolve(FeatureSource.class, null);
-                FeatureCollection features = resolve.getFeatures(filter);
+                FeatureSource<?,?> resolve = layer.getGeoResource().resolve(FeatureSource.class, null);
+                FeatureCollection<?,?> features = resolve.getFeatures(filter);
                 filter.addAdapter(features);
             } catch (IOException e) {
                 // TODO Handle IOException
@@ -1279,7 +1294,8 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
 			return null;
 		}
 
-		private void doSearch() {
+		@SuppressWarnings("unchecked")
+        private void doSearch() {
 			if (searchWidget.getText().trim().length()==0 ){
 		        searchWidget.setText(INITIAL_TEXT);
 		        searchWidget.setForeground(systemColor);
@@ -1297,16 +1313,27 @@ public class TableView extends ViewPart implements ISelectionProvider, IUDIGView
                     //updateLayerFilter( filter );
                     
                     FeatureSource<SimpleFeatureType, SimpleFeature> source = layer.getResource(FeatureSource.class, ProgressManager.instance().get());
-                    SimpleFeatureType schema=source.getSchema();                    
-                    FilterFactory fac=CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
-                    final List<String> queryAtts = obtainQueryAttributesForFeatureTable(schema);
-                    final DefaultQuery query=new DefaultQuery(schema.getName().getLocalPart(), filter, Query.NO_NAMES );
+                    SimpleFeatureType schema=source.getSchema();               
+                    //FilterFactory fac=CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
+                    //final List<String> queryAtts = obtainQueryAttributesForFeatureTable(schema);
                     
-                    FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures( query );
+                    Set<String> required = (Set<String>) filter.accept( new FilterAttributeExtractor(), null );
+                    String[] names = required.toArray( new String[ required.size()]);
+                    final DefaultQuery query=new DefaultQuery(schema.getName().getLocalPart(), filter, names );
+                    
+                    FeatureCollection<SimpleFeatureType, SimpleFeature> features;
+                    features = source.getFeatures( query ); // we just want the FeatureID no attributes needed
+                    
+                    //features = source.getFeatures( filter );
+                    
                     final Set<FeatureId> selection = new HashSet<FeatureId>();
                     features.accepts( new FeatureVisitor(){
                         public void visit( Feature feature) {
-                            selection.add( feature.getIdentifier() );
+                            // we are using FeatureId to allow for a "temporary" FID when inserting content
+                            // (a real FID is not assigned until commit)
+                            //
+                            FeatureId identifier = feature.getIdentifier();
+                            selection.add( identifier );
                         }                        
                     }, null );
                     table.select( selection );

@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
@@ -68,8 +69,8 @@ public class CatalogRef {
 
     private static final String ERROR_SAVING = "Error saving"; //$NON-NLS-1$
 
-    protected Map<URL, Map<String, Serializable>> connectionParams = Collections
-            .synchronizedMap(new HashMap<URL, Map<String, Serializable>>());
+    protected Map<ID, Map<String, Serializable>> connectionParams = Collections
+            .synchronizedMap(new HashMap<ID, Map<String, Serializable>>());
 
     private volatile boolean loaded = false;
 
@@ -149,7 +150,7 @@ public class CatalogRef {
     }
 
     /**
-     * Reaods the parameters for the resource's parameters from the string and stores them. Services
+     * Reloads the parameters for the resource's parameters from the string and stores them. Services
      * aren't created until load() is called.
      * 
      * @param string
@@ -176,13 +177,7 @@ public class CatalogRef {
             persister.restore(findParameterNode(paramsNode));
         } catch (Throwable e) {
             // ok maybe it is an from an older version of uDig so try the oldCatalogRef
-            try {
-                OldCatalogRef old = new OldCatalogRef();
-                old.parseResourceParameters(string);
-                connectionParams = old.connectionParams;
-            } catch (Throwable e2) {
-                ProjectPlugin.log("CatalogRef#parseResourceParameters, couldn't load paramters", e); //$NON-NLS-1$
-            }
+            ProjectPlugin.log("CatalogRef#parseResourceParameters, couldn't load paramters", e); //$NON-NLS-1$
         }
 
     }
@@ -214,38 +209,14 @@ public class CatalogRef {
     }
 
     /**
-     * MapGraphic has had its ID change so we need to catch layers that use the old id an update
-     * them
-     */
-    private void maintainBackwardsCompatibility( Layer layer ) {
-        String id = layer.getID().toExternalForm();
-        String path = id;
-        if (path.contains("#")) { //$NON-NLS-1$
-            int indexOfHash = path.lastIndexOf("#"); //$NON-NLS-1$
-            path = path.substring(0, indexOfHash + 1);
-            if ("file:/localhost/mapgraphic#".equals(path)) { //$NON-NLS-1$
-                try {
-                    URL url = new URL(null, "mapgraphic:///localhost/mapgraphic" //$NON-NLS-1$
-                            + id.substring(indexOfHash), CorePlugin.RELAXED_HANDLER);
-                    layer.setID(url);
-                } catch (MalformedURLException e) {
-                    // should be ok
-                }
-            }
-        }
-    }
-
-    /**
      * Adds the required services into the catalog.
      */
     public void load() {
 
-        maintainBackwardsCompatibility(getLayer());
-
         ICatalog catalog = CatalogPlugin.getDefault().getLocalCatalog();
         IServiceFactory serviceFactory = CatalogPlugin.getDefault().getServiceFactory();
         synchronized (connectionParams) {
-            for( Map.Entry<URL, Map<String, Serializable>> entry : connectionParams.entrySet() ) {
+            for( Map.Entry<ID, Map<String, Serializable>> entry : connectionParams.entrySet() ) {
                 Map<String, Serializable> params = entry.getValue();
                 boolean couldResolve = resolveURLs(params);
                 if (!couldResolve) {
@@ -333,7 +304,7 @@ public class CatalogRef {
     private boolean serviceExistsInCatalog( List<IService> createdServices, ICatalog catalog ) {
         boolean found = false;
         for( IService service : createdServices ) {
-            if (catalog.getById(IService.class, service.getIdentifier(), ProgressManager.instance()
+            if (catalog.getById(IService.class, service.getID(), ProgressManager.instance()
                     .get()) != null) {
                 found = true;
             } else {
@@ -391,21 +362,21 @@ public class CatalogRef {
      */
     private static class LayerCatalogRefPersister extends ServiceParameterPersister {
 
-        private Map<URL, Map<String, Serializable>> allParams;
+        private Map<ID, Map<String, Serializable>> allParams;
 
-        public LayerCatalogRefPersister( Map<URL, Map<String, Serializable>> allParams, File mapFile ) {
+        public LayerCatalogRefPersister( Map<ID, Map<String, Serializable>> allParams, File mapFile ) {
             super(CatalogPlugin.getDefault().getLocalCatalog(), CatalogPlugin.getDefault()
                     .getServiceFactory(), mapFile);
             this.allParams = allParams;
         }
 
         @Override
-        protected void locateService( URL url, Map<String, Serializable> map, Map<String, Serializable> properties  ) {
-            if (allParams.containsKey(url))
+        protected void locateService( ID id, Map<String, Serializable> map, Map<String, Serializable> properties  ) {
+            if (allParams.containsKey(id))
                 ProjectPlugin
                         .log("LayerCatalogRefPersister#locateService: duplicate resource ids when loading paramers"); //$NON-NLS-1$
 
-            allParams.put(url, map);
+            allParams.put(id, map);
         }
 
     }

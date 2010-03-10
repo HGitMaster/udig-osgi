@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Listener;
 public interface Tab {
 
     /**
-     * Called by the {@link PostgisConnectionPage} as the page is about to be left if the tab is active
+     * Called by the {@link PostgisConnectionPage} as the page is about to be left if the tab is active.
      * <p>
      * There are two main use cases for this method. The first is to save settings for the next time
      * the wizard is visited. The other is to perform some checks or do some loading that is too expensive to do every
@@ -44,7 +44,7 @@ public interface Tab {
      *         <pre>getContainer().run(true, cancelable, runnable);</pre>
      * </p>
      * 
-     * @return true if it is acceptable to leave the page false if the page must not be left
+     * @return true if it is acceptable to leave the page; false if the page must not be left
      */
     public boolean leavingPage();
     

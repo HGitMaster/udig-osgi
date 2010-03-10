@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.geotools.data.mysql.MySQLDataStore;
+import org.geotools.jdbc.JDBCDataStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -26,7 +26,7 @@ public class MySQLPlugin extends AbstractUIPlugin {
 	
 	private ResourceBundle resourceBundle;
 
-	private static final Set<MySQLDataStore> dsList = new CopyOnWriteArraySet<MySQLDataStore>();
+	private static final Set<JDBCDataStore> dsList = new CopyOnWriteArraySet<JDBCDataStore>();
 
 	
 	/**
@@ -96,7 +96,7 @@ public class MySQLPlugin extends AbstractUIPlugin {
         getDefault().getLog().log(new Status(status, PLUGIN_ID, IStatus.OK, message, t));
     }
 
-    public static void addDataStore(MySQLDataStore ds) {
+    public static void addDataStore(JDBCDataStore ds) {
         dsList.add(ds);
     }
     

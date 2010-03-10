@@ -89,9 +89,9 @@ public class DisplayLayerHandler implements MessageHandler {
 	private IGeoResource obtainResource(
 			Pair<URL, Map<String, Serializable>> params) throws IOException {
 		ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
-		IGeoResource resource = localCatalog.getById(IGeoResource.class, params.getLeft(), new NullProgressMonitor());
+		List<IGeoResource> resource = localCatalog.find(IGeoResource.class, params.getLeft(), new NullProgressMonitor());
 		
-		if( resource == null ){
+		if( resource.isEmpty() ){
 			List<IService> services = CatalogPlugin.getDefault().getServiceFactory().createService(params.getRight());
 			if ( !services.isEmpty() ){
 				for (IService service : services) {
@@ -104,7 +104,7 @@ public class DisplayLayerHandler implements MessageHandler {
 				}
 			}
 		}
-		return resource;
+		return resource.get(0);
 	}
 
 	Pair<URL, Map<String, Serializable>> createParams(BufferedReader reader)

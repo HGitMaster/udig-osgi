@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderFactory.java 30791 2008-09-19 20:31:56Z egouge $
+ * <copyright></copyright> $Id: RenderFactory.java 31424 2009-08-07 11:12:23Z aantonello $
  */
 package net.refractions.udig.project.internal.render;
 
@@ -18,23 +18,17 @@ import org.eclipse.emf.ecore.EFactory;
  */
 public interface RenderFactory extends EFactory {
     /**
+     * The singleton instance of the factory.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
-    String copyright = "uDig - User Friendly Desktop Internet GIS client http://udig.refractions.net (C) 2004, Refractions Research Inc. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of the License. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details."; //$NON-NLS-1$
+    RenderFactory eINSTANCE = net.refractions.udig.project.internal.render.impl.RenderFactoryImpl
+            .init();
 
     /**
-     * The singleton instance of the factory. <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    RenderFactory eINSTANCE = new net.refractions.udig.project.internal.render.impl.RenderFactoryImpl();
-
-    /**
-     * Returns a new object of class '<em>Manager</em>'. <!-- begin-user-doc --> <!--
+     * Returns a new object of class '<em>Manager</em>'.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @return a new object of class '<em>Manager</em>'.
      * @generated
      */
@@ -49,18 +43,18 @@ public interface RenderFactory extends EFactory {
     public RenderManager createRenderManagerViewer();
 
     /**
-     * Returns a new object of class '<em>Viewport Model</em>'. <!-- begin-user-doc --> <!--
+     * Returns a new object of class '<em>Viewport Model</em>'.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @return a new object of class '<em>Viewport Model</em>'.
      * @generated
      */
     ViewportModel createViewportModel();
 
     /**
-     * Returns a new object of class '<em>Executor</em>'. <!-- begin-user-doc --> <!--
+     * Returns a new object of class '<em>Executor</em>'.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @return a new object of class '<em>Executor</em>'.
      * @generated
      */
@@ -84,8 +78,8 @@ public interface RenderFactory extends EFactory {
     RenderExecutor createRenderExecutor( Renderer renderer );
 
     /**
-     * Returns the package supported by this factory. <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
+     * Returns the package supported by this factory.
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the package supported by this factory.
      * @generated
      */
@@ -97,8 +91,7 @@ public interface RenderFactory extends EFactory {
      * @return a CompositeRenderer object
      */
     MultiLayerRenderer createCompositeRenderer();
-    
-    
+
     /**
      * Creates a CompositeRenderer object
      * 

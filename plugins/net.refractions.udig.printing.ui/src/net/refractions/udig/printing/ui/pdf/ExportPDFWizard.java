@@ -143,7 +143,7 @@ public class ExportPDFWizard extends Wizard implements IExportWizard {
                 
                 Page page = makePage(pageSize, document, template);
                 
-                graphics = cb.createGraphics(pageSize.width(), pageSize.height());
+                graphics = cb.createGraphics(pageSize.getWidth(), pageSize.getHeight());
                          
                 //instantiate a PrinterEngine (pass in the Page instance)
                 PrintingEngine engine = new PrintingEngine(page);
@@ -152,8 +152,8 @@ public class ExportPDFWizard extends Wizard implements IExportWizard {
                 PageFormat pageFormat = new PageFormat();
                 pageFormat.setOrientation(PageFormat.PORTRAIT);
                 java.awt.print.Paper awtPaper = new java.awt.print.Paper();
-                awtPaper.setSize(pageSize.width() * 3, pageSize.height() *3);
-                awtPaper.setImageableArea(0, 0, pageSize.width(), pageSize.height());
+                awtPaper.setSize(pageSize.getWidth() * 3, pageSize.getHeight() *3);
+                awtPaper.setImageableArea(0, 0, pageSize.getWidth(), pageSize.getHeight());
                 pageFormat.setPaper(awtPaper);
                 
                 //run PrinterEngine's print function
@@ -200,14 +200,13 @@ public class ExportPDFWizard extends Wizard implements IExportWizard {
     
     protected Rectangle rotatePageIfNecessary(Rectangle suggestedPageSize) {
         //rotate the page if dimensions are given as portrait, but template prefers landscape
-        if (suggestedPageSize.height() > suggestedPageSize.width() && page1.isLandscape()) {
-            float temp = suggestedPageSize.width();
-            float newWidth = suggestedPageSize.height();
+        if (suggestedPageSize.getHeight() > suggestedPageSize.getWidth() && page1.isLandscape()) {
+            float temp = suggestedPageSize.getWidth();
+            float newWidth = suggestedPageSize.getHeight();
             float newHeight = temp;
-            return new Rectangle(suggestedPageSize.height(), suggestedPageSize.width());
+            return new Rectangle(suggestedPageSize.getHeight(), suggestedPageSize.getWidth());
         }
         return suggestedPageSize;
-        
     }
     
     /**
@@ -262,7 +261,7 @@ public class ExportPDFWizard extends Wizard implements IExportWizard {
         
         //3. make the page itself 
         Page page = ModelFactory.eINSTANCE.createPage();
-        page.setSize(new Dimension((int)pageSize.width(), (int)pageSize.height()));
+        page.setSize(new Dimension((int)pageSize.getWidth(), (int)pageSize.getHeight()));
 
         //page name stuff not required, because this page will just get discarded
         MessageFormat formatter = new MessageFormat(Messages.CreatePageAction_newPageName, Locale.getDefault()); 
@@ -404,41 +403,41 @@ public class ExportPDFWizard extends Wizard implements IExportWizard {
             Color color = Color.white;
             int borderWidth = 1;
             
-            BufferedImage bufferedTop = new BufferedImage((int)img.scaledWidth(), 
+            BufferedImage bufferedTop = new BufferedImage((int)img.getScaledWidth(), 
                     borderWidth,
                     BufferedImage.TYPE_INT_RGB);
             Graphics2D g1 = bufferedTop.createGraphics();
             g1.setBackground(color);
             g1.clearRect(0, 0, bufferedTop.getWidth(),bufferedTop.getHeight());
             Image top = Image.getInstance(bufferedImage2ByteArray(bufferedTop));
-            top.setAbsolutePosition(img.absoluteX(), img.absoluteY()+img.scaledHeight()-bufferedTop.getHeight()/2);
+            top.setAbsolutePosition(img.getAbsoluteX(), img.getAbsoluteY()+img.getScaledHeight()-bufferedTop.getHeight()/2);
             
-            BufferedImage bufferedBottom = new BufferedImage((int)img.scaledWidth(), 
+            BufferedImage bufferedBottom = new BufferedImage((int)img.getScaledWidth(), 
                     borderWidth,
                     BufferedImage.TYPE_INT_RGB);
             Graphics2D g2 = bufferedBottom.createGraphics();
             g2.setBackground(color);
             g2.clearRect(0, 0, bufferedBottom.getWidth(),bufferedBottom.getHeight());
             Image bottom = Image.getInstance(bufferedImage2ByteArray(bufferedBottom));
-            bottom.setAbsolutePosition(img.absoluteX(), img.absoluteY()-bufferedTop.getHeight()/2);
+            bottom.setAbsolutePosition(img.getAbsoluteX(), img.getAbsoluteY()-bufferedTop.getHeight()/2);
             
             BufferedImage bufferedLeft = new BufferedImage(borderWidth, 
-                    (int)img.scaledHeight(),
+                    (int)img.getScaledHeight(),
                     BufferedImage.TYPE_INT_RGB);
             Graphics2D g3 = bufferedLeft.createGraphics();
             g3.setBackground(color);
             g3.clearRect(0, 0, bufferedLeft.getWidth(),bufferedLeft.getHeight());
             Image left = Image.getInstance(bufferedImage2ByteArray(bufferedLeft));
-            left.setAbsolutePosition(img.absoluteX()-bufferedLeft.getWidth()/2, img.absoluteY());
+            left.setAbsolutePosition(img.getAbsoluteX()-bufferedLeft.getWidth()/2, img.getAbsoluteY());
             
             BufferedImage bufferedRight = new BufferedImage(borderWidth, 
-                    (int)img.scaledHeight(),
+                    (int)img.getScaledHeight(),
                     BufferedImage.TYPE_INT_RGB);
             Graphics2D g4 = bufferedRight.createGraphics();
             g4.setBackground(color);
             g4.clearRect(0, 0, bufferedRight.getWidth(),bufferedRight.getHeight());
             Image right = Image.getInstance(bufferedImage2ByteArray(bufferedRight));
-            right.setAbsolutePosition(img.absoluteX()+img.scaledWidth()-bufferedRight.getWidth()/2, img.absoluteY());
+            right.setAbsolutePosition(img.getAbsoluteX()+img.getScaledWidth()-bufferedRight.getWidth()/2, img.getAbsoluteY());
             
             
             doc.add(top);

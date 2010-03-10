@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectFactoryImpl.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id: ProjectFactoryImpl.java 31466 2009-09-06 19:37:38Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -38,7 +38,7 @@ import net.refractions.udig.project.internal.ProjectRegistry;
 import net.refractions.udig.project.internal.StyleBlackboard;
 import net.refractions.udig.project.internal.StyleEntry;
 import net.refractions.udig.project.internal.render.RenderFactory;
-import net.refractions.udig.project.internal.render.RenderPackage;
+import net.refractions.udig.project.internal.render.impl.ViewportModelImpl;
 import net.refractions.udig.project.render.displayAdapter.IMapDisplay;
 import net.refractions.udig.ui.PlatformGIS;
 import net.refractions.udig.ui.palette.ColourScheme;
@@ -56,6 +56,9 @@ import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.data.FeatureEvent;
 import org.geotools.data.Query;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.ReferencingFactoryFinder;
+import org.geotools.referencing.crs.DefaultEngineeringCRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.SLD;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
@@ -78,6 +81,12 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
      * @generated
      */
     public static final String copyright = "uDig - User Friendly Desktop Internet GIS client http://udig.refractions.net (C) 2004, Refractions Research Inc. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of the License. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details."; //$NON-NLS-1$
+
+
+    private static final String CARTESIAN_2D = "CARTESIAN_2D";
+    private static final String CARTESIAN_3D = "CARTESIAN_3D";
+    private static final String GENERIC_2D = "GENERIC_2D";
+    private static final String GENERIC_3D = "GENERIC_3D";
 
     /**
      * Creates an instance of the factory.
@@ -376,12 +385,7 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
 	 */
 	public Envelope createEnvelopeFromString(EDataType eDataType,
 			String initialValue) {
-		if (initialValue.equals("")) //$NON-NLS-1$
-			return new Envelope();
-		String[] coords = initialValue.split(","); //$NON-NLS-1$
-		return new ReferencedEnvelope(new Envelope(Double
-				.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double
-				.parseDouble(coords[2]), Double.parseDouble(coords[3])), null);
+	    return createReferencedEnvelopeFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -391,12 +395,7 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
 	 */
 	public String convertEnvelopeToString(EDataType eDataType,
 			Object instanceValue) {
-		Envelope env = (Envelope) instanceValue;
-		if (env.isNull())
-			return ""; //$NON-NLS-1$
-
-		return env.getMinX()
-				+ "," + env.getMaxX() + "," + env.getMinY() + "," + env.getMaxY(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    return convertReferencedEnvelopeToString(eDataType, instanceValue);
 	}
 
     /**
@@ -503,8 +502,21 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
      */
     public CoordinateReferenceSystem createCoordinateReferenceSystemFromString(
             EDataType eDataType, String initialValue ) {
-        return (CoordinateReferenceSystem) RenderFactory.eINSTANCE.createFromString(
-                RenderPackage.eINSTANCE.getCoordinateReferenceSystem(), initialValue);
+        if (initialValue.equals(CARTESIAN_2D)) {
+            return DefaultEngineeringCRS.CARTESIAN_2D;
+        } else if (initialValue.equals(CARTESIAN_3D)) {
+            return DefaultEngineeringCRS.CARTESIAN_3D;
+        } else if (initialValue.equals(GENERIC_2D)) {
+            return DefaultEngineeringCRS.GENERIC_2D;
+        } else if (initialValue.equals(GENERIC_3D)) {
+            return DefaultEngineeringCRS.GENERIC_3D;
+        }
+
+        try {
+            return ReferencingFactoryFinder.getCRSFactory(null).createFromWKT(initialValue);
+        } catch (Exception e) {
+            return ViewportModelImpl.getDefaultCRS();
+        }
     }
 
     /**
@@ -514,8 +526,21 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
      */
     public String convertCoordinateReferenceSystemToString( EDataType eDataType,
             Object instanceValue ) {
-        return RenderFactory.eINSTANCE.convertToString(RenderPackage.eINSTANCE
-                .getCoordinateReferenceSystem(), instanceValue);
+        try {
+            if (instanceValue == DefaultEngineeringCRS.CARTESIAN_2D) {
+                return CARTESIAN_2D;
+            } else if (instanceValue == DefaultEngineeringCRS.CARTESIAN_3D) {
+                return CARTESIAN_3D;
+            } else if (instanceValue == DefaultEngineeringCRS.GENERIC_2D) {
+                return GENERIC_2D;
+            } else if (instanceValue == DefaultEngineeringCRS.GENERIC_3D) {
+                return GENERIC_3D;
+            }
+            return ((CoordinateReferenceSystem) instanceValue).toWKT().replace("\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (Exception e) {
+            ProjectPlugin.log("Couldn't write crs"); //$NON-NLS-1$
+            return DefaultGeographicCRS.WGS84.toWKT().replace("\n", " "); //$NON-NLS-1$//$NON-NLS-2$
+        }
     }
 
     /**
@@ -868,16 +893,31 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
         return super.convertToString(eDataType, instanceValue);
     }
 
+    private Envelope createEnvelope(String initialValue ) {
+        if (initialValue.equals("")) //$NON-NLS-1$
+            return new Envelope();
+
+        String[] coords = initialValue.split(","); //$NON-NLS-1$
+        return new Envelope(new Envelope(Double.parseDouble(coords[0]), Double
+                .parseDouble(coords[1]), Double.parseDouble(coords[2]), Double
+                .parseDouble(coords[3])));
+
+    }
+    
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public ReferencedEnvelope createReferencedEnvelopeFromString(
 			EDataType eDataType, String initialValue) {
-		String[] parts = initialValue.split("@", 2);
-		Envelope env = createEnvelopeFromString(ProjectPackage.eINSTANCE.getEnvelope(), parts[0]);
-		CoordinateReferenceSystem crs = createCoordinateReferenceSystemFromString(ProjectPackage.eINSTANCE.getCoordinateReferenceSystem(), parts[0]);
-		return new ReferencedEnvelope(env,crs);
+		String[] parts = initialValue.split("@", 2); //$NON-NLS-1$
+		Envelope env = createEnvelope(parts[0]);
+		if( parts.length == 2){
+		    CoordinateReferenceSystem crs = createCoordinateReferenceSystemFromString(ProjectPackage.eINSTANCE.getCoordinateReferenceSystem(), parts[1]);
+		    return new ReferencedEnvelope(env,crs);
+		} else {
+		    return new ReferencedEnvelope(env, DefaultEngineeringCRS.GENERIC_2D);
+		}
 	}
 
 	/**
@@ -886,9 +926,20 @@ public class ProjectFactoryImpl extends EFactoryImpl implements ProjectFactory {
 	 */
 	public String convertReferencedEnvelopeToString(EDataType eDataType,
 			Object instanceValue) {
-		String env = convertEnvelopeToString(ProjectPackage.eINSTANCE.getEnvelope(), instanceValue);
-		String crs = convertCoordinateReferenceSystemToString(ProjectPackage.eINSTANCE.getCoordinateReferenceSystem(), ((ReferencedEnvelope)instanceValue).getCoordinateReferenceSystem());
-		return env+"@"+crs;
+	       Envelope env = (Envelope) instanceValue;
+	        if (env.isNull())
+	            return ""; //$NON-NLS-1$
+
+	        String envString = env.getMinX()
+	                + "," + env.getMaxX() + "," + env.getMinY() + "," + env.getMaxY(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	        
+	        if( env instanceof ReferencedEnvelope){
+	            String crs = convertCoordinateReferenceSystemToString(ProjectPackage.eINSTANCE.getCoordinateReferenceSystem(), ((ReferencedEnvelope)instanceValue).getCoordinateReferenceSystem());
+	            return envString+"@"+crs;
+	        } else {
+	            return envString;
+	        }
+	        
 	}
 
     /**

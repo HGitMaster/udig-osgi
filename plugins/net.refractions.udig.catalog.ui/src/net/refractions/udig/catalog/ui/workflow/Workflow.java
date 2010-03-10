@@ -17,6 +17,7 @@ import net.refractions.udig.ui.OffThreadProgressMonitor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
@@ -322,6 +323,10 @@ public class Workflow {
                 ok = current.run(subProgressMonitor) && !monitor.isCanceled();
             } catch (Throwable t) {
                 CatalogUIPlugin.log(t.getLocalizedMessage(), t);
+                if( Platform.inDevelopmentMode() ){
+                	System.out.println( "Could not "+current.getName()+":"+t.getLocalizedMessage() );
+                	t.printStackTrace();
+                }
             } finally {
                 subProgressMonitor.done();
             }
@@ -561,7 +566,43 @@ public class Workflow {
             l.finished(last);
         }
     }
-
+    
+    @Override
+    public String toString() {
+    	StringBuffer text = new StringBuffer();
+    	text.append("Workflow: Start ");
+    	if( started ){
+    		text.append(" -> ");
+    	}
+    	else {
+    		text.append( " -- " );    		
+    	}
+    	for( State state : states ){
+    		if( state == current){
+    			text.append("[");
+    		}
+    		text.append( state.getName() );
+    		if( state == current){
+    			text.append("]");
+    		}
+    		if( this.queue.contains( state )){
+    			text.append(" -- ");
+        	}
+        	else {
+        		text.append( " -> " );    		
+        	}
+    	}
+    	if( this.finished ){
+    		text.append( "[Finish]" );
+    	}
+    	else {
+    		text.append( "Finish" );
+    	}
+    	return text.toString();
+    }
+    /**
+     * Listens to the workflow as it runs; will run each stage in turn.
+     */
     public static class WorkflowRunner implements Listener {
         Workflow pipe;
         boolean stopped;
@@ -570,6 +611,12 @@ public class Workflow {
             this.pipe = pipe;
         }
 
+        /**
+         * Will run the workflow; and return true if the workflow if completed
+         *
+         * @param monitor
+         * @return true if completed
+         */
         public boolean run( final IProgressMonitor monitor ) {
             final boolean[] result = new boolean[1];
 
@@ -582,6 +629,12 @@ public class Workflow {
             return result[0];
         }
 
+        /**
+         * Carefully runs the workflow step by step until finished or stoppped.
+         *
+         * @param monitor
+         * @return true if completed; false if stopped
+         */
         private boolean runInternal( IProgressMonitor monitor ) {
             try {
                 monitor.beginTask(Messages.Workflow_task_name, IProgressMonitor.UNKNOWN);
@@ -608,27 +661,44 @@ public class Workflow {
                 monitor.done();
             }
         }
-
+        /**
+         * We are not interesed in the workflow moving forward
+         */
         public void forward( State current, State prev ) {
             // do nothing
         }
 
+        /**
+         * We are not interested in the workflow moving backward
+         */
         public void backward( State current, State next ) {
             // do nothing
         }
 
+        /**
+         * We are not interested in a state validating
+         */
         public void statePassed( State state ) {
             // do nothing
         }
 
+        /**
+         * If the state has failed our workflow has stopped - and we need human intervention
+         */
         public void stateFailed( State state ) {
             stopped = true;
         }
 
+        /**
+         * We are not interested in starting
+         */
         public void started( State first ) {
             // do nothing
         }
 
+        /**
+         * We are not interested in the workflow finishing
+         */
         public void finished( State last ) {
             // do nothing
         }

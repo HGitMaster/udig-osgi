@@ -42,9 +42,9 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
 
     private URL id;
 
-    public Lock rLock=new UDIGDisplaySafeLock();
+    public Lock rLock = new UDIGDisplaySafeLock();
 
-    private Lock dsInstantiationLock=new UDIGDisplaySafeLock();
+    private Lock dsInstantiationLock = new UDIGDisplaySafeLock();
 
     private MemoryDSFactory factory;
 
@@ -74,7 +74,8 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
             for( IGeoResource resource : member ) {
                 SimpleFeatureType type;
                 try {
-                    type = (SimpleFeatureType) resource.resolve(FeatureSource.class, null).getSchema();
+                    type = (SimpleFeatureType) resource.resolve(FeatureSource.class, null)
+                            .getSchema();
                     if (buffer == null) {
                         buffer = new StringBuffer();
                     } else {
@@ -88,7 +89,7 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
                     CatalogPlugin.log("", e); //$NON-NLS-1$
                 }
             }
-            if( buffer!=null )
+            if (buffer != null)
                 params.put(MemoryServiceExtensionImpl.MEMBER_PARAM, buffer.toString());
         }
         return params;
@@ -99,8 +100,7 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
             return false;
 
         return adaptee.isAssignableFrom(ActiveMemoryDataStore.class)
-                || adaptee.isAssignableFrom(ITransientResolve.class)||
-                super.canResolve(adaptee);
+                || adaptee.isAssignableFrom(ITransientResolve.class) || super.canResolve(adaptee);
     }
 
     @Override
@@ -119,31 +119,30 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
         }
         return super.resolve(adaptee, monitor);
     }
-
     @Override
-	protected
-    synchronized IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null){
-            info = new ScratchServiceInfo();
-        }
-        return info;
+    public ScratchServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (ScratchServiceInfo) super.getInfo(monitor);
     }
-    
+    @Override
+    protected synchronized IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        return new ScratchServiceInfo();
+    }
+
     @Override
     public List< ? extends IGeoResource> resources( IProgressMonitor monitor ) throws IOException {
         ActiveMemoryDataStore ds = getDS();
         String[] types = ds.getTypeNames();
-        if( memberList == null ){
+        if (memberList == null) {
             rLock.lock();
-            try{
-                if (memberList == null){
+            try {
+                if (memberList == null) {
                     this.memberList = new ArrayList<MemoryGeoResourceImpl>();
                     for( String type : types ) {
                         if (!found(type))
                             this.memberList.add(new MemoryGeoResourceImpl(type, this));
                     }
                 }
-            }finally{
+            } finally {
                 rLock.unlock();
             }
         }
@@ -174,7 +173,7 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
         if (ds == null) {
             boolean changed = false;
             dsInstantiationLock.lock();
-            try{
+            try {
                 if (ds == null) {
                     ds = createNewDS();
                     changed = true;
@@ -184,12 +183,12 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
                             IResolveDelta delta = new ResolveDelta(MemoryServiceImpl.this,
                                     IResolveDelta.Kind.CHANGED);
                             ((CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog())
-                            .fire(new ResolveChangeEvent(MemoryServiceImpl.this, IResolveChangeEvent.Type.POST_CHANGE,
-                                    delta));
+                                    .fire(new ResolveChangeEvent(MemoryServiceImpl.this,
+                                            IResolveChangeEvent.Type.POST_CHANGE, delta));
                         }
                     });
                 }
-            }finally{
+            } finally {
                 dsInstantiationLock.unlock();
             }
             if (changed) {
@@ -209,14 +208,16 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
             if (ds != null) {
                 return ds;
             } else {
-                CatalogPlugin.log("MemoryDSFactory '"+this.factory.getClass()+"' returned invalid ActiveMemoryDataStore", null);  //$NON-NLS-1$//$NON-NLS-2$
+                CatalogPlugin
+                        .log(
+                                "MemoryDSFactory '" + this.factory.getClass() + "' returned invalid ActiveMemoryDataStore", null); //$NON-NLS-1$//$NON-NLS-2$
             }
         }
         return new ActiveMemoryDataStore();
     }
 
     public void dispose( IProgressMonitor monitor ) {
-        if( memberList==null)
+        if (memberList == null)
             return;
 
         int steps = (int) ((double) 99 / (double) memberList.size());
@@ -231,13 +232,13 @@ public class MemoryServiceImpl extends IService implements ITransientResolve {
             }
         }
     }
-    
+
     static class ScratchServiceInfo extends IServiceInfo {
         /*
          * @see net.refractions.udig.catalog.IServiceInfo#getTitle()
          */
         public String getTitle() {
-            return Messages.catalog_memory_service_title; 
+            return Messages.catalog_memory_service_title;
         }
 
         @Override

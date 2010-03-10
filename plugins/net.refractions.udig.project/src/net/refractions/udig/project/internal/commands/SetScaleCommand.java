@@ -30,7 +30,10 @@ public class SetScaleCommand extends AbstractCommand implements UndoableCommand 
 
     private double oldScale;
     private double newScale;
-
+    /**
+     * 
+     * @param newScale Scale Denominator
+     */
     public SetScaleCommand( double newScale ) {
         this.newScale = newScale;
     }

@@ -39,6 +39,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Query;
+import org.geotools.data.crs.ForceCoordinateSystemFeatureResults;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DefaultMapContext;
 import org.geotools.map.DefaultMapLayer;
@@ -126,8 +129,9 @@ public class BasicFeatureRenderer extends RendererImpl {
 	 * context objects required for Lite renderer and creates the lite renderer.
 	 * 
 	 * @throws IOException
+	 * @throws SchemaException 
 	 */
-	private void prepareDraw(IProgressMonitor monitor) throws IOException {
+	private void prepareDraw(IProgressMonitor monitor) throws IOException, SchemaException {
 
 		// check for style information on the blackboard
  		ILayer layer = getContext().getLayer();
@@ -142,7 +146,13 @@ public class BasicFeatureRenderer extends RendererImpl {
 		Style style = getStyle(styleBlackboard, featureSource);
         
 		layers = new MapLayer[1];
-		layers[0] = new DefaultMapLayer(featureSource, style, "Test"); //$NON-NLS-1$
+		if (!layer.getCRS().equals(featureSource.getSchema().getCoordinateReferenceSystem())){
+			//need to reproject the feature source
+			FeatureCollection<SimpleFeatureType, SimpleFeature> reprojectingFc = new ForceCoordinateSystemFeatureResults(featureSource.getFeatures(), layer.getCRS()); 
+			layers[0] = new DefaultMapLayer(reprojectingFc, style, "Test"); //$NON-NLS-1$
+		}else{
+			layers[0] = new DefaultMapLayer(featureSource, style, "Test"); //$NON-NLS-1$
+		}
 		map = new DefaultMapContext(layers, getContext().getCRS());
 
 	}
@@ -154,14 +164,14 @@ public class BasicFeatureRenderer extends RendererImpl {
 		boolean transparency = store
 				.getBoolean(PreferenceConstants.P_TRANSPARENCY);
 		try{
-        if (style != null) {
-            DuplicatingStyleVisitor duplicator = new DuplicatingStyleVisitor();
-            style.accept(duplicator);
-            style=(Style)duplicator.getCopy();
-            if (!transparency) {
-                style = removeTransparency(style);
-            }
-        }
+		    if (!transparency) {
+                if (style != null) {
+                    DuplicatingStyleVisitor duplicator = new DuplicatingStyleVisitor();
+                    style.accept(duplicator);
+                    style=(Style) duplicator.getCopy();
+                    style = removeTransparency(style);                    
+                }
+		    }
 		}catch (Throwable e) {
 		    RendererPlugin.log("Error duplicating style for transparency setting", e); //$NON-NLS-1$
         }
@@ -293,7 +303,7 @@ public class BasicFeatureRenderer extends RendererImpl {
                 graphics.setClip(paintArea);
             }
 			java.util.Map<Object, Object> rendererHints=renderer2.getRendererHints();
-            rendererHints.put(StreamingRenderer.FORCE_CRS_KEY, getContext().getLayer().getCRS());
+
             rendererHints.put(StreamingRenderer.DECLARED_SCALE_DENOM_KEY, getContext().getViewportModel().getScaleDenominator());
             rendererHints.put(StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY, StreamingRenderer.SCALE_ACCURATE);
             ILabelPainter labelPainter = getContext().getLabelPainter();
@@ -304,7 +314,6 @@ public class BasicFeatureRenderer extends RendererImpl {
             rendererHints.put(StreamingRenderer.LABEL_CACHE_KEY, new LabelCacheDecorator(labelPainter, origin, layerId));
             
             renderer2.setRendererHints(rendererHints);
-
 
             RenderingHints hints = new RenderingHints(Collections.EMPTY_MAP);
             hints.add(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED));
@@ -499,12 +508,18 @@ public class BasicFeatureRenderer extends RendererImpl {
 		}
 	}
     
+    @SuppressWarnings("nls")
     public void refreshImage(){
         try{
             render(ProgressManager.instance().get());
         }catch( RenderException e ){
             getContext().setStatus(ILayer.ERROR);
-            getContext().setStatusMessage(e.getLocalizedMessage());
+            if( e.getCause() != null ){
+                getContext().setStatusMessage(e.getLocalizedMessage()+" - "+e.getLocalizedMessage() );     //$NON-NLS-1$
+            }
+            else {
+                getContext().setStatusMessage(e.getLocalizedMessage());
+            }
         }
     }
 }

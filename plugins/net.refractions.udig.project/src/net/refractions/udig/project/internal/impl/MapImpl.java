@@ -232,7 +232,9 @@ public class MapImpl extends EObjectImpl implements Map {
      * @generated not
      * @ordered
      */
-    protected volatile BrewerPalette colorPalette = PlatformGIS.getColorBrewer().getPalette(ProjectPlugin.getPlugin().getPreferenceStore().getString(PreferenceConstants.P_DEFAULT_PALETTE));
+    protected volatile BrewerPalette colorPalette = PlatformGIS.getColorBrewer().getPalette(
+            ProjectPlugin.getPlugin().getPreferenceStore().getString(
+                    PreferenceConstants.P_DEFAULT_PALETTE));
 
     /**
      * The cached value of the '{@link #getEditManagerInternal() <em>Edit Manager Internal</em>}' containment reference.
@@ -262,7 +264,7 @@ public class MapImpl extends EObjectImpl implements Map {
      */
     protected static final ColourScheme COLOUR_SCHEME_EDEFAULT = null;
 
-    private static final List<Layer> EMPTY_LIST = Collections.<Layer>emptyList();
+    private static final List<Layer> EMPTY_LIST = Collections.<Layer> emptyList();
 
     /**
      * The cached value of the '{@link #getColourScheme() <em>Colour Scheme</em>}' attribute. <!--
@@ -273,7 +275,7 @@ public class MapImpl extends EObjectImpl implements Map {
      * @ordered
      */
     protected volatile ColourScheme colourScheme = ColourScheme.getDefault(getColorPalette());
-    
+
     /**
      * The cached value of the '{@link #getBlackBoardInternal() <em>Black Board Internal</em>}' containment reference.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -320,7 +322,7 @@ public class MapImpl extends EObjectImpl implements Map {
 
     private volatile CommandManager navCommandManager;
 
-    private final Lock lock=new UDIGDisplaySafeLock();
+    private final Lock lock = new UDIGDisplaySafeLock();
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -414,33 +416,28 @@ public class MapImpl extends EObjectImpl implements Map {
         return msgs;
     }
 
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void setProjectInternal( Project newProjectInternal ) {
+        if (newProjectInternal != projectInternal) {
+            NotificationChain msgs = null;
 
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void setProjectInternal(Project newProjectInternal) {
-		if (newProjectInternal != projectInternal) {
-			NotificationChain msgs = null;
-
-            
-			if (projectInternal != null){
-    				msgs = ((InternalEObject) projectInternal).eInverseRemove(this,
-    						ProjectPackage.PROJECT__ELEMENTS_INTERNAL,
-    						Project.class, msgs);
+            if (projectInternal != null) {
+                msgs = ((InternalEObject) projectInternal).eInverseRemove(this,
+                        ProjectPackage.PROJECT__ELEMENTS_INTERNAL, Project.class, msgs);
             }
-			if ( newProjectInternal != null )
-				msgs = ((InternalEObject) newProjectInternal).eInverseAdd(this,
-						ProjectPackage.PROJECT__ELEMENTS_INTERNAL,
-						Project.class, msgs);
-			msgs = basicSetProjectInternal(newProjectInternal, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					ProjectPackage.MAP__PROJECT_INTERNAL, newProjectInternal,
-					newProjectInternal));
-	}
+            if (newProjectInternal != null)
+                msgs = ((InternalEObject) newProjectInternal).eInverseAdd(this,
+                        ProjectPackage.PROJECT__ELEMENTS_INTERNAL, Project.class, msgs);
+            msgs = basicSetProjectInternal(newProjectInternal, msgs);
+            if (msgs != null)
+                msgs.dispatch();
+        } else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET,
+                    ProjectPackage.MAP__PROJECT_INTERNAL, newProjectInternal, newProjectInternal));
+    }
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -450,12 +447,12 @@ public class MapImpl extends EObjectImpl implements Map {
      */
     @SuppressWarnings("deprecation")
     public ContextModel getContextModel() {
-        if (contextModel == null){
+        if (contextModel == null) {
             lock.lock();
-            try{
+            try {
                 if (contextModel == null)
                     setContextModel(ProjectFactory.eINSTANCE.createContextModel());
-            }finally{
+            } finally {
                 lock.unlock();
             }
         }
@@ -482,7 +479,8 @@ public class MapImpl extends EObjectImpl implements Map {
         return msgs;
     }
 
-    final ContextModelListenerAdapter contextModelListener = new EMFCompositionEventToMapCompositionEventListener(this);
+    final ContextModelListenerAdapter contextModelListener = new EMFCompositionEventToMapCompositionEventListener(
+            this);
 
     /**
      * @see net.refractions.udig.project.internal.Map#setContextModel(net.refractions.udig.project.ContextModel)
@@ -491,7 +489,7 @@ public class MapImpl extends EObjectImpl implements Map {
     public void setContextModel( ContextModel newContextModel ) {
         if (contextModel != null)
             contextModel.eAdapters().remove(contextModelListener);
-        if (newContextModel != null){
+        if (newContextModel != null) {
             newContextModel.eAdapters().add(contextModelListener);
         }
         setContextModelGen(newContextModel);
@@ -592,8 +590,8 @@ public class MapImpl extends EObjectImpl implements Map {
      */
     public BrewerPalette getColorPalette() {
         if (colorPalette == null) {
-            String defaultPalette = ProjectPlugin.getPlugin().getPreferenceStore()
-                .getString(PreferenceConstants.P_DEFAULT_PALETTE);
+            String defaultPalette = ProjectPlugin.getPlugin().getPreferenceStore().getString(
+                    PreferenceConstants.P_DEFAULT_PALETTE);
             if (defaultPalette == null || !PlatformGIS.getColorBrewer().hasPalette(defaultPalette))
                 defaultPalette = "Dark2"; //failsafe default //$NON-NLS-1$
             colorPalette = PlatformGIS.getColorBrewer().getPalette(defaultPalette);
@@ -679,7 +677,7 @@ public class MapImpl extends EObjectImpl implements Map {
                         .getCRS());
                 if (!bbox.isNull()) {
                     if (bounds.isNull())
-                        bounds.init(((Envelope)bbox));
+                        bounds.init(((Envelope) bbox));
                     else
                         bounds.expandToInclude(bbox);
                 }
@@ -690,26 +688,25 @@ public class MapImpl extends EObjectImpl implements Map {
 
             }
             return bounds;
-        }else{
+        } else {
             return getDefaultBounds();
         }
 
     }
 
     private ReferencedEnvelope getDefaultBounds() {
-        if (getViewportModel().getCRS().getDomainOfValidity()!=null){
+        if (getViewportModel().getCRS().getDomainOfValidity() != null) {
             Extent extent = getViewportModel().getCRS().getDomainOfValidity();
             ReferencedEnvelope env = toReferencedEnvelope(extent, getViewportModel().getCRS());
-            if( env!=null ){                
-                ProjectPlugin.log("MapImpl#getDefaultBounds(): Returning valid area of "+env.getCoordinateReferenceSystem().getName().toString()); //$NON-NLS-1$
+            if (env != null) {
+                ProjectPlugin
+                        .log("MapImpl#getDefaultBounds(): Returning valid area of " + env.getCoordinateReferenceSystem().getName().toString()); //$NON-NLS-1$
                 return env;
             }
         }
         ProjectPlugin.log("MapImpl#getDefaultBounds(): Returning Default bounds (entire world)"); //$NON-NLS-1$
-        return new ReferencedEnvelope(new Envelope(-180, 180, -90, 90),
-                DefaultGeographicCRS.WGS84);
+        return new ReferencedEnvelope(new Envelope(-180, 180, -90, 90), DefaultGeographicCRS.WGS84);
     }
-
 
     /**
      * Takes an Extent, usually from a {@link CoordinateReferenceSystem}, and converts it to a ReferencedEnvelope
@@ -718,35 +715,40 @@ public class MapImpl extends EObjectImpl implements Map {
      * @param crs the desired CRS of the ReferencedEnvelope.
      * @return
      */
-    public static ReferencedEnvelope toReferencedEnvelope( Extent extent, CoordinateReferenceSystem crs ) {
-        if( extent==null )
+    public static ReferencedEnvelope toReferencedEnvelope( Extent extent,
+            CoordinateReferenceSystem crs ) {
+        if (extent == null)
             return null;
-        Collection<? extends GeographicExtent> elems = extent.getGeographicElements();
+        Collection< ? extends GeographicExtent> elems = extent.getGeographicElements();
         for( GeographicExtent extent2 : elems ) {
-            ReferencedEnvelope env=null;
+            ReferencedEnvelope env = null;
             if (extent2 instanceof GeographicBoundingBox) {
                 GeographicBoundingBox box = (GeographicBoundingBox) extent2;
-                env=new ReferencedEnvelope( box.getWestBoundLongitude(), box.getEastBoundLongitude(),
-                        box.getSouthBoundLatitude(), box.getNorthBoundLatitude(), DefaultGeographicCRS.WGS84);
-            }else if (extent2 instanceof BoundingPolygon) {
+                env = new ReferencedEnvelope(box.getWestBoundLongitude(), box
+                        .getEastBoundLongitude(), box.getSouthBoundLatitude(), box
+                        .getNorthBoundLatitude(), DefaultGeographicCRS.WGS84);
+            } else if (extent2 instanceof BoundingPolygon) {
                 BoundingPolygon boundingpoly = (BoundingPolygon) extent2;
-                Collection<? extends Geometry> polygons = boundingpoly.getPolygons();
+                Collection< ? extends Geometry> polygons = boundingpoly.getPolygons();
                 for( Geometry geometry : polygons ) {
-                    Polygon poly=(Polygon) geometry;
+                    Polygon poly = (Polygon) geometry;
                     org.opengis.geometry.Envelope envelope = poly.getBoundary().getEnvelope();
-                    env=new ReferencedEnvelope(envelope.getMinimum(0), envelope.getMaximum(0),
-                            envelope.getMinimum(1), envelope.getMaximum(1), envelope.getLowerCorner().getCoordinateReferenceSystem());
+                    env = new ReferencedEnvelope(envelope.getMinimum(0), envelope.getMaximum(0),
+                            envelope.getMinimum(1), envelope.getMaximum(1), envelope
+                                    .getLowerCorner().getCoordinateReferenceSystem());
                     break;
                 }
             }
-            
-            if( env!=null ){
+
+            if (env != null) {
                 try {
-                    env=env.transform(crs, true);
+                    env = env.transform(crs, true);
                 } catch (TransformException e) {
-                    ProjectPlugin.log("error transforming "+env+" to "+crs.getName().toString(), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    ProjectPlugin.log(
+                            "error transforming " + env + " to " + crs.getName().toString(), e); //$NON-NLS-1$ //$NON-NLS-2$
                 } catch (FactoryException e) {
-                    ProjectPlugin.log("error transforming "+env+" to "+crs.getName().toString(), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    ProjectPlugin.log(
+                            "error transforming " + env + " to " + crs.getName().toString(), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return env;
             }
@@ -754,7 +756,6 @@ public class MapImpl extends EObjectImpl implements Map {
         return null;
     }
 
-    
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -773,9 +774,10 @@ public class MapImpl extends EObjectImpl implements Map {
     public NavCommandStack getNavCommandStack() {
         synchronized (CommandManager.class) {
             if (this.navCommandManager == null) {
-                this.navCommandManager = new CommandManager(Messages.MapImpl_NavigationCommandStack, new DefaultErrorHandler(), 
+                this.navCommandManager = new CommandManager(
+                        Messages.MapImpl_NavigationCommandStack, new DefaultErrorHandler(),
                         new MapCommandListener());
-                
+
             }
         }
         return navCommandManager;
@@ -789,9 +791,9 @@ public class MapImpl extends EObjectImpl implements Map {
     public CommandStack getCommandStack() {
         synchronized (CommandManager.class) {
             if (this.commandManager == null) {
-                this.commandManager = new CommandManager(Messages.MapImpl_CommandStack, new DefaultErrorHandler(), 
-                        new MapCommandListener());
-                
+                this.commandManager = new CommandManager(Messages.MapImpl_CommandStack,
+                        new DefaultErrorHandler(), new MapCommandListener());
+
             }
         }
         return commandManager;
@@ -889,7 +891,7 @@ public class MapImpl extends EObjectImpl implements Map {
 
         // init command manager
         getNavCommandStack();
-        
+
         command.setMap(this);
         command.setViewportModel(getViewportModelInternal());
         navCommandManager.execute(command, async);
@@ -943,7 +945,9 @@ public class MapImpl extends EObjectImpl implements Map {
         }
     }
 
-    private static class BatchNotification extends ENotificationImpl implements Iterable<Notification> {
+    private static class BatchNotification extends ENotificationImpl
+            implements
+                Iterable<Notification> {
 
         /**
          * Construct <code>BatchNotification</code>.
@@ -989,7 +993,7 @@ public class MapImpl extends EObjectImpl implements Map {
      * @generated NOT
      */
     public void redo() {
-        if( commandManager==null || !commandManager.hasForwardHistory() )
+        if (commandManager == null || !commandManager.hasForwardHistory())
             return;
         commandManager.redo(true);
         notifyCommandStackChange();
@@ -1001,7 +1005,7 @@ public class MapImpl extends EObjectImpl implements Map {
      * @generated NOT
      */
     public void undo() {
-        if( commandManager==null || !commandManager.hasBackHistory() )
+        if (commandManager == null || !commandManager.hasBackHistory())
             return;
         commandManager.undo(true);
         notifyCommandStackChange();
@@ -1013,7 +1017,7 @@ public class MapImpl extends EObjectImpl implements Map {
      * @generated NOT
      */
     public void backwardHistory() {
-        if( navCommandManager==null || !navCommandManager.hasBackHistory() )
+        if (navCommandManager == null || !navCommandManager.hasBackHistory())
             return;
         navCommandManager.undo(true);
     }
@@ -1024,7 +1028,7 @@ public class MapImpl extends EObjectImpl implements Map {
      * @generated NOT
      */
     public void forwardHistory() {
-        if( navCommandManager==null || !navCommandManager.hasForwardHistory() )
+        if (navCommandManager == null || !navCommandManager.hasForwardHistory())
             return;
         navCommandManager.redo(true);
     }
@@ -1209,7 +1213,7 @@ public class MapImpl extends EObjectImpl implements Map {
             eNotify(new ENotificationImpl(this, Notification.SET,
                     ProjectPackage.MAP__COLOUR_SCHEME, oldColourScheme, colourScheme));
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -1545,29 +1549,29 @@ public class MapImpl extends EObjectImpl implements Map {
      */
     @SuppressWarnings("unchecked")
     public Object getAdapter( Class adapter ) {
-    	for( Iterator i = eAdapters().iterator(); i.hasNext(); ) {
+        for( Iterator i = eAdapters().iterator(); i.hasNext(); ) {
             Object o = i.next();
             if (adapter.isAssignableFrom(o.getClass()))
                 return o;
         }
-    	
-    	/*
+
+        /*
          * Adapt to an IWorkbenchAdapter. Other aspects of Eclipse can read the
          * properties we provide access to. (example: Property page dialogs
          * can read the label and display that in their title.)
          */
-    	if (adapter.isAssignableFrom(IWorkbenchAdapter.class)) {
-    		return new WorkbenchAdapter() {
-			
-				@Override
-				public String getLabel(Object object) {
-					return getName();
-				}
-			
-			};
-    	}
+        if (adapter.isAssignableFrom(IWorkbenchAdapter.class)) {
+            return new WorkbenchAdapter(){
 
-    	return Platform.getAdapterManager().getAdapter(this, adapter);
+                @Override
+                public String getLabel( Object object ) {
+                    return getName();
+                }
+
+            };
+        }
+
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
     /**
@@ -1608,7 +1612,7 @@ public class MapImpl extends EObjectImpl implements Map {
 
     @SuppressWarnings("unchecked")
     public List<Layer> getLayersInternal() {
-        if( getContextModel()==null )
+        if (getContextModel() == null)
             return EMPTY_LIST;
         return getContextModel().getLayers();
     }
@@ -1679,15 +1683,13 @@ public class MapImpl extends EObjectImpl implements Map {
         });
     }
 
-    
-
     public String getFileExtension() {
         return "umap"; //$NON-NLS-1$
     }
 
-    CopyOnWriteArraySet<IMapListener> mapListeners=new CopyOnWriteArraySet<IMapListener>();
-    CopyOnWriteArraySet<IMapCompositionListener> compositionListeners=new CopyOnWriteArraySet<IMapCompositionListener>();
-    
+    CopyOnWriteArraySet<IMapListener> mapListeners = new CopyOnWriteArraySet<IMapListener>();
+    CopyOnWriteArraySet<IMapCompositionListener> compositionListeners = new CopyOnWriteArraySet<IMapCompositionListener>();
+
     public void addMapListener( IMapListener listener ) {
         mapListeners.add(listener);
     }
@@ -1706,8 +1708,8 @@ public class MapImpl extends EObjectImpl implements Map {
 
     public List<Color> getMapDefaultColours() {
         List<Layer> layers = getLayersInternal();
-        List<Color> colours = new ArrayList<Color> ();
-        for (Layer layer: layers) {
+        List<Color> colours = new ArrayList<Color>();
+        for( Layer layer : layers ) {
             Color thisColour = layer.getDefaultColor();
             if (thisColour != null) {
                 colours.add(thisColour);
@@ -1716,11 +1718,10 @@ public class MapImpl extends EObjectImpl implements Map {
         return colours;
     }
 
-
-    public void addDeepAdapter(Adapter adapter){
+    public void addDeepAdapter( Adapter adapter ) {
         ((LayersList2) getLayersInternal()).addDeepAdapter(adapter);
     }
-    public void removeDeepAdapter(Adapter adapter){
+    public void removeDeepAdapter( Adapter adapter ) {
         ((LayersList2) getLayersInternal()).removeDeepAdapter(adapter);
     }
     public void lowerLayer( Layer layer ) {
@@ -1729,7 +1730,7 @@ public class MapImpl extends EObjectImpl implements Map {
             return;
         ((LayersList2) getLayersInternal()).move(index--, index);
     }
-    
+
     public void raiseLayer( Layer layer ) {
         int index = getLayersInternal().indexOf(layer);
         if (index > getLayersInternal().size() - 2)
@@ -1750,7 +1751,8 @@ public class MapImpl extends EObjectImpl implements Map {
             return Filter.INCLUDE;
         }
         try {
-             FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = layer.getResource(FeatureSource.class, null);
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = layer.getResource(
+                    FeatureSource.class, null);
             if (featureSource == null) {
                 return Filter.INCLUDE;
             }
@@ -1797,22 +1799,24 @@ public class MapImpl extends EObjectImpl implements Map {
                 Filter newFilterCopy = null;
                 newFilter = layer.createBBoxFilter(boundingBox, null);
                 newFilterCopy = layer.createBBoxFilter(boundingBox, null);
-                
+
                 if (newFilter == null)
                     continue LAYERS;
-                if (oldFilter == null || oldFilter == Filter.EXCLUDE || oldFilter.equals(Filter.EXCLUDE)) {
+                if (oldFilter == null || oldFilter == Filter.EXCLUDE
+                        || oldFilter.equals(Filter.EXCLUDE)) {
                     layer.setFilter(newFilter);
                 } else {
-                    org.opengis.filter.FilterFactory fac = CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
+                    org.opengis.filter.FilterFactory fac = CommonFactoryFinder
+                            .getFilterFactory(GeoTools.getDefaultHints());
                     if (!add) {
-                            Not notFilter=fac.not(newFilter);
-                            And logicFilter = fac.and(notFilter, oldFilter);
+                        Not notFilter = fac.not(newFilter);
+                        And logicFilter = fac.and(notFilter, oldFilter);
 
-                            layer.setFilter(logicFilter);
+                        layer.setFilter(logicFilter);
                     } else {
-                            Filter orFilter = fac.or(newFilter, oldFilter );
-                            
-                            layer.setFilter(orFilter);
+                        Filter orFilter = fac.or(newFilter, oldFilter);
+
+                        layer.setFilter(orFilter);
                     }
                 }
             } else {
@@ -1845,23 +1849,24 @@ public class MapImpl extends EObjectImpl implements Map {
         Layer selected = getEditManagerInternal().getSelectedLayer();
         for( Layer layer : getLayersInternal() ) {
             if (layer == selected) {
-            	Filter oldFilter = layer.getFilter();
+                Filter oldFilter = layer.getFilter();
 
-                if (oldFilter == null || oldFilter == Filter.EXCLUDE || oldFilter.equals(Filter.EXCLUDE)) {
+                if (oldFilter == null || oldFilter == Filter.EXCLUDE
+                        || oldFilter.equals(Filter.EXCLUDE)) {
                     layer.setFilter(target(layer, filter));
                 } else {
 
-                    FilterFactory createFilterFactory = CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
+                    FilterFactory createFilterFactory = CommonFactoryFinder
+                            .getFilterFactory(GeoTools.getDefaultHints());
 
                     if (!and) {
-                            Filter logicFilter;
-                            logicFilter = createFilterFactory.and(oldFilter, target(
-                                    layer, filter));
-                            layer.setFilter(logicFilter);
+                        Filter logicFilter;
+                        logicFilter = createFilterFactory.and(oldFilter, target(layer, filter));
+                        layer.setFilter(logicFilter);
                     } else {
-                            Filter logicFilter;
-                            logicFilter = createFilterFactory.or(oldFilter, target(layer, filter));
-                            layer.setFilter(logicFilter);
+                        Filter logicFilter;
+                        logicFilter = createFilterFactory.or(oldFilter, target(layer, filter));
+                        layer.setFilter(logicFilter);
                     }
                 }
             } else {
@@ -1872,11 +1877,11 @@ public class MapImpl extends EObjectImpl implements Map {
 
     public void select( Filter filter, ILayer layerObj ) {
 
-        Layer layer = (Layer)layerObj;
-        if(getLayersInternal().contains(layer)){
+        Layer layer = (Layer) layerObj;
+        if (getLayersInternal().contains(layer)) {
             for( Layer layer2 : getLayersInternal() ) {
                 if (layer == layer2) {
-                    layer2.setFilter( target(layer, filter)); // replace
+                    layer2.setFilter(target(layer, filter)); // replace
                 } else {
                     layer2.setFilter(Filter.EXCLUDE);
                 }
@@ -1884,6 +1889,20 @@ public class MapImpl extends EObjectImpl implements Map {
         }
     }
 
-    
+    @SuppressWarnings("unchecked")
+    public List getElements( Class type ) {
+        List lists = new ArrayList();
+        for( Iterator iter = getLayersInternal().iterator(); iter.hasNext(); ) {
+            Object obj = iter.next();
+            if (type.isAssignableFrom(obj.getClass()))
+                lists.add(obj);
+        }
+        return lists;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List getElements() {
+        return getLayersInternal();
+    }
 
 } // MapImpl

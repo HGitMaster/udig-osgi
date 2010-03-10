@@ -38,8 +38,7 @@
 
    <includes
          id="net.refractions.udig_printing"
-         version="0.0.0"
-         optional="true"/>
+         version="0.0.0"/>
 
    <includes
          id="net.refractions.udig_base"
@@ -53,6 +52,9 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="net.refractions.udig.ui"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="net.refractions.udig.browser"/>
    </requires>
 
    <plugin

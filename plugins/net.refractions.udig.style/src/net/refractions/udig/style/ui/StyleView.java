@@ -18,7 +18,6 @@ import net.refractions.udig.style.Images;
 import net.refractions.udig.style.StylePlugin;
 import net.refractions.udig.style.internal.Messages;
 import net.refractions.udig.style.internal.StyleLayer;
-import net.refractions.udig.style.internal.StyleManager;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -66,9 +65,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Style Editing View.
- * <p>
- * StyleView is responsible for allowing the user to choose between applicable StyleConfigurators
+ * Responsible for allowing the user to choose between applicable StyleConfigurators
  * for the current blackboard.
  * </p>
  * <p>
@@ -86,12 +83,12 @@ import org.eclipse.ui.services.IServiceLocator;
  * the layer.
  * </ul>
  * </p>
- * TODO: Clone the blackboard and give that to the configurator
  * 
  * @author jdeolive
  * @since 0.5
  */
-public class StyleView extends ViewPart implements StyleManager {
+@SuppressWarnings("deprecation")
+public class StyleView extends ViewPart {
     /** ID used in the extension point to identify this view */
     public final static String VIEW_ID = "net.refractions.udig.style.styleView"; //$NON-NLS-1$
 
@@ -113,11 +110,6 @@ public class StyleView extends ViewPart implements StyleManager {
 
     private Action applyAction;
     private Action cancelAction;
-
-    // private IContributionItem applyCI;
-    // private IContributionItem cancelCI;
-
-    // private HashMap<Layer, StyleLayer> layer2styleLayer = new HashMap<Layer,StyleLayer>();
 
     /** Current layer being worked on (wrapped as a StyleLayer) or null if we don't have a victim * */
     private StyleLayer currentLayer;
@@ -150,7 +142,7 @@ public class StyleView extends ViewPart implements StyleManager {
                 IStructuredSelection sselection = (IStructuredSelection) selection;
 
                 // look for a Layer selection(s)
-                for( Iterator itr = sselection.iterator(); itr.hasNext(); ) {
+                for( Iterator<?> itr = sselection.iterator(); itr.hasNext(); ) {
                     Object obj = itr.next();
                     if (obj instanceof Layer) {
                         Layer layer = (Layer) obj;
@@ -340,7 +332,7 @@ public class StyleView extends ViewPart implements StyleManager {
             return false;
 
         IStructuredSelection selection = (IStructuredSelection) sel;
-        for( Iterator iter = selection.iterator(); iter.hasNext(); ) {
+        for( Iterator<?> iter = selection.iterator(); iter.hasNext(); ) {
             Object e = iter.next();
             if (e instanceof Layer) {
                 layer = (Layer) e;
@@ -872,7 +864,7 @@ public class StyleView extends ViewPart implements StyleManager {
                 ISelectionProvider selectionProvider ) {
             // nope!
         }
-		public IKeyBindingService getKeyBindingService() {
+        public IKeyBindingService getKeyBindingService() {
             return null;
         }
         public IWorkbenchPage getPage() {
@@ -890,6 +882,7 @@ public class StyleView extends ViewPart implements StyleManager {
         public void setSelectionProvider( ISelectionProvider provider ) {
             StyleView.this.getViewSite().setSelectionProvider(provider);
         }
+        @SuppressWarnings("unchecked")
         public Object getAdapter( Class adapter ) {
             return null;
         }
@@ -977,12 +970,14 @@ public class StyleView extends ViewPart implements StyleManager {
             return StyleView.this;
         }
 
-		public Object getService(Class api) {
+		@SuppressWarnings("unchecked")
+        public Object getService(Class api) {
 			// TODO3.2 Auto-generated method stub
 			return null;
 		}
 
-		public boolean hasService(Class api) {
+		@SuppressWarnings("unchecked")
+        public boolean hasService(Class api) {
 			// TODO3.2 Auto-generated method stub
 			return false;
 		}

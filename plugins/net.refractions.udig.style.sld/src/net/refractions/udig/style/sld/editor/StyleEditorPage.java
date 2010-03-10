@@ -259,12 +259,21 @@ public abstract class StyleEditorPage extends DialogPage implements IStyleEditor
 
     /**
      * Each subclass must implement this method which is called each time the page obtains focus.
-     *
+     * <p>
+     * You can use this method to check out the style and update the state of any widgets prior to display.
+     * Implementations Hint: The easiest thing to do is call IEditorPage.refresh() - which you have filled in
+     * to update the state of the widgets. You can optimize if you like by checking existing widget state and
+     * only updating the controls as needed.
+     * </p>
      */
     public abstract void gotFocus();
     
     /**
      * Each subclass must implement this method which is called each time the style object is modified on ANY page.
+     * <p>
+     * A page implementation will usually just update its contents from scratch; as an optimization
+     * you can look at the provided source object and see if you can avoid updating everything.
+     * </p>
      * @param source Source of change (often a FeatureTypeStyle or Rule)
      */
     public abstract void styleChanged( Object source );

@@ -72,6 +72,9 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     public static final BufferedImage dummyImage = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
 
+    /**
+     * Key used to retrieve the LabelPainter to and from the map blackboard.
+     */
     private static final String LABEL_PAINTER = "LABEL_PAINTER"; //$NON-NLS-1$
 
     /**
@@ -94,7 +97,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
     protected TileCache tempCache;
 
 
-    private ILabelPainter labelPainter;
+    //private ILabelPainter labelPainter;
     
     public RenderContextImpl() {
         super();
@@ -449,17 +452,13 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * 
      */
     public synchronized ILabelPainter getLabelPainter() {     
-        if ( labelPainter == null ){
-            //lets look on the blackboard first
-            labelPainter = (ILabelPainter) getMap().getBlackboard().get(LABEL_PAINTER);
-            if (labelPainter == null){
-                //create a new one and put it on the blackboard for others to use
-                LabelCacheImpl defaultLabelCache = new LabelCacheImpl();
-                labelPainter=new UDIGLabelCache(defaultLabelCache);
-                getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
-            }
+        ILabelPainter labelPainter = (ILabelPainter) getMap().getBlackboard().get(LABEL_PAINTER);
+        if (labelPainter == null){
+            //create a new one and put it on the blackboard for others to use
+            LabelCacheImpl defaultLabelCache = new LabelCacheImpl();
+            labelPainter=new UDIGLabelCache(defaultLabelCache);
+            getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
         }
-        
         return labelPainter;
     }
 
@@ -472,7 +471,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * @param labelPainter
      */
     public synchronized void setLabelPainter(ILabelPainter labelPainter){
-        this.labelPainter = labelPainter;
+        getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
     }
     
     /**

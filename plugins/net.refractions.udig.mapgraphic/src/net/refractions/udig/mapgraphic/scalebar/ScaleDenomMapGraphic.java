@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 
 import net.refractions.udig.mapgraphic.MapGraphic;
 import net.refractions.udig.mapgraphic.MapGraphicContext;
+import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.IStyleBlackboard;
 import net.refractions.udig.ui.graphics.ViewportGraphics;
 
@@ -30,7 +31,14 @@ public class ScaleDenomMapGraphic implements MapGraphic {
         if (configBean.getLabel() == null) throw new NullPointerException("ScaleDenomMapGraphicBean label must not be null"); //$NON-NLS-1$
         
         ViewportGraphics g = context.getGraphics();
+        IBlackboard mapblackboard = context.getMap().getBlackboard();
+        
         double scaleDenom = context.getViewportModel().getScaleDenominator();
+        
+        Object value = mapblackboard.get("scale"); // scale may be set by printing engine        
+        if( value != null && value instanceof Double ){
+            scaleDenom = ((Double)value).doubleValue();
+        }
         
         if (configBean.getBackgroundColor() != null) {
             g.setBackground(configBean.getBackgroundColor());

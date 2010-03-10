@@ -53,29 +53,38 @@ import org.geotools.data.DataStore;
 public class ArcServiceImpl extends IService {
 
     private URL url = null;
+
     private Map<String, Serializable> params = null;
+
     private Throwable msg = null;
+
     private volatile DataStore ds = null;
+
     private static final Lock dsLock = new UDIGDisplaySafeLock();
-    private volatile List<ArcGeoResource> members = null;    
+
+    private volatile List<ArcGeoResource> members = null;
+
     /**
      * Construct <code>PostGISServiceImpl</code>.
      * 
      * @param arg1
      * @param arg2
      */
-    public ArcServiceImpl( URL arg1, Map<String, Serializable> arg2 ) {
+    public ArcServiceImpl(URL arg1, Map<String, Serializable> arg2) {
         url = arg1;
         params = arg2;
     }
 
-    /*
-     * Required adaptions: <ul> <li>IServiceInfo.class <li>List.class <IGeoResource> </ul>
+    /**
+     * Required adaptions:
+     * <ul>
+     * <li>IServiceInfo.class
+     * <li>List.class <IGeoResource>
+     * </ul>
      * 
-     * @see net.refractions.udig.catalog.IService#resolve(java.lang.Class,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * @see net.refractions.udig.catalog.IResolve#resolve(Class, IProgressMonitor)
      */
-    public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
+    public <T> T resolve(Class<T> adaptee, IProgressMonitor monitor) throws IOException {
         if (monitor == null)
             monitor = new NullProgressMonitor();
 
@@ -85,22 +94,23 @@ public class ArcServiceImpl extends IService {
         if (adaptee.isAssignableFrom(DataStore.class)) {
             return adaptee.cast(getDS(monitor));
         }
-        return super.resolve( adaptee, monitor);
+        return super.resolve(adaptee, monitor);
     }
-    /*
-     * @see net.refractions.udig.catalog.IResolve#canResolve(java.lang.Class)
+
+    /**
+     * @see net.refractions.udig.catalog.IResolve#canResolve(Class)
      */
-    public <T> boolean canResolve( Class<T> adaptee ) {
+    public <T> boolean canResolve(Class<T> adaptee) {
         return adaptee != null
                 && (adaptee.isAssignableFrom(IServiceInfo.class)
                         || adaptee.isAssignableFrom(List.class) || adaptee
                         .isAssignableFrom(DataStore.class)) || super.canResolve(adaptee);
     }
-    
+
     /*
      * @see net.refractions.udig.catalog.IResolve#members(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public List<ArcGeoResource> resources( IProgressMonitor monitor ) throws IOException {
+    public List<ArcGeoResource> resources(IProgressMonitor monitor) throws IOException {
         if (members == null) {
             synchronized (getDS(monitor)) {
                 if (members == null) {
@@ -108,7 +118,7 @@ public class ArcServiceImpl extends IService {
                     members = new LinkedList<ArcGeoResource>();
                     String[] typenames = ds.getTypeNames();
                     if (typenames != null)
-                        for( int i = 0; i < typenames.length; i++ ) {
+                        for (int i = 0; i < typenames.length; i++) {
                             members.add(new ArcGeoResource(this, typenames[i]));
                         }
                 }
@@ -117,39 +127,41 @@ public class ArcServiceImpl extends IService {
         return members;
     }
 
+    @Override
+    public IServiceArcSDEInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (IServiceArcSDEInfo) super.getInfo(monitor);
+    }
     /*
      * @see net.refractions.udig.catalog.IService#getInfo(org.eclipse.core.runtime.IProgressMonitor)
      */
-    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+    protected IServiceArcSDEInfo createInfo(IProgressMonitor monitor) throws IOException {
         getDS(monitor); // load ds
-        if (info == null && ds != null) {
-            synchronized (ds) {
-                if (info == null) {
-                    info = new IServiceArcSDEInfo(ds);
-                }
-            }
-            IResolveDelta delta = new ResolveDelta(this, IResolveDelta.Kind.CHANGED);
-            ((CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog())
-                    .fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
+        if (ds == null) {
+            return null; // no information if we cannot connect
         }
-        return info;
+        synchronized (ds) {
+            return new IServiceArcSDEInfo(ds);
+            
+        }
     }
+
     /*
      * @see net.refractions.udig.catalog.IService#getConnectionParams()
      */
     public Map<String, Serializable> getConnectionParams() {
         return params;
     }
-    
+
     /**
-     * This method will lazily connect to ArcSDE making use of the connection parameters.   
-     *
+     * This method will lazily connect to ArcSDE making use of the connection parameters.
+     * 
      * @param monitor
      * @return
      * @throws IOException
      */
     DataStore getDS(IProgressMonitor monitor) throws IOException {
-        if( monitor == null ) monitor = new NullProgressMonitor();
+        if (monitor == null)
+            monitor = new NullProgressMonitor();
         if (ds == null) {
             synchronized (ArcSDEDataStoreFactory.class) {
                 // please copy a better example from WFS
@@ -169,29 +181,32 @@ public class ArcServiceImpl extends IService {
         return ds;
     }
 
-    private ArcSDEDataStore connect( IProgressMonitor monitor) throws IOException {
-        if( monitor == null ) monitor = new NullProgressMonitor();
-        
-        ArcSDEDataStoreFactory dsf = new ArcSDEDataStoreFactory();        
+    private ArcSDEDataStore connect(IProgressMonitor monitor) throws IOException {
+        if (monitor == null)
+            monitor = new NullProgressMonitor();
+
+        ArcSDEDataStoreFactory dsf = new ArcSDEDataStoreFactory();
         if (!dsf.canProcess(params)) {
             msg = new DataSourceException("Cannot connect to ArcSDE");
             return null;
         }
-        return (ArcSDEDataStore) dsf.createDataStore(params);                    
+        return (ArcSDEDataStore) dsf.createDataStore(params);
     }
-    
+
     /*
      * @see net.refractions.udig.catalog.IResolve#getStatus()
      */
     public Status getStatus() {
         return msg != null ? Status.BROKEN : ds == null ? Status.NOTCONNECTED : Status.CONNECTED;
     }
+
     /*
      * @see net.refractions.udig.catalog.IResolve#getMessage()
      */
     public Throwable getMessage() {
         return msg;
     }
+
     /*
      * @see net.refractions.udig.catalog.IResolve#getIdentifier()
      */
@@ -201,7 +216,7 @@ public class ArcServiceImpl extends IService {
 
     private class IServiceArcSDEInfo extends IServiceInfo {
 
-        IServiceArcSDEInfo( DataStore resource ) {
+        IServiceArcSDEInfo(DataStore resource) {
             super();
             String[] tns = null;
             try {
@@ -212,15 +227,15 @@ public class ArcServiceImpl extends IService {
             }
             keywords = new String[tns.length + 1];
             System.arraycopy(tns, 0, keywords, 1, tns.length);
-            keywords[0] = "postgis"; //$NON-NLS-1$
+            keywords[0] = "ArcSDE"; //$NON-NLS-1$
 
             try {
-                schema = new URI("jdbc://arcsde/gml"); //$NON-NLS-1$
+                schema = new URI("arcsde://geotools/gml"); //$NON-NLS-1$
             } catch (URISyntaxException e) {
                 ArcsdePlugin.log(null, e);
             }
             icon = AbstractUIPlugin.imageDescriptorFromPlugin(ArcsdePlugin.ID,
-            "icons/obj16/arcsde_obj.gif"); //$NON-NLS-1$
+                    "icons/obj16/arcsde_obj.gif"); //$NON-NLS-1$
         }
 
         public String getDescription() {
@@ -231,8 +246,8 @@ public class ArcServiceImpl extends IService {
             try {
                 return getIdentifier().toURI();
             } catch (URISyntaxException e) {
-                // This would be bad 
-                throw (RuntimeException) new RuntimeException( ).initCause( e );
+                // This would be bad
+                throw (RuntimeException) new RuntimeException().initCause(e);
             }
         }
 

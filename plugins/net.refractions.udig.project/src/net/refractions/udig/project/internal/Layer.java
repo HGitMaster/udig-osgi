@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolveChangeListener;
 import net.refractions.udig.core.IBlockingAdaptable;
@@ -493,4 +494,5 @@ public interface Layer
      * @see #getMaxScaleDenominator()
      */
     public void setMaxScaleDenominator( double value );
+
 }

@@ -18,11 +18,14 @@ package net.refractions.udig.project.ui.internal.actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import net.refractions.udig.core.Pair;
+import net.refractions.udig.core.filter.AdaptingFilter;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.command.MapCommand;
@@ -32,6 +35,7 @@ import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.internal.ProjectElement;
 import net.refractions.udig.project.internal.ProjectPlugin;
+import net.refractions.udig.project.internal.commands.edit.DeleteManyFeaturesCommand;
 import net.refractions.udig.project.preferences.PreferenceConstants;
 import net.refractions.udig.project.ui.ApplicationGIS;
 import net.refractions.udig.project.ui.UDIGGenericAction;
@@ -51,6 +55,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -64,13 +69,6 @@ import org.opengis.feature.simple.SimpleFeature;
  * @since 0.3
  */
 public class Delete extends UDIGGenericAction {
-
-    /**
-     * Indicates where the user should be queried
-     */
-    private boolean headless = false;
-
-    private boolean deleteAssumption = getDoDelete();
 
     /**
      * Indicates whether to run the commands synchronously or not.
@@ -95,7 +93,7 @@ public class Delete extends UDIGGenericAction {
      * @see net.refractions.udig.project.ui.UDIGGenericAction#operate(net.refractions.udig.project.internal.Layer[])
      */
     @Override
-    protected void operate( Layer[] layers ) {
+    protected void operate( Layer[] layers, Object c ) {
 
         if (layers != null && layers.length > 0) {
             /*
@@ -139,42 +137,77 @@ public class Delete extends UDIGGenericAction {
     /**
      * @see net.refractions.udig.project.ui.UDIGGenericAction#operate(net.refractions.udig.project.IProjectElement)
      */
-    protected void operate( ProjectElement element ) {
+    @SuppressWarnings("unchecked")
+    protected void operate( ProjectElement element, Object context ) {
         if (element == null)
             return;
-        boolean deleteFiles;
-        int returnCode;
-        if (headless) {
-            deleteFiles = deleteAssumption;
-            returnCode = Window.OK;
-        } else {
+        Pair<Boolean, Integer> pair = (Pair<Boolean, Integer>) context;
+        boolean deleteFiles = pair.left();
+        int returnCode = pair.right();
+        doDelete(element, deleteFiles, returnCode);
+    }
 
-            MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(Display
-                    .getCurrent().getActiveShell(), Messages.Delete_delete, Messages.Delete_delete
-                    + " \"" //$NON-NLS-1$
-                    + element.getName() + "\"?", //$NON-NLS-1$
-                    Messages.Delete_filesystem, getDoDelete(), null, null);
-            // note: we will do our own preference store persistence, since the built in one is
-            // backwards
-            deleteFiles = dialog.getToggleState();
-            returnCode = dialog.getReturnCode();
+    @Override
+    protected Object showErrorMessage( int size, ProjectElement element ) {
+        String deleteOne = Messages.Delete_deleteElement;
+        String name = element.getName();
+        String deleteMany = Messages.Delete_deleteMultipleElements;
+        return dialog(size, deleteOne, name, deleteMany);
+    }
+
+    @Override
+    protected Object showErrorMessage( int size, Project element ) {
+        String deleteOne = Messages.Delete_deleteProject;
+        String name = element.getName();
+        String deleteMany = Messages.Delete_deleteMultipleProjects;
+        return dialog(size, deleteOne, name, deleteMany);
+    }
+
+    private Object dialog( int size, String deleteOne, String name, String deleteMany ) {
+        String message;
+        if (size == 1) {
+            message = MessageFormat.format(deleteOne, name);
+        } else {
+            message = MessageFormat.format(deleteMany, size);
+        }
+
+        MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(Display
+                .getCurrent().getActiveShell(), Messages.Delete_delete, message,
+                Messages.Delete_filesystem, getDoDelete(), null, null);
+        // note: we will do our own preference store persistence, since the built in one is
+        // backwards
+        boolean deleteFiles = dialog.getToggleState();
+        int returnCode = dialog.getReturnCode();
+        if (returnCode == 0) {
             if (deleteFiles != getDoDelete()) {
                 setDoDelete(deleteFiles);
             }
+            return Pair.create(deleteFiles, returnCode);
+        } else {
+            return null;
         }
-        doDelete(element, deleteFiles, returnCode);
+    }
+
+    @Override
+    protected void operate( ILayer layer, AdaptingFilter filter, Object c ) {
+        layer.getMap().sendCommandASync(new DeleteManyFeaturesCommand(layer, filter));
     }
 
     protected final void doDelete( ProjectElement element, boolean deleteFiles, int returncode ) {
         if (returncode != Window.CANCEL) {
-            for( UDIGEditorInputDescriptor desc : ApplicationGIS
-                    .getEditorInputs(element) ) {
+            for( UDIGEditorInputDescriptor desc : ApplicationGIS.getEditorInputs(element) ) {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                         .getActivePage();
                 IEditorPart editor = page.findEditor(desc.createInput(element));
                 if (editor != null)
                     page.closeEditor(editor, false);
             }
+
+            List<ProjectElement> elements = element.getElements(ProjectElement.class);
+            for( ProjectElement projectElement : elements ) {
+                doDelete(projectElement, deleteFiles, returncode);
+            }
+
             Project projectInternal = element.getProjectInternal();
             if (projectInternal != null)
                 projectInternal.getElementsInternal().remove(element);
@@ -190,7 +223,7 @@ public class Delete extends UDIGGenericAction {
             }
             if (deleteFiles) {
                 try {
-                    if( resource==null ){
+                    if (resource == null) {
                         return;
                     }
                     String path = resource.getURI().toFileString();
@@ -220,31 +253,15 @@ public class Delete extends UDIGGenericAction {
     /**
      * @see net.refractions.udig.project.ui.UDIGGenericAction#operate(net.refractions.udig.project.Project)
      */
-    protected void operate( Project project ) {
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void operate( Project project, Object context ) {
         if (project == null)
             return;
-
-        boolean deleteProjectFiles;
-        int returnCode;
-        if (headless) {
-            deleteProjectFiles = deleteAssumption;
-            returnCode = Window.OK;
-        } else {
-
-            MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(Display
-                    .getCurrent().getActiveShell(), Messages.Delete_deleteProject,
-                    Messages.Delete_delete + " \"" //$NON-NLS-1$
-                            + project.getName() + "\"?", //$NON-NLS-1$
-                    Messages.Delete_filesystem, getDoDelete(), null, null);
-            // note: we will do our own preference store persistence, since the built in one is
-            // backwards
-            deleteProjectFiles = dialog.getToggleState();
-            returnCode = dialog.getReturnCode();
-            if (deleteProjectFiles != getDoDelete()) {
-                setDoDelete(deleteProjectFiles);
-            }
-        }
-        doDelete(project, deleteProjectFiles, returnCode);
+        Pair<Boolean, Integer> pair = (Pair<Boolean, Integer>) context;
+        boolean deleteFiles = pair.left();
+        int returnCode = pair.right();
+        doDelete(project, deleteFiles, returnCode);
     }
 
     protected final void doDelete( Project project, boolean deleteProjectFiles, int returncode ) {
@@ -261,15 +278,12 @@ public class Delete extends UDIGGenericAction {
 
             List<ProjectElement> toRemove = new ArrayList<ProjectElement>();
             toRemove.addAll(project.getElementsInternal());
-            boolean oldHeadless = headless;
             boolean oldrunSyn = runSync;
 
-            headless = true;
             this.runSync = true;
             for( ProjectElement element : toRemove ) {
-                operate(element);
+                doDelete(element, deleteProjectFiles, returncode);
             }
-            headless = oldHeadless;
             runSync = oldrunSyn;
 
             resource.setModified(false);
@@ -317,7 +331,8 @@ public class Delete extends UDIGGenericAction {
     /**
      * @see net.refractions.udig.project.ui.UDIGGenericAction#operate(org.geotools.feature.SimpleFeature)
      */
-    protected void operate( final SimpleFeature feature ) {
+    @Override
+    protected void operate( final SimpleFeature feature, Object c ) {
         IAdaptable adaptableFeature = null;
         if (feature instanceof IAdaptable) {
             adaptableFeature = (IAdaptable) feature;
@@ -342,13 +357,9 @@ public class Delete extends UDIGGenericAction {
             public void run() {
 
                 boolean result;
-                if (headless) {
-                    result = getDoDelete();
-                } else {
-                    result = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay()
-                            .getActiveShell(), Messages.DeleteFeature_confirmation_title,
-                            Messages.DeleteFeature_confirmation_text);
-                }
+                result = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay()
+                        .getActiveShell(), Messages.DeleteFeature_confirmation_title,
+                        Messages.DeleteFeature_confirmation_text);
 
                 if (result) {
                     UndoableMapCommand c = EditCommandFactory.getInstance().createDeleteFeature(
@@ -360,28 +371,6 @@ public class Delete extends UDIGGenericAction {
         command.setValid(false);
         pane.repaint();
 
-    }
-
-    /**
-     * Sets whether the methods should be ran headless or not. (IE whether the user should be
-     * asked).
-     * 
-     * @param headless whether to query user
-     */
-    public void setRunHeadless( boolean headless ) {
-        this.headless = headless;
-    }
-
-    /**
-     * Sets whether the methods should be ran headless or not. (IE whether the user should be
-     * asked).
-     * 
-     * @param headless whether to query user
-     * @param doDelete whether to delete the file if headless == true
-     */
-    public void setRunHeadless( boolean headless, boolean doDelete ) {
-        this.headless = headless;
-        this.deleteAssumption = doDelete;
     }
 
     /**

@@ -77,13 +77,13 @@ public interface Box extends Element {
     BoxPrinter getBoxPrinter();
     
 	/**
-	 * Sets the value of the '{@link net.refractions.udig.printing.model.Box#getBoxPrinter <em>Box Printer</em>}' attribute.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link net.refractions.udig.printing.model.Box#getBoxPrinter <em>Box Printer</em>}' attribute.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Box Printer</em>' attribute.
-	 * @see #getBoxPrinter()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>Box Printer</em>' attribute.
+     * @see #getBoxPrinter()
+     * @generated
+     */
     void setBoxPrinter(BoxPrinter value);
 
     /**
@@ -116,13 +116,13 @@ public interface Box extends Element {
     String getID();
 
 	/**
-	 * Sets the value of the '{@link net.refractions.udig.printing.model.Box#getID <em>ID</em>}' attribute.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link net.refractions.udig.printing.model.Box#getID <em>ID</em>}' attribute.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>ID</em>' attribute.
-	 * @see #getID()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>ID</em>' attribute.
+     * @see #getID()
+     * @generated
+     */
     void setID(String value);
     
 }

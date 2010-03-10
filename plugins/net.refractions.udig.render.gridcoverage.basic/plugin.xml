@@ -7,13 +7,24 @@
          name="BasicGridCoverageRenderer"
          point="net.refractions.udig.project.renderer">
       <renderer
-            class="net.refractions.udig.render.internal.gridcoverage.basic.BasicGridCoverageMetricsFactory">
+            class="net.refractions.udig.render.internal.gridcoverage.basic.GridCoverageReaderMetricsFactory"
+            id="reader"
+            name="Grid Coverage Reader Renderer">
          <description>
             %renderer.desc
          </description>
          %renderer.desc
       </renderer>
-   </extension>
+      <renderer
+            class="net.refractions.udig.render.internal.gridcoverage.basic.MemoryGridCoverageMetricsFactory"
+            id="memory"
+            name="Grid Coverage Memory Renderer">
+         <description>
+            %renderer.desc
+         </description>
+         %renderer.desc
+      </renderer>
+     </extension>
      <extension
            point="net.refractions.udig.project.ui.tool">
         <modalTool

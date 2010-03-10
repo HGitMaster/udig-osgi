@@ -68,4 +68,8 @@ public class ImageTemplate extends AbstractTemplate {
         return "Image Template"; //Should be internationalized!
     }
 
+    public String getAbbreviation() {
+        return getName();
+    }
+
 }

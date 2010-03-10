@@ -214,13 +214,15 @@ public class MosaicInfoPanel {
                         AbstractGridCoverage2DReader.class, null);
 
                 // get File
-                String locationAttributeName = imageReader.getLocationAttributeName();
+               
+                // Commented out as Simone has removed the API we were using                
+                String locationAttributeName = "location"; // imageReader.getLocationAttributeName();
                 Object attribute = f.getAttribute(locationAttributeName);
                 Literal eq = getFilterFactory().literal(attribute);
                 Filter filter = getFilterFactory().equals(
                         getFilterFactory().property(locationAttributeName), eq);
 
-                File file = imageReader.getImageFile(filter);
+                File file = null;//imageReader.getImageFile(filter);
                 // update file info
                 if (file == null) {
                     txtFileName.setText(Messages.MosaicInfoPanel_NoDataText);
@@ -239,6 +241,9 @@ public class MosaicInfoPanel {
                 // if possible update band information
                 this.currentBands = null;
                 this.currentColors = null;
+                
+                // Commented out as Simone has removed the API we were using             
+                /*
                 if (file != null && imageReader.hasBandColorAttributes()) {
                     grpBands.setVisible(true);
                     String bandAttribute = imageReader.getBandsAttributeName();
@@ -282,9 +287,11 @@ public class MosaicInfoPanel {
                     this.currentLayer = layer;
                     this.currentFeature = f;
                 } else {
+                */
                     // doesn't support band and color enhancements
                     grpBands.setVisible(false);
-                }
+                //}
+                
             } catch (Exception ex) {
                 RendererPlugin.log("Cannot update feature information", ex); //$NON-NLS-1$
             }
@@ -461,14 +468,17 @@ public class MosaicInfoPanel {
         }
         
         protected IStatus run( IProgressMonitor monitor ) {
-            
+            // Commented out as Simone has removed the API we were using            
+            String location = "location"; // this.imageReader.getLocationAttributeName();
             final Filter filter = getFilterFactory().equals(
-                    ff.property(this.imageReader.getLocationAttributeName()),
-                    ff.literal(this.feature.getAttribute(this.imageReader
-                            .getLocationAttributeName())));
+                    ff.property( location ),
+                    ff.literal(this.feature.getAttribute(location)));
 
-            //update values
-            imageReader.updateBandSelection(filter, bands, colors);
+            // update values
+            
+            // Commented out as Simone has removed the API we were using
+            
+            // imageReader.updateBandSelection(filter, bands, colors);
             //refresh gui
             layer.refresh(((Geometry) feature.getDefaultGeometry()).getEnvelopeInternal());
             //fire listeners

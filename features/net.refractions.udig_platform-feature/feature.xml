@@ -28,11 +28,7 @@
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.emf.edit.ui"/>
-      <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.eclipse.draw2d"/>
       <import plugin="org.eclipse.update.ui"/>
-      <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.apache.ant"/>
       <import plugin="org.apache.lucene"/>
@@ -40,8 +36,14 @@
       <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="org.eclipse.help.webapp"/>
-      <import plugin="org.eclipse.tomcat"/>
-      <import plugin="net.refractions.udig.catalog.oracle"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.xsd"/>
+      <import plugin="org.apache.log4j"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="net.refractions.udig.core" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="net.refractions.udig.project"/>
    </requires>
 
    <plugin
@@ -138,17 +140,10 @@
          id="net.refractions.udig.help"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.libs.db2"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="net.refractions.udig.libs.postgis"
+         id="net.refractions.udig.libs.db2"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
@@ -161,19 +156,6 @@
 
    <plugin
          id="net.refractions.udig.catalog.oracle"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.catalog.arcsde"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="net.refractions.udig.catalog.gml"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -203,13 +185,6 @@
          unpack="false"/>
 
    <plugin
-         id="net.refractions.udig.catalog.google2"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="net.refractions.udig.catalog.mysql"
          download-size="0"
          install-size="0"
@@ -217,7 +192,7 @@
          unpack="false"/>
 
    <plugin
-         id="net.refractions.udig.catalog.mif"
+         id="net.refractions.udig.catalog.arcsde"
          download-size="0"
          install-size="0"
          version="0.0.0"

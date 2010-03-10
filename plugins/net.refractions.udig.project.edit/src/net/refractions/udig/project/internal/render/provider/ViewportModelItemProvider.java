@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ViewportModelItemProvider.java 24145 2007-02-01 18:03:34Z jeichar $
+ * $Id: ViewportModelItemProvider.java 31424 2009-08-07 11:12:23Z aantonello $
  */
 package net.refractions.udig.project.internal.render.provider;
 
@@ -19,18 +19,19 @@ import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
+import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * This is the item provider adapter for a
- * {@link net.refractions.udig.project.internal.render.ViewportModel} object. <!-- begin-user-doc
+ * This is the item provider adapter for a {@link net.refractions.udig.project.internal.render.ViewportModel} object.
+ * <!-- begin-user-doc
  * --> <!-- end-user-doc -->
- * 
  * @generated
  */
 public class ViewportModelItemProvider extends ItemProviderAdapter
@@ -41,16 +42,9 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
             IItemLabelProvider,
             IItemPropertySource {
     /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public static final String copyright = "uDig - User Friendly Desktop Internet GIS client http://udig.refractions.net (C) 2004, Refractions Research Inc. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of the License. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details."; //$NON-NLS-1$
-
-    /**
-     * This constructs an instance from a factory and a notifier. <!-- begin-user-doc --> <!--
+     * This constructs an instance from a factory and a notifier.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @generated
      */
     public ViewportModelItemProvider( AdapterFactory adapterFactory ) {
@@ -77,9 +71,9 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
     }
 
     /**
-     * This adds a property descriptor for the CRS feature. <!-- begin-user-doc --> <!--
+     * This adds a property descriptor for the CRS feature.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @generated
      */
     protected void addCRSPropertyDescriptor( Object object ) {
@@ -90,14 +84,14 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
                         getString("_UI_ViewportModel_cRS_feature"), //$NON-NLS-1$
                         getString(
                                 "_UI_PropertyDescriptor_description", "_UI_ViewportModel_cRS_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        RenderPackage.eINSTANCE.getViewportModel_CRS(), true,
+                        RenderPackage.Literals.VIEWPORT_MODEL__CRS, true, false, false,
                         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
     }
 
     /**
-     * This adds a property descriptor for the Bounds feature. <!-- begin-user-doc --> <!--
+     * This adds a property descriptor for the Bounds feature.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @generated
      */
     protected void addBoundsPropertyDescriptor( Object object ) {
@@ -108,7 +102,7 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
                         getString("_UI_ViewportModel_bounds_feature"), //$NON-NLS-1$
                         getString(
                                 "_UI_PropertyDescriptor_description", "_UI_ViewportModel_bounds_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        RenderPackage.eINSTANCE.getViewportModel_Bounds(), true,
+                        RenderPackage.Literals.VIEWPORT_MODEL__BOUNDS, true, false, false,
                         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
     }
 
@@ -167,9 +161,9 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
     }
 
     /**
-     * This adds a property descriptor for the Aspect Ratio feature. <!-- begin-user-doc --> <!--
+     * This adds a property descriptor for the Aspect Ratio feature.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @generated
      */
     protected void addAspectRatioPropertyDescriptor( Object object ) {
@@ -180,14 +174,14 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
                         getString("_UI_ViewportModel_aspectRatio_feature"), //$NON-NLS-1$
                         getString(
                                 "_UI_PropertyDescriptor_description", "_UI_ViewportModel_aspectRatio_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        RenderPackage.eINSTANCE.getViewportModel_AspectRatio(), false,
+                        RenderPackage.Literals.VIEWPORT_MODEL__ASPECT_RATIO, false, false, false,
                         ItemPropertyDescriptor.REAL_VALUE_IMAGE, null, null));
     }
 
     /**
-     * This adds a property descriptor for the Pixel Size feature. <!-- begin-user-doc --> <!--
+     * This adds a property descriptor for the Pixel Size feature.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @generated
      */
     protected void addPixelSizePropertyDescriptor( Object object ) {
@@ -198,14 +192,14 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
                         getString("_UI_ViewportModel_pixelSize_feature"), //$NON-NLS-1$
                         getString(
                                 "_UI_PropertyDescriptor_description", "_UI_ViewportModel_pixelSize_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        RenderPackage.eINSTANCE.getViewportModel_PixelSize(), false,
+                        RenderPackage.Literals.VIEWPORT_MODEL__PIXEL_SIZE, false, false, false,
                         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
     }
 
     /**
-     * This adds a property descriptor for the Render Manager Internal feature. <!-- begin-user-doc
+     * This adds a property descriptor for the Render Manager Internal feature.
+     * <!-- begin-user-doc
      * --> <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected void addRenderManagerInternalPropertyDescriptor( Object object ) {
@@ -216,17 +210,108 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
                         getString("_UI_ViewportModel_renderManagerInternal_feature"), //$NON-NLS-1$
                         getString(
                                 "_UI_PropertyDescriptor_description", "_UI_ViewportModel_renderManagerInternal_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        RenderPackage.eINSTANCE.getViewportModel_RenderManagerInternal(), true,
-                        null, null, null));
+                        RenderPackage.Literals.VIEWPORT_MODEL__RENDER_MANAGER_INTERNAL, true,
+                        false, false, null, null, null));
     }
 
     /**
-     * This returns ViewportModel.gif. <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
+     * This adds a property descriptor for the Preferred Scale Denominators feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
+    protected void addPreferredScaleDenominatorsPropertyDescriptor( Object object ) {
+        itemPropertyDescriptors
+                .add(createItemPropertyDescriptor(
+                        ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                        getResourceLocator(),
+                        getString("_UI_ViewportModel_preferredScaleDenominators_feature"), //$NON-NLS-1$
+                        getString(
+                                "_UI_PropertyDescriptor_description", "_UI_ViewportModel_preferredScaleDenominators_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        RenderPackage.Literals.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS, true,
+                        false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Available Timesteps feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addAvailableTimestepsPropertyDescriptor( Object object ) {
+        itemPropertyDescriptors
+                .add(createItemPropertyDescriptor(
+                        ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                        getResourceLocator(),
+                        getString("_UI_ViewportModel_availableTimesteps_feature"), //$NON-NLS-1$
+                        getString(
+                                "_UI_PropertyDescriptor_description", "_UI_ViewportModel_availableTimesteps_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        RenderPackage.Literals.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS, true, false,
+                        false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Current Timestep feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addCurrentTimestepPropertyDescriptor( Object object ) {
+        itemPropertyDescriptors
+                .add(createItemPropertyDescriptor(
+                        ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                        getResourceLocator(),
+                        getString("_UI_ViewportModel_currentTimestep_feature"), //$NON-NLS-1$
+                        getString(
+                                "_UI_PropertyDescriptor_description", "_UI_ViewportModel_currentTimestep_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        RenderPackage.Literals.VIEWPORT_MODEL__CURRENT_TIMESTEP, true, false,
+                        false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Available Elevation feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addAvailableElevationPropertyDescriptor( Object object ) {
+        itemPropertyDescriptors
+                .add(createItemPropertyDescriptor(
+                        ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                        getResourceLocator(),
+                        getString("_UI_ViewportModel_availableElevation_feature"), //$NON-NLS-1$
+                        getString(
+                                "_UI_PropertyDescriptor_description", "_UI_ViewportModel_availableElevation_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        RenderPackage.Literals.VIEWPORT_MODEL__AVAILABLE_ELEVATION, true, false,
+                        false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Current Elevation feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addCurrentElevationPropertyDescriptor( Object object ) {
+        itemPropertyDescriptors
+                .add(createItemPropertyDescriptor(
+                        ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                        getResourceLocator(),
+                        getString("_UI_ViewportModel_currentElevation_feature"), //$NON-NLS-1$
+                        getString(
+                                "_UI_PropertyDescriptor_description", "_UI_ViewportModel_currentElevation_feature", "_UI_ViewportModel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        RenderPackage.Literals.VIEWPORT_MODEL__CURRENT_ELEVATION, true, false,
+                        false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This returns ViewportModel.gif.
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public Object getImage( Object object ) {
-        return getResourceLocator().getImage("full/obj16/ViewportModel"); //$NON-NLS-1$
+        return overlayImage(object, getResourceLocator().getImage("full/obj16/ViewportModel")); //$NON-NLS-1$
     }
 
     /**
@@ -244,9 +329,9 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
      * This handles model notifications by calling {@link #updateChildren} to update any cached
      * children and by creating a viewer notification, which it passes to {@link #fireNotifyChanged}.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
      * @generated
      */
+    @Override
     public void notifyChanged( Notification notification ) {
         updateChildren(notification);
 
@@ -258,6 +343,11 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
         case RenderPackage.VIEWPORT_MODEL__WIDTH:
         case RenderPackage.VIEWPORT_MODEL__ASPECT_RATIO:
         case RenderPackage.VIEWPORT_MODEL__PIXEL_SIZE:
+        case RenderPackage.VIEWPORT_MODEL__PREFERRED_SCALE_DENOMINATORS:
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_TIMESTEPS:
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_TIMESTEP:
+        case RenderPackage.VIEWPORT_MODEL__AVAILABLE_ELEVATION:
+        case RenderPackage.VIEWPORT_MODEL__CURRENT_ELEVATION:
             fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(),
                     false, true));
             return;
@@ -266,22 +356,12 @@ public class ViewportModelItemProvider extends ItemProviderAdapter
     }
 
     /**
-     * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-     * describing all of the children that can be created under this object. <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    protected void collectNewChildDescriptors( Collection newChildDescriptors, Object object ) {
-        super.collectNewChildDescriptors(newChildDescriptors, object);
-    }
-
-    /**
-     * Return the resource locator for this item provider's resources. <!-- begin-user-doc --> <!--
+     * Return the resource locator for this item provider's resources.
+     * <!-- begin-user-doc --> <!--
      * end-user-doc -->
-     * 
      * @generated
      */
+    @Override
     public ResourceLocator getResourceLocator() {
         return ProjectEditPlugin.INSTANCE;
     }

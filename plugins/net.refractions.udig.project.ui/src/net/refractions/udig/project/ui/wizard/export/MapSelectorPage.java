@@ -136,14 +136,14 @@ public class MapSelectorPage extends WizardPage {
         initializeViewer(listComp);
 
         Button add = new Button(listComp, SWT.PUSH);
-        add.setText("Add");
+        add.setText(Messages.MapSelectorPage_Add);
         GridData gridData = new GridData();
         gridData.horizontalAlignment = SWT.FILL;
         add.setLayoutData(gridData);
         add.addSelectionListener(new AddMapsSelectionListener(this));
 
         Button remove = new Button(listComp, SWT.PUSH);
-        remove.setText("Remove");
+        remove.setText(Messages.MapSelectorPage_Remove);
         gridData = new GridData();
         gridData.horizontalAlignment = SWT.FILL;
         remove.setLayoutData(gridData);        

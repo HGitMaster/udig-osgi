@@ -59,6 +59,10 @@ public class Messages extends NLS {
     public static String ConnectionFailurePage_selectChild;
     public static String ConnectionFailurePage_title;
     public static String ConnectionFailureState_name;
+    public static String ExportPage_Destination;
+    public static String ExportPage_Browse;
+    public static String ExportPage_ExportDir;
+    public static String ExportPage_ResourceList;
     public static String ReprojectingFeatureCollection_transformationError;
     public static String ReshapeOperation_2;
     public static String ReshapeOperation_3;
@@ -81,6 +85,7 @@ public class Messages extends NLS {
 	public static String WorkflowWizardDialog_importTask ;
 	public static String WorkflowWizard_noStates         ;
 	public static String WorkflowWizard_noPage           ;
+	public static String WorkflowWizard_PageTransitionError;
 	public static String Workflow_busy ;
 	//public static String SearchView_wait          ;
 	public static String SearchView_title         ;

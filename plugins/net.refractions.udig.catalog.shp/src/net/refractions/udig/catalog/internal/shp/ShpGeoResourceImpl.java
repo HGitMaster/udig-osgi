@@ -28,6 +28,7 @@ import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IService;
+import net.refractions.udig.catalog.URLUtils;
 import net.refractions.udig.catalog.util.GeotoolsResourceInfoAdapter;
 import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
 import net.refractions.udig.ui.graphics.Glyph;
@@ -73,30 +74,9 @@ public class ShpGeoResourceImpl extends IGeoResource {
         try {
             identifier= new URL(parent.getIdentifier().toString()+"#"+typename); //$NON-NLS-1$
             id = new ID( parent.getID(), typename );
-            if( !identifier.equals( id.toURL() )){
-                System.out.println( id + "!= "+identifier );
-            }
         } catch (MalformedURLException e) {
             identifier= parent.getIdentifier();
         }
-        try {
-            final  FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = featureSource(new NullProgressMonitor());
-            info = new GeotoolsResourceInfoAdapter(featureSource.getInfo()){
-                @Override
-                public ImageDescriptor getImageDescriptor() {
-                    return icon=Glyph.icon(featureSource.getSchema());
-                }
-                
-                @Override
-                public Icon getIcon() {
-                    return AWTSWTImageUtils.imageDescriptor2awtIcon(getImageDescriptor());
-                }
-            };
-        } catch (IOException e) {
-            // shouldn't happen if it does... well fine lets blow up.
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
-        }
-
     }
     
     public URL getIdentifier() {
@@ -169,7 +149,8 @@ public class ShpGeoResourceImpl extends IGeoResource {
 
     public Style style( IProgressMonitor monitor ) {
         URL url = parent.getIdentifier();
-        String shp = url.getFile();
+        File file = URLUtils.urlToFile(url);
+        String shp = file.getAbsolutePath();
 
         StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(GeoTools.getDefaultHints());
 
@@ -235,7 +216,11 @@ public class ShpGeoResourceImpl extends IGeoResource {
                 adaptee.isAssignableFrom(Style.class)) ||
                 super.canResolve(adaptee);
     }
-    protected IGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
-        return info;
+    @Override
+    public ShpGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (ShpGeoResourceInfo) super.getInfo(monitor);
+    }
+    protected ShpGeoResourceInfo createInfo(IProgressMonitor monitor) throws IOException{
+        return new ShpGeoResourceInfo(this);
     }
 }

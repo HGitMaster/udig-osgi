@@ -1,11 +1,13 @@
 /**
- * <copyright></copyright> $Id: LayerImpl.java 30965 2008-11-25 01:29:51Z hbullen $
+ * <copyright></copyright> $Id: LayerImpl.java 31411 2009-08-02 14:44:05Z jgarnett $
  */
 package net.refractions.udig.project.internal.impl;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +22,7 @@ import java.util.concurrent.locks.Lock;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
@@ -30,6 +33,7 @@ import net.refractions.udig.catalog.IResolve.Status;
 import net.refractions.udig.catalog.IResolveDelta.Kind;
 import net.refractions.udig.catalog.util.SearchIDDeltaVisitor;
 import net.refractions.udig.core.Pair;
+import net.refractions.udig.core.internal.CorePlugin;
 import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.ILayerListener;
@@ -88,6 +92,7 @@ import org.geotools.factory.GeoTools;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultEngineeringCRS;
 import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.geotools.util.Range;
 import org.opengis.feature.simple.SimpleFeature;
@@ -98,6 +103,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import com.sun.jndi.toolkit.url.UrlUtil;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
@@ -505,6 +511,44 @@ public class LayerImpl extends EObjectImpl implements Layer {
             eNotify(new ENotificationImpl(this, Notification.SET, ProjectPackage.LAYER__ID, oldID,
                     iD));
     }
+    private static final String DIVIDER = "@type@"; //$NON-NLS-1$
+    public void setResourceID( ID id ) {
+        String qualifier = id.getTypeQualifier();
+        String url = id.toURL().toString();
+        URL newid;
+
+        String spec = url;
+        if (qualifier != null) {
+            spec += DIVIDER + qualifier;
+        }
+
+        newid = CorePlugin.createSafeURL(spec);
+        setID(newid);
+    }
+
+    public ID getResourceID(){
+        if( getID()==null){
+            return null;
+        }
+        String rid = getID().toString();
+        String[] parts = rid.split(DIVIDER);
+        String qualifier = null;
+        if( parts.length==2){
+            qualifier = parts[1];
+        }
+        ID id;
+        if( parts[0].startsWith("file") ){ //$NON-NLS-1$
+            String[] fileParts = parts[0].split("#",2); //$NON-NLS-1$
+            File file = URLUtils.urlToFile(CorePlugin.createSafeURL(fileParts[0]));
+            URL url = CorePlugin.createSafeURL( parts[0]);
+            URI uri = CorePlugin.createSafeURI( parts[0]);
+            id=new ID(file.getPath()+"#"+fileParts[1], url, file, uri, qualifier); //$NON-NLS-1$
+        } else {
+            id = new ID(CorePlugin.createSafeURL(parts[0]));
+        }       
+        
+        return id;
+    }
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -562,7 +606,7 @@ public class LayerImpl extends EObjectImpl implements Layer {
         gettingResources.set(true);
         try {
 
-            final URL id = getID();
+            final ID id = getResourceID();
             if (id == null) {
                 return NULL;
             }
@@ -583,14 +627,20 @@ public class LayerImpl extends EObjectImpl implements Layer {
                 IRunnableWithProgress object = new IRunnableWithProgress(){
                     public void run( IProgressMonitor monitor ) throws InvocationTargetException {
                         try {
-                            List<IResolve> resources = connections.find(getID(), monitor);
+                            List<IResolve> resources = connections.find(id.toURL(), monitor);
                             for( IResolve resolve : resources ) {
                                 if (resolve.getStatus() == Status.BROKEN
                                         || resolve.getStatus() == Status.BROKEN)
                                     continue;
-                                if (resolve instanceof IGeoResource)
-                                    resourceList.add(new LayerResource(LayerImpl.this,
-                                            (IGeoResource) resolve));
+                                if (resolve instanceof IGeoResource) {
+                                    LayerResource resource = new LayerResource(LayerImpl.this,
+                                            (IGeoResource) resolve);
+                                    if (resolve.getID().equals(id)) {
+                                        resourceList.add(0, resource);
+                                    } else {
+                                        resourceList.add(resource);
+                                    }
+                                }
                             }
                         } catch (Exception e) {
                             throw new InvocationTargetException(e);
@@ -1937,11 +1987,12 @@ public class LayerImpl extends EObjectImpl implements Layer {
         }
 
         if (result != null && !result.isNull()) {
-            if (crs != null) {
+            DefaultEngineeringCRS generic2d = DefaultEngineeringCRS.GENERIC_2D;
+            if (crs != null && result.getCoordinateReferenceSystem() != generic2d) {
                 try {
                     result = result.transform(crs, true);
                 } catch (Exception fe) {
-                    ProjectPlugin.log("failure to transform layer bounds", fe);
+                    ProjectPlugin.log("failure to transform layer bounds", fe); //$NON-NLS-1$
                 }
             }
         } else {
@@ -2003,7 +2054,7 @@ public class LayerImpl extends EObjectImpl implements Layer {
             }
             String geom = getSchema().getGeometryDescriptor().getName().getLocalPart();
             Object bboxGeom = new GeometryFactory().toGeometry(bbox);
-            bboxFilter = factory.intersects(factory.literal(bboxGeom), factory.property(geom));
+            bboxFilter = factory.intersects(factory.property(geom), factory.literal(bboxGeom));
 
         } catch (Exception e) {
             ProjectPlugin.getPlugin().log(e);
@@ -2183,14 +2234,14 @@ public class LayerImpl extends EObjectImpl implements Layer {
         // Temporary solution while migrating to URI identifiers
         if (delta.getKind() == IResolveDelta.Kind.CHANGED && hit != null) {
 
-            URL affected = hit.getIdentifier();
-            URL id = getID();
+            ID affected = hit.getID();
+            ID id = getResourceID();
             if (id == null)
                 return;
 
             List<IGeoResource> resources = geoResources;
             for( IGeoResource resource : resources ) {
-                if (URLUtils.urlEquals(resource.getIdentifier(), affected, false)) {
+                if (affected.equals(resource.getID())) {
                     resetConnection(delta);
                     return;
                 }

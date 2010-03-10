@@ -43,7 +43,7 @@ public class InitMapCRS implements LayerInterceptor {
 	        }
 	        List<ILayer> layers = layer.getMapInternal().getMapLayers();
 	        //  If first layer or if the crs has been unchanged from the original CRS
-	        if( layers.size()>1&&crs!=ViewportModel.DEFAULT_CRS){
+	        if( layers.size()>1&&layer.getMapInternal().getViewportModelInternal().isSetCRS()){
 	            return;
 	        }
 	        

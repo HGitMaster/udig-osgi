@@ -95,7 +95,7 @@ public class SetProjection implements IOp {
 														.getIdentifier(),
 														params);
 										catalog.replace(
-												resolve.getIdentifier(),
+												resolve.getID(),
 												replacement);
 									}
 								}

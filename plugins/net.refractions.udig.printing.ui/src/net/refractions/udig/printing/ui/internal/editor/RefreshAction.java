@@ -39,7 +39,7 @@ public class RefreshAction implements IBoxEditAction {
     }
 
     public boolean isDone() {
-        return false;
+        return true;
     }
 
     public void perform() {

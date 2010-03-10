@@ -17,6 +17,7 @@ package net.refractions.udig.ui;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.filter.FilterAttributeExtractor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -210,14 +212,18 @@ class FeatureTableSelectionProvider implements ISelectionProvider {
 
                     FeatureTableContentProvider provider = (FeatureTableContentProvider) owner
                             .getViewer().getContentProvider();
+
                     final List<SimpleFeature> features = provider.features;
                     int i = 0;
-                    for( SimpleFeature feature : features ) {
-                        if (fids.contains(feature.getID())) {
-                            break;
+                    synchronized( provider.features ){
+                        for( SimpleFeature feature : features ) {
+                            if (fids.contains(feature.getID())) {
+                                break;
+                            }
+                            i++;
                         }
-                        i++;
                     }
+                    
                     updateMonitor(1);
 
                     final int index = i;
@@ -376,9 +382,12 @@ class FeatureTableSelectionProvider implements ISelectionProvider {
             } else {
                 DefaultQuery defaultQuery = new DefaultQuery(source.getSchema().getName().getLocalPart(),
                         filter, new String[0]);
+                // TODO: Remove this workaround in 2.6.1 (note this has no performance impact)
+                Set<String> required = (Set) filter.accept( new FilterAttributeExtractor(), null );                
+                defaultQuery.setPropertyNames( required.toArray(new String[0]) );
+                
                 // get features that are just fids no attributes
                 FeatureCollection<SimpleFeatureType, SimpleFeature>  features = source.getFeatures(defaultQuery);
-
                 long start=System.currentTimeMillis();
                 
                 FeatureIterator<SimpleFeature> featureIterator = features.features();

@@ -16,11 +16,14 @@ package net.refractions.udig.catalog.internal.ui.ops;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IService;
@@ -42,8 +45,7 @@ import org.eclipse.swt.widgets.Display;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
@@ -94,8 +96,8 @@ public class NewFeatureTypeOp implements IOp {
                     dialog[0] = new FeatureTypeEditorDialog(display
                             .getActiveShell(), new ValidateFeatureType(){
 
-                                public boolean validate( SimpleFeatureType featureBuilder ) {
-                                    return true;
+                                public String validate( SimpleFeatureType featureBuilder ) {
+                                    return null;
                                 }
                         
                     });
@@ -172,11 +174,15 @@ public class NewFeatureTypeOp implements IOp {
             s = s.substring(0, lastIndexOf == -1 ? s.length() : lastIndexOf + 1);
             file = new File(s + type.getName().getLocalPart() + ".shp"); //$NON-NLS-1$
         }
-        IndexedShapefileDataStoreFactory factory = new IndexedShapefileDataStoreFactory();
-        DataStore ds = factory.createDataStore(file.toURL());
+        ShapefileDataStoreFactory factory = new ShapefileDataStoreFactory();
+        Map<String, Serializable> params = new HashMap<String, Serializable>();
+        params.put(ShapefileDataStoreFactory.URLP.key, file.toURI().toURL());
+        params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, true);
+        
+        DataStore ds = factory.createDataStore(params);
         ds.createSchema(type);
         List<IService> service = CatalogPlugin.getDefault().getServiceFactory().createService(
-                file.toURL());
+                file.toURI().toURL());
         for( IService service2 : service ) {
             try {
                 if (service2.resolve(DataStore.class, monitor) instanceof ShapefileDataStore)

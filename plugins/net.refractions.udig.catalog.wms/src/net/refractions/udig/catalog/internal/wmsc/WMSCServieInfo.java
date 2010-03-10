@@ -14,6 +14,8 @@
  */
 package net.refractions.udig.catalog.internal.wmsc;
 
+import java.io.IOException;
+
 import net.refractions.udig.catalog.IServiceInfo;
 
 import org.geotools.data.ows.Service;
@@ -28,7 +30,12 @@ public class WMSCServieInfo extends IServiceInfo {
     
     public WMSCServieInfo(WMSCServiceImpl service ){
 //        this.title = service.getIdentifier().toString();
-        Service capservice = service.getWMSC().getCapabilities().getService();
+        Service capservice;
+        try {
+            capservice = service.getWMSC().getCapabilities().getService();
+        } catch (IOException e) {
+            capservice = null; // no connection no info?
+        }
         if (capservice != null){
             this.title = capservice.getName();
             this._abstract = capservice.get_abstract();

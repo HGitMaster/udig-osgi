@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ModelItemProviderAdapterFactory.java 29108 2008-02-06 17:56:38Z jeichar $
+ * $Id: ModelItemProviderAdapterFactory.java 31340 2009-07-16 07:56:25Z aantonello $
  */
 package net.refractions.udig.printing.model.provider;
 
@@ -57,7 +57,7 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
-    protected Collection supportedTypes = new ArrayList();
+    protected Collection<Object> supportedTypes = new ArrayList<Object>();
 
     /**
      * This constructs an instance.
@@ -70,16 +70,8 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
         supportedTypes.add(IStructuredItemContentProvider.class);
         supportedTypes.add(ITreeItemContentProvider.class);
         supportedTypes.add(IItemLabelProvider.class);
-        supportedTypes.add(IItemPropertySource.class);		
+        supportedTypes.add(IItemPropertySource.class);
     }
-
-    /**
-     * This keeps track of the one adapter used for all {@link net.refractions.udig.printing.model.Box} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected BoxItemProvider boxItemProvider;
 
     /**
      * This creates an adapter for a {@link net.refractions.udig.printing.model.Box}.
@@ -87,21 +79,10 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public Adapter createBoxAdapter() {
-        if (boxItemProvider == null) {
-            boxItemProvider = new BoxItemProvider(this);
-        }
-
-        return boxItemProvider;
+        return new BoxItemProvider(this);
     }
-
-    /**
-     * This keeps track of the one adapter used for all {@link net.refractions.udig.printing.model.Connection} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConnectionItemProvider connectionItemProvider;
 
     /**
      * This creates an adapter for a {@link net.refractions.udig.printing.model.Connection}.
@@ -109,21 +90,10 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public Adapter createConnectionAdapter() {
-        if (connectionItemProvider == null) {
-            connectionItemProvider = new ConnectionItemProvider(this);
-        }
-
-        return connectionItemProvider;
+        return new ConnectionItemProvider(this);
     }
-
-    /**
-     * This keeps track of the one adapter used for all {@link net.refractions.udig.printing.model.Element} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ElementItemProvider elementItemProvider;
 
     /**
      * This creates an adapter for a {@link net.refractions.udig.printing.model.Element}.
@@ -131,21 +101,10 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public Adapter createElementAdapter() {
-        if (elementItemProvider == null) {
-            elementItemProvider = new ElementItemProvider(this);
-        }
-
-        return elementItemProvider;
+        return new ElementItemProvider(this);
     }
-
-    /**
-     * This keeps track of the one adapter used for all {@link net.refractions.udig.printing.model.Page} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected PageItemProvider pageItemProvider;
 
     /**
      * This creates an adapter for a {@link net.refractions.udig.printing.model.Page}.
@@ -153,12 +112,9 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public Adapter createPageAdapter() {
-        if (pageItemProvider == null) {
-            pageItemProvider = new PageItemProvider(this);
-        }
-
-        return pageItemProvider;
+        return new PageItemProvider(this);
     }
 
     /**
@@ -186,6 +142,7 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public boolean isFactoryForType(Object type) {
         return supportedTypes.contains(type) || super.isFactoryForType(type);
     }
@@ -196,6 +153,7 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public Adapter adapt(Notifier notifier, Object type) {
         return super.adapt(notifier, this);
     }
@@ -205,10 +163,11 @@ public class ModelItemProviderAdapterFactory extends ModelAdapterFactory impleme
      * <!-- end-user-doc -->
      * @generated
      */
+    @Override
     public Object adapt(Object object, Object type) {
         if (isFactoryForType(type)) {
             Object adapter = super.adapt(object, type);
-            if (!(type instanceof Class) || (((Class)type).isInstance(adapter))) {
+            if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
                 return adapter;
             }
         }

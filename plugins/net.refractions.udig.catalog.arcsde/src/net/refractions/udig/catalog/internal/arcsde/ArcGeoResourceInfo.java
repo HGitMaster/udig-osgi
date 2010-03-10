@@ -25,6 +25,7 @@ import net.refractions.udig.ui.graphics.Glyph;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -38,27 +39,29 @@ class ArcGeoResourceInfo extends IGeoResourceInfo {
 
     /** ArcGeoResourceInfo resource field */
     private final ArcGeoResource resource;
+
     private SimpleFeatureType ft = null;
-    ArcGeoResourceInfo(ArcGeoResource arcGeoResource) throws IOException {
+
+    ArcGeoResourceInfo(ArcGeoResource arcGeoResource, DataStore dataStore) throws IOException {
         resource = arcGeoResource;
         ft = resource.service(new NullProgressMonitor()).getDS(null).getSchema(resource.typename);
 
         try {
-            FeatureSource<SimpleFeatureType, SimpleFeature> source = resource.service(new NullProgressMonitor()).getDS(null).getFeatureSource(resource.typename);
+            FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(resource.typename);
             bounds = new ReferencedEnvelope(source.getBounds(), getCRS());
             if (bounds == null) {
                 bounds = new ReferencedEnvelope(new Envelope(), source.getSchema()
                         .getCoordinateReferenceSystem());
-                FeatureIterator<SimpleFeature> iter=source.getFeatures().features();
-                try{
-                    while( iter.hasNext() ) {
+                FeatureIterator<SimpleFeature> iter = source.getFeatures().features();
+                try {
+                    while (iter.hasNext()) {
                         SimpleFeature element = iter.next();
                         if (bounds.isNull())
                             bounds.init(element.getBounds());
                         else
                             bounds.include(element.getBounds());
                     }
-                }finally{
+                } finally {
                     iter.close();
                 }
             }
@@ -69,13 +72,13 @@ class ArcGeoResourceInfo extends IGeoResourceInfo {
                     .log(
                             new org.eclipse.core.runtime.Status(
                                     IStatus.WARNING,
-                                    "net.refractions.udig.catalog", 0, Messages.ArcGeoResource_error_layer_bounds, e));   //$NON-NLS-1$
+                                    "net.refractions.udig.catalog", 0, Messages.ArcGeoResource_error_layer_bounds, e)); //$NON-NLS-1$
             bounds = new ReferencedEnvelope(new Envelope(), null);
         }
 
-        icon=Glyph.icon(ft);
-        keywords = new String[]{"postgis", //$NON-NLS-1$
-                ft.getName().getLocalPart(), ft.getName().getNamespaceURI()};
+        icon = Glyph.icon(ft);
+        keywords = new String[] { "postgis", //$NON-NLS-1$
+                ft.getName().getLocalPart(), ft.getName().getNamespaceURI() };
     }
 
     public CoordinateReferenceSystem getCRS() {
@@ -87,11 +90,11 @@ class ArcGeoResourceInfo extends IGeoResourceInfo {
     }
 
     public URI getSchema() {
-    	try {
-			return new URI( ft.getName().getNamespaceURI());
-		} catch (URISyntaxException e) {
-			return null;
-		}
+        try {
+            return new URI(ft.getName().getNamespaceURI());
+        } catch (URISyntaxException e) {
+            return null;
+        }
     }
 
     public String getTitle() {

@@ -54,7 +54,7 @@ public class ServiceParameterPersisterTest extends TestCase {
 		restorer.restore(preferences);
 
 		assertEquals( service.params.toString() , restorer.map.toString() );
-		assertTrue( URLUtils.urlEquals(service.url , restorer.url, false ) );
+		assertTrue( URLUtils.urlEquals(service.url , restorer.id.toURL(), false ) );
 	}
 	
 	public void testPersistURL() throws Exception {
@@ -83,16 +83,16 @@ public class ServiceParameterPersisterTest extends TestCase {
 	}
 	
 	class TestPersister extends ServiceParameterPersister{
-		URL url;
+		ID id;
 		Map<String, Serializable> map;
 
 		public TestPersister() {
 			super(CatalogPlugin.getDefault().getLocalCatalog(), CatalogPlugin.getDefault().getServiceFactory());
 		}
 		@Override
-		protected void locateService(URL url, Map<String, Serializable> map, Map<String,Serializable> properties) {
+		protected void locateService(ID url, Map<String, Serializable> map, Map<String,Serializable> properties) {
 
-			this.url = url;
+			this.id = url;
 			this.map=map;			
 		}
 	}

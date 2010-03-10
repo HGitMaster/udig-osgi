@@ -17,9 +17,13 @@
 package net.refractions.udig.catalog.ui;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IProcess;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IResolveChangeEvent;
@@ -27,6 +31,7 @@ import net.refractions.udig.catalog.IResolveChangeListener;
 import net.refractions.udig.catalog.IResolveFolder;
 import net.refractions.udig.catalog.ISearch;
 import net.refractions.udig.catalog.IService;
+import net.refractions.udig.catalog.IServiceInfo;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -82,15 +87,51 @@ public class ResolveLabelProviderSimple extends LabelProvider implements IResolv
         	try {
         	if(element instanceof IGeoResource) {
         		IGeoResource resource = (IGeoResource) element;
-        		String title = resource.getInfo(new NullProgressMonitor()).getTitle();
-        		IService service = resource.service(new NullProgressMonitor());
-        		service.getPersistentProperties().put(resource.getID() + "_title", title);
-        		return title;
+        		String title = resource.getTitle();
+        		if( title == null ){
+                    IGeoResourceInfo info = resource.getInfo(new NullProgressMonitor());
+                    title = info.getTitle();
+        		}
+        		ID id = resource.getID();
+        		if( title == null ){
+        		    // we are going to fake something here
+        		    String name = id.toBaseFile();
+        			if( name == null ){
+        		        name = id.toString();
+        			}
+        			if (name.lastIndexOf('.') != -1) {
+        			    name = name.substring(0,name.lastIndexOf(".")); //$NON-NLS-1$                        
+                    }
+        		    title = name.replace('_',' ');
+				}
+        		if( id.getTypeQualifier() != null ){
+        		    return title + "("+id.getTypeQualifier()+")";
+        		}
+        		else {
+        		    return title;
+        		}
         	} else if(element instanceof IService) {
         		IService service = (IService) element;
-        		String title = service.getInfo(new NullProgressMonitor()).getTitle();
-        		service.getPersistentProperties().put("title", title);
-        		return title;
+        		ID id = service.getID();
+        		
+        		String title = service.getTitle();
+        		if( title == null ){
+        		    IServiceInfo info = service.getInfo( new NullProgressMonitor() );
+        		    title = info.getTitle();    
+        		}
+        		if( title == null ){
+        		    // we are going to fake something here
+                    String name = id.toString();
+                    name = name.replace('_', ' ');
+                    name = name.replace("%20"," "); //$NON-NLS-1$ //$NON-NLS-2$
+                    return name;
+        		}
+        		if( id.getTypeQualifier() != null ){
+                    return title + "("+id.getTypeQualifier()+")";
+                }
+                else {
+                    return title;
+                }
         	} else if(element instanceof IProcess) {
         		IProcess proc = (IProcess) element;
         		return proc.getInfo(new NullProgressMonitor()).getTitle();

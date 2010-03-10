@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.ITransientResolve;
@@ -24,18 +25,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class MapGraphicService extends IService {
     public static String ID = "mapgraphic:///localhost/mapgraphic"; //$NON-NLS-1$
-    
+
     /** Dummy url for a MapGraphic */
     public final static URL SERVICE_URL;
+    public final static ID SERVICE_ID;
     static {
         URL tmp;
         try {
-            tmp = new URL(null, ID , CorePlugin.RELAXED_HANDLER);
+            tmp = new URL(null, ID, CorePlugin.RELAXED_HANDLER);
         } catch (MalformedURLException e) {
-            tmp=null;
+            tmp = null;
             e.printStackTrace();
         }
-        SERVICE_URL=tmp;
+        SERVICE_URL = tmp;
+        SERVICE_ID = new ID(SERVICE_URL);
     }
 
     /** MapGraphic resource children * */
@@ -50,7 +53,7 @@ public class MapGraphicService extends IService {
 
     /*
      * @see net.refractions.udig.catalog.IService#resolve(java.lang.Class,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
@@ -58,8 +61,8 @@ public class MapGraphicService extends IService {
             monitor = new NullProgressMonitor();
 
         if (adaptee == null) {
-            throw new NullPointerException("No adaptor specified" ); //$NON-NLS-1$
-        }        
+            throw new NullPointerException("No adaptor specified"); //$NON-NLS-1$
+        }
         if (adaptee.isAssignableFrom(MapGraphicFactory.class)) {
             return adaptee.cast(MapGraphicFactory.getInstance());
         }
@@ -68,13 +71,15 @@ public class MapGraphicService extends IService {
         }
         return super.resolve(adaptee, monitor);
     }
+
     @Override
-	protected
-    synchronized IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null){
-            info = new MapGraphicServiceInfo();
-        }
-        return info;
+    public MapGraphicServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (MapGraphicServiceInfo) super.getInfo(monitor);
+    }
+    @Override
+    protected synchronized MapGraphicServiceInfo createInfo( IProgressMonitor monitor )
+            throws IOException {
+        return new MapGraphicServiceInfo();
     }
     /*
      * @see net.refractions.udig.catalog.IService#members(org.eclipse.core.runtime.IProgressMonitor)
@@ -148,12 +153,12 @@ public class MapGraphicService extends IService {
          */
         @Override
         public String getTitle() {
-            return Messages.MapGraphicService_title; 
+            return Messages.MapGraphicService_title;
         }
 
         @Override
         public String getDescription() {
-            return Messages.MapGraphicService_description; 
+            return Messages.MapGraphicService_description;
         }
     }
 }

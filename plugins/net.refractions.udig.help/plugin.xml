@@ -13,30 +13,14 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            extradir="html"
             file="toc.xml"
             primary="true">
       </toc>
       <toc
-            extradir="html"
-            file="tocconcepts.xml">
+            extradir=""
+            file="livetoc.xml"
+            primary="true">
       </toc>
-      <toc
-            extradir="html"
-            file="tocgettingstarted.xml">
-      </toc>
-      <toc
-            extradir="html"
-            file="tocreference.xml">
-      </toc>
-      <toc
-            extradir="html"
-            file="toctasks.xml">
-      </toc>
-      <toc
-            primary="false"
-            file="tocfaq.xml"
-            extradir="html"/>
    </extension>
 
 </plugin>

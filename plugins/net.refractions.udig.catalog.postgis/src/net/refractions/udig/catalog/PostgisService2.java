@@ -14,12 +14,13 @@
  */
 package net.refractions.udig.catalog;
 
-import static org.geotools.data.postgis.PostgisDataStoreFactory.DATABASE;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.HOST;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.PASSWD;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.PORT;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.SCHEMA;
-import static org.geotools.data.postgis.PostgisDataStoreFactory.USER;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.PORT;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.SCHEMA;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.LOOSEBBOX;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DATABASE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.HOST;
+import static org.geotools.jdbc.JDBCDataStoreFactory.PASSWD;
+import static org.geotools.jdbc.JDBCDataStoreFactory.USER;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -41,11 +42,10 @@ import net.refractions.udig.ui.UDIGDisplaySafeLock;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.geotools.data.postgis.PostgisDataStoreFactory;
 
 /**
  * A postgis service that represents the database. Its children are "folders" that each resolve to a
- * PostGISDatastore.  Each folder has georesources
+ * PostGISDatastore. Each folder has georesources
  * 
  * @author jesse
  * @since 1.1.0
@@ -64,7 +64,7 @@ public class PostgisService2 extends IService {
         this.params = new HashMap<String, Serializable>(map);
         status = Status.NOTCONNECTED;
     }
-    
+
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
@@ -74,30 +74,33 @@ public class PostgisService2 extends IService {
 
     @Override
     public Map<String, Serializable> getConnectionParams() {
-        if( members.isEmpty()){
+        if (members.isEmpty()) {
             return params;
         }
-        StringBuilder builder = new StringBuilder(); 
+        StringBuilder builder = new StringBuilder();
         for( IResolve member : members ) {
-            if( builder.length()>0){
+            if (builder.length() > 0) {
                 builder.append(","); //$NON-NLS-1$
             }
-            
+
             PostgisSchemaFolder folder = (PostgisSchemaFolder) member;
-            
+
             builder.append(folder.getSchemaName());
         }
         params.put(SCHEMA.key, builder.toString());
-        
+
         // for wkt for a moment!
         // params.put( PostgisDataStoreFactory.WKBENABLED.key, Boolean.FALSE );
-        
-        params.put( PostgisDataStoreFactory.LOOSEBBOX.key, Boolean.TRUE );
+
+        params.put(LOOSEBBOX.key, Boolean.TRUE);
         return params;
     }
 
     @Override
-	protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+    public PostgisServiceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (PostgisServiceInfo) super.getInfo(monitor);
+    }
+    protected PostgisServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         // make sure members are loaded cause they're needed for info
         members(monitor);
         return new PostgisServiceInfo(this);
@@ -107,7 +110,7 @@ public class PostgisService2 extends IService {
     public List<PostgisGeoResource2> resources( IProgressMonitor monitor ) throws IOException {
         List<IResolve> resolves = members(monitor);
         List<PostgisGeoResource2> resources = new ArrayList<PostgisGeoResource2>();
-        
+
         for( IResolve resolve : resolves ) {
             List<IResolve> folderChildren = resolve.members(monitor);
             for( IResolve resolve2 : folderChildren ) {
@@ -126,7 +129,7 @@ public class PostgisService2 extends IService {
                         "looking up schemas", 1));
                 if (schemas == null) {
                     // couldn't look up schema so...
-                    String commaSeperated = (String) params.get(PostgisDataStoreFactory.SCHEMA.key);
+                    String commaSeperated = (String) params.get(SCHEMA.key);
                     schemas = commaSeperated.split(","); //$NON-NLS-1$
                 }
                 createSchemaFolder(schemas);
@@ -138,18 +141,19 @@ public class PostgisService2 extends IService {
             lock.unlock();
         }
     }
-    
-    private String[] lookupSchemasInDB(IProgressMonitor monitor) {
+
+    private String[] lookupSchemasInDB( IProgressMonitor monitor ) {
         String host = (String) params.get(HOST.key);
         Integer port = (Integer) params.get(PORT.key);
         String database = (String) params.get(DATABASE.key);
         String user = (String) params.get(USER.key);
         String pass = (String) params.get(PASSWD.key);
-        
-        PostgisLookUpSchemaRunnable runnable = new PostgisLookUpSchemaRunnable(host, port, user, pass, database);
+
+        PostgisLookUpSchemaRunnable runnable = new PostgisLookUpSchemaRunnable(host, port, user,
+                pass, database);
         runnable.run(monitor);
-        
-        if (runnable.getError()!=null){
+
+        if (runnable.getError() != null) {
             message = new Exception(runnable.getError());
             status = Status.BROKEN;
             return null;
@@ -166,15 +170,15 @@ public class PostgisService2 extends IService {
 
         for( String string : schemas ) {
             String trimmed = string.trim();
-            if( trimmed.length()==0 ){
+            if (trimmed.length() == 0) {
                 continue;
             }
-            
+
             try {
                 members.add(new PostgisSchemaFolder(this, trimmed));
             } catch (IOException e) {
                 // bummer something went wrong
-                PostgisPlugin.log("Couldn't construct PostgisSchemaFolder for "+trimmed, e); //$NON-NLS-1$
+                PostgisPlugin.log("Couldn't construct PostgisSchemaFolder for " + trimmed, e); //$NON-NLS-1$
             }
         }
     }
@@ -190,7 +194,7 @@ public class PostgisService2 extends IService {
     public Status getStatus() {
         return status;
     }
-    
+
     @Override
     public void dispose( IProgressMonitor monitor ) {
         for( IResolve folder : members ) {

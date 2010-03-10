@@ -39,15 +39,24 @@ public class SetLayerNameInterceptor implements LayerInterceptor {
         }
     }
 
+    /**
+     * Goes through some options for create a layer's default name.
+     * <ol>
+     * <li>info.getTitle() - long title; not the best but is at least human readable
+     * <li>info.getName() - internal name - not really considered human readable
+     *
+     * @param info
+     * @param layer
+     */
     private void nameLayer( IGeoResourceInfo info, Layer layer ) {
         String label = info.getTitle(); // may be empty?
-        if (label == null || label.trim().length() == 0) {
+        if( label == null || label.trim().length() == 0){
             label = info.getName(); // really should not be empty?
         }
-        if (label == null || label.trim().length() == 0) {
-            label = "newLayer"; // really should not be empty?
+        if( label == null || label.trim().length() == 0){
+            label = "newLayer";
         }
-        layer.setName(label); // XXX: Is this a user provided label?
+        layer.setName(label);
     }
 
 }

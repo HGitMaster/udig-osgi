@@ -14,6 +14,7 @@
  */
 package net.refractions.udig.printing.ui.internal.editor;
 
+import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 
 /**
@@ -38,5 +39,5 @@ public class PrintingScrollingGraphicalViewer extends ScrollingGraphicalViewer{
     public PageEditor getEditor() {
         return editor;
     }
-
+    
 }

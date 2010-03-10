@@ -174,7 +174,7 @@ public class StaticGISWidget extends Canvas {
             ReferencedEnvelope world = map2.getBounds(new NullProgressMonitor());
             DrawMapParameter toDraw = new DrawMapParameter(buffered.createGraphics(),
                     new Dimension(size.width, size.height), map2, new BoundsStrategy(world),
-                    dpi[0], SelectionStyle.IGNORE, monitor, true);
+                    dpi[0], SelectionStyle.IGNORE, monitor, true, false);
             ApplicationGIS.drawMap(toDraw);
         }
         getDisplay().syncExec(new Runnable(){

@@ -31,8 +31,6 @@ import net.refractions.udig.tools.edit.support.EditGeom;
 import net.refractions.udig.tools.edit.support.ShapeType;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.geotools.feature.FeatureIterator;
-import org.opengis.feature.simple.SimpleFeature;
 
 /**
  * This is a Deselection strategy that will write out all the changes that occurred and then set the
@@ -48,14 +46,6 @@ public class WriteModificationsStartEditingStrategy implements DeselectionStrate
     public WriteModificationsStartEditingStrategy( ShapeType typeToCreate ) {
         this.typeToCreate = typeToCreate;
     }
-
-    /**
-     * @deprecated Use {@link #run(IProgressMonitor,SelectionParameter,UndoableComposite)} instead
-     */
-    public void run( IProgressMonitor monitor, SelectionParameter parameters,
-            FeatureIterator<SimpleFeature> reader, UndoableComposite commands ) {
-                run(monitor, parameters, commands);
-            }
 
     public void run( IProgressMonitor monitor, SelectionParameter parameters,
             UndoableComposite commands ) {

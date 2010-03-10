@@ -36,11 +36,11 @@ public class MapDropAction extends CatalogImportDropAction {
         if ( data2.getClass().isArray() ){
             Object[] objects = ((Object[])data2);
             for( Object object : objects ) {
-                if( !canAccept(object) ){
-                    return false;
+                if( canAccept(object) ){
+                    return true;
                 }
             }
-                return true;
+            return false;
         }else {
             return canAccept(data2);
         }
@@ -98,7 +98,9 @@ public class MapDropAction extends CatalogImportDropAction {
             array=(Object[]) data2;
             for( int i = 0; i < array.length; i++ ) {
                 Object object = array[i];
-                seperateGeoResources(resources, otherData, object);
+                if(canAccept(object)){
+                	seperateGeoResources(resources, otherData, object);
+                }
             }
         }else{
             seperateGeoResources(resources, otherData, data2);

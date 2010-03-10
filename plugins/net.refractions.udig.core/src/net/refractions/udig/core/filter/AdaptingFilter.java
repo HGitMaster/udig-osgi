@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.ecql.ECQL;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -72,5 +74,9 @@ public class AdaptingFilter implements Filter, IAdaptable {
 
 	public boolean evaluate(Object object) {
 		return wrapped.evaluate(object);
+	}
+	@Override
+	public String toString() {
+	    return "Adapting:"+CQL.toCQL( wrapped );
 	}
 }

@@ -48,7 +48,7 @@ public class InsertVertexTool extends AbstractEditTool {
     @Override
     protected void initActivators( Set<Activator> activators ) {
         DrawType type = DrawGeomsActivator.DrawType.POLYGON;
-        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultActivators(type);
+        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultEditActivators(type);
         activators.addAll(defaults);
     }
 

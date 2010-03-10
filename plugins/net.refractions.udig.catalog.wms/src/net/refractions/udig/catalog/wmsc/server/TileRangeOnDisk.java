@@ -42,25 +42,43 @@ public class TileRangeOnDisk extends AbstractTileRange {
 	public TileRangeOnDisk(TiledWebMapServer server, TileSet tileset,
 			Envelope bounds, Map<String, Tile> tiles, TileWorkerQueue requestTileWorkQueue,
 			TileWorkerQueue writeTileWorkQueue) {
-		super(server, tileset, bounds, tiles, requestTileWorkQueue);
-		
-		if (writeTileWorkQueue == null) {
-			using_threadpools = false;
-			//this.writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
-		}
-		else {
-			this.writeTileWorkQueue = writeTileWorkQueue;
-		} 		
-		
-		// load the disk cache location from plugin preferences
-		String dir = CatalogPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_WMSCTILE_DISKDIR);
-		tileReadWriter = new TileImageReadWriter(server, dir);
-		
-		// the super's constructor will have built the list of tiles not loaded, so
-		// now remove any tiles that we can find already on disk from before
-		checkDiskForLoadedTiles();
+		this(server, tileset, bounds, tiles, requestTileWorkQueue, writeTileWorkQueue,
+                new TileImageReadWriter(server, CatalogPlugin.getDefault().getPreferenceStore()
+                        .getString(PreferenceConstants.P_WMSCTILE_DISKDIR)));
 	}
-
+    
+    /**
+     * This constructor allows you to use your own
+     * implementation of TileImageReadWriter.
+     * 
+     * @param server
+     * @param tileset
+     * @param bounds
+     * @param tiles
+     * @param requestTileWorkQueue
+     * @param writeTileWorkQueue
+     * @param tileImageReadWriter
+     */
+    public TileRangeOnDisk(TiledWebMapServer server, TileSet tileset,
+            Envelope bounds, Map<String, Tile> tiles, TileWorkerQueue requestTileWorkQueue,
+            TileWorkerQueue writeTileWorkQueue, TileImageReadWriter tileImageReadWriter) {
+        super(server, tileset, bounds, tiles, requestTileWorkQueue);
+        
+        if (writeTileWorkQueue == null) {
+            using_threadpools = false;
+            //this.writeTileWorkQueue = new TileWorkerQueue(TileWorkerQueue.defaultWorkingQueueSize);
+        }
+        else {
+            this.writeTileWorkQueue = writeTileWorkQueue;
+        }       
+                
+        tileReadWriter = tileImageReadWriter;
+        
+        // the super's constructor will have built the list of tiles not loaded, so
+        // now remove any tiles that we can find already on disk from before
+        checkDiskForLoadedTiles();
+    }
+    
 	/**
 	 * Check the disk for any tiles that have not yet been loaded, load them, and
 	 * remove them from the not-loaded list

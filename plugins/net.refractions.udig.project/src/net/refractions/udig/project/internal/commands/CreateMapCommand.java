@@ -55,14 +55,21 @@ public class CreateMapCommand extends AbstractCommand implements UndoableMapComm
         if (name == null) {
             if (resources.size() > 0) {
                 IGeoResource resource = resources.get(0);
-
-                IGeoResourceInfo info = resource.getInfo(monitor);
-                if (info != null) {
-                    name = info.getTitle();
-                    if (name == null)
-                        name = info.getName();
+                String title = resource.getTitle();
+                if( title == null || title.trim().length() == 0 ){
+                    IGeoResourceInfo info = resource.getInfo(monitor);
+                    if (info != null) {
+                        title = info.getTitle();
+                    }
                 }
+                if (title != null && !title.contains("(") ){
+                    name = title;
+                }
+                if( name == null ){
+                    name = resource.getID().toBaseFile();
+                }                
             }
+            
             if (name == null) {
                 name = Messages.CreateMapCommand_defaultname; 
             }

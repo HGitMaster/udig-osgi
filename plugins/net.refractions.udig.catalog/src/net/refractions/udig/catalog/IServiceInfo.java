@@ -87,6 +87,21 @@ public class IServiceInfo {
     public String getTitle() {
         return title;
     }
+    
+
+    /**
+     * Returns the an abbreviated title, may be empty or null if unsupported.
+     * <p>
+     * Note this is always metadata, and is in user terms.
+     * </p>
+     * 
+     * @return title, may be empty, null if unsupported.
+     */
+    public String getShortTitle() {
+        return getTitle();
+    }
+    
+    
 
     /**
      * Returns the service keywords. Maps to the Dublin Core Subject element.

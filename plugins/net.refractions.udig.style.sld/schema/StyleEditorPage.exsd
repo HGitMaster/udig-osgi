@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="net.refractions.udig.style.sld.editor">
+<schema targetNamespace="net.refractions.udig.style.sld.editor" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="net.refractions.udig.style.sld.editor" id="StyleEditorPage" name="%StyleEditor.name"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          An extension point for Style Layer Desriptor (SLD) style content.
       </documentation>
@@ -12,12 +12,15 @@
 
    <element name="extension">
       <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
          <documentation>
             An extension point for adding ui components used to edit a component of an SLD.
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
+         <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="StyleEditorPage"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -39,15 +42,22 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="StyleEditorPage">
+      <annotation>
+         <documentation>
+            Declare a Page to be added to the Style Editor dialog; the user can only work with one page at a time so be sure to make each page &quot;complete&quot;.  Examples of Pages are Theme editing; Choosing a Named Style for a WMS and so on.
+
+Pages should completly delegate their state to the layer (ie the style blackboard). Please feel free to directly attack the style blackboard as you are working with a copy. The Style Editor Dialog will refresh the layer with the real settings when the user presses OK.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -61,9 +71,9 @@
                <documentation>
                   A human readable label used to identify the sld extension in the ui. For example, &quot;Line&quot;, &quot;Point&quot;, etc.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -71,9 +81,9 @@
                <documentation>
                   A subclass of SLDEditorPage to instantiate
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="net.refractions.udig.style.sld.editor.StyleEditorPage"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="contentType" type="string" use="required">
@@ -81,9 +91,9 @@
                <documentation>
                   The class of style component of interest (SLD, Style, FeatureTypeStyle, Rule, Symbolizer, etc).
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="java.lang.Class"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -98,56 +108,40 @@
                <documentation>
                   if defined, the selected layer must resolve this class in order for this page to be displayed
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="java.lang.Class"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         1.0
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter API information here.]
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         
+         (c) 2005 Refractions Research
       </documentation>
    </annotation>
 

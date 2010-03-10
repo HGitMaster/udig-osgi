@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="uDig SDK" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" version="1.2" useFeatures="true">
+<product name="uDig SDK" uid="1.2Trunk" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" version="1.2" useFeatures="true" includeLaunchers="false">
 
-   <aboutInfo>
-      <image path="/net.refractions.udig/icons/about.gif"/>
-      <text>
-         %verboseAboutText
-      </text>
-   </aboutInfo>
 
    <configIni use="default" path="/net.refractions.udig-feature/config.files/configuration/config.ini">
    </configIni>
@@ -18,7 +12,7 @@
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.awt.headless=true</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/net.refractions.udig/icons/icon16.gif" i32="/net.refractions.udig/icons/icon32.gif" i64="/net.refractions.udig/icons/icon64.gif" i128="/net.refractions.udig/icons/icon128.gif"/>
+   <windowImages/>
 
    <splash
       location="net.refractions.udig"
@@ -40,11 +34,13 @@
    <vm>
    </vm>
 
+
    <plugins>
    </plugins>
 
    <features>
       <feature id="net.refractions.udig_sdk" version="1.2.0"/>
    </features>
+
 
 </product>

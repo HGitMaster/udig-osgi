@@ -1,12 +1,24 @@
 package net.refractions.udig.internal.ui;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.PropertyResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -37,6 +49,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.Preferences;
+
+import com.google.common.base.Function;
 
 /**
  * The UiPlugin helps integrate uDig with your custom RCP application.
@@ -355,6 +369,106 @@ public class UiPlugin extends AbstractUIPlugin  {
 
 
     /**
+     * Returns the max heap size in MB
+     */
+    public static int getMaxHeapSize() throws IOException {
+        final Pattern pattern = Pattern.compile("Xmx([0-9]+)([mMgGkKbB])");
+        final int[] heapS = new int[1];
+        processAppIni(true, new Function<String,String>(){
+
+            public String apply( String line ) {
+                if (line.matches(".*Xmx.*")) { //$NON-NLS-1$
+                    Matcher matcher = pattern.matcher(line);
+                    matcher.find();
+                    int num = Integer.parseInt(matcher.group(1));
+                    String unit = matcher.group(2).toLowerCase();
+                    if( unit.equals("m") ){ //$NON-NLS-1$
+                        heapS[0] = num*1;
+                    }else if( unit.equals("g") ){ //$NON-NLS-1$
+                        heapS[0] = num*1024;
+                    }else if( unit.equals("k") ){ //$NON-NLS-1$
+                        heapS[0] = num/1024;
+                    }else if( unit.equals("b") ){ //$NON-NLS-1$
+                        heapS[0] = num/(1024*1024);
+                    }
+                }
+                return line;
+            }
+            
+        });
+        
+        return heapS[0];
+    }
+    
+    /**
+     * Sets the max heap size in the configuration file so on a restart the maximum size will be changed
+     *
+     * @param maxHeadSize new heapsize. 1024M 1G are legal options
+     * @return the configFile to use for setting configuration information
+     */
+    public static void setMaxHeapSize( final String maxHeadSize ) throws FileNotFoundException, IOException {
+        processAppIni(false, new Function<String,String>(){
+
+            public String apply( String line ) {
+                if (line.matches(".*Xmx([0-9]+)([mMgGkKbB]).*")) { //$NON-NLS-1$
+                    line = line.replaceFirst("Xmx([0-9]+)([mMgGkKbB])", "Xmx" + maxHeadSize + "M"); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                return line;
+            }
+            
+        });
+        
+    }
+
+
+    private static void processAppIni( boolean readOnly, Function<String, String> func )
+            throws IOException {
+        URL installLoc = Platform.getInstallLocation().getURL();
+        File appFolder = new File(installLoc.getFile());
+        String[] list = appFolder.list();
+        String iniName = null;
+        for( String l : list ) {
+            if (l.endsWith(".ini")) { //$NON-NLS-1$
+                iniName = l;
+            }
+        }
+        File iniFile = new File(appFolder, iniName);
+        if (iniFile.exists()) {
+            BufferedReader bR = null;
+            BufferedWriter bW = null;
+            try {
+                Collection<String>  updatedLines = new ArrayList<String>(); 
+                bR = new BufferedReader(new FileReader(iniFile));
+                String line = null;
+                while( (line = bR.readLine()) != null ) {
+                    String newLine = func.apply(line);
+                    updatedLines.add(newLine);
+                    updatedLines.add("\n"); //$NON-NLS-1$
+                }
+                if (!readOnly) {
+                    bW = new BufferedWriter(new FileWriter(iniFile));
+                    for( String string : updatedLines ) {
+                        bW.write(string);
+                    }
+                }
+            } finally {
+                try {
+                    if (bR != null)
+                        bR.close();
+                } finally {
+                    if (bW != null)
+                        bW.close();
+                }
+            }
+        }
+
+        if(!readOnly){
+            UiPlugin.log("udig.ini changed:" + iniFile.getAbsolutePath(), null);
+        }
+    }
+
+
+    /**
      * Looks a configuration object using the preference store and extension 
      * points to locate the class and instantiate it. If there is a problem,
      * null is returned and the caller is expect to supply a default value of
@@ -495,4 +609,5 @@ public class UiPlugin extends AbstractUIPlugin  {
     public static Preferences getUserPreferences() {
         return new InstanceScope().getNode(ID);
     }
+
 }

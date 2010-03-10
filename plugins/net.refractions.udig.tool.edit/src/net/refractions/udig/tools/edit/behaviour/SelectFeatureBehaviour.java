@@ -52,6 +52,7 @@ import net.refractions.udig.tools.edit.support.ShapeType;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.spatial.Intersects;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -121,7 +122,7 @@ public class SelectFeatureBehaviour implements EventBehaviour {
      * 
      * @param acceptableClasses used to determine if a feature can be selected. If point is not in
      *        array then point geometries can not be selected.
-     * @param class2 one of the constants in {@link FilterType} that start with GEOMETRY_
+     * @param class2 Something like Intersects.class
      */
     @SuppressWarnings("unchecked")
     public SelectFeatureBehaviour( Class<? extends Geometry>[] acceptableClasses, Class<? extends Filter> class2 ) {

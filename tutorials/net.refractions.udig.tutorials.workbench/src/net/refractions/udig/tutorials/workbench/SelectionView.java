@@ -198,7 +198,7 @@ public class SelectionView extends ViewPart {
         label.setLayoutData( new GridData(SWT.RIGHT,SWT.TOP,true,false ) );
         label.setText("Selection:");
         
-        text = new Text(parent, SWT.DEFAULT | SWT.READ_ONLY );
+        text = new Text(parent, SWT.DEFAULT | SWT.READ_ONLY | SWT.WRAP );
         text.setTextLimit(70);
         text.setLayoutData( new GridData(SWT.LEFT,SWT.TOP,true,true, 3,1 ) );
         

@@ -24,7 +24,7 @@
 				<mapper type="glob" from="*-sources.jar" to="*src.zip" />
 			</chainedmapper>
 		</copy>
-		<antcall target="fix" />
+		<!--antcall target="fix" /-->
 	</target>
 
 	<!-- ================================= 
@@ -36,18 +36,17 @@
 	</target>
 
 	<target name="fix">
-		<move file="${libs_src_dir}/geoapi-2.2-SNAPSHOTsrc.zip" tofile="${libs_src_dir}/geoapi-2.2-PREVIOUSsrc.zip" verbose="true" failonerror="no" />
+		<move file="${libs_src_dir}/geoapi-2.3-SNAPSHOTsrc.zip" tofile="${libs_src_dir}/geoapi-2.2-PREVIOUSsrc.zip" verbose="true" failonerror="no" />
 		<move todir="${libs_src_dir}" verbose="true" failonerror="no">
 			<fileset dir="${libs_src_dir}">
-				<include name="geoapi-2.2-*.zip" />
+				<include name="geoapi-2.3-*.zip" />
 			</fileset>
-			<mapper type="regexp" from="^.*$" to="geoapi-2\.2-SNAPSHOTsrc\.zip" />
+			<mapper type="regexp" from="^.*$" to="geoapi-2\.3-SNAPSHOTsrc\.zip" />
 		</move>
 	</target>
 
 	<!-- Used by headless build please make sure this does everthing from clean to download and fix etc.. -->
 	<target name="full-build" depends="clean, download.src" description="clean and build">
 	</target>
-
 
 </project>

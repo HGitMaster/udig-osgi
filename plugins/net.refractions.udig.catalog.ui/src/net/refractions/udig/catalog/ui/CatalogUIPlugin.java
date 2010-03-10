@@ -7,6 +7,7 @@ import java.util.List;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.ICatalogInfo;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
@@ -37,9 +38,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.osgi.framework.BundleContext;
-import org.picocontainer.Disposable;
-import org.picocontainer.MutablePicoContainer;
-import org.picocontainer.Startable;
+//import org.picocontainer.Disposable;
+//import org.picocontainer.MutablePicoContainer;
+//import org.picocontainer.Startable;
 
 /**
  * Lifecycle & Resource management for RegistryUI.
@@ -90,7 +91,7 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
 
     /** Managed Images instance */
     private Images images = new Images();
-    private volatile static MutablePicoContainer pluginContainer;
+    //private volatile static MutablePicoContainer pluginContainer;
 
     /**
      * The constructor.
@@ -264,53 +265,6 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Gets the container for catalog ui.
-     * <p>
-     * This is used by the IResourceLabel decorator to pass titles, and images between threads.
-     * </p>
-     * 
-     * @return Container assocaited with the catalog ui
-     */
-    public static MutablePicoContainer getContainer() {
-        if (pluginContainer == null) {
-            synchronized (CatalogUIPlugin.class) {
-                // check so see that you were not queued for double creation
-                if (pluginContainer == null) {
-                    // This line does it ... careful to only call it once!
-                    pluginContainer = CorePlugin.getBlackBoard().makeChildContainer();
-                }
-            }
-        }
-        return pluginContainer;
-    }
-    /**
-     * Gets a container associated with this handle.
-     * <p>
-     * As with any container, the contents should not be assumned, etc...
-     * </p>
-     * 
-     * @param handle
-     * @return Container associated with display of resolve
-     */
-    public static MutablePicoContainer getContainer( IResolve handle ) {
-        Object instance = getContainer().getComponentInstance(handle);
-        if (instance != null) {
-            HandleLifecycle holder = (HandleLifecycle) instance;
-            return holder.getContainer();
-        }
-        synchronized (handle) {
-            instance = getContainer().getComponentInstance(handle);
-            if (instance != null) {
-                HandleLifecycle holder = (HandleLifecycle) instance;
-                return holder.getContainer();
-            }
-            HandleLifecycle holder = new HandleLifecycle(handle);
-            getContainer().registerComponentInstance(handle, holder);
-            return holder.getContainer();
-        }
-    }
-
-    /**
      * Quick and dirty image generated based on ID, this image is shared and should not be disposed.
      * <p>
      * This method does not block and can be safely used to by a LabelProvider. This method does not
@@ -333,51 +287,14 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
         }else if (resolve instanceof IGeoResource) {
             IGeoResource resource = (IGeoResource) resolve;
             boolean isFeature = resource.canResolve(FeatureSource.class);
-            URL url = resource.getIdentifier();
-            if (Identifier.isGraphic(url)) {
-                return images.get(ISharedImages.GRAPHIC_OBJ);
-            }
-            if (Identifier.isWMS(url)) {
-                return images.get(ISharedImages.GRID_OBJ);
-            }
-            if (Identifier.isGraphic(url)) {
-                return images.get(ISharedImages.GRAPHIC_OBJ);
-            }
-            if (Identifier.isMemory(url)) {
-                return images.get(ISharedImages.MEMORY_OBJ);
-            }
-            Image image = isFeature ? images.get(ISharedImages.FEATURE_OBJ) : images
-                    .get(ISharedImages.GRID_OBJ);
-            return image;
+            String iconId = iconInternalResource( resource.getID(), isFeature );
+            return images.get( iconId );
         } else if (resolve instanceof IService) {
             IService service = (IService) resolve;
             boolean isFeature = service.canResolve(DataStore.class);
-            URL url = service.getIdentifier();
-
-            if (Identifier.isFile(url)) {
-                Image image = isFeature ? images.get(ISharedImages.FEATURE_FILE_OBJ) : images
-                        .get(ISharedImages.GRID_FILE_OBJ);
-                return image;
-            }
-            if (Identifier.isGraphic(url)) {
-                return images.get(ISharedImages.MAP_GRAPHICS_OBJ);
-            }
-            if (Identifier.isWMS(url)) {
-                return images.get(ISharedImages.WMS_OBJ);
-            }
-            if (Identifier.isWFS(url)) {
-                return images.get(ISharedImages.WFS_OBJ);
-            }
-            if (Identifier.isJDBC(url)) {
-                return images.get(ISharedImages.DATABASE_OBJ);
-            }
-            if (Identifier.isGraphic(url)) {
-                return images.get(ISharedImages.MAP_GRAPHICS_OBJ);
-            }
-            if (isFeature) {
-                return images.get(ISharedImages.DATASTORE_OBJ);
-            }
-            return images.get(ISharedImages.SERVER_OBJ);
+            
+            String iconId = iconInternalService( service.getID(), isFeature );
+            return images.get( iconId );
         } else if (resolve instanceof ICatalog) {
             return images.get(ISharedImages.CATALOG_OBJ);
         }
@@ -385,7 +302,6 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
     }
 
     public static ImageDescriptor icon( IResolve resolve ) throws IOException {
-
         return icon(resolve, new NullProgressMonitor());
     }
 
@@ -393,6 +309,7 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
      * Create icon for provided resource, this will block!
      * 
      * @param resource
+     * @param monitor used to track progress in fetching an appropriate icon
      * @return ImageDescriptor for resource.
      * @throws IOException
      */
@@ -401,8 +318,9 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
 
         if( resolve.canResolve(ImageDescriptor.class) ){
             ImageDescriptor descriptor = resolve.resolve(ImageDescriptor.class, monitor);
-            if( descriptor!=null)
+            if( descriptor!=null){
                 return descriptor;
+            }
         }
         if (resolve instanceof IGeoResource) {
             ImageDescriptor icon = icon((IGeoResource) resolve, monitor);
@@ -418,7 +336,10 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
 
         if (resolve instanceof IService) {
             ImageDescriptor icon = icon((IService) resolve, monitor);
-            return icon != null ? icon : Images.getDescriptor(ISharedImages.SERVER_OBJ);
+            if( icon != null ){
+            	return icon;
+            }
+            return Images.getDescriptor(ISharedImages.SERVER_OBJ);
         }
 
         if (resolve instanceof IResolveFolder) {
@@ -443,24 +364,50 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
      */
     private static ImageDescriptor icon( IGeoResource resource, IProgressMonitor monitor )
             throws IOException {
-
-        IGeoResourceInfo info;
+    	if( monitor == null ) monitor = new NullProgressMonitor();
+    	
+    	// check for dynamic icon first!
+    	if( resource.canResolve( ImageDescriptor.class )){
+    		ImageDescriptor icon = resource.resolve( ImageDescriptor.class, monitor);
+    		if( icon != null ) return icon;
+    	}
+    	// check for static icon next
         try{
+            IGeoResourceInfo info;
             info = resource.resolve(IGeoResourceInfo.class, monitor);            
+            
+            ImageDescriptor icon = info.getImageDescriptor();
+            if( icon != null ) return icon;            
         }catch(Throwable t){
             log("Error obtaining info", t); //$NON-NLS-1$
             return null;
-        }   
-        
-        if (info == null)
-            return null;
-
-        try{
-            return info.getImageDescriptor();       
-        }catch(Throwable t){
-            log("Error obtaining icon for IGeoResource", t); //$NON-NLS-1$
-            return null;
-        }   
+        }
+        // check for default icon last
+        boolean isFeature = resource.canResolve(FeatureSource.class);
+        String iconId = iconInternalResource( resource.getID(), isFeature );
+        return CatalogUIPlugin.getDefault().images.getImageDescriptor( iconId );
+    }
+    
+    /** Lookup default resource icon id */
+    private static String iconInternalResource( ID id, boolean isFeature ){
+    	if (Identifier.isGraphic(id.toURL())) {
+            return ISharedImages.GRAPHIC_OBJ;
+        }
+        if (Identifier.isWMS(id.toURL())) {
+            return ISharedImages.GRID_OBJ;
+        }
+        if (Identifier.isGraphic(id.toURL())) {
+            return ISharedImages.GRAPHIC_OBJ;
+        }
+        if (Identifier.isMemory(id.toURL())) {
+            return ISharedImages.MEMORY_OBJ;
+        }
+        if( isFeature ){
+        	return ISharedImages.FEATURE_OBJ;
+        }
+        else {
+        	return ISharedImages.GRID_OBJ;
+        }
     }
 
     /**
@@ -472,12 +419,15 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
     private static ImageDescriptor icon( IResolveFolder folder, IProgressMonitor monitor )
             throws IOException {
 
-        try{
-            return folder.getIcon(monitor);       
-        }catch(Throwable t){
-            log("Error obtaining icon for IResolveFolder", t); //$NON-NLS-1$
-            return null;
-        }   
+    	if( monitor == null ) monitor = new NullProgressMonitor();
+    	
+    	// check for dynamic icon first!
+    	if( folder.canResolve( ImageDescriptor.class )){
+    		ImageDescriptor icon = folder.resolve( ImageDescriptor.class, monitor);
+    		if( icon != null ) return icon;
+    	}
+        // check for default icon last
+        return CatalogUIPlugin.getDefault().images.getImageDescriptor( ISharedImages.FOLDER_OBJ );
     }
 
     
@@ -490,112 +440,58 @@ public class CatalogUIPlugin extends AbstractUIPlugin {
      */
     private static ImageDescriptor icon( IService service, IProgressMonitor monitor )
             throws IOException {
-
-        IServiceInfo info = service.getInfo(monitor);
-        if (info == null)
+    	if( monitor == null ) monitor = new NullProgressMonitor();
+    	
+    	// check for dynamic icon first!
+    	if( service.canResolve( ImageDescriptor.class )){
+    		ImageDescriptor icon = service.resolve( ImageDescriptor.class, monitor);
+    		if( icon != null ) return icon;
+    	}
+    	// check for static icon next
+        try{
+            IServiceInfo info;
+            info = service.resolve(IServiceInfo.class, monitor);            
+            
+            ImageDescriptor icon = info.getImageDescriptor();
+            if( icon != null ) return icon;            
+        }catch(Throwable t){
+            log("Error obtaining info", t); //$NON-NLS-1$
             return null;
-
-        return info.getImageDescriptor();
-    }
-}
-
-class HandleLifecycle implements Startable, Disposable {
-    HandleListener listener;
-    volatile MutablePicoContainer container;
-
-    HandleLifecycle( IResolve resolveHandle ) {
-        container = null; // until used by getContainer();
-        listener = new HandleListener(resolveHandle){
-            public void stop( IResolve handle ) {
-                HandleLifecycle.this.stop();
-            }
-            public void dispose() {
-                CatalogPlugin.removeListener(this);
-                HandleLifecycle.this.dispose();
-            }
-
-            public void start( IResolve handle ) {
-                HandleLifecycle.this.start();
-            }
-            public void refresh( IResolve handle ) {
-                // nop
-            }
-            /** Replace if easy */
-            public void replace( IResolve handle, IResolve newHandle ) {
-                if (newHandle != null) {
-                    setHandle(newHandle);
-                }
-                reset(handle, null);
-            }
-            /** Clear out if hard */
-            public void reset( IResolve handle, IResolveChangeEvent event ) {
-                HandleLifecycle.this.stop();
-                CatalogPlugin.removeListener(this);
-                HandleLifecycle.this.dispose();
-            }
-        };
-        CatalogPlugin.addListener(listener);
-    }
-
-    /**
-     * A container for collaboration, or null if handle is out of scope.
-     * 
-     * @return The container associated with handle
-     */
-    public MutablePicoContainer getContainer() {
-        IResolve resolve = listener.getHandle();
-        if (resolve == null)
-            return null;
-
-        if (container == null) {
-            synchronized (resolve) {
-                // check so see that you were not queued for double creation
-                if (container == null) {
-                    // This line does it ... careful to only call it once!
-                    container = makeChildContainer();
-                }
-            }
         }
-        return container;
-    }
-    /**
-     * Create container, must only be called once
-     * 
-     * @return created container
-     */
-    protected MutablePicoContainer makeChildContainer() {
-        if (container != null) {
-            throw new IllegalStateException(Messages.CatalogUIPlugin_childContainerException); 
-        }
-        return CatalogUIPlugin.getContainer().makeChildContainer();
-    }
-    /** We have just been created, lets listen to the catalog */
-    public void start() {
-        CatalogPlugin.addListener(listener);
-    }
-    /** We are no longer in use */
-    public void stop() {
-        if (listener != null) {
-            CatalogPlugin.removeListener(listener);
-            listener.dispose();
-            listener = null;
-        }
-        if (container != null) {
-            container.dispose();
-            container = null;
-        }
+        // check for default icon last
+        boolean isFeature = service.canResolve( DataStore.class );
+        String iconId = iconInternalService( service.getID(), isFeature );
+        return CatalogUIPlugin.getDefault().images.getImageDescriptor( iconId );
     }
 
-    /** Stop listening, fee references, and turn off the lights */
-    public void dispose() {
-        if (listener != null) {
-            CatalogPlugin.removeListener(listener);
-            listener.dispose();
-            listener = null;
+	private static String iconInternalService(ID id, boolean isFeature) {
+		URL url = id.toURL();
+		if (Identifier.isFile(url)) {
+			if( isFeature ){
+				return ISharedImages.FEATURE_FILE_OBJ;
+			}
+			else {
+				return ISharedImages.GRID_FILE_OBJ;
+			}
         }
-        if (container != null) {
-            container.dispose();
-            container = null;
+        if (Identifier.isGraphic(url)) {
+            return ISharedImages.MAP_GRAPHICS_OBJ;
         }
-    }
+        if (Identifier.isWMS(url)) {
+            return ISharedImages.WMS_OBJ;
+        }
+        if (Identifier.isWFS(url)) {
+            return ISharedImages.WFS_OBJ;
+        }
+        if (Identifier.isJDBC(url)) {
+            return ISharedImages.DATABASE_OBJ;
+        }
+        if (isFeature) {
+            return ISharedImages.DATASTORE_OBJ;
+        }
+        else {
+	        return ISharedImages.SERVER_OBJ;
+        }
+	}
+   
 }

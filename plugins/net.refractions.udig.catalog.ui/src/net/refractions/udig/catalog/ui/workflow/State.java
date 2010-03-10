@@ -22,6 +22,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A state in a workflow.  Provides behaviour and logic for the state.
+ * <p>
+ * A WorkflowWizardPage delegates workflow decisions to a State; we can
+ * actually go through the State's without user interaction during a
+ * DnD operation; and only pop open the correct WizardPage when 
+ * interaction is required.
  * 
  * @author jesse
  * @since 1.1.0
@@ -124,5 +129,13 @@ public abstract class State {
      */
     public State next() {
         return null;
+    }
+    
+    @Override
+    public String toString() {
+    	StringBuffer text = new StringBuffer();
+    	text.append("State:");
+    	text.append( getName() );
+    	return text.toString();
     }
 }

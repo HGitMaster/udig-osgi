@@ -83,7 +83,7 @@ public class CharsetChange implements IOp {
                             params.put(ShapefileDataStoreFactory.DBFCHARSET.key, newCharset.name());
                             
                             IService newService = extension.createService(service.getIdentifier(), params);
-                            CatalogPlugin.getDefault().getLocalCatalog().replace(service.getIdentifier(), newService);
+                            CatalogPlugin.getDefault().getLocalCatalog().replace(service.getID(), newService);
                         }
                     }
                     

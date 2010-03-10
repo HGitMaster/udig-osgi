@@ -126,10 +126,14 @@ public class ConnectionPageDecorator extends WorkflowWizardPage
          if (getState() instanceof EndConnectionState) {
              // set some context for the connection state
              EndConnectionState state = (EndConnectionState) getState();
-             state.setServices(page.getServices());
+             Collection<IService> services = page.getServices();
+			 state.setServices(services);
+			 
              if (page instanceof AbstractUDIGImportPage) {
                  AbstractUDIGImportPage importPage = (AbstractUDIGImportPage) page;
-                 state.setSelectedResources(importPage.getResourceIDs());
+                 Collection<URL> resourceIDs = importPage.getResourceIDs();
+                 
+				 state.setSelectedResources(resourceIDs);
              }
          }
          
@@ -202,8 +206,9 @@ public class ConnectionPageDecorator extends WorkflowWizardPage
                             page.setErrorMessage(message);
                         }
                     });
-                } else
+                } else {
                     page.setErrorMessage(message);
+                }
             }
         }
     }

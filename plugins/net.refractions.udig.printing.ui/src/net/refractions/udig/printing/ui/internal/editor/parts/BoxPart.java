@@ -144,6 +144,11 @@ public class BoxPart extends AbstractGraphicalEditPart implements NodeEditPart, 
         }
     }
 
+    @Override
+    public void setModel( Object model ) {
+        // TODO Auto-generated method stub
+        super.setModel(model);
+    }
     
 	protected List getModelSourceConnections() {
 		return ((Box) getModel()).getSourceConnections();
@@ -189,7 +194,8 @@ public class BoxPart extends AbstractGraphicalEditPart implements NodeEditPart, 
 
         List<BoxFactory> boxes = PrintingPlugin.getDefault().getBoxes();
         
-        BoxPrinter printer = ((Box) getModel()).getBoxPrinter();
+        Box model = (Box) getModel();
+        BoxPrinter printer = model.getBoxPrinter();
         String defaultActionID = null;
         for( BoxFactory boxFactory : boxes ) {
             if( boxFactory.getType() == printer.getClass() ){
@@ -269,4 +275,5 @@ public class BoxPart extends AbstractGraphicalEditPart implements NodeEditPart, 
     public BoxAction getDefaultAction() {
         return defaultAction;
     }
+    
 }

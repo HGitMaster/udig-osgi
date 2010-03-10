@@ -213,6 +213,7 @@ public class WMSTile implements Tile {
     	}
     	if (server == null || tileset == null) {
     		WmsPlugin.log("error, tile not setup with a server and/or tileset", null); //$NON-NLS-1$
+    		createErrorImage();
     		return false;
     	}
     	String baseUrl = server.buildBaseTileRequestURL();

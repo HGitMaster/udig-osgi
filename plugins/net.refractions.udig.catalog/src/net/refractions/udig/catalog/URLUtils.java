@@ -19,8 +19,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+
+import org.eclipse.core.runtime.Platform;
 
 import net.refractions.udig.core.internal.CorePlugin;
 
@@ -33,7 +37,7 @@ import net.refractions.udig.core.internal.CorePlugin;
 public class URLUtils {
 
     /**
-     * Primarily for testing the comparison of URLS. it is not a simple thing because different
+     * Primarily for testing the cOomparison of URLS. it is not a simple thing because different
      * platforms can sometimes create ones with a dangling / or with / vs \ some times file:/// or
      * file:/.
      * 
@@ -99,7 +103,8 @@ public class URLUtils {
         // 5) file:/Jesse relative path
         // 6) file://Jesse relative? 90% of the time
         // 7) file:foo relative to base url
-        string = string.replaceAll("/+", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+        if( string.startsWith("file:"))	
+        	string = string.replaceAll("/+", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return string;
     }
@@ -138,60 +143,90 @@ public class URLUtils {
      * </ul>
      * </p>
      * 
-     * @param reference the "from" file. The file that the relative path will start at. <b>MUST BE A
-     *        FILE</b>
-     * @param destination the URL to transform to a relative path
+     * @param reference the "from" file/directory. The file/directory that the 
+     *                  relative path will start at.  It MUST exist 
+     * @param destination the URL to transform to a relative path. 
      * @return the relative path from reference to destination
      */
-    public static URL toRelativePath( File reference, URL destination ) {
-        if (!destination.getProtocol().equalsIgnoreCase("file") //$NON-NLS-1$
-                || destination.getQuery() != null || destination.getRef() != null)
-            return destination;
+	public static URL toRelativePath(File reference, URL destination) {
+	    if(!reference.exists()){
+	        
+	    }
+		if (!destination.getProtocol().equalsIgnoreCase("file") //$NON-NLS-1$
+				|| destination.getQuery() != null
+				|| destination.getRef() != null)
+			return destination;
 
-        URL referenceURL = fileToURL(reference);
-        String from = urlToString(referenceURL, false).substring(5);
-        String to = urlToString(destination, false).substring(5);
+		try {
+			
+			File destinationFile = urlToFile(destination).getAbsoluteFile();
+			File destDir;
+			if(destinationFile.isFile()){
+                destDir = destinationFile.getParentFile();
+			}else{
+			    destDir = destinationFile;
+			}
+			
+			File absReference = reference.getAbsoluteFile();
+			if(absReference.isFile()){
+				absReference = absReference.getParentFile().getAbsoluteFile();
+			}
 
-        if (from.equals(to)){
-            try {
-                return new URL("file:/./"); //$NON-NLS-1$
-            } catch (MalformedURLException e1) {
-                throw new RuntimeException(e1);
-            }
+			if (destDir.equals(absReference)) {
+				if (destinationFile.isFile()) {
+					return new URL("file:/./" + destinationFile.getName());
+				} else {
+					return new URL("file:/./");
+				}
+			}
+
+			if (!destinationFile.getPath().startsWith(absReference.getPath())) {
+				return destination;
+			} else {
+				int length = absReference.getPath().length();
+				String frag = destinationFile.getPath().substring(length+1);
+				String dirPath = "file:/./" + frag.replaceAll("\\\\", "/");
+                return new URL(dirPath);
+			}
+		} catch (Exception e) {
+			return destination;
+		}
+	}
+
+    public static String getPrefix( File file ) {
+        if (!file.isAbsolute()) {
+            // only if C:\ or D:\ or / is in the path
+            return null;
         }
-            
-        int endOfMatch = 0;
-        int lastSlash = 0;
-        for( int i = 0; i < from.length(); i++ ) {
-            char fromChar = from.charAt(i);
-            char toChar = to.charAt(i);
-
-            endOfMatch = i;
-            if (fromChar != toChar) {
-                break;
-            }
-            if (fromChar == '/')
-                lastSlash = i;
-
-        }
-
-        if (endOfMatch == 0){
-            return destination;
-        }
-        String substring = from.substring(lastSlash + 1);
-        int slashes = substring.split("/").length - 1; //$NON-NLS-1$
-
-        StringBuilder result = new StringBuilder();
-
-        for( int i = 0; i < slashes; i++ ) {
-            result.append("../"); //$NON-NLS-1$
-        }
-
+        // this is the "correct" way that may be very slow
+        File compare;
         try {
-            return new URL("file:/" + result.toString() + to.substring(lastSlash + 1)); //$NON-NLS-1$
-        } catch (MalformedURLException e) {
-            return destination;
+            compare = file.getCanonicalFile();
+        } catch (IOException e) {
+            compare = file.getAbsoluteFile();
         }
+        while( compare.getParent() != null ) {
+            compare = compare.getParentFile();
+        }
+        String root = compare.getPath();
+        String platform = System.getProperty("os.name");
+        if (platform.toUpperCase().indexOf("WINDOWS") != -1) {
+            if (root.length() > 2 && root.charAt(1) == ':') {
+                // Example: C:\ or C:
+                return root.substring(0, 2);
+            }
+            if (root.startsWith("\\\\")) {
+                // Example: \\machine\share
+                return root;
+            }
+        } else if (platform.toUpperCase().indexOf("MAC") != -1) {
+            return null;
+        } else {
+            if (root.startsWith("/")) {
+                return "/";
+            }
+        }
+        return null;
     }
 
     /**
@@ -239,7 +274,7 @@ public class URLUtils {
         try {
             // check if it is a relative path
             File tmp = new File(base.getParentFile(), file.getPath());
-            //File tmp = new File(base.getParentFile(), substring);
+            // File tmp = new File(base.getParentFile(), substring);
             if (tmp.exists()) {
                 File absoluteFile = tmp.getCanonicalFile();
                 URL url2 = absoluteFile.toURI().toURL();
@@ -258,7 +293,7 @@ public class URLUtils {
 
             File canonicalFile = file.getCanonicalFile();
             return canonicalFile.toURI().toURL();
-            //return new URL("file:" + canonicalFile);
+            // return new URL("file:" + canonicalFile);
         } catch (IOException e) {
             return url;
         }
@@ -295,7 +330,7 @@ public class URLUtils {
             path2 = string.substring(standardPrefix.length());
             path3 = path2.replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (string.startsWith(simplePrefix)) {
-            path2 = string.substring(simplePrefix.length() - 1 );
+            path2 = string.substring(simplePrefix.length() - 1);
             path3 = path2.replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             String auth = url.getAuthority();
@@ -308,8 +343,8 @@ public class URLUtils {
         }
         return new File(path3);
     }
-    
-    public static URL fileToURL(File file){
+
+    public static URL fileToURL( File file ) {
         try {
             return file.toURI().toURL();
         } catch (MalformedURLException e) {
@@ -317,12 +352,12 @@ public class URLUtils {
                 return file.toURI().toURL();
             } catch (MalformedURLException e1) {
                 try {
-                    return new URL( "file:/"+file.getCanonicalPath().replace('\\', '/')); //$NON-NLS-1$
+                    return new URL("file:/" + file.getCanonicalPath().replace('\\', '/')); //$NON-NLS-1$
                 } catch (MalformedURLException e2) {
                     return null;
                 } catch (IOException e2) {
                     return null;
-                }                
+                }
             }
         }
     }

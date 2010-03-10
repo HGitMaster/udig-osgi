@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 /**
  * Iterates through all the points in an {@link EditGeom} starting with the shell
- * and then doing the holes in order
+ * and then doing the holes in order, .  
  * 
  * @author Jesse
  * @since 1.1.0

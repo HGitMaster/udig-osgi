@@ -215,7 +215,8 @@ public class StyleThemePage extends StyleEditorPage {
      * The Classifer contains "Summary" or "Histogram" information about the FeatureCollection and
      * is used as a basis for style generation.
      */
-    ExplicitClassifier customBreak = null;
+    //ExplicitClassifier customBreak = null;
+    Classifier customBreak = null;
     
     public StyleThemePage() {
         //create factories
@@ -1089,7 +1090,6 @@ public class StyleThemePage extends StyleEditorPage {
         }
 
         public void widgetSelected( SelectionEvent e ) {
-            System.out.println(e.getSource());
             updateToggleTooltip(id);
             updatePalettes();
         }
@@ -1209,17 +1209,17 @@ public class StyleThemePage extends StyleEditorPage {
         Runnable genDefault = new Runnable(){
             public void run() {
                 //generate the expression
-                Expression expr;
+                Expression expr = null;
                 Expression attr = ff.property(selectedAttributeType.getName());
+                
                 if (normalize != null) {
-                    Divide divide = ff.divide(attr, ff.property(normalize
-                            .getName()));
+                    Divide divide = ff.divide(attr, ff.property(normalize.getName()));
                     expr = divide;
                 } else {
                     expr = attr;
                 }
-                BrewerPalette pal = (BrewerPalette) ((StructuredSelection) paletteTable
-                        .getSelection()).getFirstElement();
+                
+                BrewerPalette pal = (BrewerPalette) ((StructuredSelection) paletteTable.getSelection()).getFirstElement();
                 String paletteName = pal.getName();
                 int numClasses = new Integer(getCombo(COMBO_CLASSES).getItem(getCombo(COMBO_CLASSES).getSelectionIndex())).intValue();
                 int[] suitability = pal.getPaletteSuitability().getSuitability(numClasses);
@@ -1273,6 +1273,7 @@ public class StyleThemePage extends StyleEditorPage {
                 //create the classification function, if necessary
                 if (classifierModified) {
                     //TODO: add other classifiers
+                    boolean createClassifier = true;
                     if (getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_uniques)) 
                     	function = new UniqueIntervalFunction();
                     else if (getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_equalInterval)) 
@@ -1281,11 +1282,13 @@ public class StyleThemePage extends StyleEditorPage {
                     	function = new QuantileFunction();
                     else if (getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_standardDeviation)) 
                     	function = new StandardDeviationFunction();
-                    else if (getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_custom)) 
+                    else if (getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_custom)){ 
                         classifier = customBreak;
-                    else {
+                        createClassifier = false;
+                    }else{ 
                         return;
                     }
+                    if (createClassifier){
                     ProgressListener cancelProgress = ((StyleEditorDialog) getContainer()).getProgressListener();
                     function.setProgressListener((org.geotools.util.ProgressListener) cancelProgress);
                     numClasses = new Integer(getCombo(COMBO_CLASSES).getText()).intValue();
@@ -1300,6 +1303,7 @@ public class StyleThemePage extends StyleEditorPage {
                     function.getParameters().set(0,expr); //set the expression last, since it causes the calculation
 //                    function.setExpression(expr);
                     classifier = (Classifier) function.evaluate( collection, Classifier.class );
+                    }
                 }
 
                 //generate the style
@@ -1459,7 +1463,7 @@ public class StyleThemePage extends StyleEditorPage {
                 Rule[] rule = FTSs[i].getRules();
                 for (int j = 0; j < rule.length; j++) {
                     Symbolizer[] symb = rule[j].getSymbolizers();
-                    Symbolizer[] newSymb = symb.clone();
+                    Symbolizer[] newSymb = (Symbolizer[]) symb.clone();
                     int deletedElements = 0;
                     for (int k = 0; k < symb.length; k++) {
                         if (symbs.contains(symb[k].getClass())) { //the Symbolizer class is a match

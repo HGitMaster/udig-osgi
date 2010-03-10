@@ -467,11 +467,11 @@ public class PrimitiveShape implements Iterable<Point>, Shape {
                 return transformInternal(pointCoordCalculator);
             } else {
 
-                return translate(AffineTransform.getTranslateInstance(pointCoordCalculator.toScreen
-                        .getTranslateX()
-                        - oldToScreen.getTranslateX(), pointCoordCalculator.toScreen
-                        .getTranslateY()
-                        - oldToScreen.getTranslateY()));
+                               //pan
+                return translate(AffineTransform.getTranslateInstance(
+                pointCoordCalculator.toScreen.getTranslateX()- oldToScreen.getTranslateX(), 
+                pointCoordCalculator.toScreen.getTranslateY()- oldToScreen.getTranslateY()),
+                pointCoordCalculator);
             }
         }
 
@@ -494,15 +494,15 @@ public class PrimitiveShape implements Iterable<Point>, Shape {
                     Coordinate coord = c.get(oldPoint);
 
                     Point newPoint = pointCoordCalculator.toPoint(coord);
-                    // So that all the vertices don't make a big mess look around point in a 3x3
-                    // radius
-                    // if another point is there add to that point.
-                    Point overLappingPoint;
-                    overLappingPoint = getEditBlackboard().overVertex(newPoint,
-                            PreferenceUtil.instance().getVertexRadius());
-
-                    if (overLappingPoint != null && getEditBlackboard().isCollapseVertices())
-                        newPoint = overLappingPoint;
+//                    // So that all the vertices don't make a big mess look around point in a 3x3
+//                    // radius
+//                    // if another point is there add to that point.
+//                    Point overLappingPoint;
+//                    overLappingPoint = getEditBlackboard().overVertex(newPoint,
+//                            PreferenceUtil.instance().getVertexRadius());
+//
+//                    if (overLappingPoint != null && getEditBlackboard().isCollapseVertices())
+//                        newPoint = overLappingPoint;
 
                     if (!newPoint.equals(oldPoint)) {
                         tmp = new PointCoordMap(newPoint);
@@ -560,7 +560,7 @@ public class PrimitiveShape implements Iterable<Point>, Shape {
             return oldPointToNew;
         }
 
-        private Map< ? extends Point, ? extends List<Point>> translate( AffineTransform oldToNew ) {
+        private Map< ? extends Point, ? extends List<Point>> translate( AffineTransform oldToNew, PointCoordCalculator pointCoordCalculator ) {
             List<PointCoordMap> oldPoints = points;
 
             HashMap<Point, List<Point>> oldPointToNew = new HashMap<Point, List<Point>>();
@@ -573,45 +573,63 @@ public class PrimitiveShape implements Iterable<Point>, Shape {
             int diffY = (int) oldToNew.getTranslateY();
             for( PointCoordMap map : oldPoints ) {
 
-                Point newPoint = Point.valueOf(map.point.getX() + diffX, map.point.getY() + diffY);
-                List<Point> pointMapping = oldPointToNew.get(map.point);
-                if (pointMapping == null) {
-                    pointMapping = new ArrayList<Point>();
-                    pointMapping.add(newPoint);
-                    oldPointToNew.put(map.point, pointMapping);
-                } else {
-                    pointMapping.add(newPoint);
-                }
-                map.point = newPoint;
+                Point oldPoint = map.point;
+                for( Iterator<LazyCoord> iter = map.coords.iterator(); iter.hasNext(); ) {
+                    LazyCoord c = iter.next();
+                    PointCoordMap tmp = map;
+                    Point newPoint = Point.valueOf(map.point.getX() + diffX, map.point.getY()
+                            + diffY);
 
-                // update shape
-                points.add(map);
-                List<PointCoordMap> list = pointsToModel.get(newPoint);
-                if (list == null) {
-                    List<PointCoordMap> l = new ArrayList<PointCoordMap>();
-                    l.add(map);
-                    pointsToModel.put(newPoint, l);
-                } else {
-                    list.add(map);
-                }
+                    if (!newPoint.equals(oldPoint)) {
+                        tmp = new PointCoordMap(newPoint);
+                        tmp.coords.add(c);
+                        iter.remove();
+                    }
 
-                // update Blackboard.
-                List<LazyCoord> coords = editBlackboard.coordMapping.get(newPoint);
-                if (coords == null) {
-                    List<LazyCoord> l = new ArrayList<LazyCoord>(map.coords);
-                    editBlackboard.coordMapping.put(newPoint, l);
-                } else {
-                    coords.addAll(map.coords);
-                }
+                    c.pointCoordCalculator = new PointCoordCalculator(pointCoordCalculator);
+                    c.start = newPoint;
 
-                Set<EditGeom> mappedGeoms = editBlackboard.geomMapping.get(newPoint);
-                if (mappedGeoms == null) {
-                    Set<EditGeom> l = new HashSet<EditGeom>();
-                    l.add(getEditGeom());
-                    editBlackboard.geomMapping.put(newPoint, l);
-                } else {
-                    if (!mappedGeoms.contains(getEditGeom()))
-                        mappedGeoms.add(getEditGeom());
+                    List<Point> pointMapping = oldPointToNew.get(oldPoint);
+                    if (pointMapping == null) {
+                        pointMapping = new ArrayList<Point>();
+                        pointMapping.add(newPoint);
+                        oldPointToNew.put(oldPoint, pointMapping);
+                    } else {
+                        pointMapping.add(newPoint);
+                    }
+                    tmp.point = newPoint;
+
+                    coordsToModel.put(c, tmp);
+
+                    // update shape
+                    points.add(tmp);
+                    List<PointCoordMap> list = pointsToModel.get(newPoint);
+                    if (list == null) {
+                        List<PointCoordMap> l = new ArrayList<PointCoordMap>();
+                        l.add(tmp);
+                        pointsToModel.put(newPoint, l);
+                    } else {
+                        list.add(tmp);
+                    }
+
+                    // update Blackboard.
+                    List<LazyCoord> coords = editBlackboard.coordMapping.get(newPoint);
+                    if (coords == null) {
+                        List<LazyCoord> l = new ArrayList<LazyCoord>(tmp.coords);
+                        editBlackboard.coordMapping.put(newPoint, l);
+                    } else {
+                        coords.addAll(tmp.coords);
+                    }
+
+                    Set<EditGeom> mappedGeoms = editBlackboard.geomMapping.get(newPoint);
+                    if (mappedGeoms == null) {
+                        Set<EditGeom> l = new HashSet<EditGeom>();
+                        l.add(getEditGeom());
+                        editBlackboard.geomMapping.put(newPoint, l);
+                    } else {
+                        if (!mappedGeoms.contains(getEditGeom()))
+                            mappedGeoms.add(getEditGeom());
+                    }
                 }
 
             }
@@ -1454,4 +1472,11 @@ public class PrimitiveShape implements Iterable<Point>, Shape {
                 || (owner.getShapeType() == ShapeType.UNKNOWN && treatUnknownAsPolygon);
     }
 
+    public List<Point> getPoints() {
+        List<Point> result = new ArrayList<Point>();
+        for( PointCoordMap point : points ) {
+            result.add(point.point);
+        }
+        return result;
+    }
 }

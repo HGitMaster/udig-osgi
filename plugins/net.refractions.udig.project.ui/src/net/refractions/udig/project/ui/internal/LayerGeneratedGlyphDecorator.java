@@ -302,7 +302,7 @@ public class LayerGeneratedGlyphDecorator implements ILabelDecorator {
     }
 
     /**
-     * Genearte label.
+     * Generate label.
      * <p>
      * This is used to generate a value for layer.getProperties().getString( GENERATED_NAME ).
      * <p>
@@ -313,39 +313,43 @@ public class LayerGeneratedGlyphDecorator implements ILabelDecorator {
      * @return gernated layer, or <code>null</code> if none can be determined
      */
     public static String generateLabel( Layer layer ) {
-        IGeoResource resource = layer.getGeoResources().get(0);
-        if (resource == null)
+        String name = layer.getName();
+        if( name != null ){
+            return name; // user supplied name for the win!
+        }
+        IGeoResource resource = layer.getGeoResource();
+        if (resource == null){
             return null;
-
-        IGeoResourceInfo info = null;
-        try {
-            info = resource.getInfo(null);
-        } catch (IOException e) {
-            return null; // aka use origional label provided by item provider
         }
-        if (info == null) {
-            return null; // aka use origional label provided by item provider
+        String title = resource.getTitle(); // this is from the non-blocking cache!
+        if( title == null){
+            // fine - no title let us try to connect to find one
+            IGeoResourceInfo info = null;
+            try {
+                info = resource.getInfo(null);
+                title = info.getTitle();
+                if( title == null ){
+                    title = info.getName();
+                }
+            } catch (IOException e) {
+            }
         }
-
-        String layerName = null;
-        String title = info.getTitle();
-        if (title != null) {
-            layerName = title;
-        } else {
-	        String name = info.getName();
-	        if (name != null)
-	            layerName = name;
+        String layerName = title;
+        if( layerName == null ){
+            layerName = resource.getID().toBaseFile();
         }
-        
+        // Add qualifier if present        
+        //String qualifier = resource.getID().getTypeQualifier();
+        //if( qualifier != null ){
+        //    layerName += "("+qualifier+")";
+        //}
         // Side note: Original label, made by item provider uses,
         // resource.getIdentifier() which is non blocking
         //
-        
-
     	if( layer.hasResource(ITransientResolve.class)){
     		layerName += " *";
     	}
-    	return layerName; // give up
+    	return layerName;
     }
 
     /**

@@ -80,19 +80,21 @@ public class WMSCServiceImpl extends IService {
         return params;
     }
     @Override
-	protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null) {
-            getWMSC();
-            rLock.lock();
-            try {
-                if (info == null) {
-                    info = new WMSCServieInfo(this);
-                }
-            } finally {
-                rLock.unlock();
-            }
+    public WMSCServieInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (WMSCServieInfo) super.getInfo(monitor);
+    }
+    @Override
+    protected WMSCServieInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        TiledWebMapServer tileServer = getWMSC();
+        if (tileServer == null) {
+            return null; // could not connect
         }
-        return info;
+        rLock.lock();
+        try {
+            return new WMSCServieInfo(this);
+        } finally {
+            rLock.unlock();
+        }
     }
 
     /**
@@ -107,17 +109,19 @@ public class WMSCServiceImpl extends IService {
                 if (members == null) {
                     members = new LinkedList<IResolve>();
 
-                    List<WMSTileSet> tiles = getWMSC().getCapabilities().getCapability().getVSCapabilities().getTiles();
-//                    List<WMSTileSet> tiles = getWMSC().getCapabilities().getVSCapabilities().getTiles();
-                    
+                    List<WMSTileSet> tiles = getWMSC().getCapabilities().getCapability()
+                            .getVSCapabilities().getTiles();
+                    // List<WMSTileSet> tiles =
+                    // getWMSC().getCapabilities().getVSCapabilities().getTiles();
+
                     /*
                      * Retrieved no layers from the WMS - something is wrong, either the WMS doesn't
                      * work, or it has no named layers.
                      */
                     if (tiles != null) {
                         for( WMSTileSet tileset : tiles ) {
-                        	// add the server to this tileset
-                        	tileset.setServer(getWMSC());
+                            // add the server to this tileset
+                            tileset.setServer(getWMSC());
                             members.add(new WMSCGeoResourceImpl(this, tileset));
                         }
                     }
@@ -164,9 +168,8 @@ public class WMSCServiceImpl extends IService {
     }
 
     /**
-     * This method will return a TiledWebMapServer
-     * based on either: connecting to the server; or
-     * a cached capabilities document.
+     * This method will return a TiledWebMapServer based on either: connecting to the server; or a
+     * cached capabilities document.
      * 
      * @return the link to the actual server
      */
@@ -174,37 +177,44 @@ public class WMSCServiceImpl extends IService {
         if (wmsc == null) {
             dsLock.lock();
             try {
+                if (msg != null) {
+                    throw (IOException) msg;
+                }
                 if (wmsc == null) {
-                	Serializable serializable = getPersistentProperties().get(CAPABILITIES_KEY);
-                    if( serializable != null){
+                    Serializable serializable = getPersistentProperties().get(CAPABILITIES_KEY);
+                    if (serializable != null) {
                         try {
                             String xml = (String) serializable;
 
                             // NOTE: this constructor will check
                             // the updateSequence number and compare it to any
                             // capabilities it can fetch from the server
-                            wmsc = new TiledWebMapServer(this.url, xml, true );    
-                        } catch (Exception e) {                            
+                            wmsc = new TiledWebMapServer(this.url, xml, true);
+                        } catch (Exception e) {
                             WmsPlugin.log("Restore from cached capabilities failed", e); //$NON-NLS-1$
+                            // we are going to continue by trying to connect to the real thing
                         }
                     }
-                    if( wmsc == null){
+                    if (wmsc == null) {
                         // we could not reconstruct from our cached capabilities?
-                        
+
                         // this constructor will grab the capabilities when
                         // first needed
                         wmsc = new TiledWebMapServer(this.url);
-                        String xml = wmsc.getCapabilitiesXml(); 
-                        getPersistentProperties().put( CAPABILITIES_KEY, xml );
+                        String xml = wmsc.getCapabilitiesXml();
+                        getPersistentProperties().put(CAPABILITIES_KEY, xml);
                     }
+                    msg = null; // we connected just fine this time
                 }
+            } catch (IOException couldNotConnext) {
+                msg = couldNotConnext;
             } finally {
                 dsLock.unlock();
             }
         }
         return wmsc;
     }
-    
+
     /**
      * @return Status of the resource
      */

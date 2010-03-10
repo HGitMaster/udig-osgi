@@ -32,7 +32,7 @@ public class CoverageTool extends AbstractEditTool {
     @Override
     protected void initActivators( Set<Activator> activators ) {
         DrawType geometryType=DrawType.POLYGON;
-        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultActivators(geometryType);
+        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultCreateActivators(geometryType);
         activators.addAll(defaults);
     }
     

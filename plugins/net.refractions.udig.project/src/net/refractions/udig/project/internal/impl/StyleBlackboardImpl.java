@@ -611,10 +611,11 @@ public class StyleBlackboardImpl extends EObjectImpl implements StyleBlackboard 
 
     public Set<String> keySet() {
         Set<String> keys = new HashSet<String>();
-        Iterator iterator = content.iterator();
-        while(iterator.hasNext()){
-            StyleEntry se = (StyleEntry) iterator.next();
-            keys.add(se.getID());
+        for( StyleEntry entry : content ){
+            if( entry == null ){
+                continue; // huh?
+            }
+            keys.add( entry.getID() );
         }
         return keys;
     }

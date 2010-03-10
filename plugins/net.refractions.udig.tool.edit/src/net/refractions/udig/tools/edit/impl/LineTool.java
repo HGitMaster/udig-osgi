@@ -26,12 +26,10 @@ import net.refractions.udig.tools.edit.EditToolConfigurationHelper;
 import net.refractions.udig.tools.edit.EnablementBehaviour;
 import net.refractions.udig.tools.edit.activator.AdvancedBehaviourCommandHandlerActivator;
 import net.refractions.udig.tools.edit.activator.DeleteGlobalActionSetterActivator;
-import net.refractions.udig.tools.edit.activator.DrawCurrentGeomVerticesActivator;
 import net.refractions.udig.tools.edit.activator.DrawGeomsActivator;
-import net.refractions.udig.tools.edit.activator.EditStateListenerActivator;
 import net.refractions.udig.tools.edit.activator.GridActivator;
-import net.refractions.udig.tools.edit.activator.SetRenderingFilter;
 import net.refractions.udig.tools.edit.activator.SetSnapBehaviourCommandHandlerActivator;
+import net.refractions.udig.tools.edit.activator.DrawGeomsActivator.DrawType;
 import net.refractions.udig.tools.edit.behaviour.AcceptOnDoubleClickBehaviour;
 import net.refractions.udig.tools.edit.behaviour.AddVertexWhileCreatingBehaviour;
 import net.refractions.udig.tools.edit.behaviour.CursorControlBehaviour;
@@ -69,13 +67,13 @@ public class LineTool extends AbstractEditTool {
 
     @Override
     protected void initActivators( Set<Activator> activators ) {
-        activators.add(new EditStateListenerActivator());
+        
+        DrawType type = DrawGeomsActivator.DrawType.LINE;
+        Set<Activator> defaults = DefaultEditToolBehaviour.createDefaultCreateActivators(type);
+        activators.addAll(defaults);
         activators.add(new DeleteGlobalActionSetterActivator());
-        activators.add(new DrawGeomsActivator(DrawGeomsActivator.DrawType.LINE));
-        activators.add(new DrawCurrentGeomVerticesActivator());
         activators.add(new SetSnapBehaviourCommandHandlerActivator());
         activators.add(new AdvancedBehaviourCommandHandlerActivator());
-        activators.add(new SetRenderingFilter());
         activators.add(new GridActivator());
     }
 

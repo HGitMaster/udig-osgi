@@ -62,30 +62,42 @@ public class DataConnectionPage extends AbstractUDIGImportPage implements Listen
     private int currentPort;
     
     public DataConnectionPage() {
-        super("Databse connection page"); //$NON-NLS-1$
+        super("Database connection page"); //$NON-NLS-1$
     }
 
     @Override
     public boolean isPageComplete() {
-        return getParams()!=null;
+        Map<String, Serializable> params = getParams();
+		return params!=null;
     }
     
+    /**
+     * Gather parameters from the user interface.
+     */
     public Map<String, Serializable> getParams() {
         
         Map<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put(dialect().hostParam.key, userHostPage.getHost());
-        params.put(dialect().portParam.key, userHostPage.getPort());
-        params.put(dialect().usernameParam.key, userHostPage.getUsername());
-        params.put(dialect().passwordParam.key, userHostPage.getPassword());
-        params.put(dialect().databaseParam.key, database.getText());
-        params.put(dialect().schemaParam.key, (Serializable) dialect().schemaParam.sample);
-        params.put(dialect().typeParam.key, (Serializable) dialect().typeParam.sample);
+        DatabaseServiceDialect dialect = dialect();
+        
+        params.put(dialect.hostParam.key, userHostPage.getHost());
+        params.put(dialect.portParam.key, userHostPage.getPort());
+        params.put(dialect.usernameParam.key, userHostPage.getUsername());
+        params.put(dialect.passwordParam.key, userHostPage.getPassword());
+        params.put(dialect.databaseParam.key, database.getText());
+        
+        if( dialect.schemaParam != null && dialect.schemaParam.key != null ){
+        	params.put(dialect().schemaParam.key, (Serializable) dialect.schemaParam.sample);
+        }
+        params.put(dialect().typeParam.key, (Serializable) dialect().dbType );
         
         Either<String, Map<String, Serializable>> result = getActiveTab().getParams(params);
         if( result.isLeft() ){
-            setErrorMessage(result.getLeft());
+            Object msg = result.getLeft();
+            if( msg != null ){
+                setErrorMessage(result.getLeft());
+            }
             return null;
-        }else{
+        } else{
             setErrorMessage(null);
             return result.getRight();
         }

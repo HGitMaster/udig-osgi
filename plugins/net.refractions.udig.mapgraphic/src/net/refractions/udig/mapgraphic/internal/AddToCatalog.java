@@ -16,6 +16,7 @@ package net.refractions.udig.mapgraphic.internal;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.ui.ProgressManager;
 
@@ -33,7 +34,8 @@ public class AddToCatalog implements IStartup {
 
     public void earlyStartup() {
         ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
-        IService service = localCatalog.getById(IService.class, MapGraphicService.SERVICE_URL, ProgressManager.instance().get());
+        ID serviceUrl = new ID(MapGraphicService.SERVICE_URL);
+        IService service = localCatalog.getById(IService.class, serviceUrl, ProgressManager.instance().get());
         if( service !=null )
             return;
         

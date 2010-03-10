@@ -26,10 +26,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Jody Garnett
  */
 public class MovedService extends IService implements IForward  {
-    URL identifier;
-    URL forward;
+    ID identifier;
+    ID forward;
 
-    public MovedService( URL id, URL forward ){
+    public MovedService( ID id, ID forward ){
         this.identifier = id;
         this.forward = forward;
     }
@@ -50,10 +50,10 @@ public class MovedService extends IService implements IForward  {
     }
     
     public URL getIdentifier() {
-        return identifier;
+        return identifier.toURL();
     }
     public ID getID() {
-        return new ID( identifier );
+        return identifier;
     }
     public Throwable getMessage() {
         return new IllegalStateException("Service has moved to "+forward );
@@ -63,7 +63,7 @@ public class MovedService extends IService implements IForward  {
         return Status.BROKEN;
     }
 
-    public URL getForward() {
+    public ID getForward() {
         return forward;
     }
 }

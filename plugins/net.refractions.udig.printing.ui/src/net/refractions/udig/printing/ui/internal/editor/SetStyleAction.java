@@ -68,7 +68,7 @@ public class SetStyleAction implements IBoxEditAction {
     }
 
     public boolean isDone() {
-        return original!=null && original!=getSelectedLayer().getStyleBlackboard();
+        return true;
     }
 
     private MapGraphicBoxPrinter getBoxPrinter() {

@@ -68,8 +68,9 @@ public class ResourceSelectionState extends State {
         // LinkedHashMap to keep the order
         resources = new LinkedHashMap<IGeoResource, IService>();
 
-        // use the context object to try and match a resource
         Object context = getWorkflow().getContext();
+        
+        // use the context object to try and match a resource
         if (context != null) {
             URL url = CatalogPlugin.locateURL(context);
             if (url != null) {

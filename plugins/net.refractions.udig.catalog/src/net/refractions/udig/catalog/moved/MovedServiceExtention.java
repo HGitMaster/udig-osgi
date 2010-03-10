@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.refractions.udig.catalog.AbstractServiceExtention;
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 
 /**
@@ -35,14 +36,14 @@ public class MovedServiceExtention extends AbstractServiceExtention {
      */
     public IService createService( URL id, Map<String, Serializable> params ) {
         if ( id != null ){
-            CatalogPlugin.trace("Ignoring requested id="+id+" for moved service", null );
+            CatalogPlugin.trace("Ignoring requested id="+id+" for moved service", null ); //$NON-NLS-1$ //$NON-NLS-2$
         }
         URL identifier = (URL) params.get( ID_KEY );
         URL forward = (URL) params.get( FORWARD_KEY );
         if( identifier == null || forward == null ){
             return null;
         }
-        return new MovedService(id,forward);
+        return new MovedService(new ID(id),new ID(forward));
     }
 
     public String reasonForFailure( Map<String, Serializable> params ) {

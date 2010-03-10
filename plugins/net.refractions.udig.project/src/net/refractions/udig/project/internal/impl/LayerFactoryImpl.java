@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: LayerFactoryImpl.java 29109 2008-02-06 18:56:12Z jeichar $
+ * $Id: LayerFactoryImpl.java 31328 2009-07-15 11:56:49Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
@@ -334,13 +335,14 @@ public class LayerFactoryImpl extends EObjectImpl implements LayerFactory {
         }
         //check that the service is part of catalog... If not add
         if (CatalogPlugin.getDefault().getLocalCatalog().getById(IService.class, 
-                service.getIdentifier(),
+                service.getID(),
                 new NullProgressMonitor())==null) {
             CatalogPlugin.getDefault().getLocalCatalog().add(resource.service(null));
         }
 
-        Layer layer = ProjectFactory.eINSTANCE.createLayer();
-        layer.setID(resource.getIdentifier());
+        LayerImpl layer =(LayerImpl) ProjectFactory.eINSTANCE.createLayer();
+        
+        layer.setResourceID(resource.getID());
 
         if (layer == null) {
             throw new IOException(
@@ -352,14 +354,19 @@ public class LayerFactoryImpl extends EObjectImpl implements LayerFactory {
         // TODO: the style objects need access to preference system
         final Layer theLayer = layer;
         
-        List<IResolve> resolves = CatalogPlugin.getDefault().getLocalCatalog().find(layer.getID(), ProgressManager.instance().get());
+        ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();
+        List<IResolve> resolves = localCatalog.find(layer.getResourceID(), ProgressManager.instance().get());
         EList  resources = new EDataTypeUniqueEList(IGeoResource.class, this,
                 ProjectPackage.LAYER__GEO_RESOURCES);
         LayerResource preferredResource=null;
         for (IResolve resolve : resolves) {
 			if( resolve instanceof IGeoResource ){
 				LayerResource layerResource = new LayerResource((LayerImpl) layer, (IGeoResource)resolve);
-				resources.add( layerResource);
+				if(resolve.getID().equals(layer.getResourceID())){
+				    resources.add(0, layerResource);
+				}else{
+				    resources.add( layerResource);
+				}
 				if( resolve==resource )
 					preferredResource=layerResource;
 			}

@@ -97,7 +97,6 @@ public class DeleteTest extends AbstractProjectUITestCase {
 	public void testOperateProject() throws Exception {
 		
 		DeleteAccessor deleteAction=new DeleteAccessor();
-        deleteAction.setRunHeadless(true, false);
 		URI projecturi=project.eResource().getURI();
 		Iterator iter=project.eResource().getResourceSet().getResources().iterator();
 		while ( iter.hasNext() ){

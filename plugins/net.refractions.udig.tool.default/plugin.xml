@@ -134,20 +134,20 @@
                      class="net.refractions.udig.tools.internal.FixedScalePan"
                      icon="icons/etool16/pan_mode.gif"
                      id="net.refractions.udig.tools.FixedScalePan"
-                     name="Fixed Scale Pan"
+                     name="%FixedScalePan.name"
                      onToolbar="true"
                      toolCursorId="move"
-                     tooltip="Fixed Scale Pan">
+                     tooltip="%FixedScalePan.tooltip">
                </modalTool>
                <modalTool
                      categoryId="net.refractions.udig.tool.category.pan"
                      class="net.refractions.udig.tools.internal.ScrollPanTool"
                      icon="icons/etool16/pan_mode.gif"
                      id="net.refractions.udig.tools.ScrollPan"
-                     name="Scroll Pan Tool"
+                     name="%ScrollPanTool.name"
                      onToolbar="true"
                      toolCursorId="move"
-                     tooltip="Pan using SWT Scroll">
+                     tooltip="%ScrollPanTool.tooltip">
                </modalTool>
    </extension>
    <extension

@@ -13,11 +13,12 @@ Export-Package: net.refractions.udig.printing.ui,
  net.refractions.udig.printing.ui.internal.editor.commands,
  net.refractions.udig.printing.ui.internal.editor.figures,
  net.refractions.udig.printing.ui.internal.editor.parts,
- net.refractions.udig.printing.ui.internal.editor.policies
+ net.refractions.udig.printing.ui.internal.editor.policies,
+ net.refractions.udig.printing.ui.internal.template
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- net.refractions.udig.project,
- org.eclipse.gef,
+ org.eclipse.gef;visibility:=reexport,
+ net.refractions.udig.project;visibility:=reexport,
  org.eclipse.ui.views,
  net.refractions.udig.printing.model;visibility:=reexport,
  org.eclipse.emf.edit,
@@ -31,5 +32,4 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.style.sld,
  com.lowagie.itext
 Bundle-ActivationPolicy: lazy
-Import-Package: net.refractions.udig.ui.dialogs
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

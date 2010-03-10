@@ -59,7 +59,15 @@ public class NewProjectWizardPage extends WizardPage {
         Composite composite = new Composite(parent, SWT.NONE);
     	
 
-    	projectNameEditor = new StringFieldEditor("newproject.name", Messages.NewProjectWizardPage_label_projectName, composite);   //$NON-NLS-1$
+        projectNameEditor = new StringFieldEditor("newproject.name",
+                Messages.NewProjectWizardPage_label_projectName, composite){
+            protected boolean doCheckState() {
+                final String projectPath = getProjectPath();
+                final String projectName = getTextControl().getText();
+                File f = new File(projectPath + File.separator + projectName + ".udig");
+                return !f.exists();
+            }
+       };
     	projectNameEditor.setPage(this);
     	projectNameEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
     	Text textControl = projectNameEditor.getTextControl(composite);

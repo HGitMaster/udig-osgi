@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectRegistryImpl.java 31015 2008-12-26 06:44:25Z jeichar $
+ * <copyright></copyright> $Id: ProjectRegistryImpl.java 31338 2009-07-16 07:21:54Z jeichar $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -289,7 +289,7 @@ public class ProjectRegistryImpl extends EObjectImpl implements ProjectRegistry 
             projectPath = "file://" + projectPath; //$NON-NLS-1$
         }
         // DONE HACK
-        final String path = projectPath + File.separatorChar + "project.uprj"; //$NON-NLS-1$
+        final String path = projectPath + File.separatorChar + ProjectRegistry.PROJECT_FILE; //$NON-NLS-1$
         final URI uri = URI.createURI(path);
         Project project = getProject(uri);
         return project;

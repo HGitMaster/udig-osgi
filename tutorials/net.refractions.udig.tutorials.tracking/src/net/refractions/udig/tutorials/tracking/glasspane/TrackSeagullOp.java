@@ -1,5 +1,6 @@
 package net.refractions.udig.tutorials.tracking.glasspane;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.TimerTask;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -18,7 +20,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 import net.refractions.udig.project.IMap;
+import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.command.navigation.SetViewportCenterCommand;
+import net.refractions.udig.project.internal.render.ViewportModel;
+import net.refractions.udig.project.internal.render.impl.ViewportModelImpl;
+import net.refractions.udig.project.ui.internal.render.displayAdapter.impl.ViewportPaneTiledSWT;
 import net.refractions.udig.project.ui.render.displayAdapter.ViewportPane;
 import net.refractions.udig.project.ui.render.glass.GlassPane;
 import net.refractions.udig.ui.operations.IOp;
@@ -31,7 +37,7 @@ public class TrackSeagullOp implements IOp {
         final IMap map = (IMap) target;  //ApplicationGIS.getActiveMap();
         if (map == null)
             return;
-        
+
         
         final ViewportPane viewer = (ViewportPane)map.getRenderManager().getMapDisplay();
         
@@ -40,18 +46,87 @@ public class TrackSeagullOp implements IOp {
         
         Seagull trackingGull = gulls.iterator().next();
         trackingGull.setColor(SWT.COLOR_RED);
+        trackingGull.moveSeagull(new Coordinate(0,0));
         trackingGull.setLocationListener(new Seagull.SeagullLocationListener(){
-            public void gullMoved( Coordinate newLoc ) {
-                SetViewportCenterCommand cmd = new SetViewportCenterCommand(newLoc);
-                map.sendCommandASync(cmd);
+            public void gullMoved( final Coordinate newLoc ) {
+                Display.getDefault().asyncExec(new Runnable(){
+
+                    private void scroll(int newx, int newy, int startx, int starty){
+                        ViewportModelImpl vm =  (ViewportModelImpl)map.getViewportModel();
+                        final ViewportPaneTiledSWT viewera = (ViewportPaneTiledSWT)viewer;
+                        
+                        org.eclipse.swt.graphics.Point p = Display.getCurrent().map((Canvas)viewera, null, newx, newy);
+                        org.eclipse.swt.graphics.Point p2 = Display.getCurrent().map((Canvas)viewera, null, startx, starty);
+                        int xdiff = p2.x - p.x;
+                        int ydiff = p2.y - p.y;
+                        ((Canvas)viewera).scroll(xdiff, ydiff, 0,0, map.getRenderManager().getMapDisplay().getWidth(), map.getRenderManager().getMapDisplay().getHeight(), true);
+                        
+                    }
+                    public void run() {
+                        ViewportModelImpl vm =  (ViewportModelImpl)map.getViewportModel();
+                        final ViewportPaneTiledSWT viewera = (ViewportPaneTiledSWT)viewer;
+                        final ReferencedEnvelope bounds = vm.getBounds();
+                        Coordinate currentc = vm.getCenter();
+                      
+                        final Point newpnt = vm.worldToPixel(newLoc);
+                        final Point oldpnt = vm.worldToPixel(currentc);
+                        
+                        vm.setIsBoundsChanging(true);
+                        
+                        int xoffset =  oldpnt.x - newpnt.x;
+                        int yoffset = oldpnt.y - newpnt.y;
+                        
+                        int diffx = 0;
+                        int diffy = 0;
+                        
+                        int xdiff = (int)(xoffset / 10.0);
+                        int ydiff = (int)(yoffset / 10.0);
+                        if (xdiff == 0){
+                            if (xoffset > 0){
+                                xdiff = 1;
+                            }else{
+                                xdiff = -1;
+                            }
+                        }
+                        if (ydiff == 0){
+                            if (yoffset > 0){
+                                ydiff = 1;
+                            }else{
+                                ydiff = -1;
+                            }
+                        }
+                        int lastx = oldpnt.x;
+                        int lasty = oldpnt.y;
+                        
+                        while(Math.abs(diffx) < Math.abs(xoffset)  || Math.abs(diffy) < Math.abs(yoffset) ){
+                            if (Math.abs(diffx) < Math.abs(xoffset))
+                                diffx += xdiff;
+                            if (Math.abs(diffy) < Math.abs(yoffset))
+                                diffy += ydiff;
+                            
+                            scroll(lastx - xdiff, lasty-ydiff, lastx,lasty  );
+                            lastx -= xdiff;
+                            lasty -= ydiff;     
+                        }
+                        lastx -= xdiff;
+                        lasty -=ydiff;
+                        Coordinate newCoo = vm.pixelToWorld(lastx, lasty);
+                        vm.setIsBoundsChanging(false);
+                        vm.setCenter(newCoo);
+                    }});
+                
+//                SetViewportCenterCommand cmd = new SetViewportCenterCommand(newLoc);
+//                map.sendCommandASync(cmd);
             }
         });
+        
+        
         
         //create a glass pane that draws the seagulls
         addFlockGlassPane(viewer, gulls);
      
         //timer to update map
-        int refreshrate = 250;
+        int refreshrate = 300;
 
         //draws the map at given intervals
         Timer mapupdatetimer = new Timer();
@@ -79,9 +154,17 @@ public class TrackSeagullOp implements IOp {
                 }
                 
             }}, new Date(), refreshrate);
-        
+//        while(true){
+//            trackingGull.moveSeagull(new Coordinate(5,5));
+//            trackingGull.moveSeagull(new Coordinate(0,0));
+//            if (1==2){
+//                break;
+//            }
+//        }
         
     }
+    
+    
 
     /**
      * Creates a collection of seagulls that start near the center

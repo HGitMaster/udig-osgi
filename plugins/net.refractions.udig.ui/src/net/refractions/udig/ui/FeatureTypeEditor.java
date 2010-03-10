@@ -31,6 +31,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -61,6 +62,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -143,6 +146,7 @@ public class FeatureTypeEditor {
     private Text nameText;
     private List<LegalAttributeTypes> legalTypes=TYPES;
 	private SimpleFeatureType featureType;
+    private ControlDecoration errorDecorator;
 
     /**
      * Create the table control and set the input.
@@ -176,7 +180,7 @@ public class FeatureTypeEditor {
     public void createTable( Composite parent, Object layoutData, SimpleFeatureType featureType,
             boolean editable ) {
 
-        viewer = new TreeViewer(parent, SWT.MULTI|SWT.FULL_SELECTION);
+        viewer = new TreeViewer(parent, SWT.FULL_SELECTION);
 
         Tree tree = viewer.getTree();
         if (layoutData == null)
@@ -441,7 +445,8 @@ public class FeatureTypeEditor {
 
             };
             createAttributeAction.setId("net.refractions.udig.ui.FeatureTypeEditor.createAttributeAction"); //$NON-NLS-1$
-            createAttributeAction.setToolTipText("Add Attribute"); 
+            createAttributeAction.setText(Messages.addAttributeAction_label); 
+            createAttributeAction.setToolTipText(Messages.addAttributeAction_label); 
             createAttributeAction.setImageDescriptor(Images.getDescriptor("elcl16/new_attribute.gif")); //$NON-NLS-1$
         }
         return createAttributeAction;
@@ -486,8 +491,12 @@ public class FeatureTypeEditor {
      * @return
      */
     public void createFeatureTypeNameText( Composite parent, Object layoutData ) {
-
+        
         nameText = new Text(parent, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+        errorDecorator = new ControlDecoration(nameText, SWT.TOP|SWT.LEFT);
+        Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR);
+        errorDecorator.setImage(image);
+        
         if (viewer != null) {
             SimpleFeatureType input = ((SimpleFeatureType) viewer.getInput());
             if( input!=null )
@@ -498,19 +507,22 @@ public class FeatureTypeEditor {
         else {
             nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         }
+        
         class NameListener implements KeyListener, FocusListener {
 
             public void keyPressed( KeyEvent e ) {
                 SimpleFeatureType ft = (SimpleFeatureType) viewer.getInput();
                 if (e.character == SWT.ESC) {
                     nameText.setText(ft.getTypeName());
-                }
+                } else 
                 if (e.character == SWT.Selection) {
                     SimpleFeatureTypeBuilder ftB = new SimpleFeatureTypeBuilder();
                     ftB.init(ft);
                     ftB.setName(nameText.getText());
                     featureType = ftB.buildFeatureType();
                     viewer.setInput(featureType);
+                } else {
+                    errorDecorator.hide();
                 }
             }
 
@@ -794,6 +806,11 @@ public class FeatureTypeEditor {
                 nameText.setText(typeName);
             }
         }
+    }
+    public void setErrorMessage( String errorMessage ) {
+        errorDecorator.setDescriptionText(errorMessage);
+        errorDecorator.show();
+        errorDecorator.showHoverText(errorMessage);
     }
 
 }

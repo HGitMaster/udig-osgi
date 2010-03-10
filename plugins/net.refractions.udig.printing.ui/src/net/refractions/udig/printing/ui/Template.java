@@ -98,6 +98,11 @@ public interface Template extends Cloneable {
     public String getName();
 
     /**
+     * @return An abbbreviation that can be used to combine this name with map names in labels.
+     */
+    public String getAbbreviation();
+
+    /**
      * Templates <b>must</b> clone themselves and their contents properly.
      * 
      * @return a copy of this template

@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
-import org.geotools.data.postgis.PostgisDataStore;
+import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -45,6 +45,7 @@ public class PostgisGeoResource2 extends IGeoResource {
     private volatile Throwable message;
     private final URL identifier;
     private final PostgisSchemaFolder parent;
+    
     public PostgisGeoResource2( PostgisService2 service, PostgisSchemaFolder postgisSchemaFolder, String typename ) {        
             this.service = service;
             this.parent=postgisSchemaFolder;
@@ -103,7 +104,7 @@ public class PostgisGeoResource2 extends IGeoResource {
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         
-        PostgisDataStore dataStore = parent.getDataStore();
+        JDBCDataStore dataStore = parent.getDataStore();
         if (adaptee.isAssignableFrom(DataStore.class))
             return adaptee.cast(dataStore);
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
@@ -134,8 +135,12 @@ public class PostgisGeoResource2 extends IGeoResource {
                 || super.canResolve(adaptee);
     }
 
-    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        return info;
+    @Override
+    public PostgisResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (PostgisResourceInfo) super.getInfo(monitor);
+    }
+    protected PostgisResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        return (PostgisResourceInfo) info; // created during the constructor
     }
 
     /**

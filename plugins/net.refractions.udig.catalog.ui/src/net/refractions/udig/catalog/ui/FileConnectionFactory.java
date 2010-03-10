@@ -33,8 +33,9 @@ public class FileConnectionFactory extends UDIGConnectionFactory {
 		URL url = CatalogPlugin.locateURL(context);
 		
 		if (url == null) {
-			return url;   
+			return null;   
 		}
+		
 		url = checkedURL( url );
         if (url == null || url.getFile() == null) {
             return null;

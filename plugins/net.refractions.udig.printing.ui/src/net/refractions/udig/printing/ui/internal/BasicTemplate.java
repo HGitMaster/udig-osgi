@@ -83,7 +83,7 @@ public class BasicTemplate extends AbstractTemplate {
 
     private void addScale( int height, int scaleHeight, int scaleWidth ) {
         Box scaleBox = ModelFactory.eINSTANCE.createBox();
-        MapGraphicBoxPrinter scale = new MapGraphicBoxPrinter();
+        MapGraphicBoxPrinter scale = new MapGraphicBoxPrinter(null);
         scale.setMapGraphic(MapGraphicChooserDialog.findResource(ScalebarMapGraphic.class));
         scaleBox.setBoxPrinter(scale);
         scaleBox.setID("Scalebar Box"); //$NON-NLS-1$
@@ -168,7 +168,7 @@ public class BasicTemplate extends AbstractTemplate {
     private void addLegendBox( int height, final int legendWidth, int legendHeight, int labelHeight,
             Rectangle mapBounds ) {
         Box legendBox = ModelFactory.eINSTANCE.createBox();
-        MapGraphicBoxPrinter legend = new MapGraphicBoxPrinter();
+        MapGraphicBoxPrinter legend = new MapGraphicBoxPrinter(null);
         legend.setMapGraphic(MapGraphicChooserDialog.findResource(LegendGraphic.class));
         legendBox.setBoxPrinter(legend);
         legendBox.setID("Legend Box"); //$NON-NLS-1$
@@ -185,5 +185,9 @@ public class BasicTemplate extends AbstractTemplate {
         if (mapBounds == null)
             throw new IllegalStateException("Please initialize the template before calling this method.");
         return mapBounds;
+    }
+
+    public String getAbbreviation() {
+        return getName();
     }
 }

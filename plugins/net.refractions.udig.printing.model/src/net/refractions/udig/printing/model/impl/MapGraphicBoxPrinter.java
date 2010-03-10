@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.URLUtils;
 import net.refractions.udig.core.Pair;
@@ -34,8 +35,11 @@ import net.refractions.udig.mapgraphic.internal.MapGraphicService;
 import net.refractions.udig.mapgraphic.style.LocationStyleContent;
 import net.refractions.udig.printing.model.AbstractBoxPrinter;
 import net.refractions.udig.printing.model.Box;
+import net.refractions.udig.printing.model.BoxPrinter;
+import net.refractions.udig.printing.model.Page;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.ILayerListener;
+import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.LayerEvent;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.LayerDecorator;
@@ -49,12 +53,14 @@ import net.refractions.udig.project.internal.render.impl.CompositeRenderContextI
 import net.refractions.udig.project.internal.render.impl.ScaleUtils;
 import net.refractions.udig.project.ui.ApplicationGIS;
 import net.refractions.udig.project.ui.BoundsStrategy;
+import net.refractions.udig.project.ui.UDIGEditorInput;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
@@ -65,6 +71,10 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  * @since 1.1.0
  */
 public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
+
+    private static final int DEFAULTDPI = 90;
+    private int usedDpi = 90;
+    private float scaleFactor = Float.NaN;
 
     private static final Layer NULL = new LayerDecorator(null);
 
@@ -78,9 +88,31 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
         }
 
     };
+    private boolean inPreviewMode;
+
+    public MapGraphicBoxPrinter() {
+        System.out.println();
+    }
+
+    public MapGraphicBoxPrinter( Page page ) {
+        if (page != null) {
+            scaleFactor = (float) page.getSize().width / (float) page.getPaperSize().height;
+        }
+    }
 
     public void draw( Graphics2D graphics, IProgressMonitor monitor ) {
         super.draw(graphics, monitor);
+        if (Float.isNaN(scaleFactor)) {
+            List<Box> boxes = getBox().getPage().getBoxes();
+            for( Box box : boxes ) {
+                Object adapter = box.getBoxPrinter().getAdapter(Map.class);
+                if (adapter != null) {
+                    scaleFactor = (float) box.getSize().width / (float) box.getPaperSize().height;
+                    break;
+                }
+            }
+        }
+
         if (warning != null) {
             drawWarning(graphics, warning);
             return;
@@ -123,17 +155,33 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
         renderer.render(graphics, monitor);
     }
 
-    private CompositeRenderContext createRenderContext( Pair<Map, Pair<Dimension, Double>> info, Layer layer ) {
+    public void createPreview( Graphics2D graphics, IProgressMonitor monitor ) {
+        inPreviewMode = true;
+        draw(graphics, monitor);
+        setDirty(false);
+        inPreviewMode = false;
+    }
+
+    private CompositeRenderContext createRenderContext( Pair<Map, Pair<Dimension, Double>> info,
+            Layer layer ) {
         Map map = info.getLeft();
         Dimension size = info.getRight().getLeft();
         double scale = info.getRight().getRight();
-        
+
         ViewportModel viewportModel = map.getViewportModelInternal();
         ReferencedEnvelope bounds = (ReferencedEnvelope) viewportModel.getBounds();
         BoundsStrategy boundsStrategy = new BoundsStrategy(scale);
-        RenderContext context = ApplicationGIS.configureMapForRendering(map, size, 90,
-                boundsStrategy, bounds);
-        
+
+        RenderContext context = null;
+        if (inPreviewMode && !Float.isNaN(scaleFactor)) {
+            float dpiFloat = (float) DEFAULTDPI * scaleFactor;
+            context = ApplicationGIS.configureMapForRendering(map, size, (int) dpiFloat,
+                    boundsStrategy, bounds);
+        } else {
+            context = ApplicationGIS.configureMapForRendering(map, size, DEFAULTDPI,
+                    boundsStrategy, bounds);
+        }
+
         context.setLayerInternal(layer);
         context.setGeoResourceInternal(layer.getGeoResource());
 
@@ -147,7 +195,7 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
     /**
      * @return Pair<CopyOfMap, Pair<MapBoxSize,ScaleDenominator>>
      */
-    private Pair<Map, Pair<Dimension,Double>> findMap() {
+    private Pair<Map, Pair<Dimension, Double>> findMap() {
         List<Box> boxes = getBox().getPage().getBoxes();
         for( Box box : boxes ) {
             if (box.getBoxPrinter() instanceof MapBoxPrinter) {
@@ -155,7 +203,7 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
                 Map map = mapBoxPrinter.getMap();
                 Map copy = (Map) EcoreUtil.copy(map);
 
-                // we need the original map and its box to correctly calculate the 
+                // we need the original map and its box to correctly calculate the
                 // scale so we must do it now
                 Dimension size = new Dimension(box.getSize().width, box.getSize().height);
                 ViewportModel viewportModel = map.getViewportModelInternal();
@@ -163,9 +211,9 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
                 ReferencedEnvelope bounds = (ReferencedEnvelope) viewportModel.getBounds();
 
                 double scale = ScaleUtils.calculateScaleDenominator(bounds, size, 90);
-                
+
                 Pair<Dimension, Double> details = new Pair<Dimension, Double>(size, scale);
-                return new Pair<Map, Pair<Dimension,Double>>(copy, details );
+                return new Pair<Map, Pair<Dimension, Double>>(copy, details);
             }
         }
         return null;
@@ -195,7 +243,7 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
 
         try {
             IGeoResource resource = CatalogPlugin.getDefault().getLocalCatalog().getById(
-                    IGeoResource.class, new URL(MapGraphicService.SERVICE_URL, url),
+                    IGeoResource.class, new ID(new URL(MapGraphicService.SERVICE_URL, url)),
                     new NullProgressMonitor());
             setMapGraphic((MapGraphicResource) resource);
         } catch (IOException e) {
@@ -277,13 +325,14 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
         }
     }
 
-    public void setStyleBlackboardKey(String key, Object value) {
+    public void setStyleBlackboardKey( String key, Object value ) {
         if (layer == null) {
-            throw new IllegalStateException("Please set the map graphic before calling this method."); //$NON-NLS-1$
+            throw new IllegalStateException(
+                    "Please set the map graphic before calling this method."); //$NON-NLS-1$
         }
         layer.getStyleBlackboard().put(key, value);
     }
-    
+
     /**
      * Returns the layer contained in the box
      * 

@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.db2.DB2Plugin;
 import net.refractions.udig.catalog.db2.internal.Messages;
@@ -36,82 +38,83 @@ import net.refractions.udig.catalog.internal.db2.DB2ServiceExtension;
 import net.refractions.udig.catalog.ui.preferences.AbstractProprietaryDatastoreWizardPage;
 import net.refractions.udig.catalog.ui.preferences.AbstractProprietaryJarPreferencePage;
 import net.refractions.udig.catalog.ui.wizard.DataBaseConnInfo;
-import net.refractions.udig.ui.PlatformGIS;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Composite;
 import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.DataAccessFactory.Param;
-import org.geotools.data.db2.DB2ConnectionFactory;
-import org.geotools.data.db2.DB2DataStoreFactory;
+import org.geotools.data.db2.DB2NGDataStoreFactory;
 
+import static org.geotools.data.db2.DB2NGDataStoreFactory.*;
 /**
  * Specify DB2 database connection parameters.
  * <p>
  * </p>
  * 
- * @author   Justin Deoliveira,  jdeolive,       for Refractions Research, Inc.
- * @author   dadler
- * @author   Jesse Eichar,       jeichar,        for Refractions Research, Inc.
- * @author   Richard Gould,      rgould,         for Refractions Research, Inc.
- * @author   Adrian Custer,      acuster.
- * 
+ * @author Justin Deoliveira, jdeolive, for Refractions Research, Inc.
+ * @author dadler
+ * @author Jesse Eichar, jeichar, for Refractions Research, Inc.
+ * @author Richard Gould, rgould, for Refractions Research, Inc.
+ * @author Adrian Custer, acuster.
  * @since 1.0.1
  */
 public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
 
-    //TITLE IMAGE
+    // TITLE IMAGE
     public final String IMAGE_KEY = "DB2PageImage"; //$NON-NLS-1$   
-    //STORED SETTINGS
+    // STORED SETTINGS
     private static final String DB2_RECENT = "DB2_RECENT"; //$NON-NLS-1$
     private static final String DB2_WIZARD = "DB2_WIZARD"; //$NON-NLS-1$
-    //CONNECTION 
-    // TODO: doesn't db2 use 446 as in "http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=/com.ibm.db29.doc.inst/tcpip.htm" ?
-    private static final DataBaseConnInfo DEFAULT_DB2_CONN_INFO = 
-        new DataBaseConnInfo("","50000","","","","");                                //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-    private static DB2DataStoreFactory factory = new DB2DataStoreFactory();
+    // CONNECTION
+    // TODO: doesn't db2 use 446 as in
+    // "http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=/com.ibm.db29.doc.inst/tcpip.htm"
+    // ?
+    private static final DataBaseConnInfo DEFAULT_DB2_CONN_INFO = new DataBaseConnInfo(
+            "", "50000", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+    private static DB2NGDataStoreFactory factory = DB2ServiceExtension.getFactory();
 
-    //TO UNDERSTAND
+    // TO UNDERSTAND
     ArrayList<DataBaseConnInfo> dbData;
-    private DB2Preferences preferences;
+
+    // private DB2Preferences preferences;
 
     /**
      * Constructs a DB2 database connection wizard page. Reads any settings that may have been saved
      * from a previous session.
      */
     public DB2WizardPage() {
-        
-        //Call super with dialog title string
-        super(Messages.DB2WizardPage_title); 
-        
-        //Get any stored settings or create a new one
+
+        // Call super with dialog title string
+        super(Messages.DB2WizardPage_title);
+
+        // Get any stored settings or create a new one
         settings = DB2Plugin.getDefault().getDialogSettings().getSection(DB2_WIZARD);
         if (settings == null) {
             settings = DB2Plugin.getDefault().getDialogSettings().addNewSection(DB2_WIZARD);
         }
-        
-        //Add the name so the parent can store back to this same section
+
+        // Add the name so the parent can store back to this same section
         settingsArrayName = DB2_RECENT;
 
-        //Populate the Settings: default, current, and past list
+        // Populate the Settings: default, current, and past list
         defaultDBCI.setParameters(DEFAULT_DB2_CONN_INFO);
         currentDBCI.setParameters(defaultDBCI);
         String[] recent = settings.getArray(DB2_RECENT);
         if (null != recent) {
             for( String s : recent ) {
                 DataBaseConnInfo dbs = new DataBaseConnInfo(s);
-                if(!storedDBCIList.contains(dbs) )
+                if (!storedDBCIList.contains(dbs))
                     storedDBCIList.add(dbs);
             }
         }
-        
-        //Populate the db and schema exclusion lists
-//        dbExclusionList.add("");                                                //$NON-NLS-1$
-//        schemaExclusionList.add("");                                            //$NON-NLS-1$
-        
-        //Populate the Char and CharSeq exclusion lists
-        //TODO: when we activate Verification
+
+        // Populate the db and schema exclusion lists
+        //        dbExclusionList.add("");                                                //$NON-NLS-1$
+        //        schemaExclusionList.add("");                                            //$NON-NLS-1$
+
+        // Populate the Char and CharSeq exclusion lists
+        // TODO: when we activate Verification
     }
     /**
      * Checks if all user input fields are non-empty.
@@ -120,13 +123,13 @@ public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
      */
 
     protected boolean areAllFieldsFilled() {
-        
-        //What does this do?
+
+        // What does this do?
         if (!DB2Preferences.isInstalled())
             return false;
-        
+
         return couldConnect();
-        
+
     }
 
     private String emptyAsNull( String value ) {
@@ -144,6 +147,7 @@ public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
     protected boolean excludeSchemaFromUserChoices( String schemaName ) {
         return false;
     }
+
     /**
      * Gets a connection to the DB2 database. The port, host, userid, password and database name
      * must have been specified in order for the connection to succeed.
@@ -151,88 +155,93 @@ public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
      * @return a database Connection
      * @throws Exception
      */
-    @Override
-    protected Connection getConnection() {
-
+    protected DataSource getDataSource() {
         final String hostText = currentDBCI.getHostString();
         final String portText = currentDBCI.getPortString();
         final String userText = currentDBCI.getUserString();
         final String passText = currentDBCI.getPassString();
-        final String db       = currentDBCI.getDbString();
+        final String db = currentDBCI.getDbString();
 
-        //TODO: this is what the parent couldConnect() does.
+        // TODO: this is what the parent couldConnect() does.
         if (!areAllFieldsFilled()) {
             return null;
         }
 
-        if (realConnection == null) {
+        if (dataSource == null) {
+            runInPage(new IRunnableWithProgress(){
 
-            try {
-                getContainer().run(false, true, 
-                   new IRunnableWithProgress(){
+                public void run( IProgressMonitor monitor ) throws InvocationTargetException,
+                        InterruptedException {
 
-                        public void run( IProgressMonitor monitor ) 
-                                       throws InvocationTargetException,
-                                              InterruptedException {
-                            //TODO: why the extra layer compared to PostGIS?
-                            PlatformGIS.runBlockingOperation(new IRunnableWithProgress(){
-    
-                                public void run( IProgressMonitor monitor ) 
-                                                throws InvocationTargetException, 
-                                                InterruptedException {
-                                    
-                                        monitor.beginTask(Messages.DB2WizardPage_connectionTask, 
-                                                          IProgressMonitor.UNKNOWN); 
-                                        
-                                        if (realConnection != null)
-                                            try {
-                                                realConnection.close();
-                                            } catch (SQLException e1) {
-                                                // it's dead anyhow
-                                            }
-        
-                                        DB2ConnectionFactory connFac = 
-                                            new DB2ConnectionFactory(hostText, 
-                                                                     portText,
-                                                                     db);
-                                        connFac.setLogin(userText, passText);
-                                        DriverManager.setLoginTimeout(3);
-                                        try {
-                                            realConnection = connFac.getConnectionPool().getConnection();
-                                            
-                                            //TODO:Not sure what this was for but we can probably blow it away
-//                                            if (realConnection != null) {
-//                                                dbComboWgt.getDisplay().asyncExec(new Runnable(){
-//                                                    public void run() {
-//                                                        dbComboWgt.notifyListeners(SWT.FocusIn,
-//                                                                new Event());
-//        
-//                                                    }
-//                                                });
-//                                            }
-                                        } catch (SQLException e) {
-                                            throw new InvocationTargetException(e, e.getLocalizedMessage());
-                                        }
-                                        //TODO: Here the Postgis db has:
-//                                        if( monitor.isCanceled() )
-//                                            realConnection=null;
-//                                        monitor.done();
-                                        //should that be added?
-                                    }
-                                
-                            }, monitor);
+                    if (monitor == null)
+                        monitor = new NullProgressMonitor();
+
+                    Connection connection = null; // connection used to test DataSource
+                    try {
+                        monitor.beginTask(Messages.DB2WizardPage_connectionTask,
+                                IProgressMonitor.UNKNOWN);
+
+                        if (dataSource != null) {
+                            // close previous connection
+                            try {
+                                dataSource.close();
+                            } catch (SQLException e1) {
+                                // it's dead anyhow
+                            }
                         }
-                    });
-            } catch (InvocationTargetException e2) {
-                preferences.performDefaults();
-                throw new RuntimeException(e2.getLocalizedMessage(), e2);
-            } catch (InterruptedException e2) {
-                // Don't know why this exception doesn't do anything.
-            }
-        }
 
-        return realConnection;
+                        Map<String, Serializable> params = new HashMap<String, Serializable>();
+                        params.put(HOST.key, hostText);
+                        params.put(PORT.key, (Integer) PORT.parse(portText));
+                        params.put(DATABASE.key, db);
+                        dataSource = DB2ServiceExtension.getFactory().createDataSource(params);
+                        dataSource.setUsername(userText);
+                        dataSource.setPassword(passText);
+
+                        // Is this needed/useful?
+                        DriverManager.setLoginTimeout(3);
+                        monitor.worked(1);
+                        monitor.subTask("establish connection");
+
+                        if (monitor.isCanceled()) {
+                            dataSource.close();
+                            dataSource = null;
+                        }
+
+                        connection = dataSource.getConnection();
+                        monitor.subTask("connected");
+                        monitor.worked(1);
+
+                    } catch (Throwable shame) {
+                        if (dataSource != null) {
+                            try {
+                                dataSource.close();
+                            } catch (SQLException e1) {
+                                // we are closing already in a state of shame
+                            }
+                            dataSource = null;
+                        }
+                        // How to indicate failure? runInPage will show this to user
+                        throw new InvocationTargetException(shame, shame.getLocalizedMessage());
+                    } finally {
+                        if (connection != null) {
+                            try {
+                                connection.close();
+                            } catch (SQLException e) {
+                                // ignore since we are closing
+                            }
+                        }
+                    }
+                    /*
+                     * Postgis DB checks monitor here if( monitor.isCanceled()){ if( dataSource !=
+                     * null ){ dataSource.close(); dataSource = null; } }
+                     */
+                }
+            });
+        }
+        return dataSource; // this may of been set by the runnable above
     }
+
     /**
      * Returns the DB2DataStoreFactory.
      * 
@@ -258,34 +267,37 @@ public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
      */
     @Override
     public Map<String, Serializable> getParams() {
-        
-        if( !areAllFieldsFilled() || getConnection()==null ){
+        if (!DB2Preferences.isInstalled()) {
             return null;
         }
-        
+        if (!couldConnect()) {
+            return null;
+        }
+
         Map<String, Serializable> params = new HashMap<String, Serializable>();
-        Param[] dbParams = factory.getParametersInfo();
-        params.put(dbParams[0].key, "db2"); //$NON-NLS-1$
-        params.put(dbParams[1].key, emptyAsNull(currentDBCI.getHostString()));
+
+        params.put(DBTYPE.key, (Serializable)DBTYPE.sample); //$NON-NLS-1$
+        params.put(HOST.key, emptyAsNull(currentDBCI.getHostString()));
         String dbport = emptyAsNull(currentDBCI.getPortString());
         try {
-            params.put(dbParams[2].key, emptyAsNull(dbport));
+            params.put(PORT.key, emptyAsNull(dbport));
         } catch (NumberFormatException e) {
-            params.put(dbParams[2].key, "50000"); //$NON-NLS-1$
+            // use default port
+            params.put(PORT.key, "50000"); //$NON-NLS-1$
         }
         String db = currentDBCI.getDbString();
-        params.put(dbParams[3].key, emptyAsNull(db));
+        params.put(DATABASE.key, emptyAsNull(db));
 
         String userName = currentDBCI.getUserString();
-        params.put(dbParams[4].key, emptyAsNull(userName));
+        params.put(USER.key, emptyAsNull(userName));
         String password = currentDBCI.getPassString();
-        params.put(dbParams[5].key, emptyAsNull(password));
+        params.put(PASSWD.key, emptyAsNull(password));
 
-        params.put(dbParams[6].key, emptyAsNull(currentDBCI.getSchemaString())); 
+        params.put(SCHEMA.key, emptyAsNull(currentDBCI.getSchemaString()));
 
         return params;
     }
-    
+
     /**
      * Creates the DB2 service so we can do real work. Saves the values of text fields from the GUI
      * so that they can be used the next time this GUI page is displayed.
@@ -308,12 +320,12 @@ public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
         /*
          * Success! Store the connection settings in history.
          */
-//        saveWidgetValues();
-        //TODO: Review: This no longer exists so was removed-AVC
+        // saveWidgetValues();
+        // TODO: Review: This no longer exists so was removed-AVC
 
         return servers;
     }
-    
+
     /**
      * DB2 always requires the schema.
      * 
@@ -327,80 +339,77 @@ public class DB2WizardPage extends AbstractProprietaryDatastoreWizardPage {
     @Override
     public boolean doIsPageComplete() {
         boolean isComplete = false;
-        
+
         if (areAllFieldsFilled())
             isComplete = factory.canProcess(getParams());
-        
+
         return isComplete;
     }
     /**
-     * TODO: VERIFY
-     * According the Javadocs in the previous version of this class, DB2 does
-     * not support getting database names. If that's true, then we will have
-     * to activate the method below.
+     * TODO: VERIFY According the Javadocs in the previous version of this class, DB2 does not
+     * support getting database names. If that's true, then we will have to activate the method
+     * below.
      */
-//    @Override
-//	  protected ResultSet getDatabaseResultSet(Connection c) throws SQLException
-//    protected String [] lookupDbNamesForDisplay(Connection con) 
-//    {
-//        return null;
-//    }
-    
+    // @Override
+    // protected ResultSet getDatabaseResultSet(Connection c) throws SQLException
+    // protected String [] lookupDbNamesForDisplay(Connection con)
+    // {
+    // return null;
+    // }
+
     /**
-     * Gets the names of all the schema available for the specified database. 
-     * 
-     * The DB2 catalog table db2gse.st_geometry_columns is used to get a list of 
-     * all the schema values associated with tables that have spatial columns.
+     * Gets the names of all the schema available for the specified database. The DB2 catalog table
+     * db2gse.st_geometry_columns is used to get a list of all the schema values associated with
+     * tables that have spatial columns.
      */
     @Override
-    protected ResultSet getSchemasResultSet(Connection c) throws SQLException
-    {
-    	Statement statement = c.createStatement();
-    	return statement.executeQuery(
-    		"SELECT DISTINCT table_schema FROM db2gse.st_geometry_columns"); //$NON-NLS-1$
-    	// Ideally we should be closing the statement but we cannot
-    	// and the connection should be closed soon anyways.
+    protected ResultSet getSchemasResultSet( Connection c ) throws SQLException {
+        Statement statement = c.createStatement();
+        return statement
+                .executeQuery("SELECT DISTINCT table_schema FROM db2gse.st_geometry_columns"); //$NON-NLS-1$
+        // Ideally we should be closing the statement but we cannot
+        // and the connection should be closed soon anyways.
     }
-    
+
     @Override
     protected void doCreateWizardPage( Composite parent ) {
-        
-        //TODO: Review and remove. The string is now set in the default 
-//        this.portWgt.setTextLimit(5);
-//        this.portWgt.setText("50000"); //$NON-NLS-1$
-//        this.schemaWgt.setEnabled(false);
-        
-        //TODO: Remove. This is now done in the DataBaseRegistryWizardPage
-//        String[] recentDB2s = this.settings.getArray(DB2_RECENT);
-//        ArrayList<String> hosts = new ArrayList<String>();
-//        this.dbData = new ArrayList<DataBaseConnInfo>();
-//        if (recentDB2s != null) {
-//            for( String recent : recentDB2s ) {
-//                DataBaseConnInfo dbs = new DataBaseConnInfo(recent);
-//                this.dbData.add(dbs);
-//                hosts.add(dbs.getHostString());
-//            }
-//        }
-//        if (hosts.size() > 0) {
-//            ((CCombo) this.hostWgt).setItems(hosts.toArray(new String[0]));
-//            ((CCombo) this.hostWgt).addModifyListener(new ModifyListener(){
-//                public void modifyText( ModifyEvent e ) {
-//                    if (e.widget != null) {
-//                        for( DataBaseConnInfo db : DB2WizardPage.this.dbData ) {
-//                            if (db.getHostString().equalsIgnoreCase(getHostText())) {
-//                                setPortText(db.getPortString());
-//                                setUserText(db.getUserString());
-//                                setPassText(db.getPassString());
-//                                setPassText(db.getPassString());
-//                                setDBText(db.getDbString());
-//                                 DB2WizardPage.this.schemaWgt.setText(db.getSchemaString());
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-//        }
+
+        // TODO: Review and remove. The string is now set in the default
+        // this.portWgt.setTextLimit(5);
+        //        this.portWgt.setText("50000"); //$NON-NLS-1$
+        // this.schemaWgt.setEnabled(false);
+
+        // TODO: Remove. This is now done in the DataBaseRegistryWizardPage
+        // String[] recentDB2s = this.settings.getArray(DB2_RECENT);
+        // ArrayList<String> hosts = new ArrayList<String>();
+        // this.dbData = new ArrayList<DataBaseConnInfo>();
+        // if (recentDB2s != null) {
+        // for( String recent : recentDB2s ) {
+        // DataBaseConnInfo dbs = new DataBaseConnInfo(recent);
+        // this.dbData.add(dbs);
+        // hosts.add(dbs.getHostString());
+        // }
+        // }
+        // if (hosts.size() > 0) {
+        // ((CCombo) this.hostWgt).setItems(hosts.toArray(new String[0]));
+        // ((CCombo) this.hostWgt).addModifyListener(new ModifyListener(){
+        // public void modifyText( ModifyEvent e ) {
+        // if (e.widget != null) {
+        // for( DataBaseConnInfo db : DB2WizardPage.this.dbData ) {
+        // if (db.getHostString().equalsIgnoreCase(getHostText())) {
+        // setPortText(db.getPortString());
+        // setUserText(db.getUserString());
+        // setPassText(db.getPassString());
+        // setPassText(db.getPassString());
+        // setDBText(db.getDbString());
+        // DB2WizardPage.this.schemaWgt.setText(db.getSchemaString());
+        // break;
+        // }
+        // }
+        // }
+        // }
+        // });
+        // }
     }
     @Override
     protected String getDriversMessage() {

@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.internal.wms.WMSGeoResourceImpl;
@@ -56,7 +57,7 @@ public class GeoServerFriend extends IFriend {
 		ICatalog local = CatalogPlugin.getDefault().getLocalCatalog();
 		
 		// look up frendly wfs entry from local catalog (if present)
-		IGeoResource friend = local.getById( IGeoResource.class, target, monitor );
+		IGeoResource friend = local.getById( IGeoResource.class, new ID(target), monitor );
 		if( friend == null ) {
 			return Collections.emptyList();
 		}

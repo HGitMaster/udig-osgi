@@ -17,6 +17,7 @@ package net.refractions.udig.catalog.internal.mysql.ui;
 import static org.geotools.data.mysql.MySQLDataStoreFactory.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
+import net.refractions.udig.catalog.MySQLServiceExtension;
 import net.refractions.udig.catalog.internal.mysql.MySQLPlugin;
 import net.refractions.udig.catalog.service.database.DatabaseConnectionRunnable;
 import net.refractions.udig.catalog.service.database.DatabaseServiceDialect;
@@ -33,7 +34,7 @@ public class MySqlDialect extends DatabaseServiceDialect {
 
     public MySqlDialect(  ) {
         // TODO customize localization if it needs it
-        super(SCHEMA, DATABASE, HOST, PORT, USER, PASSWD, DBTYPE,
+        super( null, DATABASE, HOST, PORT, USER, PASSWD, MySQLServiceExtension.getPram( DBTYPE.key ), null,
                 "jdbc.mysql", new DatabaseWizardLocalization()); //$NON-NLS-1$
     }
 

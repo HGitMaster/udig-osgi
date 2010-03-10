@@ -1,5 +1,8 @@
 package net.refractions.udig.tutorials.genericprojectelement;
 
+import java.util.Collections;
+import java.util.List;
+
 import net.refractions.udig.project.element.AbstractGenericProjectElement;
 import net.refractions.udig.project.element.IGenericProjectElement;
 
@@ -39,6 +42,14 @@ public class MyProjectElement extends AbstractGenericProjectElement implements I
         // this is needed to that the project element knows that data is changed
         // and will save on shutdown
         setDirty(true);
+    }
+
+    public List getElements( Class type ) {
+        return Collections.emptyList();
+    }
+
+    public List getElements() {
+        return Collections.emptyList();
     }
     
 }

@@ -122,48 +122,33 @@ public abstract class AbstractUDIGImportPage extends WorkflowWizardPage implemen
      * Default implementation creates a collection of services from the parameters returned
      * {@link UDIGConnectionPage#getParams()}
      */
-    @SuppressWarnings("deprecation")
     public Collection<IService> getServices() {
         final Map<String, Serializable> params = getParams();
         final Collection<IService> services = new HashSet<IService>();
         IRunnableWithProgress runnable = new IRunnableWithProgress(){
             public void run(IProgressMonitor monitor) {
-                services.addAll(EndConnectionState.constructServices(monitor, params, new HashSet<URL>()));
+                Collection<IService> newServices = EndConnectionState.constructServices(monitor, params, new HashSet<URL>());
+                services.addAll(newServices);
             }
         };
         try {
             getContainer().run(false, true, runnable);
         } catch (InvocationTargetException e) {
+            setErrorMessage( "Could not connect:"+e.getCause().getMessage() );
             throw (RuntimeException) new RuntimeException( ).initCause( e );
         } catch (InterruptedException e) {
+            setErrorMessage( "Canceled");
             throw (RuntimeException) new RuntimeException( ).initCause( e );
         }
         return services;
     }
     
     /** 
-     * Does nothing
-     * @deprecated
+     * Gather up connection parameters from the user interface
+     * @return connection parameters from the user interface
      */
     public Map<String, Serializable> getParams() {
         return null;
-    }
-
-    /**
-     * Just a simple little container class
-     * 
-     * @author jesse
-     * @since 1.1.0
-     */
-    private class Entry {
-        final String message;
-        final int type;
-        public Entry( String message, int type ) {
-            super();
-            this.message = message;
-            this.type = type;
-        }
-
     }
 
     @Override

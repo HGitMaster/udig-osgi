@@ -32,6 +32,17 @@
             name="NITF"/>                                                 
                                             
    </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            class="net.refractions.udig.catalog.imageio.mosaicwizard.MosaicImportWizard"
+            id="eu.hydrologis.jgrass.dxfdwg.wizard.DxfImportWizard"
+            name="Import imagery folder as mosaic">
+         <description>
+            Import a dxf file converting it to shapefile into the workspace.
+         </description>
+      </wizard>
+   </extension>
 
 
 </plugin>

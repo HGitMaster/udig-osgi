@@ -37,6 +37,7 @@ public class WfsPlugin extends AbstractUIPlugin {
      */
     public void start( BundleContext context ) throws Exception {
         super.start(context);
+        /*
         ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(WFSDataStore.class.getClassLoader());
@@ -50,8 +51,10 @@ public class WfsPlugin extends AbstractUIPlugin {
         } finally {
             Thread.currentThread().setContextClassLoader(current);
         }
+        */
     }
 
+    /*
     private void setLoggerLevel( String loggerID, String traceID ) {
         Logger logger = Logger.getLogger(loggerID);
         if( isDebugging(traceID) ) 
@@ -61,7 +64,7 @@ public class WfsPlugin extends AbstractUIPlugin {
         ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.ALL);
         logger.addHandler(consoleHandler);
-    }
+    }*/
 
 	/**
 	 * This method is called when the plug-in is stopped

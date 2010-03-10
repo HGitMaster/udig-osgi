@@ -30,6 +30,7 @@ import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.geotools.data.Parameter;
 import org.geotools.process.ProcessFactory;
+import org.opengis.feature.type.Name;
 
 /**
  * Represents a bean style metadata ancestor for metadata about a process.
@@ -56,14 +57,18 @@ public class IProcessInfo {
     protected ImageDescriptor icon;
     protected ProcessFactory processFactory;
     private Icon awtIcon;
+    private Name processName;
 
     protected IProcessInfo() {
         // for over-riding
     }
 
     public IProcessInfo( String title, String name, String description, URI schema,
-            ProcessFactory pf, String[] keywords, 
+            ProcessFactory pf, Name pn, String[] keywords, 
             ImageDescriptor icon ) {
+        this.processFactory = pf;
+        this.processName = pn;
+        
         this.title = title;
         this.description = description;
         this.name = name;
@@ -76,7 +81,6 @@ public class IProcessInfo {
         this.keywords = k;
         this.schema = schema;
         this.icon = icon;
-        this.processFactory = pf;
     }
 
     /**
@@ -97,6 +101,10 @@ public class IProcessInfo {
         return this.processFactory;
     }    
 
+    public Name getProcessName(){
+        return this.processName;
+    }
+    
     /**
      * Returns the keywords assocaited with this resource
      * <p>
@@ -215,10 +223,10 @@ public class IProcessInfo {
     }
 
     public Map<String, Parameter< ? >> getInputs() {
-        return this.processFactory.getParameterInfo();
+        return this.processFactory.getParameterInfo( processName );
     }
 
     public Map<String, Parameter< ? >> getOutputs() {
-        return this.processFactory.getResultInfo(null);
+        return this.processFactory.getResultInfo(processName,null);
     }
 }

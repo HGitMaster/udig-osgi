@@ -26,6 +26,8 @@ import net.refractions.udig.catalog.wmsc.server.TiledWebMapServer;
 import net.refractions.udig.catalog.wmsc.server.WMSTileSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * GeoResource to represent a WMS-C Tileset.
@@ -73,9 +75,8 @@ public class WMSCGeoResourceImpl extends IGeoResource {
             return false;
         }
 
-        if (adaptee.isAssignableFrom(TiledWebMapServer.class) ||
-                adaptee.isAssignableFrom(WMSTileSet.class)  || 
-                super.canResolve(adaptee)) {
+        if (adaptee.isAssignableFrom(TiledWebMapServer.class)
+                || adaptee.isAssignableFrom(WMSTileSet.class) || super.canResolve(adaptee)) {
             return true;
         }
 
@@ -87,7 +88,7 @@ public class WMSCGeoResourceImpl extends IGeoResource {
         if (adaptee.isAssignableFrom(TiledWebMapServer.class)) {
             return adaptee.cast(service(monitor).getWMSC());
         }
-        if (adaptee.isAssignableFrom(WMSTileSet.class)){
+        if (adaptee.isAssignableFrom(WMSTileSet.class)) {
             return adaptee.cast(tile);
         }
         return super.resolve(adaptee, monitor);
@@ -108,29 +109,30 @@ public class WMSCGeoResourceImpl extends IGeoResource {
     }
 
     @Override
-	protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null) {
-            service(monitor).rLock.lock();
-            try {
-                if (info == null) {
-                    info = new WMSCGeoResourceInfo(this, monitor);
-                }
-            } finally {
-                service(monitor).rLock.unlock();
-            }
-        }
-        return info;
+    public WMSCGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (WMSCGeoResourceInfo) super.getInfo(monitor);
     }
-    
+    protected WMSCGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        if (monitor == null)
+            monitor = new NullProgressMonitor();
+
+        WMSCServiceImpl tileServer = service(new SubProgressMonitor(monitor, 50));
+        try {
+            tileServer.rLock.lock();
+            return new WMSCGeoResourceInfo(this, new SubProgressMonitor(monitor, 50));
+        } finally {
+            tileServer.rLock.unlock();
+        }
+
+    }
+
     @Override
-    public WMSCServiceImpl service(IProgressMonitor monitor) throws IOException {
-    	return (WMSCServiceImpl) super.service(monitor);
+    public WMSCServiceImpl service( IProgressMonitor monitor ) throws IOException {
+        return (WMSCServiceImpl) super.service(monitor);
     }
 
     /**
-     * 
-     *
-     * @return  the WMSC tile set represented by the service
+     * @return the WMSC tile set represented by the service
      */
     public TileSet getTileSet() {
         return this.tile;

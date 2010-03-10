@@ -32,6 +32,7 @@ import net.refractions.udig.ui.ProgressManager;
 import net.refractions.udig.ui.FeatureTypeEditorDialog.ValidateFeatureType;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -56,23 +57,13 @@ public class NewLayerAction extends ActionDelegate implements IWorkbenchWindowAc
 
     private final ValidateFeatureType performOK=new ValidateFeatureType(){
 
-        public boolean validate( SimpleFeatureType featureType ) {
+        public String validate( SimpleFeatureType featureType ) {
             try {
                 resource = CatalogPlugin.getDefault().getLocalCatalog().
                     createTemporaryResource(featureType);
-                return true;
+                return null;
             } catch (Exception e) {
-                SimpleFeatureTypeBuilder ftB = new SimpleFeatureTypeBuilder();
-                ftB.init(featureType);
-                ftB.setName(Messages.NewLayerAction_duplicate_type_name);
-                try {
-                    resource = CatalogPlugin.getDefault().getLocalCatalog().createTemporaryResource(
-                        ftB.buildFeatureType());
-                    return true;
-                } catch (Exception e2) {
-                    resource = null;
-                    return false;
-                }
+                return Messages.NewLayerAction_duplicateName;
             }            
         }
         

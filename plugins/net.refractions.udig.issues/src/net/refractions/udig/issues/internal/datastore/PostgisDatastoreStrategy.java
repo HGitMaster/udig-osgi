@@ -22,7 +22,7 @@ import net.refractions.udig.catalog.PostgisServiceExtension2;
 import net.refractions.udig.issues.IListStrategy;
 
 import org.geotools.data.DataStore;
-import org.geotools.data.postgis.PostgisDataStoreFactory;
+import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 
 /**
  * Strategy for obtaining a postgis datastore.
@@ -44,7 +44,8 @@ public class PostgisDatastoreStrategy extends AbstractDatastoreStrategy implemen
         datastore=null;
         PostgisServiceExtension2 ext=new PostgisServiceExtension2();
         Map<String, Serializable> params = ext.createParams(PostgisServiceExtension2.DIALECT.toURL(url));
-        PostgisDataStoreFactory factory = new PostgisDataStoreFactory();
+        PostgisNGDataStoreFactory factory = new PostgisNGDataStoreFactory();
+        
         datastore=factory.createDataStore(params);
         return datastore;
     }

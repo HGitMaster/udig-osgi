@@ -141,12 +141,24 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
         }
 
     };
-
+    
+    /**
+     * Prevent fetching of remote icons (localhost and files are okay)
+     */
     private boolean decorateImages;
 
+    /**
+     * Wrap around the ResolveLabelProviderSimple and add some state markup.
+     * 
+     * @param resolveLabelProviderSimple
+     */
     public ResolveTitlesDecorator( ResolveLabelProviderSimple resolveLabelProviderSimple ) {
         this( resolveLabelProviderSimple, false);
     }
+    /**
+     * @param resolveLabelProviderSimple
+     * @param decorateImages
+     */
     public ResolveTitlesDecorator( ResolveLabelProviderSimple resolveLabelProviderSimple, boolean decorateImages ) {
         this.source = resolveLabelProviderSimple;
         this.decorateImages=decorateImages;
@@ -190,10 +202,12 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
                 imageRegistry.remove(resolve.getIdentifier().toString());
         }
         
-        // we tried to look up a cached version... If not around and viewer doesn't want decorated images then we'll return. 
-        if( !decorateImages )
+        // we tried to look up a cached version... If not around and viewer doesn't want decorated images then we'll return.
+        
+        if( !resolve.getID().isLocal() && !decorateImages ){
             return null;
-
+        }
+        
         // put an element in the map so that it will not be loaded again.
         images.put(resolve, null);
 
@@ -212,22 +226,37 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
 
     public String decorateText( String text, Object element ) {
         if( disposed ) return null;
-        if (!(element instanceof IResolve))
+        if (!(element instanceof IResolve)){
             return null;
-        if (decorated.containsKey(element)) {
-            LabelData data = decorated.get(element);
-            if (data == null)
-                return null;
-            return data.text;
         }
 
         IResolve resolve = (IResolve) element;
+        
+        if (decorated.containsKey(element)) {
+            LabelData data = decorated.get(element);
+            if (data == null){
+                return null;
+            }
+            if( resolve.getID().getTypeQualifier() != null ){
+                return data.text + " ("+resolve.getID().getTypeQualifier() +")";
+            }
+            else {
+                return data.text;
+            }
+        }
+
         decorated.put(resolve, null);
         if (resolve.getTitle() != null) {
             LabelData data = new LabelData();
             data.text = resolve.getTitle();
             decorated.put(resolve, data);
-            return data.text;
+            
+            if( resolve.getID().getTypeQualifier() != null ){
+                return data.text + " ("+resolve.getID().getTypeQualifier() +")";
+            }
+            else {
+                return data.text;
+            }
         }
         toDecorate.offer(resolve);
         textWorker.schedule();
@@ -323,6 +352,12 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
         instanceListeners.add(listener);
     }
 
+    /**
+     * This Job executes in the background and tries to update the labels.
+     * <p>
+     * It can actually get "stuck" on any bad label or icon (such as a WMS that takes a while); so
+     * it is important to have default titles that work okay.
+     */
     private class UpdateLabel extends Job {
 
         DisplayUpdater updater;
@@ -355,8 +390,9 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
                     URL identifier = element.getIdentifier();
                     monitor.beginTask(Messages.ResolveTitlesDecorator_0 + identifier.getFile(),
                             IProgressMonitor.UNKNOWN);
-                    if( monitor.isCanceled() )
+                    if( monitor.isCanceled() ){
                         return Status.OK_STATUS;
+                    }
                     LabelData data = new LabelData();
                     try {
                         if(text){

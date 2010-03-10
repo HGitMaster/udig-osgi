@@ -18,6 +18,7 @@ package net.refractions.udig.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -94,6 +95,8 @@ public class CRSChooser {
     Matcher matcher;
     private TabFolder folder;
     private Controller parentPage;
+    private HashMap<String, String> crsCodeMap;
+    private CoordinateReferenceSystem sourceCRS;
 
     public CRSChooser( Controller parentPage ) {
         matcher = Pattern.compile(".*?\\(([^(]*)\\)$").matcher(""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -282,7 +285,6 @@ public class CRSChooser {
         if (crs != null) {
             final List list = codesList.getList();
             Set<Identifier> identifiers = new HashSet<Identifier>(crs.getIdentifiers());
-            identifiers.add(crs.getName());
             
             final Set<Integer> candidates=new HashSet<Integer>();
             
@@ -301,9 +303,11 @@ public class CRSChooser {
             }
             if( candidates.isEmpty() ){
                 java.util.List<String> input=(java.util.List<String>) codesList.getInput();
-                input.add(0, crs.getName().toString());
+                String sourceCRSName = crs.getName().toString();
+                sourceCRS = crs;
+                input.add(0, sourceCRSName);
                 codesList.setInput(input);
-                codesList.setSelection(new StructuredSelection(crs.getName().toString()), false);
+                codesList.setSelection(new StructuredSelection(sourceCRSName), false);
                 list.setTopIndex(0);
                 try{
                     String toWKT = crs.toWKT();
@@ -318,13 +322,19 @@ public class CRSChooser {
                 list.setTopIndex(next);
                 
             }
-
-            
         }
     }
 
     private boolean exactMatch( CoordinateReferenceSystem crs, Identifier identifier, String item ) {
-        return (crs==DefaultGeographicCRS.WGS84 && item.contains("EPSG:4326")) || item.equalsIgnoreCase(identifier.toString()); //$NON-NLS-1$
+        return (crs==DefaultGeographicCRS.WGS84 && item.equals("WGS 84 (4326)")) ||  //$NON-NLS-1$
+            item.equalsIgnoreCase(identifier.toString()) || isInCodeMap(identifier, item);
+    }
+
+    private boolean isInCodeMap( Identifier identifier, String item ) {
+    	
+        String name = crsCodeMap.get(identifier.getCode());
+        if(name==null ) return false;
+        else return name.equals(item);
     }
 
     private boolean sameEPSG( CoordinateReferenceSystem crs, Identifier identifier, String item ) {
@@ -384,6 +394,7 @@ public class CRSChooser {
      * @return Set of CRS Names which contain all the filter keywords
      */
     protected Set<String> filterCRSNames( String[] filter ) {
+        crsCodeMap = new HashMap<String, String>();
         Set<String> descriptions = new TreeSet<String>();
         for( Object object : ReferencingFactoryFinder.getCRSAuthorityFactories(null) ) {
             CRSAuthorityFactory factory = (CRSAuthorityFactory) object;
@@ -398,6 +409,7 @@ public class CRSChooser {
                         description = Messages.CRSChooser_unnamed; 
                     }
                     description += " (" + code + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    crsCodeMap.put(code, description);
                     if (matchesFilter(description.toUpperCase(), filter)){
                         descriptions.add(description);
                     }
@@ -470,6 +482,8 @@ public class CRSChooser {
             } catch (FactoryException e2) {
                 // then we have the wrong factory
                 // is there a better way to do this?
+            }catch (Exception e) {
+                UiPlugin.log("Error creating CRS object, trying more...", e);
             }
         }
         try {
@@ -566,6 +580,11 @@ public class CRSChooser {
             }
         }
         if (selectedCRS == null) {
+            String crsCode = (String) ((IStructuredSelection) codesList.getSelection()).getFirstElement();
+            if(sourceCRS != null && crsCode.equals(sourceCRS.getName().toString())){
+                System.out.println("source crs: " + sourceCRS.getName().toString());
+                return sourceCRS;
+            }
             return createCRS(searchText.getText());
         }
         return selectedCRS;

@@ -11,6 +11,8 @@ package net.refractions.udig.project.render;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.util.List;
+import java.util.SortedSet;
 
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.internal.render.impl.ViewportModelImpl;
@@ -165,6 +167,17 @@ public interface IViewportModel {
 	  */
 	public double getScaleDenominator();
 
+	/**
+	 * List of preferred scale denominators for the map.
+	 * <p>
+	 * This set is used to provide good options for a user to change the scale; or to support
+	 * the creation of "fixed" zoom in and zoom out tools.
+	 * 
+	 * @see getScaleDEnominator for a definition of scale denominator
+	 * @return List of preferred scale denominator values for the map
+	 */
+	public SortedSet<Double> getPreferredScaleDenominators();
+	
     /**
      * Adds a IViewportModelListener to this map.  A given listener will only be added once.
      *

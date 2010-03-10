@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.internal.wfs.WFSGeoResourceImpl;
@@ -38,11 +39,6 @@ public class WFSConnectionFactory extends UDIGConnectionFactory {
             return wfs.getConnectionParams();
         }
         URL url = toCapabilitiesURL( data );
-        if( url == null ){
-            // so we are not sure it is a wms url
-            // lets guess
-            url = CatalogPlugin.locateURL(data);
-        }
         if( url != null ) {
             // well we have a url - lets try it!            
             List<IResolve> list = CatalogPlugin.getDefault().getLocalCatalog().find( url, null );
@@ -97,8 +93,11 @@ public class WFSConnectionFactory extends UDIGConnectionFactory {
         else if( data instanceof URL ){
             return toCapabilitiesURL( (URL) data );
         }
-        else if( CatalogPlugin.locateURL(data) != null ){
-            return toCapabilitiesURL( CatalogPlugin.locateURL(data) );
+//        else if( CatalogPlugin.locateURL(data) != null ){
+//            return toCapabilitiesURL( CatalogPlugin.locateURL(data) );
+//        }
+        else if (ID.cast(data) != null){
+        	return ID.cast(data).toURL();
         }
         else {
             return null; // no idea what this should be
@@ -131,13 +130,13 @@ public class WFSConnectionFactory extends UDIGConnectionFactory {
             return null;
 
         }
-        if (query != null && query.indexOf("service=wfs") != -1) { //$NON-NLS-1$
+        if (query != null && query.toLowerCase().indexOf("service=wfs") != -1) { //$NON-NLS-1$
             return checkedURL( url );
         }
-        if (path != null && path.indexOf("geoserver/wfs") != -1) { //$NON-NLS-1$
+        if (path != null && path.toLowerCase().indexOf("geoserver/wfs") != -1) { //$NON-NLS-1$
             return checkedURL( url );
         }
-        if (url.toExternalForm().indexOf("WFS") != -1) { //$NON-NLS-1$
+        if (url.toExternalForm().toLowerCase().indexOf("WFS") != -1) { //$NON-NLS-1$
             return checkedURL( url );
         }
         return null;

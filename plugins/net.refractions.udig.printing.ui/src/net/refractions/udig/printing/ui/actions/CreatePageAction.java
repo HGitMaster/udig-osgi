@@ -11,8 +11,12 @@ package net.refractions.udig.printing.ui.actions;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import net.refractions.udig.printing.model.Box;
 import net.refractions.udig.printing.model.ModelFactory;
@@ -25,6 +29,7 @@ import net.refractions.udig.printing.ui.internal.PrintingPlugin;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.ui.ApplicationGIS;
+import net.refractions.udig.project.ui.internal.MapEditor;
 import net.refractions.udig.project.ui.internal.MapEditorInput;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -36,6 +41,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -51,62 +57,75 @@ import org.eclipse.ui.dialogs.ListDialog;
 public class CreatePageAction implements IEditorActionDelegate {
 
     public void run( IAction action ) {
-        IEditorInput input = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                .getActiveEditor().getEditorInput();
-
-        if (!(input instanceof MapEditorInput)) {
-            MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.CreatePageAction_printError_title, 
-                    Messages.CreatePageAction_printError_text); 
+        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+        IEditorInput input = activeEditor.getEditorInput();
+        if (!(activeEditor instanceof MapEditor) && !(input instanceof MapEditorInput)) {
+            MessageDialog.openError(Display.getDefault().getActiveShell(),
+                    Messages.CreatePageAction_printError_title,
+                    Messages.CreatePageAction_printError_text);
         }
+
+        MapEditor mapEditor = (MapEditor) activeEditor;
+        Point partSize = mapEditor.getComposite().getSize();
 
         Template template = getPageTemplate();
 
-        if( template==null ){
+        if (template == null) {
             return;
         }
-        
+
         Map map = null;
         Project project = null;
 
         Map oldMap = (Map) ((MapEditorInput) input).getProjectElement();
         project = oldMap.getProjectInternal();
-        
+
         map = (Map) EcoreUtil.copy(oldMap);
-        
+
         project.getElementsInternal().add(map);
 
-        Page page = createPage(template, map, project);
-        
-       ApplicationGIS.openProjectElement(page, false);
+        Page page = createPage(template, map, project, partSize);
+
+        ApplicationGIS.openProjectElement(page, false);
     }
 
-    private Page createPage( Template template, Map map, Project project ) {
-        PageFormat pageFormat = PrinterJob.getPrinterJob().defaultPage();
-        int width = new Double(pageFormat.getImageableWidth()).intValue();
-        int height = new Double(pageFormat.getImageableHeight()).intValue();
+    private Page createPage( Template template, Map map, Project project, Point partSize ) {
+        int width = 800;
+        int height = 600;
+        if (partSize != null) {
+            width = partSize.x;
+            height = partSize.y;
+        }else{
+            PageFormat pageFormat = PrinterJob.getPrinterJob().defaultPage();
+            width = new Double(pageFormat.getImageableWidth()).intValue();
+            height = new Double(pageFormat.getImageableHeight()).intValue();
+        }
 
         Page page = ModelFactory.eINSTANCE.createPage();
 
         page.setSize(new Dimension(width, height));
 
-        MessageFormat formatter = new MessageFormat(Messages.CreatePageAction_newPageName, Locale.getDefault()); 
+        MessageFormat formatter = new MessageFormat("{0} - " + template.getAbbreviation(), Locale
+                .getDefault());
         if (page.getName() == null || page.getName().length() == 0) {
-            page.setName(formatter.format(new Object[] { map.getName() }));
+            page.setName(formatter.format(new Object[]{map.getName()}));
         }
 
         page.setProjectInternal(project);
         template.init(page, map);
         Iterator<Box> iter = template.iterator();
-        while (iter.hasNext()) {
+        while( iter.hasNext() ) {
             page.getBoxes().add(iter.next());
         }
         return page;
     }
 
     private Template getPageTemplate() {
-        final java.util.Map<String, TemplateFactory> templateFactories = PrintingPlugin.getDefault().getTemplateFactories();
+        final java.util.Map<String, TemplateFactory> templateFactories = PrintingPlugin
+                .getDefault().getTemplateFactories();
 
-        //TODO move to a preference initializer
+        // TODO move to a preference initializer
         PrintingPlugin.getDefault().getPluginPreferences().setValue(
                 PrintingPlugin.PREF_DEFAULT_TEMPLATE,
                 "net.refractions.udig.printing.ui.internal.BasicTemplate"); //$NON-NLS-1$
@@ -114,10 +133,10 @@ public class CreatePageAction implements IEditorActionDelegate {
         String defaultTemplate = PrintingPlugin.getDefault().getPluginPreferences().getString(
                 PrintingPlugin.PREF_DEFAULT_TEMPLATE);
 
-
         ListDialog dialog = createTemplateChooserDialog(templateFactories);
 
-        TemplateFactory templateFactory = (TemplateFactory) PrintingPlugin.getDefault().getTemplateFactories().get(defaultTemplate);
+        TemplateFactory templateFactory = (TemplateFactory) PrintingPlugin.getDefault()
+                .getTemplateFactories().get(defaultTemplate);
 
         dialog.setInitialSelections(new Object[]{templateFactory});
         int result = dialog.open();
@@ -126,21 +145,23 @@ public class CreatePageAction implements IEditorActionDelegate {
         }
 
         Template template = null;
-        
+
         templateFactory = ((TemplateFactory) dialog.getResult()[0]);
 
         if (templateFactory == null) {
-            PrintingPlugin.log(Messages.CreatePageAction_error_cannotFindDefaultTemplate,null); 
+            PrintingPlugin.log(Messages.CreatePageAction_error_cannotFindDefaultTemplate, null);
 
-            TemplateFactory firstAvailable = (TemplateFactory) templateFactories.values().iterator().next();
+            TemplateFactory firstAvailable = (TemplateFactory) templateFactories.values()
+                    .iterator().next();
             if (firstAvailable == null) {
-            	PrintingPlugin.log("Unable to locate any templates, resorting to hard coded default.", null); //$NON-NLS-1$
-            	template = new BasicTemplateFactory().createTemplate();            	
+                PrintingPlugin.log(
+                        "Unable to locate any templates, resorting to hard coded default.", null); //$NON-NLS-1$
+                template = new BasicTemplateFactory().createTemplate();
             } else {
-            	template = firstAvailable.createTemplate();
-            }	
+                template = firstAvailable.createTemplate();
+            }
         } else {
-        	template = templateFactory.createTemplate();
+            template = templateFactory.createTemplate();
         }
         return template;
     }
@@ -153,9 +174,19 @@ public class CreatePageAction implements IEditorActionDelegate {
     private ListDialog createTemplateChooserDialog(
             final java.util.Map<String, TemplateFactory> templateFactories ) {
         ListDialog dialog = new ListDialog(Display.getDefault().getActiveShell());
-        dialog.setTitle(Messages.CreatePageAction_dialog_title); 
-        dialog.setMessage(Messages.CreatePageAction_dialog_message); 
-        dialog.setInput(templateFactories.values());
+        dialog.setTitle(Messages.CreatePageAction_dialog_title);
+        dialog.setMessage(Messages.CreatePageAction_dialog_message);
+        
+        Set<String> keySet = templateFactories.keySet();
+        List<String> keyList = new ArrayList<String>();
+        keyList.addAll(keySet);
+        Collections.sort(keyList);
+        List<TemplateFactory> valuesList = new ArrayList<TemplateFactory>();
+        for( String key : keyList ) {
+            valuesList.add(templateFactories.get(key));
+        }
+        
+        dialog.setInput(valuesList);
         ArrayContentProvider provider = new ArrayContentProvider();
         dialog.setContentProvider(provider);
 

@@ -132,7 +132,7 @@ class ApplyStyleCommand extends AbstractCommand implements UndoableCommand {
     	//FIXME: This is a temporary solution
     	List<StyleEntry> l = new ArrayList<StyleEntry>(newStyleBlackboard.getContent());
         List<String> selected=new ArrayList<String>();
-    	for (Iterator itr = l.iterator(); itr.hasNext();) { 
+    	for (Iterator<?> itr = l.iterator(); itr.hasNext();) { 
     		StyleEntry entry = (StyleEntry)itr.next();
     		if (entry.getStyle() != null) {
     			newStyleBlackboard.put(entry.getID(), entry.getStyle());

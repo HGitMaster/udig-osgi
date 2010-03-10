@@ -32,6 +32,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -96,8 +97,12 @@ public class LabelDirectEditManager extends DirectEditManager {
                 
                 if (size.x != 0) {
                     size = text.computeSize(size.x, SWT.DEFAULT);
+                }else{
+                    size.x = 1;
                 }
-                getCellEditor().getControl().setSize(size.x, size.y);
+                
+                Control control = getCellEditor().getControl();
+                control.setSize(size.x, size.y);
             }
         };
         

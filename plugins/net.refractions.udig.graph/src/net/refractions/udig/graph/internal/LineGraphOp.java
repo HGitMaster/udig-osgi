@@ -7,6 +7,7 @@ import java.util.List;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.util.GeoToolsAdapters;
 import net.refractions.udig.core.internal.CorePlugin;
@@ -80,8 +81,8 @@ public class LineGraphOp implements IOp {
         ILayer graphLayer = null;
         ILayer pathLayer = null;
         
-        URL GRAPH_ID = new URL( null, GraphMapGraphic.ID, CorePlugin.RELAXED_HANDLER );            
-        URL PATH_ID = new URL( null, PathMapGraphic.ID, CorePlugin.RELAXED_HANDLER );            
+        ID GRAPH_ID = new ID(new URL( null, GraphMapGraphic.ID, CorePlugin.RELAXED_HANDLER ));            
+        ID PATH_ID =  new ID(new URL( null, PathMapGraphic.ID, CorePlugin.RELAXED_HANDLER ));            
          
         for( ILayer look : map.getMapLayers() ){
             URL id = look.getGeoResource().getIdentifier();
@@ -97,7 +98,7 @@ public class LineGraphOp implements IOp {
                 return; // not available?
             }
             List<IGeoResource> resourceList = Collections.singletonList( resource );            
-            List added = ApplicationGIS.addLayersToMap(map, resourceList, 0 );
+            List< ? extends ILayer> added = ApplicationGIS.addLayersToMap(map, resourceList, 0 );
             if( added.isEmpty() ){
                 return; // not available?
             }
@@ -121,7 +122,7 @@ public class LineGraphOp implements IOp {
                 return; // not available?
             }
             List<IGeoResource> resourceList = Collections.singletonList( resource );            
-            List added = ApplicationGIS.addLayersToMap(map, resourceList, 0 );
+            List< ? extends ILayer> added = ApplicationGIS.addLayersToMap(map, resourceList, 0 );
             if( added.isEmpty() ){
                 return; // not available?
             }

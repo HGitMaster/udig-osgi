@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Examples Plug-in
-Bundle-SymbolicName: net.refractions.udig.code.examples;singleton:=true
+Bundle-SymbolicName: net.refractions.udig.tutorials.examples;singleton:=true
 Bundle-Version: 1.2.0
 Bundle-Activator: net.refractions.udig.code.examples.Activator
 Bundle-Vendor: Refractions Research Inc

@@ -26,6 +26,7 @@ import net.refractions.udig.tools.edit.Behaviour;
 import net.refractions.udig.tools.edit.EditToolConfigurationHelper;
 import net.refractions.udig.tools.edit.EditToolHandler;
 import net.refractions.udig.tools.edit.EnablementBehaviour;
+import net.refractions.udig.tools.edit.activator.ClearCurrentSelectionActivator;
 import net.refractions.udig.tools.edit.activator.EditStateListenerActivator;
 import net.refractions.udig.tools.edit.activator.ResetHandlerActivator;
 import net.refractions.udig.tools.edit.activator.SetRenderingFilter;
@@ -63,6 +64,7 @@ public class RectangleTool extends AbstractEditTool {
         activators.add(new EditStateListenerActivator());
         activators.add(new ResetHandlerActivator());
         activators.add(new SetRenderingFilter());
+        activators.add(new ClearCurrentSelectionActivator());
     }
 
     @Override

@@ -176,7 +176,7 @@ public class MapTests {
         if( numFeatures == 0)
             toCreate=1;
         SimpleFeature[] features = UDIGTestUtil.createDefaultTestFeatures(featureTypeName, toCreate);
-        IGeoResource resource = createGeoResource(features, deleteExistingService);
+        IGeoResource resource = CatalogTests.createGeoResource(features, deleteExistingService);
         if( numFeatures == 0)
             resource.resolve(FeatureStore.class, new NullProgressMonitor()).removeFeatures(Filter.INCLUDE);
         return createNonDynamicMapAndRenderer(resource, displaySize, null, createRenderManager);

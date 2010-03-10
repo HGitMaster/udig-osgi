@@ -46,8 +46,7 @@ import com.vividsolutions.jts.geom.Envelope;
 /**
  * Provides GeoResouces for MySQL based features.
  * <p>
- * This copies the postgisGeoResouce and is used to identify 
- * MySql features.
+ * This copies the postgisGeoResouce and is used to identify MySql features.
  * </p>
  * 
  * @author David Zwiers, Refractions Research
@@ -72,9 +71,10 @@ public class MySQLGeoResource extends IGeoResource {
         this.parent = parent;
         this.typename = typename;
         try {
-            identifier=new URL(null, parent.getIdentifier().toString() + "#" + typename, CorePlugin.RELAXED_HANDLER); //$NON-NLS-1$
+            identifier = new URL(null,
+                    parent.getIdentifier().toString() + "#" + typename, CorePlugin.RELAXED_HANDLER); //$NON-NLS-1$
         } catch (MalformedURLException e) {
-            identifier= parent.getIdentifier();
+            identifier = parent.getIdentifier();
         }
     }
 
@@ -86,7 +86,7 @@ public class MySQLGeoResource extends IGeoResource {
      * @see net.refractions.udig.catalog.IGeoResource#getStatus()
      */
     public Status getStatus() {
-        if( status!=null )
+        if (status != null)
             return status;
         return parent.getStatus();
     }
@@ -95,16 +95,15 @@ public class MySQLGeoResource extends IGeoResource {
      * @see net.refractions.udig.catalog.IGeoResource#getStatusMessage()
      */
     public Throwable getMessage() {
-        if( message!=null )
+        if (message != null)
             return message;
         return parent.getMessage();
     }
 
     /*
      * Required adaptations: <ul> <li>IGeoResourceInfo.class <li>IService.class </ul>
-     * 
      * @see net.refractions.udig.catalog.IResolve#resolve(java.lang.Class,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * org.eclipse.core.runtime.IProgressMonitor)
      */
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
         if (adaptee == null)
@@ -114,14 +113,15 @@ public class MySQLGeoResource extends IGeoResource {
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS().getFeatureSource(typename);
+            FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS().getFeatureSource(
+                    typename);
             if (fs instanceof FeatureStore)
                 return adaptee.cast(fs);
             if (adaptee.isAssignableFrom(FeatureSource.class))
                 return adaptee.cast(parent.getDS().getFeatureSource(typename));
         }
-        if (adaptee.isAssignableFrom(Connection.class)){
-        	return parent.resolve(adaptee, monitor);
+        if (adaptee.isAssignableFrom(Connection.class)) {
+            return parent.resolve(adaptee, monitor);
         }
 
         return super.resolve(adaptee, monitor);
@@ -135,22 +135,25 @@ public class MySQLGeoResource extends IGeoResource {
         return (adaptee.isAssignableFrom(IGeoResourceInfo.class)
                 || adaptee.isAssignableFrom(FeatureStore.class)
                 || adaptee.isAssignableFrom(FeatureSource.class) || adaptee
-                .isAssignableFrom(IService.class))||adaptee
-                .isAssignableFrom(Connection.class) ||
-                super.canResolve(adaptee);
+                .isAssignableFrom(IService.class))
+                || adaptee.isAssignableFrom(Connection.class) || super.canResolve(adaptee);
     }
-    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null && getStatus() != Status.BROKEN) {
-            parent.rLock.lock();
-            try{
-                if (info == null) {
-                    info = new MySQLResourceInfo();
-                }
-            }finally{
-                parent.rLock.unlock();
-            }
+    @Override
+    public MySQLResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (MySQLResourceInfo) super.getInfo(monitor);
+    }
+    protected MySQLResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        if (getStatus() == Status.BROKEN) {
+            return null; // not connected
         }
-        return info;
+        parent.rLock.lock();
+        try {
+            return new MySQLResourceInfo();
+
+        } finally {
+            parent.rLock.unlock();
+        }
+
     }
 
     class MySQLResourceInfo extends IGeoResourceInfo {
@@ -162,32 +165,34 @@ public class MySQLGeoResource extends IGeoResource {
             try {
                 ft = parent.getDS().getSchema(typename);
             } catch (DataSourceException e) {
-                if( e.getMessage().contains("permission") ){ //$NON-NLS-1$
-                    status=Status.RESTRICTED_ACCESS;
-                }else{
-                    status=Status.BROKEN;
+                if (e.getMessage().contains("permission")) { //$NON-NLS-1$
+                    status = Status.RESTRICTED_ACCESS;
+                } else {
+                    status = Status.BROKEN;
                 }
-                message=e;
-                MySQLPlugin.log("Unable to retrieve FeatureType schema for type '"+typename+"'.", e); //$NON-NLS-1$ //$NON-NLS-2$
+                message = e;
+                MySQLPlugin.log(
+                        "Unable to retrieve FeatureType schema for type '" + typename + "'.", e); //$NON-NLS-1$ //$NON-NLS-2$
                 keywords = new String[]{"mysql", //$NON-NLS-1$
                         typename};
                 return;
             }
 
             keywords = new String[]{"mysql", //$NON-NLS-1$
-                    typename, ft.getName().getNamespaceURI() };
+                    typename, ft.getName().getNamespaceURI()};
 
-            icon=Glyph.icon(ft);
+            icon = Glyph.icon(ft);
 
         }
-        
+
         @Override
         public synchronized ReferencedEnvelope getBounds() {
-            if (bounds==null ){
+            if (bounds == null) {
 
                 try {
-                    FeatureSource<SimpleFeatureType, SimpleFeature> source = parent.getDS().getFeatureSource(typename);
-                    
+                    FeatureSource<SimpleFeatureType, SimpleFeature> source = parent.getDS()
+                            .getFeatureSource(typename);
+
                     bounds = source.getBounds();
                     CoordinateReferenceSystem crs = getCRS();
 
@@ -198,9 +203,9 @@ public class MySQLGeoResource extends IGeoResource {
 
                         if (envelope != null) {
                             bounds = new ReferencedEnvelope(envelope.getLowerCorner()
-                                    .getOrdinate(0), envelope.getUpperCorner().getOrdinate(0), envelope
-                                    .getLowerCorner().getOrdinate(1), envelope.getUpperCorner()
-                                    .getOrdinate(1), crs);
+                                    .getOrdinate(0), envelope.getUpperCorner().getOrdinate(0),
+                                    envelope.getLowerCorner().getOrdinate(1), envelope
+                                            .getUpperCorner().getOrdinate(1), crs);
                         } else {
                             // TODO: perhaps access a preference which indicates
                             // whether to do a full table scan
@@ -216,7 +221,7 @@ public class MySQLGeoResource extends IGeoResource {
                                     else
                                         bounds.include(element.getBounds());
                                 }
-                            }finally{
+                            } finally {
                                 iter.close();
                             }
                         }
@@ -230,7 +235,7 @@ public class MySQLGeoResource extends IGeoResource {
                             .log(
                                     new org.eclipse.core.runtime.Status(
                                             IStatus.WARNING,
-                                            "net.refractions.udig.catalog", 0, Messages.MySQLGeoResource_error_layer_bounds, e));   //$NON-NLS-1$
+                                            "net.refractions.udig.catalog", 0, Messages.MySQLGeoResource_error_layer_bounds, e)); //$NON-NLS-1$
                     bounds = new ReferencedEnvelope(new Envelope(), null);
                 }
 
@@ -239,7 +244,7 @@ public class MySQLGeoResource extends IGeoResource {
         }
 
         public CoordinateReferenceSystem getCRS() {
-            if( status==Status.BROKEN || status==Status.RESTRICTED_ACCESS )
+            if (status == Status.BROKEN || status == Status.RESTRICTED_ACCESS)
                 return DefaultGeographicCRS.WGS84;
 
             return ft.getCoordinateReferenceSystem();
@@ -250,10 +255,10 @@ public class MySQLGeoResource extends IGeoResource {
         }
 
         public URI getSchema() {
-            if( status==Status.BROKEN || status==Status.RESTRICTED_ACCESS )
+            if (status == Status.BROKEN || status == Status.RESTRICTED_ACCESS)
                 return null;
             try {
-                return new URI( ft.getName().getNamespaceURI());
+                return new URI(ft.getName().getNamespaceURI());
             } catch (URISyntaxException e) {
                 return null;
             }
@@ -263,5 +268,5 @@ public class MySQLGeoResource extends IGeoResource {
             return typename;
         }
     }
-    
+
 }

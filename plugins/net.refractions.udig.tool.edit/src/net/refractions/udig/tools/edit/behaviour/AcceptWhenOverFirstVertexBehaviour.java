@@ -43,14 +43,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * <li>button 1 released</li>
  * <li>no buttons down</li>
  * <li>current shape and geom are set</li>
- * <li>mouse is over the first vertex of the currentShape</li> *</ul> * </p> * @author jones
+ * <li>mouse is over the first vertex of the currentShape</li>
+ * <li>event type != DOUBLE_CLICK</li> *</ul> * </p> * @author jones
  * @since 1.1.0
  */
 public class AcceptWhenOverFirstVertexBehaviour implements EventBehaviour {
 
     public boolean isValid( EditToolHandler handler, MapMouseEvent e, EventType eventType ) {
         boolean legalState=handler.getCurrentState()==EditState.CREATING;
-        boolean legalEventType=eventType==EventType.RELEASED || eventType==EventType.DOUBLE_CLICK;
+        
+        //Aritz, Mauricio: Solution for issue: Odd effects in hole cutting mode (problem 2).
+        //This event should be launched only when mouse is released and not when doing double click.
+        //Also the class description has been modified.
+//        boolean legalEventType=eventType==EventType.RELEASED || eventType==EventType.DOUBLE_CLICK;
+        boolean legalEventType=eventType==EventType.RELEASED && !(eventType==EventType.DOUBLE_CLICK);
         boolean shapeAndGeomNotNull=handler.getCurrentShape()!=null;
         boolean button1Released=e.button==MapMouseEvent.BUTTON1;
         
@@ -72,8 +78,11 @@ public class AcceptWhenOverFirstVertexBehaviour implements EventBehaviour {
         List<UndoableMapCommand> commands=new ArrayList<UndoableMapCommand>();
                 
         commands.add(handler.getCommand(handler.getAcceptBehaviours()));
-        if( handler.getCurrentState()==EditState.CREATING)
-            commands.add(new SetEditStateCommand(handler, EditState.MODIFYING));            
+        //Aritz, Mauricio: Solution for issue: Odd effects in hole cutting mode (problem 2).
+        //This command isn't need because before that the AcceptChangesBehaviour is launched 
+        //and its entrust of changing the state if everything goes well.
+//        if( handler.getCurrentState()==EditState.CREATING)
+//            commands.add(new SetEditStateCommand(handler, EditState.MODIFYING));            
         
         UndoableComposite undoableComposite = new UndoableComposite(commands);
         undoableComposite.setMap(handler.getContext().getMap());

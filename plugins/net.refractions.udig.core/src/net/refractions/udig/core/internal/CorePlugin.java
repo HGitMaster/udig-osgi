@@ -3,6 +3,8 @@ package net.refractions.udig.core.internal;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -62,6 +64,39 @@ public class CorePlugin extends Plugin {
         super.start(context);
     }
 	
+    /**
+     * Create a URL from the provided spec; willing to create
+     * a URL even if the spec does not have a registered handler.
+     * Can be used to create "jdbc" URLs for example.
+     *
+     * @param spec
+     * @return URL if possible
+     * @throws RuntimeException of a MalformedURLException resulted
+     */
+    public static URL createSafeURL( String spec ) {
+        try {
+            return new URL(null, spec, RELAXED_HANDLER);
+        } catch (MalformedURLException e) {
+            throw (RuntimeException) new RuntimeException( e );
+        }
+    }
+    /**
+     * Create a URI from the provided spec; willing to create
+     * a URI even if the spec does not have a registered handler.
+     * Can be used to create "jdbc" URLs for example.
+     *
+     * @param spec
+     * @return URI if possible
+     * @throws RuntimeException of a URISyntaxException resulted
+     */
+    public static URI createSafeURI( String spec ){
+        try {
+            return new URI( spec );
+        } catch (URISyntaxException e) {
+            throw (RuntimeException) new RuntimeException( e );
+        }
+    }
+
     /**
      * Returns the system created plugin object
      * 

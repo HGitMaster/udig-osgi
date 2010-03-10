@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.project.tests.support.AbstractProjectTestCase;
@@ -73,7 +74,7 @@ public class TestCatalogRef extends AbstractProjectTestCase {
         String string=layer.getCatalogRef().toString();
         
         class CatalogRefForTesting extends CatalogRef{
-        	public Map<URL, Map<String, Serializable>> getParams(){
+        	public Map<ID, Map<String, Serializable>> getParams(){
         		return connectionParams;
         	}
         };
@@ -81,7 +82,7 @@ public class TestCatalogRef extends AbstractProjectTestCase {
         ref.parseResourceParameters(string);
         
         assertEquals( 1, ref.getParams().entrySet().size());
-        URL url=ref.getParams().keySet().iterator().next();
+        ID url=ref.getParams().keySet().iterator().next();
         Map<String, Serializable> map = ref.getParams().get(url);
         assertEquals( new URL("http://testURL.test").toString(),url.toString()); //$NON-NLS-1$
         assertEquals( 4 ,map.entrySet().size());

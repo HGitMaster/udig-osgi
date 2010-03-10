@@ -72,7 +72,7 @@ public class LayerSummary extends PropertyPage implements IWorkbenchPropertyPage
             
             for( int i = 0; i < children.length; i++ ) {
                 AttributeDescriptor attributeType = schema.getDescriptor(i);
-                children[i]=new SummaryData(attributeType.getLocalName(), attributeType.getType().getName().getLocalPart());
+                children[i]=new SummaryData(attributeType.getLocalName(), attributeType.getType().getBinding().getSimpleName());
                 children[i].setParent(schemaData);
                 List<SummaryData> attTypeChildren=new ArrayList<SummaryData>();
                 attTypeChildren.add(new SummaryData(Messages.LayerSummary_nillable, attributeType.isNillable()));

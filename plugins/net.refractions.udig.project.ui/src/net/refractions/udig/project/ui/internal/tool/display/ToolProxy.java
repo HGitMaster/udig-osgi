@@ -48,11 +48,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -63,118 +60,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @version $Revision: 1.9 $
  */
 public class ToolProxy extends ModalItem implements ModalTool, ActionTool {
-    /**
-     * Handles lazy cursor loading.
-     * 
-     * @author jeichar
-     * @since 0.9.0
-     * 
-     * @deprecated use {@link CursorProxy} class instead.
-     */
-    public static class CursorLoader {
-
-        private volatile Cursor cursor;
-        private String imagePath;
-        private String hotspotX;
-        private String hotspotY;
-        private String cursorId;
-        private String pluginID;
-        /**
-         * Construct <code>ToolProxy.CursorLoader</code>.
-         */
-        public CursorLoader( IConfigurationElement cursorDef ) {
-            if (cursorDef != null) {
-                imagePath = cursorDef.getAttribute("image"); //$NON-NLS-1$
-                hotspotX = cursorDef.getAttribute("hotspotX"); //$NON-NLS-1$
-                hotspotY = cursorDef.getAttribute("hotspotY"); //$NON-NLS-1$
-                cursorId = cursorDef.getAttribute("id"); //$NON-NLS-1$
-                pluginID = cursorDef.getNamespace();
-            } else {
-                cursorId = ModalTool.DEFAULT_CURSOR;
-            }
-        }
-
-        /**
-         * @return Returns the cursor.
-         */
-        public Cursor getCursor() {
-            if (cursor == null) {
-                synchronized (this) {
-                    if (cursor == null) {
-                        if (imagePath == null) {
-                            cursor = parseCursorId(cursorId);
-                        } else {
-                            ImageDescriptor imageDescriptor = AbstractUIPlugin
-                                    .imageDescriptorFromPlugin(pluginID, imagePath);
-                            int x;
-                            try {
-                                x = Integer.parseInt(hotspotX);
-                            } catch (Exception e) {
-                                x = 0;
-                            }
-                            int y;
-                            try {
-                                y = Integer.parseInt(hotspotY);
-                            } catch (Exception e) {
-                                y = 0;
-                            }
-                            if (imageDescriptor == null || imageDescriptor.getImageData() == null)
-                                cursor = parseCursorId(cursorId);
-                            else
-                                cursor = new Cursor(Display.getDefault(), imageDescriptor
-                                        .getImageData(), x, y);
-                        }
-                    }
-                }
-            }
-
-            return cursor;
-        }
-
-        Cursor parseCursorId( String cursor ) {
-        	Display display = PlatformUI.getWorkbench().getDisplay();
-            if (cursor == null)
-                return display.getSystemCursor(SWT.CURSOR_ARROW);
-            if (cursor.equals(ModalTool.CROSSHAIR_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_CROSS);
-            if (cursor.equals(ModalTool.E_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZEE);
-            if (cursor.equals(ModalTool.HAND_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_HAND);
-            if (cursor.equals(ModalTool.MOVE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZEALL);
-            if (cursor.equals(ModalTool.N_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZEN);
-            if (cursor.equals(ModalTool.NE_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZENE);
-            if (cursor.equals(ModalTool.NW_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZENW);
-            if (cursor.equals(ModalTool.S_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZES);
-            if (cursor.equals(ModalTool.SE_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZESE);
-            if (cursor.equals(ModalTool.SW_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZESW);
-            if (cursor.equals(ModalTool.TEXT_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_IBEAM);
-            if (cursor.equals(ModalTool.W_RESIZE_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_SIZESW);
-            if (cursor.equals(ModalTool.WAIT_CURSOR))
-                return display.getSystemCursor(SWT.CURSOR_WAIT);
-            return  display.getSystemCursor(SWT.CURSOR_ARROW);
-        }
-
-        /**
-         * Dispose the cursor.
-         */
-        public void dispose() {
-            if (cursor != null)
-                cursor.dispose();
-            cursor = null;
-        }
-
-    }
-
+ 
     /**
      * The actual tool implementation. To be lazily loaded.
      */
@@ -331,15 +217,6 @@ public class ToolProxy extends ModalItem implements ModalTool, ActionTool {
             results.add(opCategory);
         }
         return results;
-    }
-
-    CursorLoader parseCursor( IConfigurationElement toolDef ) {
-
-        // should only be one
-        IConfigurationElement[] children = toolDef.getChildren("cursor"); //$NON-NLS-1$
-
-        return new CursorLoader(children.length > 0 ? children[0] : null);
-
     }
 
     /**

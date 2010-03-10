@@ -62,7 +62,7 @@ public class FontEditor {
         fFont = new Font[1];
         fColor = new Color[1];
 
-        fButton.setText("Set Font"); //$NON-NLS-1$
+        fButton.setText(Messages.FontEditor_SetFont);
         labelFontDialog = new FontDialog(new Shell());
         labelFontDialog.setText("Choose a Font"); //$NON-NLS-1$
 

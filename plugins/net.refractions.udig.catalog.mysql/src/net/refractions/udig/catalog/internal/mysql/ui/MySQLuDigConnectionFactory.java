@@ -16,7 +16,7 @@ import net.refractions.udig.catalog.MySQLServiceExtension;
 import net.refractions.udig.catalog.MySQLServiceImpl;
 import net.refractions.udig.catalog.internal.mysql.MySQLPlugin;
 import net.refractions.udig.catalog.ui.UDIGConnectionFactory;
-
+import static org.geotools.data.mysql.MySQLDataStoreFactory.*;
 /**
  * The Factory class used to build connections for mysql
  * @author Harry Bullen, Intelligent Automation
@@ -213,17 +213,17 @@ public class MySQLuDigConnectionFactory extends UDIGConnectionFactory {
         Map<String,Serializable> params2 = new HashMap<String,Serializable>();
         
 
-        params2.put("dbtype", "mysql"); //$NON-NLS-1$
-        params2.put("host", url.getHost());
+        params2.put( DBTYPE.key, (Serializable) DBTYPE.sample); //$NON-NLS-1$
+        params2.put( HOST.key, url.getHost());
         
-        params2.put("port", Integer.valueOf( url.getPort() != -1 ? url.getPort() : 3306 ));
+        params2.put(PORT.key, Integer.valueOf( url.getPort() != -1 ? url.getPort() : 3306 ));
 
 
         String the_database = url.getPath() == null ? "" : url.getPath(); //$NON-NLS-1$
-        params2.put("database",the_database); // database
+        params2.put( DATABASE.key,the_database); // database
         String userInfo = url.getUserInfo() == null ? "" : url.getUserInfo(); //$NON-NLS-1$
-        params2.put("user",userInfo); // user
-        params2.put("passwd",""); // pass //$NON-NLS-1$
+        params2.put( USER.key,userInfo); // user
+        params2.put( PASSWD.key,""); // pass //$NON-NLS-1$
         
         return params2;
     }

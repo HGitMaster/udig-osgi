@@ -128,7 +128,7 @@ public class Seagull {
      * @param graphics
      * @param gp
      */
-    private boolean up = false;
+    private boolean up = (Math.random() < 0.5);
     public void drawSeagull(GC graphics, GlassPane gp){
         if (location == null) {
             return;
@@ -187,12 +187,26 @@ public class Seagull {
         
     }
     
+    public void moveSeagull( Coordinate new_loc ) {
+        this.location = new_loc;
+
+        if (moveListener != null) {
+            moveListener.gullMoved(this.location);
+        }
+    }
+    
     /**
      * Moves the seagull to some random new point inside the bounding box.
      *
      * @param bounds
      */
     public void moveSeagull( Envelope bounds ) {
+        
+        
+        if (moveListener != null){
+            moveListener.gullMoved(this.location);
+        }
+        
         double x = location.x;
         double offset = 0.008;
         if (generator.nextDouble() < 0.5 ){
@@ -217,10 +231,7 @@ public class Seagull {
             //center on screen
             this.location = new Coordinate(bounds.getWidth()/2 + bounds.getMinX(), bounds.getHeight()/2 + bounds.getMinY());
         }
-        
-        if (moveListener != null){
-            moveListener.gullMoved(this.location);
-        }
+
     }
     
     /*

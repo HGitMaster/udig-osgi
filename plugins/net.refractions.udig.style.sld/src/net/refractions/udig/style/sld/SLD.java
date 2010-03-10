@@ -22,6 +22,9 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+/**
+ * The different kinds of content that can be rendered with Style Layer Descriptor.
+ */
 public enum SLD {
     POINT(PointSymbolizer.class) {
 

@@ -16,6 +16,7 @@ package net.refractions.udig.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -112,7 +113,7 @@ class FeatureTableContentProvider implements ILazyContentProvider, IProvider<Col
     // Memory bound cache of features for table
     // May be sorted according to FID or any of the attributes so don't rely on any given order because
     // its liable to change.  User Lookup instead for quickly locating a features
-    List<SimpleFeature> features = new ArrayList<SimpleFeature>();
+    List<SimpleFeature> features = Collections.synchronizedList( new ArrayList<SimpleFeature>());
 
     /**
      * Contains same features as Features but sorted by id

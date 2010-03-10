@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IService;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,6 +31,10 @@ public class CSVGeoResource extends IGeoResource {
     }
 
     @Override
+    public CSVGeoResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (CSVGeoResourceInfo) super.getInfo(monitor);
+    }
+    
 	protected CSVGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
     	return new CSVGeoResourceInfo( this, monitor );
     }

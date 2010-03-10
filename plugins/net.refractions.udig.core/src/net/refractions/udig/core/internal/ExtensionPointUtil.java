@@ -85,7 +85,7 @@ public class ExtensionPointUtil {
                             .getLog()
                             .log(
                                     new Status(
-                                            IStatus.ERROR,
+                                            IStatus.WARNING,
                                             element.getNamespaceIdentifier(),
                                             0,
                                             MessageFormat

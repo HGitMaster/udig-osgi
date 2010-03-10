@@ -21,6 +21,7 @@ import net.refractions.udig.tools.edit.EditToolHandler;
 import net.refractions.udig.tools.edit.support.EditUtils;
 
 /**
+ * 
  * This hides the selected features on the current layer.
  * 
  * @author Jesse

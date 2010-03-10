@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "net.refractions.udig.project.ui.internal.messages"; //$NON-NLS-1$
+    public static String Delete_deleteMultipleProjects = null;
 	public static String AbstractToolbarContributionItem_warning_message;
 	public static String AbstractToolbarContributionItem_warning_title;
 	public static String AddToNewMap_resource_selection_page_title;
@@ -60,6 +61,7 @@ public class Messages extends NLS {
 	public static String MenuToolCategory_menu_manager_title;
 	public static String MultiTargetOp_resource_summary;
 	public static String NewLayerAction_duplicate_type_name;
+	public static String NewLayerAction_duplicateName;
     public static String NewProjectWizardPage_err_project_name;
 	public static String NewProjectWizardPage_label_projectDir;
 	public static String NewProjectWizardPage_err_project_exists;
@@ -91,6 +93,8 @@ public class Messages extends NLS {
 	public static String StopAnimationCommand_name;
     public static String Delete_filesystem;
     public static String Delete_delete;
+    public static String Delete_deleteElement;
+    public static String Delete_deleteMultipleElements;
 	public static String Delete_deleteProject;
 	public static String IssuesView_showGroups;
 	public static String IssuesView_DeleteIssueTooltip;
@@ -198,7 +202,9 @@ public class Messages extends NLS {
 	public static String Rename_enterNewName;
 	public static String ResourceSelectionPage_title;
 	public static String OpenMapCommand_taskName;
-	public static String OpenProject_openProject;
+	public static String OpenProject_ErrorMessage;
+    public static String OpenProject_ErrorTitle;
+    public static String OpenProject_openProject;
 	public static String OpenMapCommand_commandName;
 	public static String OpenProject_selectProject;
 	public static String OpenProject_openProject_title;
@@ -296,11 +302,17 @@ public class Messages extends NLS {
     public static String MapSelectorPage_pageName;
     public static String MapSelectorPage_selectmapsExport;
     public static String MapSelectorPage_selectMapsLabel;
+    public static String MapSelectorPage_Add;
+    public static String MapSelectorPage_Remove;
+    
     public static String MapSelectorPageWithScaleColumn_defaultScale;
     public static String MapSelectorPageWithScaleColumn_invalidScaleError;
     public static String MapSelectorPageWithScaleColumn_scale;
     public static String MapSelectorPageWithScaleColumn_scaleColumnText;
     
+    public static String mousePreferences_setvalue;
+    public static String mousePreferences_title;
+
     static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

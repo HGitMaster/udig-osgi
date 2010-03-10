@@ -18,6 +18,7 @@ import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.ui.ApplicationGIS;
+import net.refractions.udig.project.ui.internal.ActiveMapTracker;
 import net.refractions.udig.tutorials.tracking.trackingitem.Seagull;
 import net.refractions.udig.tutorials.tracking.trackingitem.SeagullFlock;
 import net.refractions.udig.tutorials.tracking.trackingitem.TrackingItem;
@@ -26,6 +27,7 @@ import net.refractions.udig.ui.operations.IOp;
 public class CreateSeagulls implements IOp {
 
     public void op( Display display, Object target, IProgressMonitor monitor ) throws Exception {
+        
         //System.out.println("create seagulls called"); //$NON-NLS-1$
         // build some flock data to use
         SeagullFlock flock = new SeagullFlock("flock 01",  //$NON-NLS-1$
@@ -86,6 +88,8 @@ public class CreateSeagulls implements IOp {
         long delay = 500; // 0.5 secs
         UpdateFlockJob newJob = new UpdateFlockJob(map, delay);
         newJob.schedule(delay);
+        
+        
     }
     
     /**

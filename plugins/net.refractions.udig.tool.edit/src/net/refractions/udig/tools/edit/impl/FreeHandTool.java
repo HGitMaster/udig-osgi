@@ -24,6 +24,7 @@ import net.refractions.udig.tools.edit.EditToolConfigurationHelper;
 import net.refractions.udig.tools.edit.EditToolHandler;
 import net.refractions.udig.tools.edit.EnablementBehaviour;
 import net.refractions.udig.tools.edit.MutualExclusiveBehavior;
+import net.refractions.udig.tools.edit.activator.ClearCurrentSelectionActivator;
 import net.refractions.udig.tools.edit.activator.DrawEndPointsActivator;
 import net.refractions.udig.tools.edit.activator.DrawGeomsActivator;
 import net.refractions.udig.tools.edit.activator.EditStateListenerActivator;
@@ -71,6 +72,7 @@ public class FreeHandTool extends AbstractEditTool {
         activators.add(drawGeomsActivator);
         activators.add(new DrawEndPointsActivator());
         activators.add(new SetRenderingFilter());
+        activators.add(new ClearCurrentSelectionActivator());
     }
 
     @Override

@@ -146,7 +146,9 @@ public class Messages extends NLS {
 	public static String EventBehaviourCommand_name;
 	public static String MoveVertexCommand_name;
 	public static String AddToNearestEdgeCommand_name;
-	static {
+	public static String GeometryCreationUtil_errorMsg;
+    public static String GeometryCreationUtil_errorTitle;
+    static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

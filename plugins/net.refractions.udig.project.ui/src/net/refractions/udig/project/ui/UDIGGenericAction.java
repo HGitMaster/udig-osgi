@@ -25,7 +25,6 @@ import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Project;
 import net.refractions.udig.project.internal.ProjectElement;
-import net.refractions.udig.project.internal.commands.edit.DeleteManyFeaturesCommand;
 import net.refractions.udig.project.ui.internal.actions.Rename;
 
 import org.eclipse.emf.common.ui.action.WorkbenchWindowActionDelegate;
@@ -50,37 +49,124 @@ public abstract class UDIGGenericAction extends WorkbenchWindowActionDelegate {
      */
     public void run( IAction action ) {
 
+        if( selection.isEmpty() ){
+            return;
+        }
+        
         /*
          * TODO: Optimization for a set of objects in selection of the same nature. The goal: run an
          * operation once over all selected objects.
          */
         ArrayList<Layer> layers = new ArrayList<Layer>(selection.size());
-
+        
+        Object firstElem = selection.iterator().next();
+        Object stateData; 
+        if (firstElem instanceof Project) {
+            stateData = showErrorMessage(selection.size(), (Project) firstElem);
+        } else if (firstElem instanceof IProjectElement) {
+            stateData = showErrorMessage(selection.size(), (ProjectElement) firstElem);
+        } else if (firstElem instanceof Layer) {
+            stateData = showErrorMessage(selection.size(), (Layer) firstElem);
+        } else if (firstElem instanceof SimpleFeature) {
+            stateData = showErrorMessage(selection.size(), (SimpleFeature) firstElem);
+        }else if (firstElem instanceof AdaptingFilter) {
+            AdaptingFilter f = (AdaptingFilter) firstElem;
+            ILayer layer = (ILayer) f.getAdapter(ILayer.class);
+            stateData = showErrorMessage(selection.size(), layer,f);
+        }else{
+            stateData = null;
+        }
+        
         for( Iterator iter = selection.iterator(); iter.hasNext(); ) {
             Object element = iter.next();
 
             if (element instanceof Project) {
-                operate((Project) element);
+                operate((Project) element, stateData);
             } else if (element instanceof IProjectElement) {
-                operate((ProjectElement) element);
+                operate((ProjectElement) element, stateData);
             } else if (element instanceof Layer) {
                 layers.add((Layer) element);
             } else if (element instanceof SimpleFeature) {
-                operate((SimpleFeature) element);
-            }
-            if (element instanceof AdaptingFilter) {
+                operate((SimpleFeature) element, stateData);
+            }else if (element instanceof AdaptingFilter) {
                 AdaptingFilter f = (AdaptingFilter) element;
                 ILayer layer = (ILayer) f.getAdapter(ILayer.class);
-                layer.getMap().sendCommandASync(new DeleteManyFeaturesCommand(layer, f));
+                operate(layer,f, stateData);
             }
 
         }
 
         if (!layers.isEmpty()) {
-            operate(layers.toArray(new Layer[layers.size()]));
+            operate(layers.toArray(new Layer[layers.size()]), stateData);
         }
 
         // layers = null;
+    }
+
+    /**
+     * Called before operation.  Default implementation does nothing
+     *
+     * @param size number of items to operate on
+     * @param firstElement one sample object
+     * @return an object to pass to the corresponding operate method
+     */
+    protected Object showErrorMessage( int size, Project firstElement ) {
+        //do nothing
+        return null;
+    }
+
+    /**
+     * Called before operation.  Default implementation does nothing
+     *
+     * @param size number of items to operate on
+     * @param firstElement one sample object
+     * @return an object to pass to the corresponding operate method
+     */
+    protected Object showErrorMessage( int size, Layer firstElement ) {
+        //do nothing
+        return null;
+    }
+
+    /**
+     * Called before operation.  Default implementation does nothing
+     *
+     * @param size number of items to operate on
+     * @param firstElement one sample object
+     * @return an object to pass to the corresponding operate method
+     */
+    protected Object showErrorMessage( int size, SimpleFeature firstElement ) {
+        //do nothing
+        return null;
+    }
+
+    /**
+     * Called before operation.  Default implementation does nothing
+     *
+     * @param size number of items to operate on
+     * @param firstElement one sample object
+     * @return an object to pass to the corresponding operate method
+     */
+    protected Object showErrorMessage( int size, ProjectElement firstElement ) {
+        //do nothing
+        return null;
+    }
+
+    /**
+     * Called before operation.  Default implementation does nothing
+     *
+     * @param size number of items to operate on
+     * @param firstElement one sample object
+     */
+    protected Object showErrorMessage( int size, ILayer layer, AdaptingFilter firstElement ) {
+        //do nothing
+        return null;
+    }
+
+    /**
+     * Operates on a filter and associated layer. Default Implementation does nothing.
+     */
+    protected void operate( ILayer layer, AdaptingFilter filter, Object context) {
+        // do nothing
     }
 
     /**
@@ -88,17 +174,7 @@ public abstract class UDIGGenericAction extends WorkbenchWindowActionDelegate {
      * 
      * @param feature
      */
-    protected void operate( SimpleFeature feature ) {
-        // do nothing
-    }
-
-    /**
-     * Operates on a layer. Default Implementation does nothing.
-     * 
-     * @param layer
-     * @deprecated
-     */
-    protected void operate( Layer layer ) {
+    protected void operate( SimpleFeature feature, Object context ) {
         // do nothing
     }
 
@@ -109,7 +185,7 @@ public abstract class UDIGGenericAction extends WorkbenchWindowActionDelegate {
      * 
      * @param layers
      */
-    protected void operate( Layer[] layers ) {
+    protected void operate( Layer[] layers, Object context ) {
         // do nothing
     }
 
@@ -118,7 +194,7 @@ public abstract class UDIGGenericAction extends WorkbenchWindowActionDelegate {
      * 
      * @param element
      */
-    protected void operate( ProjectElement element ) {
+    protected void operate( ProjectElement element, Object context ) {
         // do nothing
     }
 
@@ -127,7 +203,7 @@ public abstract class UDIGGenericAction extends WorkbenchWindowActionDelegate {
      * 
      * @param project
      */
-    protected void operate( Project project ) {
+    protected void operate( Project project, Object context ) {
         // do nothing
     }
 

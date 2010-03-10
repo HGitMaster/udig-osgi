@@ -26,7 +26,6 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.renderer.label.LabelCacheImpl;
 import org.geotools.renderer.lite.LabelCache;
-import org.geotools.renderer.lite.LabelCacheDefault;
 import org.geotools.renderer.lite.SynchronizedLabelCache;
 
 import com.vividsolutions.jts.geom.GeometryFactory;

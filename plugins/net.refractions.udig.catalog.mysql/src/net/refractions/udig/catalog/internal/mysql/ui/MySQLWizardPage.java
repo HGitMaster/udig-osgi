@@ -8,6 +8,14 @@
  */
 package net.refractions.udig.catalog.internal.mysql.ui;
 
+import static org.geotools.jdbc.JDBCDataStoreFactory.DATABASE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DBTYPE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.HOST;
+import static org.geotools.jdbc.JDBCDataStoreFactory.PASSWD;
+import static org.geotools.jdbc.JDBCDataStoreFactory.PORT;
+import static org.geotools.jdbc.JDBCDataStoreFactory.USER;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -18,6 +26,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import net.refractions.udig.catalog.MySQLServiceExtension;
 import net.refractions.udig.catalog.internal.mysql.MySQLPlugin;
 import net.refractions.udig.catalog.mysql.internal.Messages;
 import net.refractions.udig.catalog.ui.UDIGConnectionPage;
@@ -32,9 +43,6 @@ import org.eclipse.ui.PlatformUI;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.mysql.MySQLDataStoreFactory;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-
-
 /**
  * Enter MySQL connection parameters. Based heavily on the postgis version of this class.
  * 
@@ -43,62 +51,60 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
  * @since 1.1.0
  */
 public class MySQLWizardPage extends DataBaseRegistryWizardPage implements UDIGConnectionPage {
-    
-	private static final String MYSQL_WIZARD = "MYSQL_WIZARD"; //$NON-NLS-1$
+
+    private static final String MYSQL_WIZARD = "MYSQL_WIZARD"; //$NON-NLS-1$
     private static final String MYSQL_RECENT = "MYSQL_RECENT"; //$NON-NLS-1$
-    private static final DataBaseConnInfo DEFAULT_MYSQL_CONN_INFO = new DataBaseConnInfo("localhost","3306","","","test","");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+    private static final DataBaseConnInfo DEFAULT_MYSQL_CONN_INFO = new DataBaseConnInfo(
+            "localhost", "3306", "", "", "test", ""); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     private static MySQLDataStoreFactory factory = new MySQLDataStoreFactory();
 
     public final String IMAGE_KEY = "MySQLWizardPageImage"; //$NON-NLS-1$
     MySQLuDigConnectionFactory mycFactory = new MySQLuDigConnectionFactory();
-    
-    
+
     public MySQLWizardPage() {
-    	// super class
-        super(Messages.MySQLWizardPage_title);     
-    
+        // super class
+        super(Messages.MySQLWizardPage_title);
+
         // load mysql Drivers
         try {
             Class.forName("com.mysql.jdbc.Driver"); //$NON-NLS-1$
         } catch (ClassNotFoundException e) {
             // TODO Handle ClassNotFoundException
-        	// should be big error
-            throw (RuntimeException) new RuntimeException( ).initCause( e );
+            // should be big error
+            throw (RuntimeException) new RuntimeException().initCause(e);
         }
-        
-    	// get stored settings
+
+        // get stored settings
         settings = MySQLPlugin.getDefault().getDialogSettings().getSection(MYSQL_WIZARD);
         if (settings == null) {
             settings = MySQLPlugin.getDefault().getDialogSettings().addNewSection(MYSQL_WIZARD);
         }
-        
-        //Add the name so the parent can store back to this same section
+
+        // Add the name so the parent can store back to this same section
         settingsArrayName = MYSQL_RECENT;
-  
+
         String[] recent = settings.getArray(MYSQL_RECENT);
         if (null != recent) {
             for( String s : recent ) {
                 DataBaseConnInfo dbs = new DataBaseConnInfo(s);
-                if(!storedDBCIList.contains(dbs) )
+                if (!storedDBCIList.contains(dbs))
                     storedDBCIList.add(dbs);
             }
         }
-        
+
         // Populate the Settings:
         defaultDBCI.setParameters(DEFAULT_MYSQL_CONN_INFO);
         currentDBCI.setParameters(defaultDBCI);
-     
+
         // populate exclusion lists
-        dbExclusionList.add("mysql");                                       //$NON-NLS-1$
-        dbExclusionList.add("information_schema");                          //$NON-NLS-1$
+        dbExclusionList.add("mysql"); //$NON-NLS-1$
+        dbExclusionList.add("information_schema"); //$NON-NLS-1$
     }
 
-    //UTILITY METHODS
-    /** 
-     * Called during createControl to handle Drag-n-drop of a selected object.
-     * 
-     * TODO: move to createControl?
-     * TODO: flesh out, what can selection be?
+    // UTILITY METHODS
+    /**
+     * Called during createControl to handle Drag-n-drop of a selected object. TODO: move to
+     * createControl? TODO: flesh out, what can selection be?
      */
     protected Map<String, Serializable> getParamsFromWorkbenchSelection() {
         IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench()
@@ -110,31 +116,31 @@ public class MySQLWizardPage extends DataBaseRegistryWizardPage implements UDIGC
             if (params != null && !params.isEmpty())
                 return params;
         }
-        //TODO: Why is this here? Is this to handle the existence of a selection
-        //      but one for which the for loop is going to create garbage? If so,
-        //      let's not make the garbage.
+        // TODO: Why is this here? Is this to handle the existence of a selection
+        // but one for which the for loop is going to create garbage? If so,
+        // let's not make the garbage.
         return Collections.emptyMap();
 
     }
-    
+
     @Override
     public void createControl( Composite arg0 ) {
         super.createControl(arg0);
-        
+
         // Handle Drag-n-drop by looking at the Map of parameters
-        Map<String,Serializable> params = getParamsFromWorkbenchSelection(); // based on
-                                                                                // selection
-        String selectedHost = (String)params.get(MySQLDataStoreFactory.HOST.key);
-        if( selectedHost != null ){
+        Map<String, Serializable> params = getParamsFromWorkbenchSelection(); // based on
+        // selection
+        String selectedHost = (String) params.get(MySQLDataStoreFactory.HOST.key);
+        if (selectedHost != null) {
             // TODO: make sure this triggers a modifyEvent which then puts the value in
             // currentDBCI
-            hostTextWgt.setText(params.get(MySQLDataStoreFactory.HOST.key).toString());
-            portTextWgt.setText(params.get(MySQLDataStoreFactory.PORT.key).toString());
-            userTextWgt.setText(params.get(MySQLDataStoreFactory.USER.key).toString());
-            passTextWgt.setText(params.get(MySQLDataStoreFactory.PASSWD.key).toString());
-            dbComboWgt.setText(params.get(MySQLDataStoreFactory.DATABASE.key).toString());
+            hostTextWgt.setText(params.get(HOST.key).toString());
+            portTextWgt.setText(params.get(PORT.key).toString());
+            userTextWgt.setText(params.get(USER.key).toString());
+            passTextWgt.setText(params.get(PASSWD.key).toString());
+            dbComboWgt.setText(params.get(DATABASE.key).toString());
         }
-       
+
     }
 
     @Override
@@ -145,30 +151,29 @@ public class MySQLWizardPage extends DataBaseRegistryWizardPage implements UDIGC
     /**
      * Returns the id of the wizard
      */
-	public String getId() {
-		return "net.refractions.udig.catalog.ui.mysql"; //$NON-NLS-1$
-	}
-    
-	/** Can be called during createControl */
-    protected Map<String,Serializable> defaultParams(){
-        IStructuredSelection selection = (IStructuredSelection)PlatformUI
-            .getWorkbench() .getActiveWorkbenchWindow().getSelectionService()
-            .getSelection();
-        return toParams( selection );
+    public String getId() {
+        return "net.refractions.udig.catalog.ui.mysql"; //$NON-NLS-1$
     }
-    
+
+    /** Can be called during createControl */
+    protected Map<String, Serializable> defaultParams() {
+        IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getSelectionService().getSelection();
+        return toParams(selection);
+    }
+
     /** Retrieve "best" MySQL guess of parameters based on provided context */
-    protected Map<String,Serializable> toParams( IStructuredSelection context){
-        if( context==null )
+    protected Map<String, Serializable> toParams( IStructuredSelection context ) {
+        if (context == null)
             return Collections.emptyMap();
-        for( Iterator<?> itr = context.iterator(); itr.hasNext(); ) {
-            Map<String,Serializable> params = mycFactory.createConnectionParameters( itr.next() );
-            if( params!=null && !params.isEmpty() ) return params;
+        for( Iterator< ? > itr = context.iterator(); itr.hasNext(); ) {
+            Map<String, Serializable> params = mycFactory.createConnectionParameters(itr.next());
+            if (params != null && !params.isEmpty())
+                return params;
         }
         return Collections.emptyMap();
     }
-   
-    
+
     /**
      * The key method of the whole exercise, it will get a java.sql.Connection object with which we
      * can move on to work with data. Note this will be called both by the selection handler for
@@ -177,62 +182,63 @@ public class MySQLWizardPage extends DataBaseRegistryWizardPage implements UDIGC
      * @return The java.sql.Connection we will use to get and store data
      */
     @Override
-    protected Connection getConnection() {
+    protected DataSource getDataSource() {
+        runInPage(new IRunnableWithProgress(){
+            public void run( IProgressMonitor monitor ) throws InvocationTargetException,
+                    InterruptedException {
+                monitor.beginTask(Messages.MySQLWizardPage_0, IProgressMonitor.UNKNOWN);
 
-           
-            try {
-            	// this must block execution if we want a meaningfull connection returned.
-                getContainer().run(false, true, 
-            		new IRunnableWithProgress(){
+                if (dataSource != null) {
+                    // close previous connection
+                    try {
+                        dataSource.close();
+                    } catch (SQLException e1) {
+                        // it's dead anyhow
+                    }
+                }
+                Connection connection = null;
+                try {
+                    Map<String, Serializable> params = new HashMap<String, Serializable>();
+                    params.put(DBTYPE.key, "mysql");
+                    params.put(HOST.key, currentDBCI.getHostString());
+                    try {
+                        params.put(PORT.key, (Integer) PORT.parse(currentDBCI.getPortString()));
+                    } catch (Throwable e) {
+                        // ignore - use default port
+                    }
+                    params.put(DATABASE.key, currentDBCI.getDbString());
+                    dataSource = MySQLServiceExtension.getFactory().createDataSource(params);
+                    dataSource.setUsername(currentDBCI.getUserString());
+                    dataSource.setPassword(currentDBCI.getPassString());
 
-                            public void run( IProgressMonitor monitor ) 
-                            throws InvocationTargetException, 
-                            InterruptedException {
-                                monitor.beginTask(Messages.MySQLWizardPage_0, IProgressMonitor.UNKNOWN); 
-                                if (realConnection != null)
-                                    try {
-                                        realConnection.close();
-                                    } catch (SQLException e1) {
-                                        // it's dead anyhow
-                                    }
+                    // MySQLConnectionFactory conFac = new
+                    // MySQLConnectionFactory(currentDBCI.getHostString(),
+                    // Integer.parseInt(currentDBCI.getPortString()), currentDBCI.getDbString());
 
-                               
-                                //MySQLConnectionFactory conFac = new MySQLConnectionFactory(currentDBCI.getHostString(),
-                                //        Integer.parseInt(currentDBCI.getPortString()), currentDBCI.getDbString());
-                                MysqlDataSource ds = new MysqlDataSource();
-                                ds.setServerName(currentDBCI.getHostString());
-                                ds.setPort(Integer.parseInt(currentDBCI.getPortString()));
-                                ds.setDatabaseName(currentDBCI.getDbString());
-                                ds.setUser(currentDBCI.getUserString());
-                                ds.setPassword(currentDBCI.getPassString());
-                                
-                                
-                                DriverManager.setLoginTimeout(3);
-                                try {
-                                    if( monitor.isCanceled() )
-                                        return;
-                                    realConnection = ds.getConnection();
-
-                                } catch (SQLException e) {
-                                    throw (InvocationTargetException) new InvocationTargetException(e,e.getLocalizedMessage());
-                                }
-                                if( monitor.isCanceled() )
-                                    realConnection=null;
-                                monitor.done();
-                            }
-                });
-            } 
-            catch (InvocationTargetException e2) {
-                throw new RuntimeException(e2.getLocalizedMessage(), e2);
-            } 
-            catch (InterruptedException e2) {
-                
+                    DriverManager.setLoginTimeout(3);
+                    if (monitor.isCanceled()){
+                        dataSource = null;
+                        return;
+                    }
+                    connection = dataSource.getConnection();
+                    monitor.done();
+                } catch (IOException e) {
+                    throw (InvocationTargetException) new InvocationTargetException(e);
+                } catch (SQLException e) {
+                    throw (InvocationTargetException) new InvocationTargetException(e);
+                } finally {
+                    if (connection != null) {
+                        try {
+                            connection.close();
+                        } catch (SQLException e) {
+                            // we are already on the way out
+                        }
+                    }
+                }
             }
-     return realConnection;
+        });
+        return dataSource;
     }
-
-
-
     /**
      * Does the Database Management System (DBMS) use schemata for connections.
      * 
@@ -249,7 +255,7 @@ public class MySQLWizardPage extends DataBaseRegistryWizardPage implements UDIGC
      */
     @Override
     public boolean isPageComplete() {
-        return (null != realConnection) && factory.canProcess(getParams()) ;
+        return (dataSource != null) && factory.canProcess(getParams());
 
     }
 
@@ -261,29 +267,27 @@ public class MySQLWizardPage extends DataBaseRegistryWizardPage implements UDIGC
      */
     @Override
     public Map<String, Serializable> getParams() {
-        
         Map<String, Serializable> params = new HashMap<String, Serializable>();
-        
-        params.put(MySQLDataStoreFactory.DBTYPE.key, "mysql");              //$NON-NLS-1$
+
+        params.put(MySQLDataStoreFactory.DBTYPE.key, "mysql"); //$NON-NLS-1$
 
         currentDBCI.treatEmptyStringAsNull(true);
-        params.put(MySQLDataStoreFactory.HOST.key,     currentDBCI.getHostString());
-        params.put(MySQLDataStoreFactory.PORT.key,     new Integer(currentDBCI.getPortString()) );
-        params.put(MySQLDataStoreFactory.USER.key,     currentDBCI.getUserString() );
-        params.put(MySQLDataStoreFactory.PASSWD.key,   currentDBCI.getPassString() );
-        params.put(MySQLDataStoreFactory.DATABASE.key, currentDBCI.getDbString() );
+        params.put(MySQLDataStoreFactory.HOST.key, currentDBCI.getHostString());
+        params.put(MySQLDataStoreFactory.PORT.key, new Integer(currentDBCI.getPortString()));
+        params.put(MySQLDataStoreFactory.USER.key, currentDBCI.getUserString());
+        params.put(MySQLDataStoreFactory.PASSWD.key, currentDBCI.getPassString());
+        params.put(MySQLDataStoreFactory.DATABASE.key, currentDBCI.getDbString());
 
         currentDBCI.treatEmptyStringAsNull(false);
-        
+
         /*
          * if (wkbBtnWgt.getSelection()) params.put(PostgisDataStoreFactory.WKBENABLED.key,
          * Boolean.TRUE); if (looseBBoxBtnWgt.getSelection())
          * params.put(PostgisDataStoreFactory.LOOSEBBOX.key, Boolean.TRUE);
          */
-        params.put("namespace", "");                  //$NON-NLS-1$
-        
+        params.put("namespace", ""); //$NON-NLS-1$
+
         return params;
     }
 
- 
 }

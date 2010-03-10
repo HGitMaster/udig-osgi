@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: PageEditPlugin.java 12510 2005-03-21 19:26:01Z jeichar $
+ * $Id: PageEditPlugin.java 31340 2009-07-16 07:56:25Z aantonello $
  */
 package net.refractions.udig.printing.model.provider;
 
@@ -54,6 +54,7 @@ public final class PageEditPlugin extends EMFPlugin {
      * @return the singleton instance.
      * @generated
      */
+    @Override
     public ResourceLocator getPluginResourceLocator() {
         return plugin;
     }

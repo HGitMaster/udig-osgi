@@ -8,6 +8,7 @@ import java.util.Map;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
@@ -101,7 +102,7 @@ public class ShapeMover implements ServiceMover {
                 }
             }
         }
-        URL id = shapefile.getIdentifier();
+        ID id = shapefile.getID();
 		IServiceFactory serviceFactory = CatalogPlugin.getDefault().getServiceFactory();
 		IService newService = serviceFactory.createService(parametersMap).iterator().next();
 		ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();

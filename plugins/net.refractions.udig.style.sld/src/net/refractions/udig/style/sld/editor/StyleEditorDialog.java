@@ -136,38 +136,10 @@ public class StyleEditorDialog extends FilteredEditorDialog implements IStyleEdi
     }
 
     public void setStyle( Style newStyle ) {
-        /*
-        Style oldStyle = getStyle();
-        StyledLayerDescriptor oldSLD = getSLD(oldStyle);
-        StyledLayerDescriptor newSLD = getSLD(newStyle);
-        if (newSLD == oldSLD) {
-            // rip out the old style and put in the new
-            //Object layer = oldStyle.getNote().getParent();
-            if (layer instanceof UserLayer) {
-                UserLayer thisLayer = (UserLayer) layer;
-                Style[] styles = thisLayer.getUserStyles();
-                for( int i = 0; i < styles.length; i++ ) {
-                    if (styles[i] == oldStyle) {
-                        // this is the style to replace...
-                        styles[i] = newStyle;
-                        // reconnect events
-                        thisLayer.setUserStyles(styles);
-                        break;
-                    }
-                }
-            } else {
-                System.out.println("Style.getParent not a UserLayer"); //$NON-NLS-1$
-                // TODO: exception
-            }
-        } else {
-            // move the listeners to the new SLD object
-            //moveListeners(oldSLD, newSLD);
-        }
-        */
         StyleBlackboard styleBlackboard = selectedLayer.getStyleBlackboard();
         // put the style on the blackboard
-        styleBlackboard.put(SLDContent.ID, newStyle);
-        (styleBlackboard).setSelected(new String[]{SLDContent.ID});
+        styleBlackboard.put(SLDContent.ID, newStyle);        
+        styleBlackboard.setSelected(new String[]{SLDContent.ID});
     }
 
     private StyledLayerDescriptor getSLD( Style style ) {

@@ -37,8 +37,8 @@ import net.refractions.udig.ui.UDIGDisplaySafeLock;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.geotools.data.mysql.MySQLDataStore;
 import org.geotools.data.mysql.MySQLDataStoreFactory;
+import org.geotools.jdbc.JDBCDataStore;
 
 /**
  * Provides an ISerivce so that MySQL can show up in service lists
@@ -69,9 +69,8 @@ public class MySQLServiceImpl extends IService {
 
     /*
      * Required adaptations: <ul> <li>IServiceInfo.class <li>List.class <IGeoResource> </ul>
-     * 
      * @see net.refractions.udig.catalog.IService#resolve(java.lang.Class,
-     *      org.eclipse.core.runtime.IProgressMonitor)
+     * org.eclipse.core.runtime.IProgressMonitor)
      */
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
         if (monitor == null)
@@ -80,17 +79,14 @@ public class MySQLServiceImpl extends IService {
         if (adaptee == null) {
             throw new NullPointerException("No adaptor specified"); //$NON-NLS-1$
         }
-        if (adaptee.isAssignableFrom(MySQLDataStore.class))
+        if (adaptee.isAssignableFrom(JDBCDataStore.class))
             return adaptee.cast(getDS());
-        /* if (adaptee.isAssignab6leFrom(Connection.class)){
-                 Connection connection;
-        		try {
-        			connection = getDS().getConnectionPool().getConnection();
-        		} catch (SQLException e) {
-        			throw (IOException) new IOException(e.getLocalizedMessage()).initCause(e);
-        		}
-        		return adaptee.cast(connection);
-         }*/
+        /*
+         * if (adaptee.isAssignab6leFrom(Connection.class)){ Connection connection; try { connection
+         * = getDS().getConnectionPool().getConnection(); } catch (SQLException e) { throw
+         * (IOException) new IOException(e.getLocalizedMessage()).initCause(e); } return
+         * adaptee.cast(connection); }
+         */
         return super.resolve(adaptee, monitor);
     }
     /*
@@ -99,7 +95,7 @@ public class MySQLServiceImpl extends IService {
     public <T> boolean canResolve( Class<T> adaptee ) {
         if (adaptee == null)
             return false;
-        return adaptee.isAssignableFrom(MySQLDataStore.class)
+        return adaptee.isAssignableFrom(JDBCDataStore.class)
                 || adaptee.isAssignableFrom(Connection.class) || super.canResolve(adaptee);
     }
 
@@ -125,7 +121,7 @@ public class MySQLServiceImpl extends IService {
      */
     public List<MySQLGeoResource> resources( IProgressMonitor monitor ) throws IOException {
 
-        MySQLDataStore ds = getDS();
+        JDBCDataStore ds = getDS();
         rLock.lock();
         try {
             if (members == null) {
@@ -143,25 +139,24 @@ public class MySQLServiceImpl extends IService {
     }
     private volatile List<MySQLGeoResource> members = null;
 
+    @Override
+    public IServiceMySQLInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (IServiceMySQLInfo) super.getInfo(monitor);
+    }
     /*
      * @see net.refractions.udig.catalog.IService#getInfo(org.eclipse.core.runtime.IProgressMonitor)
      */
-    protected IServiceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        getDS(); // load DataStore
-        if (info == null && ds != null) {
-            rLock.lock();
-            try {
-                if (info == null) {
-                    info = new IServiceMySQLInfo(ds);
-                }
-            } finally {
-                rLock.unlock();
-            }
-            IResolveDelta delta = new ResolveDelta(this, IResolveDelta.Kind.CHANGED);
-            ((CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog())
-                    .fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
+    protected IServiceMySQLInfo createInfo( IProgressMonitor monitor ) throws IOException {
+        JDBCDataStore dataStore = getDS(); // load DataStore
+        if (dataStore == null) {
+            return null; // could not connect to provide info
         }
-        return info;
+        rLock.lock();
+        try {
+            return new IServiceMySQLInfo(dataStore);
+        } finally {
+            rLock.unlock();
+        }
     }
     /*
      * @see net.refractions.udig.catalog.IService#getConnectionParams()
@@ -170,19 +165,19 @@ public class MySQLServiceImpl extends IService {
         return params;
     }
     private Throwable msg = null;
-    private volatile MySQLDataStore ds = null;
+    private volatile JDBCDataStore ds = null;
     private Lock dsInstantiationLock = new UDIGDisplaySafeLock();
-    
-    MySQLDataStore getDS() throws IOException {
+
+    JDBCDataStore getDS() throws IOException {
         boolean changed = false;
         dsInstantiationLock.lock();
         try {
             if (ds == null) {
                 changed = true;
-                MySQLDataStoreFactory dsf = new MySQLDataStoreFactory();
+                MySQLDataStoreFactory dsf = MySQLServiceExtension.getFactory();
                 if (dsf.canProcess(params)) {
                     try {
-                        ds = (MySQLDataStore) dsf.createDataStore(params);
+                        ds = dsf.createDataStore(params);
                     } catch (IOException e) {
                         msg = e;
                         throw e;
@@ -223,7 +218,7 @@ public class MySQLServiceImpl extends IService {
 
     private class IServiceMySQLInfo extends IServiceInfo {
 
-        IServiceMySQLInfo( MySQLDataStore resource ) {
+        IServiceMySQLInfo( JDBCDataStore resource ) {
             super();
             String[] tns = null;
             try {
@@ -252,13 +247,14 @@ public class MySQLServiceImpl extends IService {
             try {
                 return getIdentifier().toURI();
             } catch (URISyntaxException e) {
-                // This would be bad 
+                // This would be bad
                 throw (RuntimeException) new RuntimeException().initCause(e);
             }
         }
 
         public String getTitle() {
-            return "MySQL " + getIdentifier().getHost() + getIdentifier().getFile(); //$NON-NLS-1$
+            return "MySQL " + getIdentifier(); //$NON-NLS-1$
+            //return "MySQL " + getIdentifier().getHost() + URLUtils.urlToFile(getIdentifier()).getAbsolutePath(); //$NON-NLS-1$
         }
 
     }

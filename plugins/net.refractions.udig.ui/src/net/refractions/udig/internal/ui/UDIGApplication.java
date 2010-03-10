@@ -18,19 +18,28 @@ package net.refractions.udig.internal.ui;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.MessageFormat;
 
+import net.refractions.udig.libs.internal.Activator;
 import net.refractions.udig.ui.internal.Messages;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.geotools.referencing.factory.epsg.ThreadedH2EpsgFactory;
+import org.osgi.framework.Bundle;
 
 /**
  * IApplication used by the uDig product - subclass for your own application.
@@ -114,9 +123,12 @@ public class UDIGApplication implements IApplication {
                 return EXIT_OK;
             }
         }
-
         if (!login()) {
             // user did not login
+            return EXIT_OK;
+        }
+        if (!init()) {            
+            // could not init
             return EXIT_OK;
         }
         int returnCode = EXIT_OK;
@@ -125,13 +137,62 @@ public class UDIGApplication implements IApplication {
         } catch (Throwable t) {
             UiPlugin.log(Messages.UDIGApplication_error, t);
         } finally {
-            Platform.endSplash();
+            context.applicationRunning();
             display.dispose();
         }
         if (returnCode == PlatformUI.RETURN_RESTART) {
             return EXIT_RESTART;
         }
         return EXIT_OK;
+    }
+
+    /**
+     * We have a couple things that need to happen
+     * before the workbench is opened. The org.eclipse.ui.startup
+     * extension point is willing to run stuff for us *after*
+     * the workbench is opened - but that is not so useful
+     * when we need to configure the EPSG database for libs
+     * and load up the local catalog.
+     * <p>
+     * Long term we will want to create a startup list
+     * (much like we have shutdown hooks).
+     */
+    @SuppressWarnings("restriction")
+    protected boolean init() {
+        ProgressMonitorDialog progress = new ProgressMonitorDialog( Display.getCurrent().getActiveShell());
+        final Bundle bundle = Platform.getBundle(Activator.ID);
+        
+        // We should kick the libs plugin to load the EPSG database now
+        if( ThreadedH2EpsgFactory.isUnpacked()){
+            // if there is not going to be a long delay
+            // don't annoy users with a dialog
+            Activator.initializeReferencingModule( null );            
+        }
+        else {
+            // We are going to take a couple of minutes to set this up
+            // so we better set up a progress dialog thing
+            //
+            try {
+                progress.run(false,false, new IRunnableWithProgress(){            
+                    public void run( IProgressMonitor monitor ) throws InvocationTargetException,
+                            InterruptedException {
+                        Activator.initializeReferencingModule( monitor);
+                    }
+                });
+            } catch (InvocationTargetException e) {
+                Platform.getLog(bundle).log(
+                        new Status(IStatus.ERROR, UiPlugin.ID, e.getCause().getLocalizedMessage(), e
+                                .getCause()));
+                return false;
+            } catch (InterruptedException e) {
+                Platform.getLog(bundle).log(
+                        new Status(IStatus.ERROR, UiPlugin.ID, e.getCause().getLocalizedMessage(), e
+                                .getCause()));
+                return false;
+            }
+        }
+        // We should kick the CatalogPlugin to load now...
+        return true;
     }
 
     /**

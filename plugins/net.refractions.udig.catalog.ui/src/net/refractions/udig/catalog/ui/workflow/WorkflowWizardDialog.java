@@ -62,11 +62,12 @@ public class WorkflowWizardDialog extends WizardDialog implements Listener {
         final Workflow pipe = getWizard().getWorkflow();
 
         try {
+        	// don't fork, can cancel during transition
             run(false, true, new IRunnableWithProgress(){
 
                 public void run( IProgressMonitor monitor ) throws InvocationTargetException,
                         InterruptedException {
-                    pipe.next(monitor);
+                    pipe.next(monitor); // progress through the workflow
                 }
 
             });
@@ -130,7 +131,7 @@ public class WorkflowWizardDialog extends WizardDialog implements Listener {
         try {
             super.nextPressed();
         } catch (Exception e) {
-            setErrorMessage("An error occurred during page transition.  This is most likely a programming error.  Please report it");
+            setErrorMessage(Messages.WorkflowWizard_PageTransitionError);
             CatalogUIPlugin.log("WorkflowWizardDialog#nextPressedSuper(): Error moving to "+getWorkflowWizard().getWorkflow().getCurrentState().getName(), e); //$NON-NLS-1$
         }
     }

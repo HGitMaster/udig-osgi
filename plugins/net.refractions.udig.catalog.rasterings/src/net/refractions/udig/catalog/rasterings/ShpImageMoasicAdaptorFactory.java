@@ -41,7 +41,7 @@ public class ShpImageMoasicAdaptorFactory implements IResolveAdapterFactory {
 		
 		if( adapter.isAssignableFrom(ImageMosaicReader.class)){
 			return toGridCoverage2DReader( resolve, monitor);
-		}
+		}		
 		return null;
 	}
 

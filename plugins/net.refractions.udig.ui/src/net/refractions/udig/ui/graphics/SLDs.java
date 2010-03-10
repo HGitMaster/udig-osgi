@@ -16,18 +16,27 @@
  */
 package net.refractions.udig.ui.graphics;
 
+import java.awt.Color;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.swt.graphics.FontData;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.Filters;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Font;
-import org.geotools.styling.PointPlacement;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.TextSymbolizer;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -46,7 +55,9 @@ import org.opengis.filter.expression.Expression;
  * @author Jody Garnett, Refractions Research.
  * @since 0.7.0
  */
-public final class SLDs extends SLD {
+public class SLDs extends SLD {
+    private static StyleFactory sf = CommonFactoryFinder.getStyleFactory(null);
+    private static FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
 
     public static final double ALIGN_LEFT = 1.0;
     public static final double ALIGN_CENTER = 0.5;
@@ -89,6 +100,42 @@ public final class SLDs extends SLD {
         if( tempFD[0] != null ) return tempFD;        
         return null;
     }
+    
+    /**
+     * Retrieves all colour names defined in a rule
+     * @param rule the rule
+     * @return an array of unique colour names
+     */
+    public static String[] colors(Rule rule) {
+        Set<String> colorSet = new HashSet<String>();
+
+        Color color = null;
+        for (Symbolizer sym : rule.symbolizers()) {
+            if (sym instanceof PolygonSymbolizer) {
+                PolygonSymbolizer symb = (PolygonSymbolizer) sym;
+                color = polyFill(symb);
+
+            } else if (sym instanceof LineSymbolizer) {
+                LineSymbolizer symb = (LineSymbolizer) sym;
+                color = color(symb);
+
+            } else if (sym instanceof PointSymbolizer) {
+                PointSymbolizer symb = (PointSymbolizer) sym;
+                color = color(symb);
+            }
+
+            if (color != null) {
+                colorSet.add(SLD.colorToHex(color) );
+            }
+        }
+
+        if (colorSet.size() > 0) {
+            return colorSet.toArray(new String[0]);
+        } else {
+            return new String[0];
+        }
+    }
+
     
     public static Font font(TextSymbolizer symbolizer) {
         if(symbolizer == null) return null;
@@ -190,10 +237,6 @@ public final class SLDs extends SLD {
         return null;
     }
     
-    public static PointPlacement getPlacement(double horizAlign, double vertAlign, double rotation) {
-        return builder.createPointPlacement(horizAlign, vertAlign, rotation);
-    }
-
     /**
      * The type name that can be used in an SLD in the featuretypestyle that matches all feature types.
      */

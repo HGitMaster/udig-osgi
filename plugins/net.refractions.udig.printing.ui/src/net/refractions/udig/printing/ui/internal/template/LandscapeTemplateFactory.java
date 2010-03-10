@@ -26,7 +26,7 @@ import net.refractions.udig.printing.ui.TemplateFactory;
 public class LandscapeTemplateFactory implements TemplateFactory {
 
     public Template createTemplate() {
-        return new LandScaleTemplate();
+        return new A4LandscapeTemplate();
     }
 
     public String getName() {

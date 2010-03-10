@@ -10,6 +10,7 @@ import java.util.List;
 import net.refractions.udig.internal.ui.UiPlugin;
 import net.refractions.udig.internal.ui.operations.OperationCategory;
 import net.refractions.udig.internal.ui.operations.OperationMenuFactory;
+import net.refractions.udig.ui.internal.Messages;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -173,7 +174,7 @@ public class OperationDialog extends TitleAreaDialog implements ITreeContentProv
     @Override
     protected void createButtonsForButtonBar( Composite parent ) {
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-        createButton(parent, IDialogConstants.OK_ID, "Operate", true);
+        createButton(parent, IDialogConstants.OK_ID, Messages.OperationDialog_Operate, true);
     }
     @Override
     protected void buttonPressed( int buttonId ) {

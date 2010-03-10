@@ -138,10 +138,14 @@ public class TableSelectionTab implements Tab {
             builder.append(descriptor.schema);
 
         }
-        params.put(dialect.schemaParam.key, builder.toString());
+        if (dialect.schemaParam != null){
+        	params.put(dialect.schemaParam.key, builder.toString());
+        }
         return Either.createRight(params);
     }
-
+    /**
+     * @return true as we are always ready to advanced to the next page
+     */
     public boolean leavingPage() {
         return true;
     }
@@ -344,8 +348,10 @@ public class TableSelectionTab implements Tab {
                             .matches();
                     boolean nameMatch = filter.matcher(table.name.toLowerCase()).matches();
                     boolean sridMatch = filter.matcher(table.srid.toLowerCase()).matches();
-                    boolean schemaMatch = filter.matcher(table.schema.toLowerCase()).matches();
-
+                    boolean schemaMatch = true;
+                    if (table.schema != null){
+                    	schemaMatch = filter.matcher(table.schema.toLowerCase()).matches();	
+                    }
                     if (geometryTypeMatch || nameMatch || sridMatch || schemaMatch) {
                         filtered.add(table);
                     }

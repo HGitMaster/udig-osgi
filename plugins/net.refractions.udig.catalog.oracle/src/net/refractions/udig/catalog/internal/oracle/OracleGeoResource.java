@@ -46,6 +46,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * <p>
  * TODO Description
  * </p>
+ * 
  * @author David Zwiers, Refractions Research
  * @since 0.6
  */
@@ -53,11 +54,11 @@ public class OracleGeoResource extends IGeoResource {
     OracleServiceImpl parent;
     String typename = null;
 
-    private OracleGeoResource() {/*not for use*/
+    private OracleGeoResource() {/* not for use */
     }
     /**
      * Construct <code>OracleGeoResource</code>.
-     *
+     * 
      * @param parent
      * @param typename
      */
@@ -89,25 +90,23 @@ public class OracleGeoResource extends IGeoResource {
     }
 
     /*
-     * Required adaptions:
-     * <ul>
-     * <li>IGeoResourceInfo.class
-     * <li>IService.class
-     * </ul>
-     * @see net.refractions.udig.catalog.IResolve#resolve(java.lang.Class, org.eclipse.core.runtime.IProgressMonitor)
+     * Required adaptions: <ul> <li>IGeoResourceInfo.class <li>IService.class </ul>
+     * @see net.refractions.udig.catalog.IResolve#resolve(java.lang.Class,
+     * org.eclipse.core.runtime.IProgressMonitor)
      */
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
         if (adaptee == null)
             return null;
-//        if (adaptee.isAssignableFrom(IService.class))
-//            return adaptee.cast(parent);
+        // if (adaptee.isAssignableFrom(IService.class))
+        // return adaptee.cast(parent);
         if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
             return adaptee.cast(createInfo(monitor));
         if (adaptee.isAssignableFrom(IGeoResource.class))
             return adaptee.cast(this);
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS(monitor).getFeatureSource(typename);
-            if (fs instanceof FeatureStore)
+            FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS(monitor)
+                    .getFeatureSource(typename);
+            if (fs instanceof FeatureStore< ? , ? >)
                 return adaptee.cast(fs);
             if (adaptee.isAssignableFrom(FeatureSource.class))
                 return adaptee.cast(parent.getDS(monitor).getFeatureSource(typename));
@@ -126,55 +125,56 @@ public class OracleGeoResource extends IGeoResource {
                 .isAssignableFrom(IService.class))
                 || super.canResolve(adaptee);
     }
+
     protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
-        if (info == null && getStatus() != Status.BROKEN) {
-            parent.rLock.lock();
-            try {
-                if (info == null) {
-                    info = new IGeoResourceShpInfo();
-                }
-            } finally {
-                parent.rLock.unlock();
-            }
+        if (getStatus() == Status.BROKEN) {
+            return null; // could not connect
         }
-        return info;
+        parent.rLock.lock();
+        try {
+            return new OracleResourceInfo();
+        } finally {
+            parent.rLock.unlock();
+        }
     }
 
-    class IGeoResourceShpInfo extends IGeoResourceInfo {
+    class OracleResourceInfo extends IGeoResourceInfo {
 
         private SimpleFeatureType ft = null;
-        IGeoResourceShpInfo() throws IOException {
+        OracleResourceInfo() throws IOException {
             ft = parent.getDS(null).getSchema(typename);
 
             try {
-                FeatureSource<SimpleFeatureType, SimpleFeature> source = parent.getDS(null).getFeatureSource(typename);
+                FeatureSource<SimpleFeatureType, SimpleFeature> source = parent.getDS(null)
+                        .getFeatureSource(typename);
                 bounds = (ReferencedEnvelope) source.getBounds();
                 if (bounds == null) {
                     CoordinateReferenceSystem crs = null;
-                    //GeometryDescriptor defaultGeometry = source.getSchema().getGeometryDescriptor();
+                    // GeometryDescriptor defaultGeometry =
+                    // source.getSchema().getGeometryDescriptor();
                     crs = source.getSchema().getCoordinateReferenceSystem();
                     bounds = new ReferencedEnvelope(new Envelope(), crs);
-                    FeatureIterator<SimpleFeature> iter=source.getFeatures().features();
-                    try{
-                        while(iter.hasNext() ) {
+                    FeatureIterator<SimpleFeature> iter = source.getFeatures().features();
+                    try {
+                        while( iter.hasNext() ) {
                             SimpleFeature element = iter.next();
-                            if( bounds.isNull() )
+                            if (bounds.isNull())
                                 bounds.init(element.getBounds());
                             else
                                 bounds.include(element.getBounds());
                         }
-                    }finally{
+                    } finally {
                         iter.close();
                     }
                 }
-                //                        CoordinateReferenceSystem geomcrs = source.getSchema().getCRS();
+                // CoordinateReferenceSystem geomcrs = source.getSchema().getCRS();
 
-                //                        if(geomcrs!=null && !geomcrs.equals(CRS.decode("EPSG:4269"))){
-                //                            bounds = JTS.transform(bounds,CRS.transform(geomcrs,CRS.decode("EPSG:4269")));
-                //                        }else{
-                //                            if(geomcrs == null)
-                //                                System.err.println("CRS unknown for Shp");
-                //                        }
+                // if(geomcrs!=null && !geomcrs.equals(CRS.decode("EPSG:4269"))){
+                // bounds = JTS.transform(bounds,CRS.transform(geomcrs,CRS.decode("EPSG:4269")));
+                // }else{
+                // if(geomcrs == null)
+                // System.err.println("CRS unknown for Shp");
+                // }
             } catch (Exception e) {
                 CatalogPlugin
                         .getDefault()
@@ -186,7 +186,7 @@ public class OracleGeoResource extends IGeoResource {
                 bounds = new ReferencedEnvelope(new Envelope(), null);
             }
 
-            icon=Glyph.icon(ft);
+            icon = Glyph.icon(ft);
             keywords = new String[]{"postgis", //$NON-NLS-1$
                     ft.getName().getLocalPart(), ft.getName().getNamespaceURI()};
         }
@@ -200,11 +200,11 @@ public class OracleGeoResource extends IGeoResource {
         }
 
         public URI getSchema() {
-        	try {
-				return new URI( ft.getName().getNamespaceURI() );
-			} catch (URISyntaxException e) {
-				return null;
-			}
+            try {
+                return new URI(ft.getName().getNamespaceURI());
+            } catch (URISyntaxException e) {
+                return null;
+            }
         }
 
         public String getTitle() {

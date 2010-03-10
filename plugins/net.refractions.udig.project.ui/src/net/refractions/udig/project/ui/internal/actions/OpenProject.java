@@ -16,7 +16,12 @@
  */
 package net.refractions.udig.project.ui.internal.actions;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.text.MessageFormat;
+
 import net.refractions.udig.project.internal.ProjectPlugin;
+import net.refractions.udig.project.internal.ProjectRegistry;
 import net.refractions.udig.project.ui.internal.Messages;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,9 +29,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -54,15 +61,30 @@ public class OpenProject implements IViewActionDelegate, IWorkbenchWindowActionD
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run( IAction action ) {
+        path=null;
+        
+    	Shell activeShell = Display.getDefault().getActiveShell();
 
-        DirectoryDialog dialog = new DirectoryDialog(Display.getDefault().getActiveShell());
-        dialog.setFilterPath(Messages.OpenProject_newProject_filename); 
-        dialog.setMessage(Messages.OpenProject_selectProject); 
-        dialog.setText(Messages.OpenProject_openProject); 
-        path = dialog.open();
-        if (path == null)
-            return;
+    	while(path==null){
+			DirectoryDialog dialog = new DirectoryDialog(activeShell);
+	        dialog.setFilterPath(Messages.OpenProject_newProject_filename); 
+	        dialog.setMessage(Messages.OpenProject_selectProject); 
+	        dialog.setText(Messages.OpenProject_openProject); 
+	        path = dialog.open();
+	        if (path == null)
+	        	return;
+	        
+	        File projFile = new File(path+File.separator+ProjectRegistry.PROJECT_FILE);
+	        if( !projFile.exists() ){
+	        	String message = Messages.OpenProject_ErrorMessage;
+	        	message = MessageFormat.format(message, ProjectRegistry.PROJECT_FILE);
+                MessageDialog.openInformation(activeShell, Messages.OpenProject_ErrorTitle, 
+	        			message);
+	        	path = null;
+	        }
+    	}
 
+        
         if (job == null) {
             synchronized (this) {
                 if (job == null) {

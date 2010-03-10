@@ -54,21 +54,19 @@ import org.eclipse.ui.part.ViewPart;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 /**
- * 
  * A map view.
  * 
  * @author Emily Gouge, Graham Davis (Refractions Research, Inc.)
  * @since 1.1.0
  */
 public class MapView extends ViewPart implements MapPart {
-    public static String ID = "net.refractions.udig.tutorials.rcp.mapView" ;
-	//private GISWidget widget;
+    public static String ID = "net.refractions.udig.tutorials.rcp.mapView";
+    // private GISWidget widget;
     private MapViewer mapviewer;
-    //private RenderManager renderManager;
+    // private RenderManager renderManager;
     private Map map;
     private SeagullGlassPaneOp seagullOp;
-    
-    
+
     public MapView() {
         super();
     }
@@ -78,8 +76,8 @@ public class MapView extends ViewPart implements MapPart {
         FillLayout fillLayout = new FillLayout();
         fillLayout.type = SWT.VERTICAL;
         parent.setLayout(fillLayout);
-        //mapviewer = new MapViewer(parent,  SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.MULTI);
-        mapviewer = new MapViewer(parent);
+        // mapviewer = new MapViewer(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.MULTI);
+        mapviewer = new MapViewer(parent, SWT.SINGLE | SWT.DOUBLE_BUFFERED );
 
         // create a new empty map
         // if you are going to add layers do so now
@@ -87,224 +85,238 @@ public class MapView extends ViewPart implements MapPart {
         // 
         map = (Map) ProjectFactory.eINSTANCE.createMap();
         mapviewer.setMap(map);
-        
+
         IMenuManager viewMenu = getViewSite().getActionBars().getMenuManager();
-        viewMenu.add( new SetBackgroundFileAction() );
-        viewMenu.add( new SetBackgroundWMSCAction() );
-        viewMenu.add( new SetGlassSeagullsAction() );
-        
-         IToolBarManager toolbar = getViewSite().getActionBars().getToolBarManager();
-         toolbar.add(new SetPanToolAction());
-         toolbar.add(new SetZoomExtentToolAction());
-         toolbar.add(new SetPrintMapLayersToolAction());
-         toolbar.add(new SetRefreshToolAction());
-         toolbar.add(new SetZoomToMapToolAction());
-//         toolbar.add(new SetPrintTilesRMToolAction());
-//         toolbar.add(new SetPrintTilesVPToolAction());
-    }      
-    
-//    class SetPrintTilesRMToolAction extends Action {
-//    	  public SetPrintTilesRMToolAction() {
-//    	      super("Print RM Tiles"); //$NON-NLS-1$
-//    	  }
-//    	  public void run() {
-//    	  	if (map != null) {
-//				// make this field public for testing
-//    	  		Collection<Tile> values = ((TiledRenderManagerDynamic)mapviewer.getRenderManager()).tiles.values();
-//    	  		System.out.println("=============== RM tiles: ");
-//    	  		List<String> list = new ArrayList();
-//    	  		for (Tile tile : values ) {
-//    	  			list.add(tile.toString());
-//    	  		}
-//    	  		Collections.sort(list);
-//    	  		for (String s : list ) {
-//    	  			System.out.println( s );
-//    	  		}
-//    	  		System.out.println("=============== /end RM tiles: ");
-//    	  	}
-//    	  }
-//      }     
-//    
-//    class SetPrintTilesVPToolAction extends Action {
-//  	  public SetPrintTilesVPToolAction() {
-//  	      super("Print VP Tiles"); //$NON-NLS-1$
-//  	  }
-//  	  public void run() {
-//  	  	if (map != null) {
-//				// make this field public for testing    
-//  	  		Collection<Tile> values = ((ViewportPaneTiledSWT)mapviewer.getViewport()).readyTiles.values();
-//  	  		System.out.println("=============== VP tiles: ");
-//  	  		List<String> list = new ArrayList();
-//	  		for (Tile tile : values ) {
-//	  			list.add(tile.toString());
-//	  		}
-//	  		Collections.sort(list);
-//	  		for (String s : list ) {
-//	  			System.out.println( s );
-//	  		}
-//  	  		System.out.println("=============== /end VP tiles: ");
-//  	  	}
-//  	  }
-//    }       
-      
-  class SetPrintMapLayersToolAction extends Action {
-	  public SetPrintMapLayersToolAction() {
-	      super("Print Map Layers"); //$NON-NLS-1$
-	  }
-	  public void run() {
-	  	if (map != null) {
-	  		for (Layer layer : map.getLayersInternal()) {
-	  			System.out.println(layer+", isvisible: "+layer.isVisible());
-	  		}
-	  	}
-	  }
-  }      
-    
+        viewMenu.add(new SetBackgroundFileAction());
+        viewMenu.add(new SetBackgroundWMSCAction());
+        viewMenu.add(new SetGlassSeagullsAction());
+
+        IToolBarManager toolbar = getViewSite().getActionBars().getToolBarManager();
+        toolbar.add(new SetPanToolAction());
+        toolbar.add(new SetZoomExtentToolAction());
+        toolbar.add(new SetPrintMapLayersToolAction());
+        toolbar.add(new SetRefreshToolAction());
+        toolbar.add(new SetZoomToMapToolAction());
+        // toolbar.add(new SetPrintTilesRMToolAction());
+        // toolbar.add(new SetPrintTilesVPToolAction());
+    }
+
+    // class SetPrintTilesRMToolAction extends Action {
+    // public SetPrintTilesRMToolAction() {
+    //    	      super("Print RM Tiles"); //$NON-NLS-1$
+    // }
+    // public void run() {
+    // if (map != null) {
+    // // make this field public for testing
+    // Collection<Tile> values =
+    // ((TiledRenderManagerDynamic)mapviewer.getRenderManager()).tiles.values();
+    // System.out.println("=============== RM tiles: ");
+    // List<String> list = new ArrayList();
+    // for (Tile tile : values ) {
+    // list.add(tile.toString());
+    // }
+    // Collections.sort(list);
+    // for (String s : list ) {
+    // System.out.println( s );
+    // }
+    // System.out.println("=============== /end RM tiles: ");
+    // }
+    // }
+    // }
+    //    
+    // class SetPrintTilesVPToolAction extends Action {
+    // public SetPrintTilesVPToolAction() {
+    //  	      super("Print VP Tiles"); //$NON-NLS-1$
+    // }
+    // public void run() {
+    // if (map != null) {
+    // // make this field public for testing
+    // Collection<Tile> values =
+    // ((ViewportPaneTiledSWT)mapviewer.getViewport()).readyTiles.values();
+    // System.out.println("=============== VP tiles: ");
+    // List<String> list = new ArrayList();
+    // for (Tile tile : values ) {
+    // list.add(tile.toString());
+    // }
+    // Collections.sort(list);
+    // for (String s : list ) {
+    // System.out.println( s );
+    // }
+    // System.out.println("=============== /end VP tiles: ");
+    // }
+    // }
+    // }
+
+    class SetPrintMapLayersToolAction extends Action {
+        public SetPrintMapLayersToolAction() {
+            super("Print Map Layers"); //$NON-NLS-1$
+        }
+        public void run() {
+            if (map != null) {
+                for( Layer layer : map.getLayersInternal() ) {
+                    System.out.println(layer + ", isvisible: " + layer.isVisible());
+                }
+            }
+        }
+    }
+
     class SetPanToolAction extends Action {
         public SetPanToolAction() {
             super("Pan"); //$NON-NLS-1$
         }
-        
+
         private FixedScalePan tool = new FixedScalePan();
-        public void run(){
-        	mapviewer.setModalTool(tool);
+        public void run() {
+            mapviewer.setModalTool(tool);
         }
-    }    
-    
+    }
+
     class SetZoomExtentToolAction extends Action {
         Zoom tool = new Zoom();
         public SetZoomExtentToolAction() {
             super("Zoom"); //$NON-NLS-1$
         }
         public void run() {
-        	mapviewer.setModalTool( tool );
+            mapviewer.setModalTool(tool);
         }
-    }     
-    
+    }
+
     class SetZoomToMapToolAction extends Action {
         public SetZoomToMapToolAction() {
-            super( "Zoom to Map"); //$NON-NLS-1$
+            super("Zoom to Map"); //$NON-NLS-1$
         }
         public void run() {
             ReferencedEnvelope bounds = map.getBounds(new NullProgressMonitor());
             map.sendCommandASync(new SetViewportBBoxCommand(bounds));
         }
-    }      
+    }
 
     class SetRefreshToolAction extends Action {
         public SetRefreshToolAction() {
-            super( "Refresh Map"); //$NON-NLS-1$
+            super("Refresh Map"); //$NON-NLS-1$
         }
         public void run() {
-        	mapviewer.getRenderManager().refresh(null);
+            mapviewer.getRenderManager().refresh(null);
         }
-    }    
+    }
 
     class SetBackgroundFileAction extends Action {
         public SetBackgroundFileAction() {
-            super( "Add Background layer from file..."); //$NON-NLS-1$
+            super("Add Background layer from file..."); //$NON-NLS-1$
         }
         public void run() {
             Display display = Display.getCurrent();
             final ArrayList<File> files = new ArrayList<File>();
-            display.syncExec( new Runnable(){
+            display.syncExec(new Runnable(){
                 public void run() {
-                    FileDialog openDialog = new FileDialog( getSite().getShell(), SWT.OPEN | SWT.MULTI );
+                    FileDialog openDialog = new FileDialog(getSite().getShell(), SWT.OPEN
+                            | SWT.MULTI);
                     String file = openDialog.open();
-                    if( file == null ) return;
-                    for( String name : openDialog.getFileNames() ){
-                        files.add( new File( openDialog.getFilterPath(), name ) );
+                    if (file == null)
+                        return;
+                    for( String name : openDialog.getFileNames() ) {
+                        files.add(new File(openDialog.getFilterPath(), name));
                     }
-                }                
+                }
             });
-            if( files.isEmpty() ) return;
+            if (files.isEmpty())
+                return;
             List<IGeoResource> dataHandles = new ArrayList<IGeoResource>();
             ICatalog catalog = CatalogPlugin.getDefault().getLocalCatalog();
             IServiceFactory factory = CatalogPlugin.getDefault().getServiceFactory();
-            for( File file : files ){
+            for( File file : files ) {
                 try {
                     URL url = file.toURI().toURL();
-                    //URL url = file.toURL();
-                    IService handle = catalog.getById( IService.class, url, new NullProgressMonitor() );
-                    if( handle != null ){
-                        IServiceInfo info = handle.getInfo( new NullProgressMonitor() );
-                        if( info == null ) {
-                            continue; // could not connect
-                        }
-                        // connected okay add all resources
-                        List< ? extends IGeoResource> resources = handle.resources( new NullProgressMonitor() );
-                        for( IGeoResource resource : resources){
-                            dataHandles.add( resource );
+                    // URL url = file.toURL();
+                    List<IService> handles = catalog.find(IService.class, url,
+                            new NullProgressMonitor());
+                    IService handle = null;
+                    for( IService iService : handles ) {
+                        if (handles != null) {
+                            IServiceInfo info = iService.getInfo(new NullProgressMonitor());
+                            if (info != null) {
+                                handle = iService;
+                                break;
+                            }
+                            // could not connect try next
                         }
                     }
-                    else {
-                        List<IService> services = factory.createService( url );
-                        for( IService service : services ){
-                            IServiceInfo info = service.getInfo( new NullProgressMonitor() );
-                            if( info == null ) {
+                    if (handle != null) {
+                        // connected okay add all resources
+                        List< ? extends IGeoResource> resources = handle
+                                .resources(new NullProgressMonitor());
+                        for( IGeoResource resource : resources ) {
+                            dataHandles.add(resource);
+                        }
+                    } else {
+                        List<IService> services = factory.createService(url);
+                        for( IService service : services ) {
+                            IServiceInfo info = service.getInfo(new NullProgressMonitor());
+                            if (info == null) {
                                 continue; // could not connect
                             }
                             // connected okay add all resources
-                            catalog.add( service );
-                            List< ? extends IGeoResource> resources = service.resources( new NullProgressMonitor() );
-                            for( IGeoResource resource : resources){
-                                dataHandles.add( resource );
+                            catalog.add(service);
+                            List< ? extends IGeoResource> resources = service
+                                    .resources(new NullProgressMonitor());
+                            for( IGeoResource resource : resources ) {
+                                dataHandles.add(resource);
                             }
                         }
                     }
-                }
-                catch( IOException eek ){
-                    System.out.println( eek );
+                } catch (IOException eek) {
+                    System.out.println(eek);
                 }
             }
-            if( dataHandles.isEmpty() ) return;
-            
-            map.sendCommandASync( new AddLayersCommand(dataHandles));
+            if (dataHandles.isEmpty())
+                return;
+
+            map.sendCommandASync(new AddLayersCommand(dataHandles));
         }
     }
-    
+
     class SetGlassSeagullsAction extends Action {
         public SetGlassSeagullsAction() {
-            super( "Add Glass Seagulls layer"); //$NON-NLS-1$
+            super("Add Glass Seagulls layer"); //$NON-NLS-1$
         }
         public void run() {
             Display display = Display.getCurrent();
             if (seagullOp == null) {
-            	seagullOp = new SeagullGlassPaneOp();
+                seagullOp = new SeagullGlassPaneOp();
             }
-            //create a flock of seagulls on a glasspane
+            // create a flock of seagulls on a glasspane
             try {
-				seagullOp.op(display, map, new NullProgressMonitor());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-			}
+                seagullOp.op(display, map, new NullProgressMonitor());
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+            }
         }
-      
-    } 	
-    
+
+    }
+
     class SetBackgroundWMSCAction extends Action {
         public SetBackgroundWMSCAction() {
-            super( "Add Background layer..."); //$NON-NLS-1$
+            super("Add Background layer..."); //$NON-NLS-1$
         }
         public void run() {
             Display display = Display.getCurrent();
             // final ArrayList<File> files = new ArrayList<File>();
-            display.syncExec( new Runnable(){
+            display.syncExec(new Runnable(){
                 public void run() {
-                	MapImport mapImport = new MapImport();
+                    MapImport mapImport = new MapImport();
                     mapImport.getDialog().open();
-                }                
+                }
             });
         }
-    }    
-    
+    }
+
     @Override
     public void setFocus() {
-    	mapviewer.getViewport().getControl().setFocus();
+        mapviewer.getViewport().getControl().setFocus();
     }
 
     public void setModalTool( ModalTool tool ) {
-        mapviewer.setModalTool( tool );
+        mapviewer.setModalTool(tool);
     }
     public Map getMap() {
         return mapviewer.getMap();
@@ -313,7 +325,7 @@ public class MapView extends ViewPart implements MapPart {
     @Override
     public void dispose() {
         if (mapviewer != null && mapviewer.getViewport() != null && getMap() != null) {
-        	mapviewer.getViewport().removePaneListener(getMap().getViewportModelInternal());
+            mapviewer.getViewport().removePaneListener(getMap().getViewportModelInternal());
         }
     }
 
@@ -322,11 +334,11 @@ public class MapView extends ViewPart implements MapPart {
     }
 
     public void setFont( Control control ) {
-        mapviewer.setFont( control );
+        mapviewer.setFont(control);
     }
 
     public void setSelectionProvider( IMapEditorSelectionProvider selectionProvider ) {
-        mapviewer.setSelectionProvider( selectionProvider );
+        mapviewer.setSelectionProvider(selectionProvider);
     }
 
 }

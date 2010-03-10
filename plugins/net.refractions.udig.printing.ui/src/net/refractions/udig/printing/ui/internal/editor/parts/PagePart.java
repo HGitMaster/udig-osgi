@@ -18,6 +18,7 @@ package net.refractions.udig.printing.ui.internal.editor.parts;
 
 import java.util.List;
 
+import net.refractions.udig.printing.model.Box;
 import net.refractions.udig.printing.model.Page;
 import net.refractions.udig.printing.model.PropertyListener;
 import net.refractions.udig.printing.ui.internal.editor.figures.PageFigure;
@@ -41,9 +42,9 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
  */
 public class PagePart extends AbstractGraphicalEditPart {
 
-    private InternalPropertyListener listener = new InternalPropertyListener(); 
+    private InternalPropertyListener listener = new InternalPropertyListener();
 
-    protected List<?> getModelChildren() {
+    protected List< ? > getModelChildren() {
         return getModel().getBoxes();
     }
 
@@ -56,16 +57,16 @@ public class PagePart extends AbstractGraphicalEditPart {
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.LAYOUT_ROLE, new CustomXYLayoutEditPolicy());
     }
-    
+
     public void activate() {
         if (isActive()) {
             return;
         }
-        
+
         super.activate();
         getModel().eAdapters().add(this.listener);
     }
-    
+
     public void deactivate() {
         if (!isActive()) {
             return;
@@ -78,29 +79,40 @@ public class PagePart extends AbstractGraphicalEditPart {
     public Page getModel() {
         return (Page) super.getModel();
     }
-    
+
     protected void refreshVisuals() {
         Page page = getModel();
-        
-        Point loc = new Point(0,0);
+
+        Point loc = new Point(0, 0);
         Dimension size = page.getSize();
         Rectangle rectangle = new Rectangle(loc, size);
-        
-        getParent().setLayoutConstraint(this, getFigure(), rectangle);
+
+        // this should trigger all the resize in PageImpl
+        IFigure fig = getFigure();
+        // Dimension fSize = fig.getSize();
+        fig.setSize(size);
+        getParent().setLayoutConstraint(this, fig, rectangle);
+        //
+        // List<Box> boxes = page.getBoxes();
+        // for( Box box : boxes ) {
+        // Dimension size2 = box.getSize();
+        // System.out.println(size2.width + "/" + size2.height);
+        // }
+
     }
 
     public GraphicalEditPart getParent() {
         return ((GraphicalEditPart) super.getParent());
     }
-        
+
     protected class InternalPropertyListener extends PropertyListener {
-        
+
         protected void boxesChanged() {
             refreshChildren();
         }
-        
+
         protected void sizeChanged() {
             refreshVisuals();
         }
-    }   
+    }
 }

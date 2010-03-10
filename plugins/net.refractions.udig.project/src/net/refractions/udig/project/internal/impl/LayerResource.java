@@ -15,6 +15,7 @@ import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IResolve;
+import net.refractions.udig.catalog.IService;
 import net.refractions.udig.core.internal.ExtensionPointList;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IResourceCachingInterceptor;
@@ -358,7 +359,6 @@ public class LayerResource extends IGeoResource {
             this.targetType=targetType;
         }
 
-        @SuppressWarnings("unchecked")
         public T run( ILayer layer, T resource, Class<? super T> requestedType ) {
             try{
                 return interceptor.run(layer, resource, requestedType);
@@ -372,6 +372,12 @@ public class LayerResource extends IGeoResource {
         public String toString() {
             return interceptor.toString();
         }
-
     }
+    
+    @Override
+    public IService service(IProgressMonitor monitor) throws IOException {
+    	return geoResource.service(monitor);
+    }
+    
+    
 }

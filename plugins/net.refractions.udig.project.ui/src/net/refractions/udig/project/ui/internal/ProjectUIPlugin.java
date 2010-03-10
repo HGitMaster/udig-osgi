@@ -30,6 +30,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -44,12 +45,19 @@ import org.osgi.framework.BundleContext;
  * @version $Revision: 1.9 $
  */
 public class ProjectUIPlugin extends AbstractUIPlugin {
+
+
     /**
      * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
     public static final ProjectUIPlugin INSTANCE = new ProjectUIPlugin();
+
+    /**
+     * The default speed for mouse double click in milliseconds.
+     */
+    public static final int DEFAULT_DOUBLECLICK_SPEED_MILLIS = 1000;
 
     private static final String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
@@ -72,6 +80,8 @@ public class ProjectUIPlugin extends AbstractUIPlugin {
     List<AdapterFactory> adapterFactories;
 
     private static final String ADAPTER_FACTORIES_ID = "net.refractions.udig.project.ui.itemProviderAdapterFactories"; //$NON-NLS-1$
+
+    public static final String MOUSE_SPEED_KEY = "MOUSE_SPEED_KEY";
 
     private PropertySheetPage propertySheetPage;
 
@@ -299,8 +309,22 @@ public class ProjectUIPlugin extends AbstractUIPlugin {
         return getDefault().isDebugging()
                 && "true".equalsIgnoreCase(Platform.getDebugOption(trace)); //$NON-NLS-1$    
     }
-
+    /**
+     * The delay used to determine double click speed.
+     * 
+     * <p>
+     * The delay defaults to 100 milliseconds.
+     * </p>
+     * 
+     * @return the milliseconds used for the double-click speed.
+     */
     public int getDoubleClickSpeed() {
-        return 400;
+        IPreferenceStore store = ProjectUIPlugin.getDefault().getPreferenceStore();
+        int mouseSpeed = store.getInt(MOUSE_SPEED_KEY);
+        if (mouseSpeed == 0) {
+            mouseSpeed = DEFAULT_DOUBLECLICK_SPEED_MILLIS;
+        }
+        return mouseSpeed; 
     }
+
 }

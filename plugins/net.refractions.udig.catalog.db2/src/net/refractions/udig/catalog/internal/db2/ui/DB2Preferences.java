@@ -14,6 +14,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
+ * Preference page for DB2; allows people to install the correct drivers.
+ * 
  * @author jones
  */
 public class DB2Preferences extends AbstractProprietaryJarPreferencePage

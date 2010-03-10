@@ -149,7 +149,7 @@ public class AcceptChangesBehaviour implements Behaviour {
         try{
 		idToGeom = GeometryCreationUtil.createAllGeoms(
                 handler.getCurrentGeom(), geomToCreate, handler.getEditLayer()
-                        .getSchema().getGeometryDescriptor());
+                        .getSchema().getGeometryDescriptor(), true);
         }catch (IllegalStateException e) {
         	return null;
 		}

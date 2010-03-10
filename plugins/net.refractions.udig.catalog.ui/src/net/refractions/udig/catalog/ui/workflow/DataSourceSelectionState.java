@@ -13,15 +13,24 @@ import net.refractions.udig.core.Pair;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * First state in the data import worklow. This state chooses a data source based on the context of
+ * First state in the data import worklow.
+ * <p>
+ * This state chooses a data source based on the context of
  * the workflow.
  * 
  * @author Justin Deoliveira,Refractions Research Inc.,jdeolive@refractions.net
  */
 public class DataSourceSelectionState extends State {
 
-    /** the chosen import page * */
+    /**
+     * This chosen import page - there should only be one; or we will need
+     * to ask the user to choose.
+     */
     UDIGConnectionFactoryDescriptor descriptor;
+    
+    /**
+     * Flag used to check that the service connects; by listing members
+     */
     private boolean validateService;
 
     /**
@@ -39,12 +48,12 @@ public class DataSourceSelectionState extends State {
         descriptor=null;
         // based on context, try to choose a single data source
         Object context = getWorkflow().getContext();
-        if (context == null)
-            return;
-
+        if (context == null){
+            return; // we got a single page
+        }
         Collection<UDIGConnectionFactoryDescriptor> descriptors = ConnectionFactoryManager.instance().getConnectionFactoryDescriptors();
         
-        // determine if any conntection factory can process the context object
+        // determine if any connection factory can process the context object
         descriptor = null;
         for( UDIGConnectionFactoryDescriptor d : descriptors ) {
             UDIGConnectionFactory factory = d.getConnectionFactory();
@@ -55,14 +64,15 @@ public class DataSourceSelectionState extends State {
                         descriptor = null;
                         return;
                     }
-
-                    descriptor = d;
+                    descriptor = d; // record the fact we can connect to this page
                 }
             } catch (Throwable t) {
                 // log and keep going
                 CatalogPlugin.log(t.getLocalizedMessage(), t);
             }
-
+        }
+        if( descriptor != null ){
+            CatalogPlugin.log("Drag and Drop of "+descriptor.getId() + " from "+context, null );
         }
     }
 

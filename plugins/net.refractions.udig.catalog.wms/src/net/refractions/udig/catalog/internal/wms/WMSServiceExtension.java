@@ -35,8 +35,9 @@ import net.refractions.udig.catalog.wms.internal.Messages;
 public class WMSServiceExtension implements ServiceExtension2 {
 
     public IService createService( URL id, Map<String, Serializable> params ) {
-        if (params == null)
+        if (params == null){
             return null;
+        }
 
         if ((!params.containsKey(WMSServiceImpl.WMS_URL_KEY) && id == null)
                 && !params.containsKey(WMSServiceImpl.WMS_WMS_KEY)) {
@@ -45,12 +46,13 @@ public class WMSServiceExtension implements ServiceExtension2 {
 
         URL extractedId = extractId(params);
         if (extractedId != null) {
-            if (id != null)
+            if (id != null){
                 return new WMSServiceImpl(id, params);
-            else
+            }
+            else {
                 return new WMSServiceImpl(extractedId, params);
+            }
         }
-
         return null;
     }
     private URL extractId( Map<String, Serializable> params ) {

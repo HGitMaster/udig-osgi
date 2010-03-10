@@ -144,8 +144,9 @@ public class CatalogImpl extends ICatalog {
     public void add( IService entry ) throws UnsupportedOperationException {
         if (entry == null || entry.getIdentifier() == null)
             throw new NullPointerException("Cannot have a null id"); //$NON-NLS-1$
-        if( !findService(entry.getIdentifier()).isEmpty() )
+        if( getById(IService.class, entry.getID(), new NullProgressMonitor())!=null )
             return;
+        
         services.add(entry);
         IResolveDelta deltaAdded = new ResolveDelta(entry, IResolveDelta.Kind.ADDED);
         IResolveDelta deltaChanged = new ResolveDelta(this, Collections.singletonList(deltaAdded));
@@ -169,28 +170,15 @@ public class CatalogImpl extends ICatalog {
         fire(new ResolveChangeEvent(CatalogImpl.this, IResolveChangeEvent.Type.POST_CHANGE,
                 deltaRemoved));
     }
-
-    @Override
     public void replace( ID id, IService replacement ) throws UnsupportedOperationException {
-        replace( id.toURL(), replacement );
-    }
-    /**
-     * This implementation will store a IForward handle
-     * at the indicated *id*, recording the fact that entry
-     * has now moved.
-     * <p>
-     * If the id == entry.getIdentifier() this method is being used to
-     * "reset" the current <b>id</b> service handle.
-     */
-    public void replace( URL id, IService entry ) throws UnsupportedOperationException {
-        if (entry == null || entry.getIdentifier() == null || id == null){
+        if (replacement == null || replacement.getIdentifier() == null || id == null){
             throw new NullPointerException("Cannot have a null id"); //$NON-NLS-1$
         }
         final IService service = getServiceById(id);        
         List<IResolveDelta> changes = new ArrayList<IResolveDelta>();
         List<IResolveDelta> childChanges = new ArrayList<IResolveDelta>();
         try {
-        	List< ? extends IGeoResource> newChildren = entry.resources(null);
+        	List< ? extends IGeoResource> newChildren = replacement.resources(null);
         	List< ? extends IGeoResource> oldChildren = service.resources(null);
             if( oldChildren!=null )
             for( IGeoResource oldChild : oldChildren ) {
@@ -208,7 +196,7 @@ public class CatalogImpl extends ICatalog {
         } catch (IOException ignore) {
             // no children? Not a very good entry ..
         }
-        changes.add(new ResolveDelta(service, entry, childChanges));
+        changes.add(new ResolveDelta(service, replacement, childChanges));
             
         IResolveDelta deltas = new ResolveDelta(this, changes);
         IResolveChangeEvent event = new ResolveChangeEvent(this,
@@ -228,13 +216,13 @@ public class CatalogImpl extends ICatalog {
             
         });
         
-        services.add(entry);
+        services.add(replacement);
         event = new ResolveChangeEvent(this,
                 IResolveChangeEvent.Type.POST_CHANGE, deltas);
         
-        if( !id.equals( entry.getIdentifier())){
+        if( !id.equals( replacement.getIdentifier())){
             // the service has actually moved
-            IService moved = new MovedService( id, entry.getIdentifier() );
+            IService moved = new MovedService( id, replacement.getID() );
             services.add( moved );
         }
         fire(event);
@@ -255,6 +243,8 @@ public class CatalogImpl extends ICatalog {
     public List<IResolve> find( URL query, IProgressMonitor monitor ) {        
         Set<IResolve> found = new LinkedHashSet<IResolve>();
 
+        ID id = new ID(query);
+        
         // first pass 1.1- use urlEquals on CONNECTED service for subset check
         for( IService service : services ) {
             if( service.getStatus() != CONNECTED ) continue; // skip non connected service
@@ -263,14 +253,12 @@ public class CatalogImpl extends ICatalog {
                 if( matchedService(query, identifier)){
             		found.add(service);
             		found.addAll( friends( service ));
-                    break;
             	}
             	else {                    
-                    IResolve res = getChildById(service, query, monitor);
+                    IResolve res = getChildById(service, id, true, monitor);
                     if( res!=null ){
                         found.add(res);
                 		found.addAll( friends( res));
-                        break;
                     }
                 }                
             }
@@ -280,18 +268,16 @@ public class CatalogImpl extends ICatalog {
             if( service.getStatus() == CONNECTED ) continue; // already checked in pass 1.1                                    
             URL identifier = service.getIdentifier();
             if ( URLUtils.urlEquals(query, identifier, true)) { 
-                if( service.getStatus() != NOTCONNECTED ) continue; // look into notconnected service that "match"
+                if( service.getStatus() != NOTCONNECTED ) continue; // look into not connected service that "match"
                 if( matchedService(query, identifier) ){
                     found.add(service);
                     found.addAll( friends( service ));
-                    break;
                 }
                 else {
-                    IResolve res = getChildById(service, query, monitor);
+                    IResolve res = getChildById(service, id, true, monitor);
                     if( res!=null ){
                         found.add(res);
                         found.addAll( friends( res));
-                        break;
                     }
                 }                
             }
@@ -308,14 +294,12 @@ public class CatalogImpl extends ICatalog {
                 if( matchedService(query, identifier) ){
                     found.add(service);
                     found.addAll( friends( service ));
-                    break;
                 }
                 else {
-                    IResolve res = getChildById(service, query, monitor);
+                    IResolve res = getChildById(service, id, true, monitor);
                     if( res!=null ){
                         found.add(res);
                         found.addAll( friends( res));
-                        break;
                     }
                 }                
             }
@@ -394,9 +378,6 @@ public class CatalogImpl extends ICatalog {
      * @return List of frends, possibly empty
      */
     public List<IResolve> friends( final IResolve handle ){
-    	if( false ){
-    		return Collections.emptyList();
-    	}
     	final List<IResolve> friends = new ArrayList<IResolve>();
         ExtensionPointUtil.process(CatalogPlugin.getDefault(),
                 "net.refractions.udig.catalog.friendly", new ExtensionPointProcessor(){ //$NON-NLS-1$
@@ -433,36 +414,19 @@ public class CatalogImpl extends ICatalog {
     }
     
     /**
-     * Quick search by url match.
-     * 
-     * @see net.refractions.udig.catalog.ICatalog#search(org.opengis.filter.Filter)
-     * @param query
-     * @return List<IResolve>
-     * @throws IOException
-     * @deprecated use getServiceById
-     */
-    public List<IService> findService( URL query ) {
-    	IService service = getServiceById( query );
-    	if( service == null )
-    		return Collections.emptyList();
-    	else
-    		return Collections.singletonList( service );    	 
-    }
-    
-    /**
      * Utility method to quick hunt for matching service.
      * <p>
      * We are depending on the provided ID being unique for this catalog;
      * please note that in the event the ID locates an IForward instances
      * we will find and return the replacement.
      * <p>
-     * @param ID Identification of service to find
+     * @param id Identification of service to find
      * @return Found service handle or null
      */
-    public IService getServiceById( final URL ID ){
-        if( ID == null || ID.getRef() != null ) return null;
+    private IService getServiceById( final ID id ){
+        if( id == null ) return null;
         for( IService service : services ) {
-            if ( URLUtils.urlEquals( ID, service.getIdentifier(), false) ) {
+            if ( id.equals(service.getID()) ) {
             	return service;
             }
         }
@@ -470,80 +434,90 @@ public class CatalogImpl extends ICatalog {
     }
     
     public <T extends IResolve> T getById(Class<T> type, final ID id, IProgressMonitor monitor) {
-        return getById( type, id.toURL(), monitor );                
-    }
-    
-    @Override
-    public <T extends IResolve> T getById(Class<T> type, final URL ID, IProgressMonitor monitor) {
-        
-    	IProgressMonitor monitor2=monitor;;
+
+        IProgressMonitor monitor2=monitor;;
         if( monitor2 == null) monitor2 = new NullProgressMonitor();
-    	if( ID == null ) return null;
-    	
-    	if( IService.class.isAssignableFrom( type )){
-    		monitor2.beginTask(Messages.CatalogImpl_monitorTask,1); 
-    		IService service = getServiceById( ID );
-    		monitor2.done();
-    		return type.cast(service);
-    	}
-    	
-    	if( IResolve.class.isAssignableFrom( type ) ){    		
+        if( id == null ) return null;
+        
+        if( IService.class.isAssignableFrom( type )){
+            monitor2.beginTask(Messages.CatalogImpl_monitorTask,1); 
+            IService service = getServiceById( id );
+            monitor2.done();
+            return type.cast(service);
+        }
+        
+        URL url = id.toURL();
+        if( IResolve.class.isAssignableFrom( type ) ){          
             for( IService service : services ) {
-            	if( URLUtils.urlEquals( ID, service.getIdentifier(), true ) ){
-            		IResolve child = getChildById( service, ID, monitor2 );
-            		if( child != null ) return type.cast( child );
-            	}
+                if( URLUtils.urlEquals( url, service.getIdentifier(), true ) ){
+                    IResolve child = getChildById( service, id, false, monitor2 );
+                    if( child != null ) return type.cast( child );
+                }
             }            
-    	}
-    	return null;
+        }
+        return null;
     }
     
+//    @Override
+//    public <T extends IResolve> T getById(Class<T> type, final URL id, IProgressMonitor monitor) {
+//        return getById(type, new ID(id), monitor);
+//    }
+
     /**
      * Utility method that will search in the provided handle for an ID match; especially good for
-     * nested content such as folders or WMS layers.
-     * 
-     * <h4>Old Comment</h4>
-     * The following comment was origional included in the source code: we are not sure it should
-     * be belived ... we will do our best to search CONNECTED services first, nut NOTCONNECTED
-     * is included in our search.
-     * <quote>
-     * Although the following is a 'blocking' call, we have deemed it safe based on
-     * the following reasons:
+     * nested content such as folders or WMS layers. <h4>Old Comment</h4> The following comment was
+     * original included in the source code: we are not sure it should be believed ... we will do
+     * our best to search CONNECTED services first, nut NOTCONNECTED is included in our search.
+     * <quote> Although the following is a 'blocking' call, we have deemed it safe based on the
+     * following reasons:
      * <ul>
      * <li>This will only be called for Identifiers which are well known.
-     * <li>The Services being checked have already been screened, and only a
-     * limited number of services (usually 1) will be called.
-     *    <ol>
-     *    <li>The Id was acquired from the catalog ... and this is a look-up, in which case the uri exists.
-     *    <li>The Id was persisted.
-     *    </ol>
+     * <li>The Services being checked have already been screened, and only a limited number of
+     * services (usually 1) will be called.
+     * <ol>
+     * <li>The Id was acquired from the catalog ... and this is a look-up, in which case the uri
+     * exists.
+     * <li>The Id was persisted.
+     * </ol>
      * </ul>
-     * In the future this will also be free, as we plan on caching the equivalent of a getCapabilities
-     * document between runs (will have to be updated too as the app has time).
-     * </quote>
-     * Repeate the following comment is out of date since people are using this method to look
-     * for entries that have not been aded to the catalog yet.
+     * In the future this will also be free, as we plan on caching the equivalent of a
+     * getCapabilities document between runs (will have to be updated too as the app has time).
+     * </quote> Repeat the following comment is out of date since people are using this method to
+     * look for entries that have not been added to the catalog yet.
+     * 
+     * @param roughMatch an ID consists of a URL and other info like a typeQualifier if roughMatch
+     *                   is true then the extra information is ignored during search
      */
-    public IResolve getChildById( IResolve handle, final URL ID, IProgressMonitor monitor) {
-    	IProgressMonitor monitor2=monitor;
-        if( monitor2 == null) monitor2 = new NullProgressMonitor();
-    	
-    	if ( URLUtils.urlEquals( handle.getIdentifier(), ID, false ) ) {
-    		return handle;
-    	}
-		try {
-			List<? extends IResolve> children = handle.members(monitor2);
-			if( children == null || children.isEmpty() ) return null;
-			
-			monitor2.beginTask(Messages.CatalogImpl_monitorTask2, children.size()); 
-			for( IResolve child : children ){
-				IResolve found = getChildById( child, ID, null );
-				if( found != null ) return found;
-			}
-		} catch (IOException e) {
-			CatalogPlugin.log( "Could not search children of "+handle.getIdentifier(), e); //$NON-NLS-1$
-		}
-		return null;
+    public IResolve getChildById( IResolve handle, final ID id, boolean roughMatch,
+            IProgressMonitor monitor ) {
+        IProgressMonitor monitor2 = monitor;
+        if (monitor2 == null)
+            monitor2 = new NullProgressMonitor();
+
+        if( roughMatch ){
+            if( new ID(id.toURL()).equals(new ID(handle.getIdentifier())) ){
+                return handle;
+            }
+        }else{
+            if (id.equals(handle.getID())) {
+                return handle;
+            }
+        }
+        try {
+            List< ? extends IResolve> children = handle.members(monitor2);
+            if (children == null || children.isEmpty())
+                return null;
+
+            monitor2.beginTask(Messages.CatalogImpl_monitorTask2, children.size());
+            for( IResolve child : children ) {
+                IResolve found = getChildById(child, id, roughMatch, null);
+                if (found != null)
+                    return found;
+            }
+        } catch (IOException e) {
+            CatalogPlugin.log("Could not search children of " + handle.getIdentifier(), e); //$NON-NLS-1$
+        }
+        return null;
     }
 
     /**
@@ -899,7 +873,7 @@ public class CatalogImpl extends ICatalog {
 		try{
         	Preferences toSave = Platform.getPreferencesService().getRootNode().node(CatalogPlugin.ID).node("LOCAL_CATALOG_SERVICES");  //$NON-NLS-1$
 	        if (services!=null) {
-	            ServiceParameterPersister persister=new ServiceParameterPersister(this, factory, catalogLocation);
+	            ServiceParameterPersister persister=new ServiceParameterPersister(this, factory, catalogLocation.getParentFile());
 	         
 	            persister.store(monitor, toSave, services);
 	        }

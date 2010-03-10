@@ -1,7 +1,27 @@
-
-
+/*
+ *    uDig - User Friendly Desktop Internet GIS client
+ *    http://udig.refractions.net
+ *    (C) 2009, Refractions Research Inc.
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package net.refractions.udig.catalog.internal.postgis.ui;
 import static net.refractions.udig.catalog.PostgisServiceExtension2.DIALECT;
+import static org.geotools.data.postgis.PostgisNGDataStoreFactory.PORT;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DATABASE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.DBTYPE;
+import static org.geotools.jdbc.JDBCDataStoreFactory.HOST;
+import static org.geotools.jdbc.JDBCDataStoreFactory.PASSWD;
+import static org.geotools.jdbc.JDBCDataStoreFactory.USER;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -21,7 +41,6 @@ import net.refractions.udig.catalog.internal.postgis.PostgisPlugin;
 import net.refractions.udig.catalog.ui.UDIGConnectionFactory;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.geotools.data.postgis.PostgisDataStoreFactory;
 
 public class PostGisConnectionFactory extends UDIGConnectionFactory {
 
@@ -217,20 +236,20 @@ public class PostGisConnectionFactory extends UDIGConnectionFactory {
         
         Map<String,Serializable> params2 = new HashMap<String,Serializable>();
         
-        params2.put(PostgisDataStoreFactory.DBTYPE.key, "postgis"); //$NON-NLS-1$
-        params2.put(PostgisDataStoreFactory.HOST.key, url.getHost());
+        params2.put(DBTYPE.key, (Serializable)DBTYPE.sample); //$NON-NLS-1$
+        params2.put(HOST.key, url.getHost());
         String dbport = ((Integer)url.getPort()).toString();
         try {
-            params2.put(PostgisDataStoreFactory.PORT.key, new Integer(dbport));
+            params2.put(PORT.key, new Integer(dbport));
         } catch (NumberFormatException e) {
-            params2.put(PostgisDataStoreFactory.PORT.key, new Integer(5432));
+            params2.put(PORT.key, new Integer(5432));
         }
 
         String the_database = url.getPath() == null ? "" : url.getPath(); //$NON-NLS-1$
-        params2.put(PostgisDataStoreFactory.DATABASE.key,the_database); // database
+        params2.put(DATABASE.key,the_database); // database
         String userInfo = url.getUserInfo() == null ? "" : url.getUserInfo(); //$NON-NLS-1$
-        params2.put(PostgisDataStoreFactory.USER.key,userInfo); // user
-        params2.put(PostgisDataStoreFactory.PASSWD.key,""); // pass //$NON-NLS-1$
+        params2.put(USER.key,userInfo); // user
+        params2.put(PASSWD.key,""); // pass //$NON-NLS-1$
         
         return params2;
     }

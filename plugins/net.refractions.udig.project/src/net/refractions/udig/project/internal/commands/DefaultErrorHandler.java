@@ -27,7 +27,7 @@ public class DefaultErrorHandler implements ErrorHandler {
      *      Throwable)
      */
     public void handleError( Command command, Throwable e ) {
-        ProjectPlugin.log("", e); //$NON-NLS-1$
+        ProjectPlugin.log(command.getName()+" failed to run", e); //$NON-NLS-1$
     }
 
     /**
