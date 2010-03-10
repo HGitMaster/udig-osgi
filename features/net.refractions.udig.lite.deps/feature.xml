@@ -2,7 +2,7 @@
 <feature
       id="net.refractions.udig.lite.deps"
       label="Dependencies of udigLite"
-      version="1.2.0.osgi3"
+      version="1.2.0.RC1osgi1"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
@@ -298,6 +298,34 @@
 
    <plugin
          id="org.mortbay.jetty.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.org.joda.time"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.com.google.common.collect"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.berlios.com.miglayout"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.org.apache.commons.dbcp"
          download-size="0"
          install-size="0"
          version="0.0.0"
