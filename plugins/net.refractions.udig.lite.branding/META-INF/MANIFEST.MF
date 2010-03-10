@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: uDig Lite
+Bundle-SymbolicName: net.refractions.udig.lite
+Bundle-Version: 1.2.0.osgi3
+Bundle-Vendor: Harman/Becker
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

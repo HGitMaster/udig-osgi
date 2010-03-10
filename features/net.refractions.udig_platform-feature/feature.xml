@@ -26,7 +26,11 @@
          version="0.0.0"/>
 
    <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.xsd"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.update.ui"/>
       <import plugin="org.eclipse.jface"/>
@@ -117,13 +121,6 @@
 
    <plugin
          id="net.refractions.udig.catalog.wfs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.refractions.udig.catalog.wms"
          download-size="0"
          install-size="0"
          version="0.0.0"

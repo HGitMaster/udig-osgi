@@ -1,0 +1,26 @@
+syntax: glob
+
+.svn
+target
+dependencies
+local.properties
+
+# stuff created by PDE build
+@dot
+@dot.log
+*temp.folder
+features/*/build.xml
+plugins/*/build.xml
+javaCompiler.*.*.args
+net.refractions.udig.libs/lib
+I.udigLite
+assemble*
+*org.eclipse.pde.build.container.feature*
+finalFeatures*
+finalPlugins*
+net.refractions.udig.libs/library.jar
+*~
+bin
+
+
+

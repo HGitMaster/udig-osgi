@@ -14,7 +14,7 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xmx386M -Dosgi.parentClassloader=ext -Dorg.eclipse.emf.ecore.plugin.EcorePlugin.doNotLoadResourcesPlugin=true</vmArgs>
+      <vmArgs>-Xmx386M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.awt.headless=true</vmArgsMac>
    </launcherArgs>
 
@@ -25,7 +25,7 @@
       startupProgressRect="0,196,500,8"
       startupMessageRect="7,180,445,16"
       startupForegroundColor="FFFFFF" />
-   <launcher name="udig_internal">
+   <launcher name="udigLite">
       <linux icon="/net.refractions.udig/icons/udig.xpm"/>
       <macosx icon="/net.refractions.udig/icons/icon128.icns"/>
       <solaris/>
@@ -36,7 +36,6 @@
    </launcher>
 
    <intro introId="net.refractions.udig.ui.intro"/>
-
    <vm>
    </vm>
 
@@ -67,7 +66,7 @@
    </plugins>
 
    <features>
-      <feature id="net.refractions.udig" version="1.2.0"/>
+      <feature id="net.refractions.udig.sdk" version="1.2.0.osgi3"/>
    </features>
 
 

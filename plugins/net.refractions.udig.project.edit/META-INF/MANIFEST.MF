@@ -14,6 +14,13 @@ Require-Bundle: net.refractions.udig.project;visibility:=reexport,
  net.refractions.udig.ui,
  org.eclipse.emf.edit.ui;visibility:=reexport,
  org.eclipse.core.runtime,
- net.refractions.udig.catalog.ui
+ net.refractions.udig.catalog.ui,
+ org.geotools.main;bundle-version="2.6.0",
+ org.geotools.wms;bundle-version="2.6.0"
+Import-Package: org.opengis.feature,
+ org.opengis.feature.simple,
+ org.opengis.feature.type,
+ org.opengis.geometry,
+ org.picocontainer
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

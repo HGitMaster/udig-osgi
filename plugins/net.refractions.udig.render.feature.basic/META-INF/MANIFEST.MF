@@ -9,9 +9,20 @@ Bundle-Localization: plugin
 Export-Package: net.refractions.udig.render.internal.feature.basic
 Require-Bundle: org.eclipse.core.runtime,
  net.refractions.udig.project,
- net.refractions.udig.libs,
  org.eclipse.ui,
  net.refractions.udig.project.ui,
- net.refractions.udig.style.sld
+ net.refractions.udig.style.sld,
+ org.geotools.render;bundle-version="2.6.0",
+ org.geotools.api,
+ org.geotools.main,
+ org.geotools.coverage;bundle-version="2.6.0"
+Import-Package: com.vividsolutions.jts.geom,
+ org.opengis.feature.simple,
+ org.opengis.feature.type,
+ org.opengis.referencing,
+ org.opengis.referencing.crs,
+ org.opengis.referencing.cs,
+ org.opengis.referencing.datum,
+ org.opengis.referencing.operation
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

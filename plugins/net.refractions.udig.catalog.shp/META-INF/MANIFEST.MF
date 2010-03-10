@@ -10,8 +10,18 @@ Bundle-Vendor: udig.refractions.net
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
- net.refractions.udig.libs,
- net.refractions.udig.catalog.ui
+ net.refractions.udig.catalog.ui,
+ org.geotools.shapefile;bundle-version="2.6.0",
+ org.geotools.referencing;bundle-version="2.6.0",
+ org.geotools.api;bundle-version="2.6.0",
+ org.geotools.data;bundle-version="2.6.0",
+ org.geotools.main;bundle-version="2.6.0"
 Export-Package: net.refractions.udig.catalog.internal.shp;x-friends:="net.refractions.udig.project.tests.ui"
 Bundle-ActivationPolicy: lazy
+Import-Package: com.vividsolutions.jts.geom,
+ org.opengis.feature,
+ org.opengis.feature.simple,
+ org.opengis.feature.type,
+ org.opengis.filter,
+ org.opengis.referencing.crs
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

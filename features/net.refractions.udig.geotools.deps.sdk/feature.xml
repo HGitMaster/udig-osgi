@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.geotools.deps.sdk"
+      label="Geotools Dependencies"
+      version="2.6.0.osgi1"
+      provider-name="Harman/Becker"
+      plugin="org.geotools.deps.sdk">
+
+   <description>
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright>
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license>
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="org.geotools.deps"
+         version="0.0.0"/>
+
+   <includes
+         id="org.geotools.deps.source"
+         version="0.0.0"/>
+     
+
+</feature>

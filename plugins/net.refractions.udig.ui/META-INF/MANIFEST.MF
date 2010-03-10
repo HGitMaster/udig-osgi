@@ -10,11 +10,15 @@ Eclipse-ExtensibleAPI: true
 Eclipse-BuddyPolicy: ext
 Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.core.runtime,
- net.refractions.udig.libs;visibility:=reexport,
  net.refractions.udig.core;visibility:=reexport,
  org.eclipse.update.ui,
- org.eclipse.core.expressions;visibility:=reexport
-Bundle-ActivationPolicy: lazy
+ org.eclipse.core.expressions;visibility:=reexport,
+ org.geotools.data;bundle-version="2.6.0",
+ org.geotools.render;bundle-version="2.6.0",
+ org.geotools.main,
+ org.geotools.referencing;bundle-version="2.6.0",
+ org.geotools.cql;bundle-version="2.6.0",
+ org.geotools.brewer;bundle-version="2.6.0"
 Export-Package: net.refractions.udig,
  net.refractions.udig.internal.ui,
  net.refractions.udig.internal.ui.operations,
@@ -24,4 +28,21 @@ Export-Package: net.refractions.udig,
  net.refractions.udig.ui.operations,
  net.refractions.udig.ui.palette,
  net.refractions.udig.ui.preferences
+Import-Package: com.vividsolutions.jts.geom,
+ com.vividsolutions.jts.io,
+ javax.measure.unit,
+ org.opengis.feature,
+ org.opengis.feature.simple,
+ org.opengis.feature.type,
+ org.opengis.filter,
+ org.opengis.filter.expression,
+ org.opengis.filter.identity,
+ org.opengis.geometry,
+ org.opengis.metadata,
+ org.opengis.referencing,
+ org.opengis.referencing.crs,
+ org.opengis.referencing.operation,
+ org.opengis.style,
+ org.opengis.util
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
