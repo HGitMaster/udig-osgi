@@ -203,6 +203,7 @@ public class Styling {
     public static Collection getStyleNames( Layer currentLayer ) {
         // URI id=currentLayer.getID();
         // if( id.containsKey(WMSRegistryEntry.GET_CAPABILITIES_URL) ){
+    	
         if (currentLayer.isType(WebMapServer.class)) { // checking for wms
 
             List<String> l = new LinkedList<String>();

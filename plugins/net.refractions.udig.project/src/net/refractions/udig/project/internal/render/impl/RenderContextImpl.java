@@ -467,6 +467,7 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
             LabelCacheImpl defaultLabelCache = new LabelCacheImpl();
                 labelPainter = new UDIGLabelCache(defaultLabelCache);
             getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
+            }
         }
         return labelPainter;
     }
