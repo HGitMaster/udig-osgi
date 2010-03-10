@@ -21,6 +21,7 @@ finalPlugins*
 net.refractions.udig.libs/library.jar
 *~
 bin
+*.source_1.2.0
 
 
 
