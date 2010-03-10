@@ -84,11 +84,14 @@
 				<include name="fragment.xml"/>
 			</fileset>
 		</copy>
+		<ant antfile="build.xml" dir="..\net.refractions.udig.style.sld" target="gather.individual.sources">
+			<property name="destination.temp.folder" value="${build.result.folder}/sources"/>
+		</ant>
 		<eclipse.versionReplacer path="${build.result.folder}" version="1.2.0"/>
 		<antcall target="apitools.generation">
 			<param name="target.folder" value="${build.result.folder}"/>
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="c:\projects\anaconda\berlios-src\udig-osgi\plugins\net.refractions.udig.style.sld.source_1.2.0"/>
+			<param name="binary.folders" value="d:\work\udig-1.2-RC\plugins\net.refractions.udig.style.sld.source_1.2.0"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 		</antcall>
 		<eclipse.gatherBundle 
@@ -111,11 +114,14 @@
 				<include name="plugin.properties"/>
 			</fileset>
 		</copy>
+		<ant antfile="build.xml" dir="..\net.refractions.udig.style.sld" target="gather.individual.sources">
+			<property name="destination.temp.folder" value="${destination.temp.folder}/net.refractions.udig.style.sld.source_1.2.0"/>
+		</ant>
 		<eclipse.versionReplacer path="${destination.temp.folder}/net.refractions.udig.style.sld.source_1.2.0" version="1.2.0"/>
 		<antcall target="apitools.generation">
 			<param name="target.folder" value="${destination.temp.folder}/net.refractions.udig.style.sld.source_1.2.0"/>
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="c:\projects\anaconda\berlios-src\udig-osgi\plugins\net.refractions.udig.style.sld.source_1.2.0"/>
+			<param name="binary.folders" value="d:\work\udig-1.2-RC\plugins\net.refractions.udig.style.sld.source_1.2.0"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 		</antcall>
 	</target>
@@ -149,7 +155,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="c:/projects/anaconda/berlios-src/udig-osgi/plugins/net.refractions.udig.style.sld.source_1.2.0" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="d:/work/udig-1.2-RC/plugins/net.refractions.udig.style.sld.source_1.2.0" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 
