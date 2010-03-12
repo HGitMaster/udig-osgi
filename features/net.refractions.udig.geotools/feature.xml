@@ -2,7 +2,7 @@
 <feature
       id="org.geotools"
       label="Geotools"
-      version="2.6.0.osgi1"
+      version="2.6.2.osgi1"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
@@ -31,39 +31,42 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="org.geotools.brewer"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="org.geotools.coverage"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="org.geotools.cql"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="org.geotools.data"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="org.geotools.epsg.wkt"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="org.geotools.geotiff"
          download-size="0"

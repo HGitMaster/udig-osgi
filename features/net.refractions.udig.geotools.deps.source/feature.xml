@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.deps.source"
       label="Geotools Dependencies"
-      version="2.6.0.osgi1"
+      version="2.6.2.osgi1"
       provider-name="Harman/Becker"
       plugin="org.geotools.deps.source">
 
@@ -24,6 +24,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="com.springsource.org.apache.batik.dom.source"
          download-size="0"
@@ -93,12 +94,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   <!-- no sources plugin
-         id="java3d.osgi.vecmath.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
 
    <plugin
          id="javax.media.jai.osgi.jai_imageio.source"
@@ -106,7 +101,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-  
+
    <plugin
          id="de.berlios.it.geosolutions.imageio.ext.tiff.source"
          download-size="0"
@@ -120,12 +115,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   <!-- no sources plugin
-         id="org.apache.batik.osgi.transcoder.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
 
    <plugin
          id="com.springsource.com.lowagie.text.source"
@@ -176,14 +165,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!-- IPoletaev: There is no sources avaliable for this bundle. Bundle commented. -->
-   <!--plugin
-         id="com.springsource.org.apache.xmlcommons.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
 
    <plugin
          id="com.springsource.org.picocontainer.source"
@@ -255,21 +236,12 @@
          version="0.0.0"
          unpack="false"/>
 
-  
-   <!-- plugin
-         id="com.springsource.org.junit.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-       unpack="false"/-->
-
    <plugin
          id="com.springsource.org.hamcrest.core.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-       unpack="false"/>
-
+         unpack="false"/>
 
    <plugin
          id="javax.media.jai.osgi.win32.x86.source"
@@ -279,8 +251,6 @@
          install-size="0"
          version="0.0.0"
          fragment="true"
-         unpack="false"/>   
-
-   
+         unpack="false"/>
 
 </feature>

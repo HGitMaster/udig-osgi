@@ -2,7 +2,7 @@
 <feature
       id="org.opengis.geoapi"
       label="OpenGIS GeoAPI"
-      version="2.2.0.osgi1">
+      version="2.3.0.M1osgi1">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,7 +17,7 @@
    </license>
 
    <requires>
-      <import plugin="net.java.dev.osgi.jsr275"/>  
+      <import plugin="net.java.dev.osgi.jsr275"/>
    </requires>
 
    <plugin
@@ -27,13 +27,11 @@
          version="0.0.0"
          unpack="false"/>
 
-   
-
    <plugin
          id="net.java.dev.osgi.jsr275"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
 </feature>
