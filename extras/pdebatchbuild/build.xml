@@ -38,8 +38,8 @@
     <maven:dependencies filesetId="platform.fileset" useScope="runtime" verbose="false" settingsFile="${maven.settings}">
       <maven:localRepository path="${maven.repo.local}"/>
 
-      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" version="2.3.0.osgi2"/>
-      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" classifier="sources" version="2.3.0.osgi2"/>
+      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" version="2.3.0.M1osgi1"/>
+      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" classifier="sources" version="2.3.0.M1osgi1"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-api" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-api" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-brewer" version="${gt.version}"/>
