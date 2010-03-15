@@ -2,7 +2,7 @@
 <feature
       id="net.refractions.udig.lite.deps.source"
       label="Dependencies of udigLite"
-      version="1.2.0.osgi3"
+      version="1.2.0.RC1osgi1"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
@@ -30,62 +30,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!--plugin
-         id="org.eclipse.draw2d.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.common.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.common.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.ecore.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.ecore.change.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.ecore.xmi.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.edit.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
-   <!--plugin
-         id="org.eclipse.emf.edit.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
 
    <plugin
          id="org.eclipse.equinox.http.jetty.source"
@@ -115,13 +59,6 @@
          version="0.0.0"
          unpack="false"/>
 
-   <!--plugin
-         id="org.eclipse.gef.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
    <plugin
          id="org.eclipse.help.appserver.source"
          download-size="0"
@@ -149,13 +86,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!--plugin
-         id="org.eclipse.jface.text.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
 
    <plugin
          id="org.eclipse.osgi.services.source"
@@ -192,12 +122,6 @@
          version="0.0.0"
          unpack="false"/>
 
-   <!--plugin
-         id="org.eclipse.ui.intro.universal.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/-->
-
    <plugin
          id="org.eclipse.ui.views.source"
          download-size="0"
@@ -212,26 +136,12 @@
          version="0.0.0"
          unpack="false"/>
 
-   <!--plugin
-         id="org.eclipse.update.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
-
    <plugin
          id="org.mortbay.jetty.server.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!--plugin
-         id="org.apache.lucene.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/-->
 
    <plugin
          id="org.apache.lucene.analysis.source"
@@ -304,4 +214,3 @@
          unpack="false"/>
 
 </feature>
-

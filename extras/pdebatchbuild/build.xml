@@ -56,6 +56,10 @@
       <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" classifier="sources" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-jdbc" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-jdbc" classifier="sources" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools.jdbc" artifactId="gt-jdbc-postgis" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools.jdbc" artifactId="gt-jdbc-postgis" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-main" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-main" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-metadata" version="${gt.version}"/>

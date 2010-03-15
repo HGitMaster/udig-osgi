@@ -2,7 +2,7 @@
 <feature
       id="net.refractions.udig.lite.deps.sdk"
       label="uDig Lite Feature"
-      version="1.2.0.osgi3"
+      version="1.2.0.RC1osgi1"
       provider-name="Harman/Becker"
       plugin="net.refractions.udig.lite.deps.sdk">
 
@@ -17,7 +17,7 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
-  
+
    <includes
          id="net.refractions.udig.lite.deps"
          version="0.0.0"/>
@@ -26,4 +26,4 @@
          id="net.refractions.udig.lite.deps.source"
          version="0.0.0"/>
 
- </feature>
+</feature>
