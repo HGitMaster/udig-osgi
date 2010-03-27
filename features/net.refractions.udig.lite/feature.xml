@@ -72,14 +72,12 @@
          install-size="0"
          version="0.0.0"/>
 
-
    <plugin
          id="net.refractions.udig.catalog"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.catalog.ui"
@@ -88,14 +86,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.project"
@@ -104,14 +100,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.project.edit"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.project.ui"
@@ -120,14 +114,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.project.ui.editor"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.render.feature.basic"
@@ -136,14 +128,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.style"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.style.sld"
@@ -152,14 +142,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.tool.default"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.ui"
@@ -168,14 +156,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.tool.info"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.catalog.shp"
@@ -184,14 +170,12 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.catalog.geotiff"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="net.refractions.udig.catalog.rasterings"
@@ -200,7 +184,6 @@
          version="0.0.0"
          unpack="false"/>
 
-
    <plugin
          id="net.refractions.udig.render.gridcoverage.basic"
          download-size="0"
@@ -208,5 +191,18 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="net.refractions.udig.tools.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.refractions.udig.mapgraphic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
