@@ -191,4 +191,18 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="net.refractions.udig.tools.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.refractions.udig.mapgraphic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
