@@ -15,7 +15,6 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileCache;
 
 import net.refractions.udig.catalog.IGeoResource;
-import net.refractions.udig.project.IBlackboard;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.ProjectBlackboardConstants;
 import net.refractions.udig.project.internal.Layer;
@@ -25,6 +24,7 @@ import net.refractions.udig.project.internal.impl.AbstractContextImpl;
 import net.refractions.udig.project.internal.render.RenderContext;
 import net.refractions.udig.project.internal.render.SelectionLayer;
 import net.refractions.udig.project.render.ILabelPainter;
+import net.refractions.udig.project.render.displayAdapter.IMapDisplay;
 
 import org.geotools.data.DefaultQuery;
 import org.geotools.data.Query;
@@ -97,7 +97,9 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
 
     protected TileCache tempCache;
 
+
     //private ILabelPainter labelPainter;
+    
     public RenderContextImpl() {
         super();
     }
@@ -144,7 +146,11 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * @return BufferedImage for use by the Renderer
      */
     public BufferedImage getImage() {
-        return getImage(getImageSize().width, getImageSize().height);
+        Dimension size = getImageSize();
+        if( size == null || size.width < 1 || size.height <1 ){
+            return dummyImage; // dummy image
+        }
+        return getImage(size.width, size.height); // will create if needed
     }
     
     /**
@@ -168,9 +174,9 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * @return a BufferedImage of the requested size (the image is cached) 
      */
     public synchronized BufferedImage getImage( int width, int height ) {
-        if (width < 1 || height < 1)
+        if (width < 1 || height < 1){
             return dummyImage;
-
+        }
         if (image == null || image.getWidth() < width || image.getHeight() < height) {
             synchronized (this) {
                 if (image == null || image.getWidth() < width || image.getHeight() < height) {
@@ -450,29 +456,16 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      * </p>
      * 
      */
-    public ILabelPainter getLabelPainter() {
-        /*
-         * hwellmann: We need to synchronize on the blackboard, synchronizing
-         * this method is not enough, when multiple threads work on multiple
-         * render contexts.
-         */
-        IBlackboard blackboard = getMap().getBlackboard();
-        ILabelPainter labelPainter = null; 
-        synchronized (blackboard)
-        {
-            labelPainter = (ILabelPainter) blackboard.get(LABEL_PAINTER);
-            if (labelPainter == null) {
-                // create a new one and put it on the blackboard for others to
-                // use
+    public synchronized ILabelPainter getLabelPainter() {     
+        ILabelPainter labelPainter = (ILabelPainter) getMap().getBlackboard().get(LABEL_PAINTER);
+        if (labelPainter == null){
+            //create a new one and put it on the blackboard for others to use
             LabelCacheImpl defaultLabelCache = new LabelCacheImpl();
-                labelPainter = new UDIGLabelCache(defaultLabelCache);
+            labelPainter=new UDIGLabelCache(defaultLabelCache);
             getMap().getBlackboard().put(LABEL_PAINTER, labelPainter);
-            }
         }
         return labelPainter;
     }
-
-    
 
     /**
      * Sets the label painter to use with the context.
@@ -508,7 +501,11 @@ public class RenderContextImpl extends AbstractContextImpl implements RenderCont
      */
     public Dimension getImageSize(){
         if (imagesize == null){
-            return getMapDisplay().getDisplaySize();
+            IMapDisplay mapDisplay = getMapDisplay();
+            if( mapDisplay == null ){
+                return null;
+            }
+            return mapDisplay.getDisplaySize();
         }else{
             return imagesize;
         }

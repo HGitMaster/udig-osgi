@@ -27,99 +27,26 @@ import net.refractions.udig.ui.ErrorManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 /**
  * Interface to capture both the Local Catalog resources and Web Registry Service.
  * <p>
  * Conceptually provides a searchable Catalog of "Spatial Data Sources". Metadata search is
  * arbitrary.
  * </p>
+ * This class contributes the idea of temporary resources (or scratch layers)
+ * <ul>
+ * <li>{@link #createTemporaryResource(Object)</li>
+ * <li>@link #getTemporaryDescriptorClasses()</li>
+ * </ul>
+ * Descriptor classes, usually a GeoTools SimpleFeatureType, are used to create a temporary resource
+ * that is held in memory. These temporary resources must be saved prior to the application exiting
+ * or the contents will be lost.
  * 
- * @author David Zwiers, Refractions Research
+ * @author David Zwiers (Refractions Research)
  * @since 0.7.0
  * @see IService
  */
-public abstract class ICatalog extends IRepository {
-    /**
-     * Catalogs do not have a parent so null is returned.
-     * <p>
-     * We can consider adding a global 'root' parent - but we will wait until we find a need, or if
-     * users request.
-     * </p>
-     * z
-     * @return null as catalogs do not have a parent
-     */
-    public IResolve parent( IProgressMonitor monitor ) {
-        return null;
-    }
-    /**
-     * Adds the specified entry to this catalog.
-     * <p>
-     * In some cases the catalog will be backed onto an
-     * external server, which may not allow for additions.
-     * <p>
-     * An IService may belong to more than one Catalog.
-     * </p>
-     * 
-     * @param entry
-     * @throws UnsupportedOperationException
-     */
-    public abstract void add( IService service ) throws UnsupportedOperationException;
-
-    /**
-     * Removes the specified entry to this catalog. In some cases the catalog will be backed onto a
-     * server, which may not allow for deletions.
-     * 
-     * @param service
-     * @throws UnsupportedOperationException
-     */
-    public abstract void remove( IService service ) throws UnsupportedOperationException;
-
-    /**
-     * Replaces the specified entry in this catalog.
-     * <p>
-     * In some cases the catalog will be backed onto a server, which may not
-     * allow for deletions.
-     * <p>
-     * This method can be used for two things:
-     * <ul>
-     * <li>ResetService (Action): calls this method with id == service.getID() in order
-     * to "reset" the IService handle with a fresh one. This can be used to replace a
-     * catalog entry that has locked up.
-     * <li>This method can also be used to *move* an existing service (the one with the
-     * indicated ID) with a new replacement). 
-     * </ul>
-     * <p>
-     * This replace method has two differences from a simple *remove( id )* and *add( replacement)* 
-     * <ul>
-     * <li>A difference series of events is generated; letting client code know that they
-     * should update the ID they were using to track this resource.
-     * <li>An new IForward( ID, replacement.getID()) is left in the catalog as a place holder to
-     * order to let any client that was off-line know what happened next time they come to call.
-     * </ul>
-     * @param id ID of the service to replace, the service with this ID will be removed
-     * @param replacement Replacement IService handle; indicating where the service has moved to
-     * @throws UnsupportedOperationException
-     */
-    public abstract void replace( ID id, IService replacement ) throws UnsupportedOperationException;
-
-    /**
-     * Will attempt to morph into the adaptee, and return that object. Required adaptions:
-     * <ul>
-     * <li>ICatalogInfo.class
-     * <li>List.class <IService>
-     * </ul>
-     * May Block.
-     * 
-     * @param adaptee
-     * @param monitor May Be Null
-     * @return
-     * @see ICatalogInfo
-     * @see IService
-     */
-    public abstract <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException;
-
+public abstract class ICatalog extends IRepository {    
     /**
      * Aquire info on this Catalog.
      * <p>
@@ -144,6 +71,7 @@ public abstract class ICatalog extends IRepository {
      * @param resource used to match resolves
      * @param monitor used to show the progress of the find.
      * @return List (possibly empty) of matching Resolves
+     * @see #find(ID, IProgressMonitor)
      */
     public abstract List<IResolve> find( URL resourceId, IProgressMonitor monitor );
 
@@ -174,40 +102,6 @@ public abstract class ICatalog extends IRepository {
         return result;
     }
     
-    /**
-     * Look in catalog for exact match with provided id.
-     * 
-     * @param type Type of IResolve if known
-     * @param id id used for lookup
-     * @param monitor
-     * @return Resolve or null if not found
-     */
-//    public abstract <T extends IResolve> T getById( Class<T> type, URL id, IProgressMonitor monitor );
-    
-    /**
-     * Performs a search on this catalog based on the specified inputs.
-     * <p>
-     * The pattern uses the following conventions:
-     * <ul>
-     * <li>
-     * <li> use " " to surround a phase
-     * <li> use + to represent 'AND'
-     * <li> use - to represent 'OR'
-     * <li> use ! to represent 'NOT'
-     * <li> use ( ) to designate scope
-     * </ul>
-     * The bbox provided shall be in Lat - Long, or null if the search is not to be contained within
-     * a specified area.
-     * </p>
-     * 
-     * @param pattern Search pattern (see above)
-     * @param bbox The bbox in Lat-Long (ESPG 4269), or null
-     * @param monitor for progress, or null if monitoring is not desired
-     * @return List matching IResolve
-     */
-    public abstract List<IResolve> search( String pattern, Envelope bbox, IProgressMonitor monitor )
-            throws IOException;
-
     /**
      * Indicate class and id.
      * 

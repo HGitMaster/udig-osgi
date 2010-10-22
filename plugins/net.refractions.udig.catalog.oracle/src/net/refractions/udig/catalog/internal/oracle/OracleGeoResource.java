@@ -23,10 +23,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.oracle.internal.Messages;
+import net.refractions.udig.core.jts.ReferencedEnvelopeCache;
 import net.refractions.udig.ui.graphics.Glyph;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,6 +37,7 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,20 +45,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * Provides ...TODO summary sentence
- * <p>
- * TODO Description
- * </p>
+ * OracleGeoResource representing a table or view.
  * 
  * @author David Zwiers, Refractions Research
  * @since 0.6
  */
 public class OracleGeoResource extends IGeoResource {
-    OracleServiceImpl parent;
     String typename = null;
+    private ID id;
 
-    private OracleGeoResource() {/* not for use */
-    }
     /**
      * Construct <code>OracleGeoResource</code>.
      * 
@@ -63,30 +61,38 @@ public class OracleGeoResource extends IGeoResource {
      * @param typename
      */
     public OracleGeoResource( OracleServiceImpl parent, String typename ) {
-        this.parent = parent;
+        this.service = parent;
         this.typename = typename;
+        this.id = new ID(service.getID(), typename );
     }
 
+    OracleServiceImpl getService() {
+        return (OracleServiceImpl) service;
+    }
+    
+    @Override
+    public ID getID() {
+        return id;
+    }
+
+    @Override
     public URL getIdentifier() {
-        try {
-            return new URL(parent.getIdentifier().toString() + "#" + typename); //$NON-NLS-1$
-        } catch (MalformedURLException e) {
-            return parent.getIdentifier();
-        }
+        return id.toURL();
     }
 
+    
     /*
      * @see net.refractions.udig.catalog.IGeoResource#getStatus()
      */
     public Status getStatus() {
-        return parent.getStatus();
+        return service.getStatus();
     }
 
     /*
      * @see net.refractions.udig.catalog.IGeoResource#getStatusMessage()
      */
     public Throwable getMessage() {
-        return parent.getMessage();
+        return service.getMessage();
     }
 
     /*
@@ -95,21 +101,29 @@ public class OracleGeoResource extends IGeoResource {
      * org.eclipse.core.runtime.IProgressMonitor)
      */
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
-        if (adaptee == null)
+        if (adaptee == null){
             return null;
-        // if (adaptee.isAssignableFrom(IService.class))
-        // return adaptee.cast(parent);
-        if (adaptee.isAssignableFrom(IGeoResourceInfo.class))
+        }
+        if (adaptee.isAssignableFrom(IGeoResourceInfo.class)){
             return adaptee.cast(createInfo(monitor));
-        if (adaptee.isAssignableFrom(IGeoResource.class))
+        }
+        if (adaptee.isAssignableFrom(IGeoResource.class)){
             return adaptee.cast(this);
+        }
         if (adaptee.isAssignableFrom(FeatureStore.class)) {
-            FeatureSource<SimpleFeatureType, SimpleFeature> fs = parent.getDS(monitor)
+            JDBCDataStore dataStore = getService().getDS(monitor);
+
+            FeatureSource<SimpleFeatureType, SimpleFeature> fs = dataStore
                     .getFeatureSource(typename);
-            if (fs instanceof FeatureStore< ? , ? >)
+
+            if (fs instanceof FeatureStore< ? , ? >){
                 return adaptee.cast(fs);
-            if (adaptee.isAssignableFrom(FeatureSource.class))
-                return adaptee.cast(parent.getDS(monitor).getFeatureSource(typename));
+            }
+            if (adaptee.isAssignableFrom(FeatureSource.class)) {
+                dataStore = getService().getDS(monitor);
+
+                return adaptee.cast(dataStore.getFeatureSource(typename));
+            }
         }
         return super.resolve(adaptee, monitor);
     }
@@ -126,15 +140,19 @@ public class OracleGeoResource extends IGeoResource {
                 || super.canResolve(adaptee);
     }
 
-    protected IGeoResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
+    @Override
+    public OracleResourceInfo getInfo( IProgressMonitor monitor ) throws IOException {
+        return (OracleResourceInfo) super.getInfo(monitor);
+    }
+    protected OracleResourceInfo createInfo( IProgressMonitor monitor ) throws IOException {
         if (getStatus() == Status.BROKEN) {
             return null; // could not connect
         }
-        parent.rLock.lock();
+        getService().rLock.lock();
         try {
             return new OracleResourceInfo();
         } finally {
-            parent.rLock.unlock();
+            getService().rLock.unlock();
         }
     }
 
@@ -142,17 +160,23 @@ public class OracleGeoResource extends IGeoResource {
 
         private SimpleFeatureType ft = null;
         OracleResourceInfo() throws IOException {
-            ft = parent.getDS(null).getSchema(typename);
-
+            JDBCDataStore dataStore = getService().getDS(null);
+            ft = dataStore.getSchema(typename); // this may be broken in geotools?
+            this.title = typename;
             try {
-                FeatureSource<SimpleFeatureType, SimpleFeature> source = parent.getDS(null)
+                FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore
                         .getFeatureSource(typename);
+                ft = source.getSchema();
                 bounds = (ReferencedEnvelope) source.getBounds();
                 if (bounds == null) {
                     CoordinateReferenceSystem crs = null;
                     // GeometryDescriptor defaultGeometry =
                     // source.getSchema().getGeometryDescriptor();
                     crs = source.getSchema().getCoordinateReferenceSystem();
+                    this.bounds = ReferencedEnvelopeCache.getReferencedEnvelope(info.getCRS());
+                    
+                    /*
+                    // no full table scan for you!
                     bounds = new ReferencedEnvelope(new Envelope(), crs);
                     FeatureIterator<SimpleFeature> iter = source.getFeatures().features();
                     try {
@@ -166,6 +190,7 @@ public class OracleGeoResource extends IGeoResource {
                     } finally {
                         iter.close();
                     }
+                    */
                 }
                 // CoordinateReferenceSystem geomcrs = source.getSchema().getCRS();
 

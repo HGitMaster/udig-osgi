@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import net.refractions.udig.printing.model.AbstractBoxPrinter;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 
 public class ImageBoxPrinter extends AbstractBoxPrinter {
 	private BufferedImage image;
@@ -40,7 +41,7 @@ public class ImageBoxPrinter extends AbstractBoxPrinter {
         if( adapter.isAssignableFrom( BufferedImage.class )){
             return image;
         }
-        return null;
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
 }

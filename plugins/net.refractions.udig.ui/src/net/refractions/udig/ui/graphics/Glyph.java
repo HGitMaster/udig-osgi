@@ -354,20 +354,15 @@ public class Glyph {
             public ImageData getImageData() {
                 Image image = null;
                 try {
-                Display display =PlatformUI.getWorkbench().getDisplay();
-                
-                image = new Image(display, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-//                d.drawDirect( image, display,
-//                        d.feature(d.polygon(new int[]{4,14, 5,9, 7,6, 12,4, 15,3, 15,14})),
-//                        rule );
-                d.drawDirect( image, display,
-                        d.feature(d.line(new int[]{0,12, 6,3, 11,12, 15,3})),
-                        rule );
-                d.drawDirect( image, display, d.feature(d.point(4,4)), rule );
-                
-                return extractImageDataAndDispose( image );
-                } catch(RuntimeException ex) {
-                    if(image != null && !image.isDisposed()) {
+                    Display display = PlatformUI.getWorkbench().getDisplay();
+
+                    image = new Image(display, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                    d.drawDirect(image, display, d.feature(d.line(new int[]{0, 12, 6, 3, 11, 12, 15, 3})), rule);
+                    d.drawDirect(image, display, d.feature(d.point(4, 4)), rule);
+
+                    return extractImageDataAndDispose(image);
+                } catch (RuntimeException ex) {
+                    if (image != null && !image.isDisposed()) {
                         image.dispose();
                     }
                     throw ex;
@@ -463,9 +458,14 @@ public class Glyph {
                 PlatformGIS.syncInDisplayThread(display, new Runnable(){
                     public void run() {
                         image[0] = new Image(display, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                        d.drawDirect( image[0], display,
+                        try {
+                            d.drawDirect( image[0], display,
                                 d.feature(d.polygon(new int[]{1,14, 3,9, 4,6,  6,4,  9,3, 14,1, 14,14})),
                                 rule );
+                        }
+                        catch (Throwable npe ){
+                            // unavailable
+                        }
                     }
                 });
                 

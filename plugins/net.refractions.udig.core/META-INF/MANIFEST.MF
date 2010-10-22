@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.refractions.udig.core;singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.core.internal.CorePlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -15,6 +15,7 @@ Export-Package: net.refractions.udig.core;
    org.opengis.filter,
    org.geotools.feature.collection",
  net.refractions.udig.core.enums,
+ net.refractions.udig.core.jts,
  net.refractions.udig.core.filter;
   uses:="org.eclipse.core.runtime,
    org.opengis.filter.expression,
@@ -41,7 +42,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.geotools.api;bundle-version="2.6.0",
  org.geotools.metadata;bundle-version="2.6.0",
  org.opengis.geoapi;bundle-version="2.3.0",
- org.geotools.cql;bundle-version="2.6.0"
+ org.geotools.cql;bundle-version="2.6.0",
+ de.berlios.com.google.collections.google-collections;bundle-version="1.0.4"
 Bundle-ActivationPolicy: lazy
 Import-Package: com.vividsolutions.jts.geom,
  org.picocontainer,

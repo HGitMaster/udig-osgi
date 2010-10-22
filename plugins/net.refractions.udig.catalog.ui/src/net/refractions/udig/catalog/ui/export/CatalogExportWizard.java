@@ -42,6 +42,7 @@ import net.refractions.udig.ui.ProgressManager;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -105,7 +106,7 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
     /**
      * If true this will open the catalog view and select the exported items in the catalog view.
      * This is true by default.
-     *
+     * 
      * @param select if true the exported items will be selected in the catalog view
      */
     public void setSelectExportedInCatalog( boolean select ) {
@@ -155,6 +156,7 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
 
     /**
      * Export data, currently focused on Features.
+     * 
      * @param monitor
      * @param data
      * @return success
@@ -206,22 +208,26 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
                 // possibly multiple geometry types
                 String geomName = schema.getGeometryDescriptor().getName().getLocalPart();
 
-                FeatureCollection<SimpleFeatureType, SimpleFeature> pointCollection = FeatureCollections.newCollection();
-                FeatureCollection<SimpleFeatureType, SimpleFeature> lineCollection = FeatureCollections.newCollection();
-                FeatureCollection<SimpleFeatureType, SimpleFeature> polygonCollection = FeatureCollections.newCollection();
-                
+                FeatureCollection<SimpleFeatureType, SimpleFeature> pointCollection = FeatureCollections
+                        .newCollection();
+                FeatureCollection<SimpleFeatureType, SimpleFeature> lineCollection = FeatureCollections
+                        .newCollection();
+                FeatureCollection<SimpleFeatureType, SimpleFeature> polygonCollection = FeatureCollections
+                        .newCollection();
+
                 FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection = fs
                         .getFeatures();
                 FeatureIterator<SimpleFeature> featureIterator = featureCollection.features();
                 while( featureIterator.hasNext() ) {
                     SimpleFeature feature = featureIterator.next();
-                    String geometryType = ((Geometry)feature.getDefaultGeometry()).getGeometryType();
-                    
+                    String geometryType = ((Geometry) feature.getDefaultGeometry())
+                            .getGeometryType();
+
                     if (geometryType.endsWith("Point")) {
                         pointCollection.add(feature);
-                    }else if(geometryType.endsWith("LineString")) {
+                    } else if (geometryType.endsWith("LineString")) {
                         lineCollection.add(feature);
-                    }else if(geometryType.endsWith("Polygon")) {
+                    } else if (geometryType.endsWith("Polygon")) {
                         polygonCollection.add(feature);
                     }
                 }
@@ -472,9 +478,9 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
     }
 
     private void exportLineFeatures( Data data, IProgressMonitor currentMonitor, File file,
-            FeatureCollection<SimpleFeatureType, SimpleFeature> lineCollection, SimpleFeatureType schema,
-            String geomName, MathTransform mt ) throws IllegalFilterException, IOException,
-            SchemaException, MalformedURLException {
+            FeatureCollection<SimpleFeatureType, SimpleFeature> lineCollection,
+            SimpleFeatureType schema, String geomName, MathTransform mt )
+            throws IllegalFilterException, IOException, SchemaException, MalformedURLException {
 
         SimpleFeatureType finalFeatureType;
         FeatureCollection<SimpleFeatureType, SimpleFeature> temp;
@@ -489,14 +495,13 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
     }
 
     private void exportPointFeatures( Data data, IProgressMonitor currentMonitor, File file,
-            FeatureCollection<SimpleFeatureType, SimpleFeature> pointCollection, SimpleFeatureType schema,
-            String geomName, MathTransform mt ) throws IllegalFilterException, IOException,
-            SchemaException, MalformedURLException {
+            FeatureCollection<SimpleFeatureType, SimpleFeature> pointCollection,
+            SimpleFeatureType schema, String geomName, MathTransform mt )
+            throws IllegalFilterException, IOException, SchemaException, MalformedURLException {
 
         SimpleFeatureType createFeatureType;
         FeatureCollection<SimpleFeatureType, SimpleFeature> temp;
         File pointFile = addFileNameSuffix(file, CatalogExport.POINT_SUFFIX);
-
 
         createFeatureType = createFeatureType(schema, MultiPoint.class, data.getCRS());
         temp = new ToMultiPointFeatureCollection(pointCollection, createFeatureType, schema
@@ -507,16 +512,17 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
     }
 
     private void exportPolygonFeatures( Data data, IProgressMonitor currentMonitor, File file,
-            FeatureCollection<SimpleFeatureType, SimpleFeature> polygonCollection, SimpleFeatureType schema,
-            String geomName, MathTransform mt ) throws IllegalFilterException, IOException,
-            SchemaException, MalformedURLException {
+            FeatureCollection<SimpleFeatureType, SimpleFeature> polygonCollection,
+            SimpleFeatureType schema, String geomName, MathTransform mt )
+            throws IllegalFilterException, IOException, SchemaException, MalformedURLException {
         File polyFile = addFileNameSuffix(file, CatalogExport.POLY_SUFFIX);
 
         SimpleFeatureType createFeatureType = createFeatureType(schema, MultiPolygon.class, data
                 .getCRS());
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> temp = new ToMultiPolygonFeatureCollection(
-                polygonCollection, createFeatureType, schema.getGeometryDescriptor(), mt, currentMonitor);
+                polygonCollection, createFeatureType, schema.getGeometryDescriptor(), mt,
+                currentMonitor);
         if (writeToShapefile(temp, createFeatureType, polyFile))
             addToCatalog(polyFile, data);
     }
@@ -549,17 +555,29 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
         return builder.buildFeatureType();
     }
 
+    /**
+     * Connect to the file (using the existing catalog entry if avaiable) and
+     * add 
+     * 
+     * @param file
+     * @param data
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
     private void addToCatalog( File file, Data data ) throws IOException {
+        IProgressMonitor monitor = ProgressManager.instance().get();
 
         // add the service to the catalog
         IServiceFactory sFactory = CatalogPlugin.getDefault().getServiceFactory();
         ICatalog catalog = CatalogPlugin.getDefault().getLocalCatalog();
-        List<IService> services = sFactory.createService(URLUtils.fileToURL(file));
-
+        URL url = URLUtils.fileToURL(file);
+        List<IService> services = sFactory.createService(url);
+        monitor.beginTask("add to catalog", services.size() * 10);
         for( IService service : services ) {
-            catalog.add(service);
-            data.addNewResource(service.resources(ProgressManager.instance().get()).iterator()
-                    .next());
+            IService registeredService = catalog.add(service);
+            SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 10);
+            List<IGeoResource> contents = (List<IGeoResource>) registeredService.resources(monitor2);
+            data.addNewResources( contents );
         }
     }
 
@@ -612,33 +630,17 @@ public class CatalogExportWizard extends WorkflowWizard implements IExportWizard
 
         final int count[] = new int[1];
         /*
-        DefaultTransaction t = new DefaultTransaction("export"); //$NON-NLS-1$
-        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = ds.getFeatureWriterAppend(t);
-        try {
-            fc.accepts(new FeatureVisitor(){
-                public void visit( Feature feature ) {
-                    SimpleFeature simpleFeature = (SimpleFeature) feature;
-                    try {
-                        SimpleFeature copy = writer.next();
-                        for( Property attribute : simpleFeature.getProperties() ) {
-                            try {
-                                copy.setAttribute(attribute.getName(), attribute.getValue());
-                            } catch (Throwable t) {
-                                System.out.println("Issue copying " + attribute); //$NON-NLS-1$
-                            }
-                        }
-                        writer.write();
-                        count[0]++;
-                    } catch (IOException e) {
-                        throw (RuntimeException) new RuntimeException().initCause(e);
-                    }
-                }
-            }, new NullProgressListener());
-        } finally {
-            t.commit();
-            writer.close();
-        }
-        */
+         * DefaultTransaction t = new DefaultTransaction("export"); //$NON-NLS-1$ final
+         * FeatureWriter<SimpleFeatureType, SimpleFeature> writer = ds.getFeatureWriterAppend(t);
+         * try { fc.accepts(new FeatureVisitor(){ public void visit( Feature feature ) {
+         * SimpleFeature simpleFeature = (SimpleFeature) feature; try { SimpleFeature copy =
+         * writer.next(); for( Property attribute : simpleFeature.getProperties() ) { try {
+         * copy.setAttribute(attribute.getName(), attribute.getValue()); } catch (Throwable t) {
+         * System.out.println("Issue copying " + attribute); //$NON-NLS-1$ } } writer.write();
+         * count[0]++; } catch (IOException e) { throw (RuntimeException) new
+         * RuntimeException().initCause(e); } } }, new NullProgressListener()); } finally {
+         * t.commit(); writer.close(); }
+         */
         FeatureStore<SimpleFeatureType, SimpleFeature> featureSource = (FeatureStore<SimpleFeatureType, SimpleFeature>) ds
                 .getFeatureSource();
         List<FeatureId> ids = featureSource.addFeatures(fc);

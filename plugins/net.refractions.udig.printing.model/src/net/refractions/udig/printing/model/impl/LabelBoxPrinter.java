@@ -28,6 +28,7 @@ import net.refractions.udig.project.ui.UDIGEditorInput;
 import net.refractions.udig.ui.graphics.AWTSWTImageUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
@@ -349,7 +350,7 @@ public class LabelBoxPrinter extends AbstractBoxPrinter {
         if (adapter.isAssignableFrom(String.class)) {
             return text;
         }
-        return null;
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
     /**

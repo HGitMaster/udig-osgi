@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: net.refractions.udig.ui; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.internal.ui.UiPlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -13,12 +13,12 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  net.refractions.udig.core;visibility:=reexport,
  org.eclipse.update.ui,
  org.eclipse.core.expressions;visibility:=reexport,
- org.geotools.data;bundle-version="2.6.0",
- org.geotools.render;bundle-version="2.6.0",
+ org.geotools.data;bundle-version="2.6.5",
+ org.geotools.render;bundle-version="2.6.5",
  org.geotools.main,
- org.geotools.referencing;bundle-version="2.6.0",
- org.geotools.cql;bundle-version="2.6.0",
- org.geotools.brewer;bundle-version="2.6.0"
+ org.geotools.referencing;bundle-version="2.6.5",
+ org.geotools.cql;bundle-version="2.6.5",
+ org.geotools.brewer;bundle-version="2.6.5"
 Export-Package: net.refractions.udig,
  net.refractions.udig.internal.ui,
  net.refractions.udig.internal.ui.operations,
@@ -44,6 +44,7 @@ Import-Package: com.google.common.base;version="0.8.0.20080820",
  org.opengis.referencing.crs,
  org.opengis.referencing.operation,
  org.opengis.style,
- org.opengis.util
+ org.opengis.util,
+ org.geotools.data.shapefile
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

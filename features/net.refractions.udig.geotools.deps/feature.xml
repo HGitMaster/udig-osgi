@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.deps"
       label="Geotools Dependencies"
-      version="2.6.2.osgi1"
+      version="2.6.5.osgi1"
       provider-name="Harman/Becker"
       plugin="org.geotools.deps">
 
@@ -122,7 +122,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+         
    <plugin
          id="org.apache.batik.osgi.transcoder"
          download-size="0"
@@ -256,21 +256,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="de.berlios.it.geosolutions.imageio.ext.tiff"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.berlios.it.geosolutions.imageio.ext.utilities"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
+   
    <plugin
          id="com.springsource.org.junit"
          download-size="0"

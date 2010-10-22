@@ -86,7 +86,7 @@ public class TiledWebMapServer {
 	        response = new WMSCCapabilitiesResponse("txt/xml", is);  //$NON-NLS-1$
 	        capabilities = (WMSCCapabilities) response.getCapabilities(); 
     	} catch (Exception e) {
-    		WmsPlugin.log("Restore from cached capabilities failed", e);  //$NON-NLS-1$
+    		log("Restore from cached capabilities failed", e);  //$NON-NLS-1$
     	}
     	
     	// try getting a new capabilities and see if its updatesequence is higher
@@ -152,7 +152,20 @@ public class TiledWebMapServer {
         }
         return capabilities;
     }
-
+    private static void log( String msg, Throwable t ){
+        if( WmsPlugin.getDefault() == null ){
+            System.out.print( msg );
+            if( t != null ){
+                t.printStackTrace();
+            }
+            else {
+                System.out.println();
+            }
+        }
+        else {
+            WmsPlugin.log(msg, t);
+        }
+    }
     /**
      * Makes a getCapabilities request and parses the response into a WMSCCapabilities 
      * object.  Also stores the resulting getcaps xml.
@@ -168,7 +181,7 @@ public class TiledWebMapServer {
         
         //create a request
         CapabilitiesRequest r = new CapabilitiesRequest(serverURL);
-        WmsPlugin.log("WMSC GetCapabilities: " + r.getFinalURL(), null);  //$NON-NLS-1$
+        log("WMSC GetCapabilities: " + r.getFinalURL(), null);  //$NON-NLS-1$
         //issue the request
         WMSCCapabilitiesResponse cr;
         cr = (WMSCCapabilitiesResponse) issueRequest(r);
@@ -235,6 +248,7 @@ public class TiledWebMapServer {
         protected void initService() {
             setProperty(REQUEST, "GetCapabilities"); //$NON-NLS-1$
             setProperty(SERVICE, "WMS"); //$NON-NLS-1$;
+            setProperty("TILED","true");
         }
 
         @Override

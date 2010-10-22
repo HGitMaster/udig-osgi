@@ -10,6 +10,16 @@
             class="net.refractions.udig.style.sld.SLDContent"
             name="%sld.name"
             id="net.refractions.udig.style.sld"/>
+      <style
+            class="net.refractions.udig.style.cache.CacheContent"
+            id="net.refractions.udig.style.cache"
+            name="%cache.name">
+      </style>
+      <style
+            class="net.refractions.udig.style.filter.FilterContent"
+            id="net.refractions.udig.style.filter"
+            name="%filter.name">
+      </style>
    </extension>
    <extension
          point="net.refractions.udig.style.styleConfigurator">
@@ -38,7 +48,35 @@
             id="simple-raster-wms"
             label="%simple.label"
             requires="org.geotools.data.ows.Layer"
-            styleId="net.refractions.udig.style.sld"/>           
+            styleId="net.refractions.udig.style.sld"/>
+      <styleConfigurator
+            class="net.refractions.udig.style.sld.SimpleRasterConfigurator"
+            id="simple-raster"
+            label="%simple.label"
+            requires="org.geotools.coverage.grid.io.AbstractGridCoverage2DReader"
+            styleId="net.refractions.udig.style.sld">
+      </styleConfigurator>
+      <styleConfigurator
+            class="net.refractions.udig.style.cache.CacheConfigurator"
+            id="cache"
+            label="%cache.label"
+            requires="org.geotools.data.FeatureSource"
+            styleId="net.refractions.udig.style.cache">
+      </styleConfigurator>
+      <styleConfigurator
+            class="net.refractions.udig.style.cache.CacheConfigurator"
+            id="cache-gridcoverage"
+            label="%cache.label"
+            requires="org.opengis.coverage.grid.GridCoverage"
+            styleId="net.refractions.udig.style.cache">
+      </styleConfigurator>           
+      <styleConfigurator
+            class="net.refractions.udig.style.filter.FilterConfigurator"
+            id="filter"
+            label="%filter.label"
+            requires="org.geotools.data.FeatureSource"
+            styleId="net.refractions.udig.project.view">
+            </styleConfigurator>
    </extension>
    <extension
          point="net.refractions.udig.style.sld.sldEditorPart">
@@ -176,6 +214,12 @@
             id="net.refractions.udig.style.dialogSettings"
             name="Dialog Settings">
       </style>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="net.refractions.udig.style.sld.editor.CustomPalettesLoader">
+      </startup>
    </extension>
 
 </plugin>

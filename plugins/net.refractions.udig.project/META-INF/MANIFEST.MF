@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: net.refractions.udig.project; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.project.internal.ProjectPlugin$Implementation
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -17,15 +17,17 @@ Require-Bundle: org.eclipse.core.runtime,
  net.refractions.udig.ui,
  net.refractions.udig.ui.tests;resolution:=optional,
  org.junit4;resolution:=optional,
- org.geotools.api;bundle-version="2.6.0",
- org.geotools.referencing;bundle-version="2.6.0",
- org.geotools.brewer;bundle-version="2.6.0",
- org.geotools.render;bundle-version="2.6.0",
+ org.geotools.api;bundle-version="2.6.5",
+ org.geotools.referencing;bundle-version="2.6.5",
+ org.geotools.brewer;bundle-version="2.6.5",
+ org.geotools.render;bundle-version="2.6.5",
  org.geotools.main,
- org.geotools.wms;bundle-version="2.6.0"
+ org.geotools.swing;bundle-version="2.6.5",
+ org.geotools.wms;bundle-version="2.6.5"
 Export-Package: net.refractions.udig.project,
  net.refractions.udig.project.command,
  net.refractions.udig.project.command.factory,
+ net.refractions.udig.project.command.map,
  net.refractions.udig.project.command.provider,
  net.refractions.udig.project.element,
  net.refractions.udig.project.element.impl,

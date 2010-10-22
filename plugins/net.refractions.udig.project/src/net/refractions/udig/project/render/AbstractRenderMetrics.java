@@ -128,28 +128,43 @@ public abstract class AbstractRenderMetrics {
     public static final long LATENCY_NETWORK = 500;
     
     /* DRAWING TIME DEFAULTS */
+    
     /**
-     * An image in memory to draw to screen.
+     * An indexed image able to draw just part of the image.
+     * With an index we should be able to read just what is needed.
      */
-    public static final long DRAW_IMAGE_MEMORY = 100;
+    public static final long DRAW_IMAGE_INDEX = 100;
+
     /**
-     * An indexed image on disk to draw to screen.
+     * Image in memory; not indexed.
      */
-    public static final long DRAW_IMAGE_INDEX = 200;
+    public static final long DRAW_IMAGE_MEMORY = 200;
+
     /**
      * Image on disk; not indexed.
+     * Without an index the entire image may need to be read.
      */
     public static final long DRAW_IMAGE_RAW = 300;
+    
+    /**
+     * Used to represent formats like jpeg where the file
+     * needs to be decompressed in order to ready any part
+     * of the file.
+     */
+    public static final long DRAW_IMAGE_COMPRESSED = 600;
+    
     /**
      * In memory data that needs to be converted to image before being drawn.
      */
     public static final long DRAW_DATA_MEMORY = 400;
     /**
-     * Data that is indexes that needs to be converted to image before being drawn.
+     * Data that is indexed that needs to be converted to image before being drawn.
+     * The index cuts down on the amount of features considered for drawing.
      */
     public static final long DRAW_DATA_INDEX = 500;
     /**
      * Data with no index that needs to be converted to image before being drawn.
+     * Without an index every feature will be considered and or clipped.
      */
     public static final long DRAW_DATA_RAW = 600;
     
@@ -219,10 +234,14 @@ public abstract class AbstractRenderMetrics {
     /**
      * Check to see if this layers can be added to rendered.
      * <p>
-     * This is only called for renderers that are MultiLayer renderers.
+     * This is only called for renderers that are MultiLayer renderers;
+     * implementors should check the layer and see if it can be combined
+     * into a single rendercontext.
      * </p>
      */
-    public abstract boolean canAddLayer( ILayer layer );
+    public boolean canAddLayer( ILayer layer ){
+        return false;
+    }
     
     /**
      * @return the RenderContext that this RenderMetrics is valid for.

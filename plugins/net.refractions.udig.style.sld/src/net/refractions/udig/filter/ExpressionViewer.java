@@ -1,6 +1,7 @@
 package net.refractions.udig.filter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,6 +28,8 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.util.Utilities;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 
@@ -90,6 +93,8 @@ public class ExpressionViewer extends Viewer {
     };
 
     private ControlDecoration feedback;
+
+    private FunctionContentProposalProvider proposalProvider;
     
     public ExpressionViewer( Composite parent ){
         this( parent, SWT.SINGLE );
@@ -115,7 +120,7 @@ public class ExpressionViewer extends Viewer {
         
         FunctionFinder ff = new FunctionFinder(null);
 
-        FunctionContentProposalProvider proposalProvider = new FunctionContentProposalProvider();
+        proposalProvider = new FunctionContentProposalProvider();
         proposalProvider.setFiltering(true);
         ContentProposalAdapter adapter = new ContentProposalAdapter(
                 text, new TextContentAdapter(), 
@@ -330,137 +335,20 @@ public class ExpressionViewer extends Viewer {
             control.setToolTipText( error +":"+ eek );
         }
     }
+    /**
+     * Feature Type to use for attribute names.
+     * @param type
+     */
+    public void setSchema( SimpleFeatureType type ) {
+        if( type == null ){
+            return;
+        }
+        Set<String> names = new HashSet<String>();
+        for( AttributeDescriptor attribute : type.getAttributeDescriptors()){
+            names.add( attribute.getLocalName() );
+        }
+        proposalProvider.setExtra( names );
+    }
 }
 
-/**
- * SimpleContentProposalProvider is a class designed to map a static list of
- * Strings to content proposals.
- * 
- * @see IContentProposalProvider
- * @since 3.2
- * 
- */
-@SuppressWarnings("deprecation")
-class FunctionContentProposalProvider implements IContentProposalProvider {
-
-    public static Set<String> proposals;
-    static {
-        proposals = new TreeSet<String>();
-        Set<Function> oldFunctions = CommonFactoryFinder.getFunctionExpressions(null);   
-        for( Function function : oldFunctions ){
-            proposals.add( function.getName().toLowerCase() );
-        }
-        Set<Function> newFunctions = CommonFactoryFinder.getFunctions(null);
-        for( Function function : newFunctions ){
-            proposals.add( function.getName().toLowerCase() );
-        }
-    }
-    
-    /*
-     * The proposals mapped to IContentProposal. Cached for speed in the case
-     * where filtering is not used.
-     */
-    private IContentProposal[] contentProposals;
-
-    /*
-     * Boolean that tracks whether filtering is used.
-     */
-    private boolean filterProposals = false;
-
-    /**
-     * Construct a SimpleContentProposalProvider whose content proposals are
-     * always the specified array of Objects.
-     * 
-     * @param proposals
-     *            the array of Strings to be returned whenever proposals are
-     *            requested.
-     */
-    public FunctionContentProposalProvider() {
-    }
-
-    /**
-     * Return an array of Objects representing the valid content proposals for a
-     * field. 
-     * 
-     * @param contents
-     *            the current contents of the field (only consulted if filtering
-     *            is set to <code>true</code>)
-     * @param position
-     *            the current cursor position within the field used to select a word
-     * @return the array of Objects that represent valid proposals for the field
-     *         given its current content.
-     */
-    public IContentProposal[] getProposals(String contents, int position) {
-        String word = contents.substring(0,position);
-        int start = contents.lastIndexOf(" ", position);
-        if( start != -1 ){
-            word = contents.substring( start, position );
-        }
-        word = word.trim();
-        if( word.length() == 0 ){
-            return new IContentProposal[0];
-        }
-        
-        if (filterProposals) {
-            ArrayList<IContentProposal> list = new ArrayList<IContentProposal>();
-            for( String proposal : proposals ) {
-                if (proposal.length() >= word.length()
-                        && proposal.substring(0, word.length())
-                                .equalsIgnoreCase(word)) {
-                    list.add(makeContentProposal(proposal));
-                }
-            }
-            return (IContentProposal[]) list.toArray(new IContentProposal[list
-                    .size()]);
-        }
-        if (contentProposals == null) {
-            contentProposals = new IContentProposal[proposals.size()];
-            int i = 0;
-            for( String proposal : proposals ){
-                contentProposals[i] = makeContentProposal(proposal);
-            }
-        }
-        return contentProposals;
-    }
-
-    /**
-     * Set the boolean that controls whether proposals are filtered according to
-     * the current field content.
-     * 
-     * @param filterProposals
-     *            <code>true</code> if the proposals should be filtered to
-     *            show only those that match the current contents of the field,
-     *            and <code>false</code> if the proposals should remain the
-     *            same, ignoring the field content.
-     * @since 3.3
-     */
-    public void setFiltering(boolean filterProposals) {
-        this.filterProposals = filterProposals;
-        // Clear any cached proposals.
-        contentProposals = null;
-    }
-
-    /*
-     * Make an IContentProposal for showing the specified String.
-     */
-    private IContentProposal makeContentProposal(final String proposal) {
-        return new IContentProposal() {
-            public String getContent() {
-                return proposal;
-            }
-
-            public String getDescription() {
-                return null;
-            }
-
-            public String getLabel() {
-                return null;
-            }
-
-            public int getCursorPosition() {
-                return proposal.length();
-            }
-        };
-    }
-}
 

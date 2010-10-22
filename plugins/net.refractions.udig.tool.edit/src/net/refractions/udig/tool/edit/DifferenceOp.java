@@ -16,11 +16,13 @@ package net.refractions.udig.tool.edit;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IRepository;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.internal.Layer;
@@ -209,10 +211,13 @@ public class DifferenceOp implements IOp {
         }));
         
         // add the diff shapefile as a udig resource
-        List<IService> services = CatalogPlugin.getDefault().getServiceFactory().createService(tmp.toURL());
+        URL url = tmp.toURI().toURL();
+        IRepository local = CatalogPlugin.getDefault().getLocal();
+        IService service = local.acquire( url, null );
         
-        IService service = services.get(0);
-        CatalogPlugin.getDefault().getLocalCatalog().add(service);
+        // List<IService> services = CatalogPlugin.getDefault().getServiceFactory().createService(tmp.toURL());
+        // IService service = services.get(0);
+        // CatalogPlugin.getDefault().getLocalCatalog().add(service);
         List< ? extends IGeoResource> resources = service.resources(null);
         
         IGeoResource resource = resources.get(0);

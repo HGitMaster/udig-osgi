@@ -18,6 +18,7 @@ package net.refractions.udig.printing.model;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -34,7 +35,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @see Element
  * @model
  */
-public interface Box extends Element {
+public interface Box extends Element, IAdaptable {
     
     /**
      * This is used by the GEF system to access the source connections on this Box

@@ -51,4 +51,8 @@ public class CatalogImplTest extends TestCase {
         assertTrue(URLUtils.urlEquals(new URL("file:///java/udig"), //$NON-NLS-1$
                 new URL("file:/java/udig#ResourceName"), true)); //$NON-NLS-1$
     }
+    
+    public void testAquire(){
+        
+    }
 }

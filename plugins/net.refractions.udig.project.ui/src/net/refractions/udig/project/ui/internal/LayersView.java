@@ -29,6 +29,8 @@ import net.refractions.udig.project.IEditManagerListener;
 import net.refractions.udig.project.ILayer;
 import net.refractions.udig.project.IMap;
 import net.refractions.udig.project.IProjectElement;
+import net.refractions.udig.project.command.map.LayerMoveDownCommand;
+import net.refractions.udig.project.command.map.LayerMoveUpCommand;
 import net.refractions.udig.project.internal.ContextModel;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
@@ -713,8 +715,12 @@ public class LayersView extends ViewPart
      * @return An object of type key or null;
      */
     public Object getAdapter( Class key ) {
-        if (key.equals(IPropertySheetPage.class))
+        if (key.equals(IPropertySheetPage.class)){
             return ProjectUIPlugin.getDefault().getPropertySheetPage();
+        }
+        if( key.isAssignableFrom(IMap.class)){
+            return getCurrentMap();
+        }
         return super.getAdapter(key);
     }
 
@@ -729,15 +735,11 @@ public class LayersView extends ViewPart
      */
     private LayerAction downAction() {
         downAction = new LayerAction(){
-            /**
-             * @see org.eclipse.jface.action.Action#run()
-             */
             public void run() {
-                // System.out.println("down");
-                for( Iterator iter = selection.iterator(); iter.hasNext(); ) {
-                    Layer layer = (Layer) iter.next();
-                    getCurrentMap().getContextModel().lowerLayer(layer);
-                }
+                if( selection.isEmpty() ) return;
+                IMap map = getCurrentMap();
+                // map.sendCommandSync( new LayerMoveDownCommand( selection ));
+                map.sendCommandASync( new LayerMoveDownCommand( selection ));
             }
         };
         downAction.setEnabled(false);
@@ -755,10 +757,10 @@ public class LayersView extends ViewPart
              * @see org.eclipse.jface.action.Action#run()
              */
             public void run() {
-                for( Iterator iter = selection.iterator(); iter.hasNext(); ) {
-                    Layer layer = (Layer) iter.next();
-                    getCurrentMap().getContextModel().raiseLayer(layer);
-                }
+                if( selection.isEmpty() ) return;
+                IMap map = getCurrentMap();
+                //map.sendCommandSync( new LayerMoveUpCommand( selection ));
+                map.sendCommandASync( new LayerMoveUpCommand( selection ));
             }
         };
         upAction.setEnabled(false);

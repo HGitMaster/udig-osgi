@@ -37,8 +37,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.geotools.data.DataStore;
-//hwellmann: disabled
-//import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -136,10 +135,6 @@ public class FeatureTypeEditorDialog extends Dialog {
     
     public void setDataStore(DataStore dataStore){
         this.dataStore=dataStore;
-/* 
- * hwellmann: ui should not depend on shapefile
- * 
- *         
         if( dataStore instanceof ShapefileDataStore ){
             List<LegalAttributeTypes> list=new ArrayList<LegalAttributeTypes>(editor.getLegalTypes());
             for( Iterator<LegalAttributeTypes> iter=list.iterator(); iter.hasNext(); ){
@@ -150,7 +145,6 @@ public class FeatureTypeEditorDialog extends Dialog {
             }
             editor.setLegalTypes(list);
         }
-*/        
     }
     
     @Override

@@ -23,9 +23,10 @@ import net.refractions.udig.ui.ProgressManager;
 import org.eclipse.ui.IStartup;
 
 /**
- * Adds the MapGraphic Service to the LocalCatalog... 
- * 
- * TODO this should be an extension point that is part of catalog
+ * Adds the MapGraphic Service to the LocalCatalog.
+ * <p>
+ * Currently implemented as a workbench startup; this may be considered 
+ * as an extension point defined by the catalog.
  * 
  * @author Jesse
  * @since 1.1.0

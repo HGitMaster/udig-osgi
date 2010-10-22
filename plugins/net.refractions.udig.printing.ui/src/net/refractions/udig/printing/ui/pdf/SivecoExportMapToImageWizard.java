@@ -29,6 +29,7 @@ import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
+import net.refractions.udig.catalog.IServiceFactory;
 import net.refractions.udig.core.internal.CorePlugin;
 import net.refractions.udig.mapgraphic.style.LocationStyleContent;
 import net.refractions.udig.project.IMap;
@@ -63,9 +64,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.XMLMemento;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultQuery;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
+import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -438,8 +441,16 @@ public class SivecoExportMapToImageWizard extends Wizard implements IExportWizar
         
     }
 	
+    /**
+     * Adds the destination file to the catalog.
+     *
+     * @param destination
+     * @throws MalformedURLException
+     */
 	private void addToCatalog(File destination) throws MalformedURLException {
-		List<IService> services = CatalogPlugin.getDefault().getServiceFactory().createService(destination.toURL());
+		IServiceFactory serviceFactory = CatalogPlugin.getDefault().getServiceFactory();
+		URL url = DataUtilities.fileToURL( destination );
+        List<IService> services = serviceFactory.createService(url);
 		ICatalog localCatalog = CatalogPlugin.getDefault().getLocalCatalog();;
 		for (IService service : services) {
 			localCatalog.add(service);

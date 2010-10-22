@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>1.2.0 Release Notes</title>
+</head>
+<body>
+<p>Welcome to the uDig 1.2.0 release.</p>
+<p>This release is made in conjunction with GeoTools 2.6.5.</p>
+<h2>Installation</h2>
+<p>Download the package appropriate to your platform, unzip and run:</p>
+<ul>
+  <li>Windows</li>
+  <li>Linux</li>
+  <li>Mac</li>
+  <li>SDK: For use with <a href="http://udig.refractions.net/confluence/display/DEV/1+SDK+Quickstart">SDK Quickstart</a> instructions</li>
+</ul>
+<p>Windows and Linux packages includes a Java Runtime so you really can unzip and run without making any configuration changes to your Machine. On Mac OSX uDig is able to check for Java Advanced Imaging and install if needed.</p>
+<p>To get started with uDig:</p>
+<ul>
+  <li>Help Menu provides a <a href="http://udig.refractions.net/confluence/display/EN/Quickstart">Quickstart</a></li>
+  <li><a href="http://udig.refractions.net/confluence/display/EN/Walkthrough+1">Walkthrough 1</a></li>
+  <li><a href="http://udig.refractions.net/confluence/display/EN/Walkthrough+2">Walkthrough 2</a></li>
+</ul>
+<h2>About uDig 1.2 Series</h2>
+<p>The uDig 1.2 series highlights a lot really great ideas the developer community has been working on. We have migrated to a modern version of the GeoTools library - bringing in five years of new developments in standard support, and a host of new raster and vector formats. An exciting addition is the use of the ImageIO-ext project allowing the use of raster formats supported by GDAL.</p>
+<p>New and capabilities of uDig 1.2 include:</p>
+<ul>
+  <li>ImageIO-EXT rendering enabling additional raster formats and working with images larger then memory</li>
+  <li>On select platforms MRSID and ECW raster support</li>
+  <li>Tiled rendering (as an option in preferences) with a new flicker free panning tool.</li>
+  <li>Support for <a href="http://geowebcache.org/">GeoWebCache</a> and <a href="http://tilecache.org/">TileCache</a> via WMS-C</li>
+  <li>WFS 1.1.0 support (read-only)</li>
+  <li>Greatly improved ArcSDE support; multithreaded and faster</li>
+  <li>Advanced Symbology including Hatches and True Type Font support</li>
+</ul>
+<h2>About uDig 1.2.0</h2>
+<p>Features and capabilities of this release:</p>
+<ul>
+  <li>Access to GeoTools DataStores via a generic wizard allowing users to connect to many additional data formats and access all connection parameters.</li>
+  <li>One long standing difficulty with using large datasets is uDig wanting to know the bounds of the data (so it can efficiently search, zoom). For common spatial file formats this data is known and available; for large databases such as DB2 and PostgreSQL this can take some time to calculate. For the generic GeoTools DataStore wizard above we are experimenting with using bounds based simply on the valid area for coordinate reference system provided by the data.</li>
+  <li>The valid area of the coordinate reference system is also used when "clipping" WFS requests resolving some long standing issues when editing WFS services that do not update their Capabilities document.</li>
+  <li>Advanced: Control what features are requested for a layer using a Common Query Language (CQL) expression. The expression builder offers command completion with the full GeoTools function list available as you type</li>
+  <li>Advanced: Cache support added allowing you to cache Raster layers in memory (please be working with large datasets as this is the first time uDig is allowing users to cache information in memory). Please note that raster file formats on disk are optimised and in may cases perform better than caching in memory. Caching in memory is recommended for formats such as jpeg (where the entire image must be loaded to display even a small section) and when working with data from a slow device such as the network or DVD.</li>
+  <li>Experimental: Cache support added allowing you to cache WFS layers in memory for increased performance (please be careful when working with large datasets as this is the first time uDig is allowing users to cache data in memory)</li>
+  <li>Enhanced Vector Editing</li>
+  <li>Revamped printing support, standard paper sizes are supported when printing</li>
+  <li>Import multiple layers into the catalog at once</li>
+  <li>switch between common map scales</li>
+  <li>Improved Drag and Drop support allowing multiple layers to be manipulated at once</li>
+  <li>Drag and Drop treats URL as a distinct content type across browser implementations</li>
+</ul>
+<p>Notes and documentation for developers:</p>
+<ul>
+  <li><a href="http://udig.refractions.net/confluence/display/DEV/10+Service+and+GeoResource+Interceptors">Service and GeoResource Interceptors</a> Docs</li>
+  <li><a href="http://udig.refractions.net/confluence/display/DEV/10+Interceptors">Interceptors</a> Docs</li>
+  <li>Review of the dependencies used by the uDig SDK with license and build advice</li>
+  <li>We have transitioned to a modern version of GeoTools allowing for a more productive relationship with the larger community</li>
+  <li>Support for the "JDBC-NG" rewrite of GeoTools Database access</li>
+  <li>Uses the latest Eclipse 3.6.0 "Helios" release for an industrial strength plug-in system</li>
+  <li>Uses the latest "Babel" project translations</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+    <li>The following release notes are applicable to this release:</li>
+    <li>UDIG 1.2.0<a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=16264"> Release Notes</a>, August 9, 2010 (23 Issues)</li>
+    <li>UDIG 1.2.RC3 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=16441">Release Notes</a>, May 17th, 2010 (25 Issues)</li>
+    <li>UDIG 1.2.RC2 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=16287">Release Notes</a>, March 21, 2010 (7 Issues)</li>
+    <li>UDIG 1.2.RC1 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=16163">Release Notes</a>, March 10, 2010 (4 issues)</li>
+    <li>UDIG 1.2.M9 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=16115">Release Notes</a>, January 8, 2010 (2 issues)</li>
+    <li>UDIG 1.2.M8 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=15691">Release Notes</a>, December 8, 2009 (1 issue)</li>
+    <li>UDIG 1.2.M7 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=15476">Release Notes</a>, September 9, 2009 (13 issues)</li>
+    <li>UDIG 1.2.M6 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=15474">Release Notes</a>, August 5, 2009 (53 issues)</li>
+    <li>UDIG 1.2.M5 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=15119">Release Notes</a>, June 10, 2009 (4 issues)</li>
+    <li>UDIG 1.2.M4 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=15071">Release Notes</a>, May 23, 2009 (12 Issues)</li>
+    <li>UDIG 1.2.M3 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=14979">Release Notes</a>, March 30, 2009 (74 Issues)</li>
+    <li>UDIG 1.2.M2 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=12942">Release Notes</a>, February 5, 2009 (14 Issues)</li>
+    <li>UDIG 1.2.M1 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=11975">Release Notes</a>, December 18, 2008 (10 Issues)</li>
+    <li>UDIG 1.2.M0 <a href="https://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=10600&amp;version=13063">Release Notes</a>, August 19, 2008 (19 Issues)</li>
+</ul>
+        
+<h2>Known problems:</h2>
+<ul>
+  <li>The mac release is unable to support the full range of ImageIO-EXT formats. Please contact udig-devel if you are able to build GDAL on Mac OSX.</li>
+</ul>
+
+</body>
+</html>

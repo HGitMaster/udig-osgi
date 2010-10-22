@@ -23,6 +23,7 @@ import net.refractions.udig.project.render.IRenderManager;
 import net.refractions.udig.project.render.displayAdapter.IMapDisplay;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.FactoryException;
@@ -71,8 +72,9 @@ public final class ScaleUtils {
 	 */
 	public static boolean isLatLong(CoordinateReferenceSystem crs) {
 		Unit<?> unit = getUnit(crs);
-                boolean isLatLong = unit.getStandardUnit().equals(javax.measure.unit.SI.RADIAN);
-                return isLatLong;
+		Unit<?> degrees = getUnit(DefaultGeographicCRS.WGS84);
+		boolean isLatLong = CRS.equalsIgnoreMetadata(unit, degrees);
+		return isLatLong;
 	}
 
 	/**

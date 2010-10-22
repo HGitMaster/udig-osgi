@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.refractions.udig.catalog.postgis; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.catalog.internal.postgis.PostgisPlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -10,13 +10,13 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
  net.refractions.udig.catalog.ui;visibility:=reexport,
- org.geotools.jdbc;bundle-version="2.6.2",
- org.geotools.jdbc.postgis;bundle-version="2.6.2",
- org.geotools.api;bundle-version="2.6.2",
+ org.geotools.jdbc;bundle-version="2.6.5",
+ org.geotools.jdbc.postgis;bundle-version="2.6.5",
+ org.geotools.api;bundle-version="2.6.5",
  org.opengis.geoapi;bundle-version="2.3.0",
- org.geotools.data;bundle-version="2.6.2",
- org.geotools.referencing;bundle-version="2.6.2",
- org.geotools.metadata;bundle-version="2.6.2"
+ org.geotools.data;bundle-version="2.6.5",
+ org.geotools.referencing;bundle-version="2.6.5",
+ org.geotools.metadata;bundle-version="2.6.5"
 Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.catalog
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

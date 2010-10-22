@@ -571,10 +571,11 @@ public class WMSGeoResourceImpl extends IGeoResource {
             org.opengis.geometry.Envelope env = null;
             CoordinateReferenceSystem crs = null;
 
-            Map<Object, CRSEnvelope> boundingBoxes = layer.getBoundingBoxes();
+            Map<String, CRSEnvelope> boundingBoxes = layer.getBoundingBoxes();
 
             if (boundingBoxes.isEmpty()) {
                 crs = DefaultGeographicCRS.WGS84;
+                // env = layer.getLatLonBoundingBox();
                 env = layer.getEnvelope(crs);
             } else {
                 GeneralEnvelope layerDefinedEnv = layer.getEnvelope(DefaultGeographicCRS.WGS84);

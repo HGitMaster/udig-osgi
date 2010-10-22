@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: LayerImpl.java 31411 2009-08-02 14:44:05Z jgarnett $
+ * <copyright></copyright> $Id: LayerImpl.java 31618 2010-03-23 11:02:08Z jgarnett $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -74,6 +74,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -2152,7 +2153,11 @@ public class LayerImpl extends EObjectImpl implements Layer {
             // parameters may have changed
             // so set modified on the map so the new params will be saved on
             // shutdown.
-            getMapInternal().eResource().setModified(true);
+            Map map = getMapInternal();
+            Resource eResource = map.eResource();
+            if( eResource != null ){
+                eResource.setModified(true);
+            }
             if (delta.getNewValue() == null) {
                 // no change
                 if (delta.getOldValue() == null)

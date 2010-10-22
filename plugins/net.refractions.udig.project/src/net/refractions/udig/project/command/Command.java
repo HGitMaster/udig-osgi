@@ -66,9 +66,9 @@ public interface Command {
     public Command copy();
 
     /**
-     * Returns the name of the MapCommand
-     * 
-     * @return The name of the command.
+     * Each command has a name that is displayed with the undo/redo buttons.
+     * </p>
+     * @return The name of the command (often translated)
      */
     public String getName();
 

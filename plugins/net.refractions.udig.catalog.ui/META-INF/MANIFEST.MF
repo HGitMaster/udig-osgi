@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.refractions.udig.catalog.ui; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.catalog.ui.CatalogUIPlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -10,6 +10,7 @@ Export-Package: net.refractions.udig.catalog.internal.ui,
  net.refractions.udig.catalog.internal.ui.actions;x-friends:="net.refractions.udig.catalog.tests.ui",
  net.refractions.udig.catalog.internal.ui.ops;x-friends:="net.refractions.udig.catalog.tests.ui",
  net.refractions.udig.catalog.memory,
+ net.refractions.udig.catalog.service,
  net.refractions.udig.catalog.service.database,
  net.refractions.udig.catalog.ui,
  net.refractions.udig.catalog.ui.export,

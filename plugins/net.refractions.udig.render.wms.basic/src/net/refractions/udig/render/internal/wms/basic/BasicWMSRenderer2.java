@@ -346,8 +346,9 @@ public class BasicWMSRenderer2 extends RendererImpl implements IMultiLayerRender
             } else {
                 filter = mapFilter;
             }
-            if (filter != null)
+            if (filter != null && filter != Filter.INCLUDE){
                 filters.put(layer, filter);
+            }
         }
 
         if (filters.isEmpty())
@@ -510,6 +511,8 @@ public class BasicWMSRenderer2 extends RendererImpl implements IMultiLayerRender
 
     private boolean formatSupportsTransparency( String format ) {
         if (format.equalsIgnoreCase("image/png")) //$NON-NLS-1$
+            return true;
+        if (format.equalsIgnoreCase("image/png8")) //$NON-NLS-1$
             return true;
         if (format.equalsIgnoreCase("image/gif")) //$NON-NLS-1$
             return true;

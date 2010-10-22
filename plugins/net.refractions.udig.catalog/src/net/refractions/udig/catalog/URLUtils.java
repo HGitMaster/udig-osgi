@@ -19,12 +19,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-
-import org.eclipse.core.runtime.Platform;
 
 import net.refractions.udig.core.internal.CorePlugin;
 
@@ -265,11 +261,12 @@ public class URLUtils {
                 // won't work so lets continue on and try to resolve the file.
             }
         }
-
+        
         String substring = urlSpec.substring(5);
         if (substring.startsWith("//")) { //$NON-NLS-1$
             // skip leading / indicating a root folder?
-            substring = substring.substring(2);
+            //substring = substring.substring(2);
+            return url;
         }
         try {
             // check if it is a relative path

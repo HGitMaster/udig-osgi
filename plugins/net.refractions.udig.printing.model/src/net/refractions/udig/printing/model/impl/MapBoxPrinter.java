@@ -46,6 +46,7 @@ import net.refractions.udig.project.ui.ApplicationGIS.DrawMapParameter;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.ui.IMemento;
@@ -336,7 +337,7 @@ public class MapBoxPrinter extends AbstractBoxPrinter implements IAdaptable {
         if (adapter.isAssignableFrom(Map.class)) {
             return this.map;
         }
-        return null;
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
 }

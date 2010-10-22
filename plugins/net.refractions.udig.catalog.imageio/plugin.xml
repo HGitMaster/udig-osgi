@@ -36,10 +36,11 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             class="net.refractions.udig.catalog.imageio.mosaicwizard.MosaicImportWizard"
+            icon="icons/obj16/worldimage_obj.gif"
             id="eu.hydrologis.jgrass.dxfdwg.wizard.DxfImportWizard"
-            name="Import imagery folder as mosaic">
+            name="%Import.ImagesAsMosaic">
          <description>
-            Import a dxf file converting it to shapefile into the workspace.
+            %Import.ImagesAsMosaic.tooltip
          </description>
       </wizard>
    </extension>

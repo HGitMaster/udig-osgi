@@ -15,7 +15,7 @@
 package net.refractions.udig.project.command;
 
 /**
- * Describes an undoable MapCommand as opposed to a normal undoable command. 
+ * Describes an undoable MapCommand as opposed to a normal undoable command.
  * @author jones
  * @since 1.0.0
  */

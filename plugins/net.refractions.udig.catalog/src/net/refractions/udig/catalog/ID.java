@@ -204,7 +204,23 @@ public class ID implements Serializable {
     public File toFile() {
         return file;
     }
-
+    public String toExtension(){
+        String name;
+        try {
+            name = uri.toURL().getFile();
+        } catch (MalformedURLException e) {
+            name = url.getFile();
+        }
+        int slash = name.lastIndexOf('/');
+        int dot = name.lastIndexOf('.');
+        int beginIndex = (slash == -1 && slash < name.length() - 1 ? 0 : slash) + 1;
+        if( dot == -1 || dot < beginIndex || dot == name.length()-1 ){
+            return ""; // no extension
+        }
+        else {
+            return name.substring(dot+1);
+        }
+    }
     public String toBaseFile() {
         String name;
         try {
@@ -283,6 +299,7 @@ public class ID implements Serializable {
     public boolean isLocal(){
         return id.contains("localhost");
     }
+    
     /**
      * @return true if ID represents a File
      */
@@ -483,9 +500,13 @@ public class ID implements Serializable {
         } else if (isJDBC()) {
             int split2 = HOST.lastIndexOf('.');
             int split1 = HOST.lastIndexOf('.', split2 - 1);
-            label.append(HOST.substring(split1 + 1, split2));
-            label.append("://"); //$NON-NLS-1$
-            label.append(HOST.subSequence(0, split1));
+            if(split1 != -1 && split2 != -1) {
+                label.append(HOST.substring(split1 + 1, split2));
+                label.append("://"); //$NON-NLS-1$
+                label.append(HOST.subSequence(0, split1));
+            } else {
+                label.append(HOST);
+            }
         } else if ("http".equals(PROTOCOL) || "https".equals(PROTOCOL)) { //$NON-NLS-1$ //$NON-NLS-2$
             if (isWMS()) {
                 label.append("wms://"); //$NON-NLS-1$

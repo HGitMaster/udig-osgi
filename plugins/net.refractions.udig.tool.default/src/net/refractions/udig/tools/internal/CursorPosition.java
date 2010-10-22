@@ -148,13 +148,12 @@ public class CursorPosition extends AbstractTool {
             if (Double.isInfinite(value)) {
                 return Messages.CursorPosition_infinity;
             }
-
+            
             DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance();
             format.setMaximumFractionDigits(4);
             format.setMinimumIntegerDigits(1);
             format.setGroupingUsed(false);
             String string = format.format(value);
-
 
             String[] parts = string.split("\\.");
             if(parts[0].length()>3){

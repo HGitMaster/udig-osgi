@@ -8,6 +8,7 @@
    <extension-point id="featureEditor" name="%featureEditor.point" schema="schema/featureEditor.exsd"/>
    <extension-point id="toolManagers" name="toolManagers" schema="schema/toolManagers.exsd"/>
    <extension-point id="pdfTemplates" name="PDF Templates" schema="schema/pdfTemplates.exsd"/>
+   <extension-point id="featurePanel" name="%featurePanel.point" schema="schema/featurePanel.exsd"/>
    
  	<extension
          point="org.eclipse.ui.popupMenus">
@@ -35,14 +36,14 @@
             objectClass="net.refractions.udig.project.IProject"
             adaptable="true"
             id="net.refractions.udig.project.ui.ProjectContributions">
-         <action
+       <!--  <action
                class="net.refractions.udig.project.ui.internal.actions.ConsolidateAction"
                enablesFor="1"
                id="net.refractions.udig.project.ui.action1"
                label="%consolidate.action"
                menubarPath="additions"
                style="push">
-         </action>
+         </action> -->
          <action
                enablesFor="1"
                label="%rename.label"

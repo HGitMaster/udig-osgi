@@ -100,9 +100,11 @@ public class PdfPrintingEngine {
                 String id = box.getID();
                 System.out.println(id);
                 Point boxLocation = box.getLocation();
+                if( boxLocation == null ) continue;
                 int x = boxLocation.x;
                 int y = boxLocation.y;
                 Dimension size = box.getSize();
+                if( size == null ) continue; 
                 int w = size.width;
                 int h = size.height;
 

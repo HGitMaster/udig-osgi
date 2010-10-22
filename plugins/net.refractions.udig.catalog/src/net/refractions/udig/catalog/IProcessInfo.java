@@ -56,8 +56,8 @@ public class IProcessInfo {
     protected URI schema;
     protected ImageDescriptor icon;
     protected ProcessFactory processFactory;
-    private Icon awtIcon;
-    private Name processName;
+    protected Icon awtIcon;
+    protected Name processName;
 
     protected IProcessInfo() {
         // for over-riding

@@ -404,8 +404,6 @@ public class ViewportModelImpl extends EObjectImpl implements ViewportModel {
             }
         }
         bounds = new ReferencedEnvelope(newBounds, getCRS());
-        // TODO: This class has been changed on trunk. Merge latest fixes.
-        bounds = new ReferencedEnvelope(newBounds,getCRS());
         fireNotification(oldBounds);
     }
 

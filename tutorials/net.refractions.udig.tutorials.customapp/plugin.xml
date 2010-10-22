@@ -35,51 +35,45 @@
          <actionSet
                id="net.refractions.udig.project.ui.data.menu">
          </actionSet>
-         <actionSet
-               id="net.refractions.udig.style.sld.editor.layerAction">
-         </actionSet>
-         <actionSet
-               id="net.refractions.udig.project.ui.layerStyleSet">
-         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension
-         id="product"
+         id="customapp"
          point="org.eclipse.core.runtime.products">
       <product
             application="net.refractions.udig.tutorials.customapp.id1"
             name="Custom">
          <property
-               name="appName"
-               value="Custom">
+               name="windowImages"
+               value="icons/world16.gif,icons/world32.gif,icons/world48.gif,icons/world64.gif,icons/world128.gif">
          </property>
          <property
-               name="startupForegroundColor"
-               value="FFFFFF">
-         </property>
-         <property
-               name="startupMessageRect"
-               value="7,180,445,16">
-         </property>
-         <property
-               name="startupProgressRect"
-               value="0,196,500,10">
-         </property>
-         <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
+               name="aboutText"
+               value="Hello World&#x0A;&#x0A;This is a custom application generated using the uDig SDK.&#x0A;For more information visit http://udig.refractions.net">
          </property>
          <property
                name="aboutImage"
                value="nl/en/about.gif">
          </property>
          <property
-               name="aboutText"
-               value="This is the udig custom application tutorial">
+               name="startupForegroundColor"
+               value="FFFFFF">
          </property>
          <property
-               name="windowImages"
-               value="icons/world16.gif,icons/world32.gif,icons/world48.gif,icons/world64.gif,icons/world128.gif">
+               name="startupProgressRect"
+               value="0,196,500,10">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="7,180,445,16">
+         </property>
+         <property
+               name="appName"
+               value="Custom">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>

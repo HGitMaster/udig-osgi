@@ -25,7 +25,6 @@ import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
-import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
 import net.refractions.udig.project.internal.ProjectFactory;
@@ -40,7 +39,9 @@ import net.refractions.udig.tools.internal.FixedScalePan;
 import net.refractions.udig.tools.internal.Zoom;
 import net.refractions.udig.tutorials.tracking.glasspane.SeagullGlassPaneOp;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -77,7 +78,7 @@ public class MapView extends ViewPart implements MapPart {
         fillLayout.type = SWT.VERTICAL;
         parent.setLayout(fillLayout);
         // mapviewer = new MapViewer(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.MULTI);
-        mapviewer = new MapViewer(parent, SWT.SINGLE | SWT.DOUBLE_BUFFERED );
+        mapviewer = new MapViewer(parent, SWT.SINGLE | SWT.DOUBLE_BUFFERED);
 
         // create a new empty map
         // if you are going to add layers do so now
@@ -204,6 +205,7 @@ public class MapView extends ViewPart implements MapPart {
         public SetBackgroundFileAction() {
             super("Add Background layer from file..."); //$NON-NLS-1$
         }
+        @SuppressWarnings("unchecked")
         public void run() {
             Display display = Display.getCurrent();
             final ArrayList<File> files = new ArrayList<File>();
@@ -227,50 +229,24 @@ public class MapView extends ViewPart implements MapPart {
             for( File file : files ) {
                 try {
                     URL url = file.toURI().toURL();
-                    // URL url = file.toURL();
-                    List<IService> handles = catalog.find(IService.class, url,
-                            new NullProgressMonitor());
-                    IService handle = null;
-                    for( IService iService : handles ) {
-                        if (handles != null) {
-                            IServiceInfo info = iService.getInfo(new NullProgressMonitor());
-                            if (info != null) {
-                                handle = iService;
-                                break;
-                            }
-                            // could not connect try next
-                        }
-                    }
+                    IService handle = catalog.acquire(url, null);
                     if (handle != null) {
                         // connected okay add all resources
-                        List< ? extends IGeoResource> resources = handle
+                        List<IGeoResource> resources = (List<IGeoResource>) handle
                                 .resources(new NullProgressMonitor());
-                        for( IGeoResource resource : resources ) {
-                            dataHandles.add(resource);
-                        }
-                    } else {
-                        List<IService> services = factory.createService(url);
-                        for( IService service : services ) {
-                            IServiceInfo info = service.getInfo(new NullProgressMonitor());
-                            if (info == null) {
-                                continue; // could not connect
-                            }
-                            // connected okay add all resources
-                            catalog.add(service);
-                            List< ? extends IGeoResource> resources = service
-                                    .resources(new NullProgressMonitor());
-                            for( IGeoResource resource : resources ) {
-                                dataHandles.add(resource);
-                            }
-                        }
+                        dataHandles.addAll(resources);
                     }
                 } catch (IOException eek) {
-                    System.out.println(eek);
+                    String message = "Could not add " + file;
+                    IStatus status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, eek);
+                    // ExceptionDetailsDialog.openError(null, message, IStatus.ERROR,
+                    // Activator.PLUGIN_ID, eek );
+                    Activator.getDefault().getLog().log(status);
                 }
             }
-            if (dataHandles.isEmpty())
-                return;
-
+            if (dataHandles.isEmpty()) {
+                return; // nothing to add
+            }
             map.sendCommandASync(new AddLayersCommand(dataHandles));
         }
     }

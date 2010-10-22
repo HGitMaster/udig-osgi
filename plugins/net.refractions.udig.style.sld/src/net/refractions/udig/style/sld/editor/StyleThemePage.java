@@ -77,20 +77,24 @@ import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.NameImpl;
 import org.geotools.feature.visitor.UniqueVisitor;
 import org.geotools.filter.IllegalFilterException;
 import org.geotools.filter.function.ClassificationFunction;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.EqualIntervalFunction;
-import org.geotools.filter.function.ExplicitClassifier;
 import org.geotools.filter.function.QuantileFunction;
 import org.geotools.filter.function.StandardDeviationFunction;
 import org.geotools.filter.function.UniqueIntervalFunction;
 import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Fill;
+import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
+import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyledLayerDescriptor;
@@ -324,6 +328,18 @@ public class StyleThemePage extends StyleEditorPage {
     public ColorBrewer getBrewer() {
         if (brewer == null) {
             createBrewer();
+            
+            // add custom palettes
+            List<BrewerPalette> palettesList = CustomPalettesLoader.PALETTESLIST;
+            for( BrewerPalette brewerPalette : palettesList ) {
+                brewer.registerPalette(brewerPalette);
+            }
+            // add a dynamic one that support everythings
+            CustomDynamicPalette customDynamicPalette = new CustomDynamicPalette(CustomDynamicPalette.TABLE.RAINBOW);
+            brewer.registerPalette(customDynamicPalette);
+            customDynamicPalette = new CustomDynamicPalette(CustomDynamicPalette.TABLE.GREY);
+            brewer.registerPalette(customDynamicPalette);
+            
         }
         return brewer;
     }
@@ -616,9 +632,9 @@ public class StyleThemePage extends StyleEditorPage {
             public void widgetSelected( SelectionEvent e ) {
                 reverseColours = !reverseColours; //used by generateTheme to get things half right
                 FeatureTypeStyle fts = getFTS();
-                Rule[] rule = fts.getRules();
-                for (int i = 0; i < (rule.length / 2); i++) {
-                    swapColours(rule[i], rule[rule.length-i-1]);
+                List<Rule> ruleList = fts.rules();
+                for (int i = 0; i < (ruleList.size() / 2); i++) {
+                    swapColours(ruleList.get(i), ruleList.get(ruleList.size()-i-1));
                 }
                 treeViewer.refresh();
             }
@@ -880,7 +896,7 @@ public class StyleThemePage extends StyleEditorPage {
         attributeCombo.setVisibleItemCount(16);
         attributeCombo.addListener(SWT.Modify, new AttributeComboListener());
         
-        Combo classesCombo = new Combo(compTop, SWT.BORDER | SWT.READ_ONLY);
+        Combo classesCombo = new Combo(compTop, SWT.BORDER);
         pageControls.put(COMBO_CLASSES, classesCombo);
         classesCombo.setLayout(new GridLayout(1, false));
         gridData = createDefaultGridData();
@@ -1153,6 +1169,7 @@ public class StyleThemePage extends StyleEditorPage {
         if (isNumber(currentAttr)) { //show numeric break types
             breaksCombo.add(Messages.StyleEditor_theme_equalInterval); 
             breaksCombo.add(Messages.StyleEditor_theme_quantile); 
+            breaksCombo.add(Messages.StyleEditor_theme_uniques); 
             //breaksCombo.add(Messages.StyleEditor_theme_standardDeviation); 
             int index = breaksCombo.indexOf(value);
             if (index > -1) breaksCombo.select(index);
@@ -1219,10 +1236,24 @@ public class StyleThemePage extends StyleEditorPage {
                     expr = attr;
                 }
                 
-                BrewerPalette pal = (BrewerPalette) ((StructuredSelection) paletteTable.getSelection()).getFirstElement();
+                StructuredSelection structuredSelection = (StructuredSelection) paletteTable.getSelection();
+                BrewerPalette pal = (BrewerPalette) structuredSelection.getFirstElement();
+                if (pal == null) {
+                    // get it from the last memento used
+                    StyleBlackboard bb = getSelectedLayer().getStyleBlackboard();
+                    IMemento memento = (IMemento) bb.get(DialogSettingsStyleContent.EXTENSION_ID);
+                    String paletteName = memento.getString(PALETTE_KEY);
+                    pal = getBrewer().getPalette(paletteName);
+                }
                 String paletteName = pal.getName();
-                int numClasses = new Integer(getCombo(COMBO_CLASSES).getItem(getCombo(COMBO_CLASSES).getSelectionIndex())).intValue();
-                int[] suitability = pal.getPaletteSuitability().getSuitability(numClasses);
+                Combo combo = getCombo(COMBO_CLASSES);
+                int numClasses = new Integer(combo.getText()).intValue();
+                int[] suitability =null;
+                try{
+                    suitability = pal.getPaletteSuitability().getSuitability(numClasses);
+                }catch (Exception e) {
+                    suitability = CustomUnknownPaletteSuitability.getInstance().getSuitability(numClasses);
+                }
                 
                 //check for custom classifier
                 if (getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_custom)) { 
@@ -1234,9 +1265,9 @@ public class StyleThemePage extends StyleEditorPage {
                     classifierModified = true;
                 } else {
                     //determine if the classifier needs recalculation
-                    if (function.getNumberOfClasses() != new Integer(getCombo(COMBO_CLASSES).getText()).intValue()) {
+                    if (function.getClasses() != new Integer(getCombo(COMBO_CLASSES).getText()).intValue()) {
                         if (getCombo(COMBO_ELSE).getSelectionIndex() == 0) classifierModified = true;
-                        if (function.getNumberOfClasses() != new Integer(getCombo(COMBO_CLASSES).getText()).intValue()-1)
+                        if (function.getClasses() != new Integer(getCombo(COMBO_CLASSES).getText()).intValue()-1)
                             classifierModified = true;
                     }
                     if (getCombo(COMBO_ELSE).getSelectionIndex() > 0) 
@@ -1248,6 +1279,8 @@ public class StyleThemePage extends StyleEditorPage {
                     else if ((getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_quantile)) && !(function instanceof QuantileFunction)) 
                         classifierModified = true;
                     else if ((getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_standardDeviation)) && !(function instanceof StandardDeviationFunction)) 
+                        classifierModified = true;
+                    else if ((getCombo(COMBO_BREAKTYPE).getText().equalsIgnoreCase(Messages.StyleEditor_theme_uniques)) && !(function instanceof UniqueIntervalFunction)) 
                         classifierModified = true;
                     else if (!function.getExpression().equals(expr))
                         classifierModified = true;
@@ -1307,7 +1340,16 @@ public class StyleThemePage extends StyleEditorPage {
                 }
 
                 //generate the style
-                Color[] colors = getBrewer().getPalette(paletteName).getColors(numClasses);
+                BrewerPalette palette = getBrewer().getPalette(paletteName);
+                
+                Color[] colors = null;
+                try{
+                    colors = palette.getColors(numClasses);
+                }catch (Exception e) {
+                    colors = palette.getColors();
+                    palette = new CustomDynamicPalette(palette.getName(), palette.getDescription(), colors);
+                    colors = palette.getColors(numClasses);
+                }
                 if (reverseColours) {
                     for (int i = 0; i < colors.length / 2; i++) {
                         Color tempColor = colors[i];
@@ -1317,16 +1359,6 @@ public class StyleThemePage extends StyleEditorPage {
                     }
                 }
                 
-                if (sg == null) {
-//                    sg = new StyleGenerator(colors, classifier, semanticTypeIdentifier);
-                } else {
-//                    sg.setColors(colors);
-//                    sg.setCollection(collection);
-//                    sg.setClassifier(classifier);
-//                    sg.setExpression(expr);
-//                    sg.setNumClasses(numClasses);//?
-//                    sg.setTypeId(semanticTypeIdentifier);
-                }
                 int elsemode = -1;
                 if (getCombo(COMBO_ELSE).getSelectionIndex() == 0) {
                     //sg.setElseMode(StyleGenerator.ELSEMODE_IGNORE);
@@ -1345,12 +1377,12 @@ public class StyleThemePage extends StyleEditorPage {
                 } else {
                     opac = 1;
                 }
-                BorderColorComboListener.setBorder(getCombo(COMBO_BORDER_COLOR), sg);
+                Color borderColor = BorderColorComboListener.getBorder(getCombo(COMBO_BORDER_COLOR));
                 
                 FeatureTypeStyle newFTS = null;
                 try {
-  //                  newFTS = sg.createFeatureTypeStyle(getSelectedLayer().getSchema().getGeometryDescriptor());
-                    newFTS = StyleGenerator.createFeatureTypeStyle(classifier, (org.geotools.filter.Expression) expr, colors, semanticTypeIdentifier, getSelectedLayer().getSchema().getGeometryDescriptor(), elsemode, opac, null);
+                    newFTS = StyleGenerator.createFeatureTypeStyle(classifier, (org.opengis.filter.expression.Expression) expr, colors, semanticTypeIdentifier, getSelectedLayer().getSchema().getGeometryDescriptor(), elsemode, opac, null);
+                    applyExistingRulesProperties(newFTS, opac, borderColor);
                 } catch (IllegalFilterException e) {
                     newFTS = null;
                     SLDPlugin.log("sg.createFeatureTypeStyle() failed", e); //$NON-NLS-1$
@@ -1360,17 +1392,11 @@ public class StyleThemePage extends StyleEditorPage {
                 }
                 if (newFTS == null) {
                     ErrorManager.get().displayError(Messages.StyleEditor_error, Messages.StyleEditor_theme_failure);
-//                    MessageDialog
-//                    .openError(
-//                            PlatformUI.getWorkbench()
-//                                    .getActiveWorkbenchWindow()
-//                                    .getShell(),
-//                                    Messages.StyleEditor_error, 
-//                                    Messages.StyleEditor_theme_failure); 
                     return;
                 } else {
                     //set the FeatureTypeName to the current layer name
-                    newFTS.setFeatureTypeName(SLDs.GENERIC_FEATURE_TYPENAME);
+                    newFTS.featureTypeNames().clear();
+                    newFTS.featureTypeNames().add( new NameImpl( SLDs.GENERIC_FEATURE_TYPENAME ));
                     //get the style
                     Style style = getStyle();
                     //ensure the style has an SLD
@@ -1379,8 +1405,6 @@ public class StyleThemePage extends StyleEditorPage {
                     StyledLayerDescriptor sld = null; //SLDs.styledLayerDescriptor(style);
                     if (sld == null) {
                         SLDContent.createDefaultStyledLayerDescriptor(style);
-                        //sld = SLDs.styledLayerDescriptor(style);
-                        //if (sld == null) throw new RuntimeException("SLD is null"); //$NON-NLS-1$
                     }
                     //insert/replace the FTS
                     try {
@@ -1393,11 +1417,14 @@ public class StyleThemePage extends StyleEditorPage {
                     }
                     
                     //update the suitability icons
-                    updateSuitabilities(suitability);
+                    if (suitability != null) {
+                        updateSuitabilities(suitability);
+                    }
                     
                     treeViewer.setInput(newFTS);
                 }
             }
+
         };
         try {
             BusyIndicator.showWhile(Display.getCurrent(), genDefault);
@@ -1416,16 +1443,98 @@ public class StyleThemePage extends StyleEditorPage {
     }
 
     /**
+     * This takes as much as possible from the old rules and applies them 
+     * to the new ones. In that way mark type, size and borders are properly kept.
+     * 
+     * @param newFTS the new style to tweak.
+     * @param opac an opacity value to apply to the fill.
+     * @param borderColor 
+     */
+    private void applyExistingRulesProperties( FeatureTypeStyle newFTS, double opac, Color borderColor ) {
+        Style style = getStyle();
+        Symbolizer[] symbolizers = SLDs.symbolizers(style);
+        if (symbolizers.length > 0) {
+            Symbolizer symbolizer = symbolizers[0];
+            if (symbolizer instanceof PointSymbolizer) {
+                PointSymbolizer previousSymbolizer = (PointSymbolizer) symbolizer;
+                Graphic oldGraphic = SLDs.graphic(previousSymbolizer);
+                Mark oldMark = SLDs.mark(previousSymbolizer);
+                if (oldMark != null) {
+                    // we apply the properties to all the new rules
+                    List<Rule> rules = newFTS.rules();
+                    for( Rule rule : rules ) {
+                        String[] colors = SLDs.colors(rule);
+                        Color fill = SLDs.toColor(colors[0]);
+
+                        List<Symbolizer> newSymbolizers = rule.symbolizers();
+                        for( Symbolizer newSymbolizer : newSymbolizers ) {
+                            if (newSymbolizer instanceof PointSymbolizer) {
+                                PointSymbolizer newPointSymbolizer = (PointSymbolizer) newSymbolizer;
+
+                                Mark mark = sb.createMark(oldMark.getWellKnownName().evaluate(null, String.class));
+                                Fill newFill = sb.createFill(fill);
+                                newFill.setOpacity(ff.literal(opac));
+                                mark.setFill(newFill);
+                                mark.setRotation(oldMark.getRotation());
+                                mark.setSize(oldMark.getSize());
+
+                                Stroke newStroke = oldMark.getStroke();
+                                if (newStroke != null) {
+                                    if (borderColor!=null) {
+                                        newStroke.setColor(ff.literal(borderColor));
+                                        mark.setStroke(newStroke);
+                                    }else{
+                                        mark.setStroke(null);
+                                    }
+                                }
+
+                                Graphic newGraphic = SLDs.graphic(newPointSymbolizer);
+                                newGraphic.setSize(oldGraphic.getSize());
+                                newGraphic.graphicalSymbols().clear();
+                                newGraphic.graphicalSymbols().add(mark);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else if (symbolizer instanceof PolygonSymbolizer) {
+                List<Rule> rules = newFTS.rules();
+                for( Rule rule : rules ) {
+                    List<Symbolizer> newSymbolizers = rule.symbolizers();
+                    for( Symbolizer newSymbolizer : newSymbolizers ) {
+                        if (newSymbolizer instanceof PolygonSymbolizer) {
+                            PolygonSymbolizer polygonSymbolizer = (PolygonSymbolizer ) newSymbolizer;
+                            
+                            Fill previousFill = SLDs.fill(polygonSymbolizer);
+                            previousFill.setOpacity(ff.literal(opac));
+                            
+                            Stroke stroke = SLDs.stroke(polygonSymbolizer);
+                            if (stroke != null) {
+                                if(borderColor!=null){
+                                    stroke.setColor(ff.literal(borderColor));
+                                }else{
+                                    polygonSymbolizer.setStroke(null);
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
      * Iterates through the style blackboard style and returns the ColorBrewer FeatureTypeStyle.
      *
-     * @return
+     * @return the ColorBrewer {@link FeatureTypeStyle} or null if none found.
      */
     FeatureTypeStyle getFTS() {
         Style style = getStyle();
-        FeatureTypeStyle[] fts = style.getFeatureTypeStyles();
-        for (int i = 0; i < fts.length; i++) {
-            if (SLDs.isSemanticTypeMatch(fts[i], "colorbrewer:.*")) { //$NON-NLS-1$
-                return fts[i];
+        List<FeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
+        for( FeatureTypeStyle featureTypeStyle : featureTypeStyles ) {
+            if (SLDs.isSemanticTypeMatch(featureTypeStyle, "colorbrewer:.*")) { //$NON-NLS-1$
+                return featureTypeStyle;
             }
         }
         return null;
@@ -1708,13 +1817,15 @@ public class StyleThemePage extends StyleEditorPage {
                     for (int j = 0; j < i+1; j++) {
                         scheme[j] = j;
                     }
-                    newScheme.setSampleScheme(i+1, scheme);
-                    //set the suitability to unknown
                     try {
+                        newScheme.setSampleScheme(i+1, scheme);
+                        //set the suitability to unknown
                         suitability.setSuitability(i+1, new String[] {unknown, unknown, unknown, unknown, unknown, unknown});
-                    } catch (IOException e) {
-                        SLDPlugin.log("setSuitability() failed", e); //$NON-NLS-1$
-                        return;
+                    } catch (Exception e) {
+                        // SLDPlugin.log("setSuitability() failed", e); //$NON-NLS-1$
+                        // don't block here, give an unknown status
+                        suitability = CustomUnknownPaletteSuitability.getInstance();
+                        newScheme = new CustomSampleScheme(colors.size());
                     }
                 }
             }
@@ -1729,7 +1840,9 @@ public class StyleThemePage extends StyleEditorPage {
             }
         }
         paletteTable.setInput(getBrewer());
-        paletteTable.setSelection(new StructuredSelection(customPalette));
+        String paletteName = memento.getString(PALETTE_KEY);
+        if(paletteName.equals(customPalette.getName()))
+            paletteTable.setSelection(new StructuredSelection(customPalette));
     }
 
     private void setPaletteSelection(IMemento memento) {

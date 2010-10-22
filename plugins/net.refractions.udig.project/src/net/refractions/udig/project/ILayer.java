@@ -27,9 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * TODO Purpose of net.refractions.udig.project
- * <p>
- * </p>
+ * Layer interface (part of a map).
  * 
  * @author Jesse
  * @since 1.0.0
@@ -82,6 +80,8 @@ public interface ILayer extends Comparable<ILayer> {
     /**
      * Resource the user associates with this layer. This is not the same as getGeoResource(Class
      * clazz).
+     * <p>
+     * This is usually the first GeoResource among "friends"
      * 
      * @return Resource the user associates with this layer.
      */
@@ -335,7 +335,7 @@ public interface ILayer extends Comparable<ILayer> {
      * @return the CoordinateReferenceSystem of the layer or if the CRS cannot be determined. the
      *         current map's CRS will be returned, or if this fails the CRS will be WGS84.
      * 
-     *  @deprecated
+     *  @deprecated use getCRS()
      */
     CoordinateReferenceSystem getCRS( IProgressMonitor monitor );
 

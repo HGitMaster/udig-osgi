@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="net.refractions.udig.project.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
-         <meta.schema plugin="net.refractions.udig.project.ui" id="featureEditor" name="featureEditor"/>
-      </appinfo>
+      <appInfo>
+         <meta.schema plugin="net.refractions.udig.project.ui" id="featureEditor" name="Feature Editor"/>
+      </appInfo>
       <documentation>
          Declares a feature editor.  If a feature type is declared for the editor then the editor will only be available for use on features with a &lt;i&gt;matching&lt;/i&gt; feature type otherwise (if there is no decalred featureType element) the editor will be available for all features.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
          <documentation>
             An extension point where extenders can add custom features editors to udig.  Context menus that open when the ActivePage has a feature as part of the selection will have an &quot;Edit Feature&quot; item and an &quot;Edit With&quot; submenu.  These new feature editors will begin the &quot;Edit With&quot; menu and if chosen will be also accessible when the &quot;Edit Feature&quot; item is selected(until the time that a different editor is chosen in the &quot;Edit With&quot; menu&quot;
          </documentation>
@@ -42,9 +42,9 @@
                <documentation>
                   A human readable name for the extension.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -52,9 +52,9 @@
 
    <element name="editor">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             The definition of the editor.  Either the viewId or the dialogPage must be specified. If both are specified then the view will be opened.
          </documentation>
@@ -68,9 +68,9 @@
                <documentation>
                   The icon that will be displayed in the &quot;Edit With&quot; menu.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -98,11 +98,11 @@ The view must implement net.refractions.udig.project.ui.IUDIGView
          <attribute name="dialogPage" type="string">
             <annotation>
                <documentation>
-                  If this is defined then a dialog will be opened with the declared page.
+                  If this is defined then a dialog will be opened with the declared IUDIGDialogPage.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="net.refractions.udig.project.ui.IUDIGDialogPage"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -143,9 +143,9 @@ The view must implement net.refractions.udig.project.ui.IUDIGView
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -176,40 +176,53 @@ The view must implement net.refractions.udig.project.ui.IUDIGView
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          0.9
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         CountryEditor from the udig tutorials is an example implementation:
+- http://svn.refractions.net/udig/udig/trunk/tutorials/net.refractions.udig.tutorials.featureeditor/
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         [Enter API information here.]
+         The featureEditor extension point can be used to reference:
+- Views
+- Dialogs
+
+The featureEditor extension point just adds the option to open the view or dialog when editing a feature.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          See DefaultFeatureEditor
       </documentation>
    </annotation>
 
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         http://udig.refractions.net/
+      </documentation>
+   </annotation>
 
 </schema>

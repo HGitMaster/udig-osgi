@@ -13,6 +13,7 @@ import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
+import net.refractions.udig.catalog.IServiceFactory;
 import net.refractions.udig.catalog.internal.wfs.WFSServiceExtension;
 import net.refractions.udig.catalog.tests.ui.CatalogTestsUIPlugin;
 import net.refractions.udig.ui.WaitCondition;
@@ -94,7 +95,10 @@ public class NewFeatureTypeOpTest extends TestCase {
     }
 
     public void testMemoryDataStoreType() throws Exception {
-        List<IService> services = CatalogPlugin.getDefault().getServiceFactory().createService(new URL("http://localhost/scratch/TestNewFeatureTypeOp")); //$NON-NLS-1$
+        IServiceFactory serviceFactory = CatalogPlugin.getDefault().getServiceFactory();
+        URL dragNdrop = new URL("http://localhost/scratch/TestNewFeatureTypeOp");
+        List<IService> services = serviceFactory.createService(dragNdrop); //$NON-NLS-1$
+        
         NewFeatureTypeOp op=new NewFeatureTypeOp();
         op.testingSetTesting(true);
         op.op(Display.getCurrent(), services.get(0), new NullProgressMonitor());

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: CompositeRendererImpl.java 31068 2009-01-19 10:17:31Z jeichar $
+ * <copyright></copyright> $Id: CompositeRendererImpl.java 31750 2010-05-07 10:29:37Z jgarnett $
  */
 package net.refractions.udig.project.internal.render.impl;
 
@@ -375,7 +375,12 @@ public class CompositeRendererImpl extends RendererImpl implements MultiLayerRen
                     RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setRenderingHints(hints);
                     Dimension displaySize = getContext().getMapDisplay().getDisplaySize();
-                    cache.end(g, new Rectangle(displaySize));
+                    try {
+                        cache.end(g, new Rectangle(displaySize));
+                    }
+                    catch( Throwable t ){
+                        ProjectPlugin.trace( CompositeRenderContextImpl.class,"painting labels failed", t );
+                    }
                 }
 
                 //update the context with the new image

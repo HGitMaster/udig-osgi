@@ -19,6 +19,7 @@ import java.util.Set;
 import net.refractions.udig.catalog.CatalogPlugin;
 import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IGeoResource;
+import net.refractions.udig.catalog.IRepository;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
@@ -211,25 +212,28 @@ public class EndConnectionState extends State {
     }
 
     public static Collection<IService> constructServices( IProgressMonitor monitor, Map<String, Serializable> params, Collection<URL> urls ) {
-
         // use the parameters/url to acquire a set of services
+        //
         IServiceFactory sFactory = CatalogPlugin.getDefault().getServiceFactory();
+        IRepository local = CatalogPlugin.getDefault().getLocal();
+        
         monitor.setTaskName(Messages.ConnectionState_task);
 
         Collection<IService> services = new HashSet<IService>();
-        if (urls != null) {
+        if (urls != null && !urls.isEmpty()) {        
             for( URL url : urls ) {
                 Collection<IService> searchResult = searchLocalCatalog(url, monitor);
                 if (searchResult.isEmpty()) {
-                    services.addAll(sFactory.createService(url));
+                    List<IService> created = sFactory.createService(url);
+                    services.addAll(created);
                 } else {
                     services.addAll(searchResult);
                 }
             }
         } 
         
-        if( params!=null ){
-            Set<IService> results = new HashSet<IService>(sFactory.createService(params));
+        if( params!=null && !params.isEmpty()){
+            Set<IService> results = new HashSet<IService>(sFactory.createService(params));            
             for( IService service : results ) {
                 Collection<IService> searchResult = searchLocalCatalog(service.getIdentifier(), monitor);
                 if (searchResult.isEmpty() ) {
@@ -238,8 +242,7 @@ public class EndConnectionState extends State {
                     services.addAll(searchResult);
                 }
             }
-        }
-        
+        }        
         return services;
     }
 
@@ -289,12 +292,11 @@ public class EndConnectionState extends State {
         if ((errors == null || errors.isEmpty()) && nextState == null) {
             return null;
         } else {
-            if (!errors.isEmpty()) {
+            if (errors != null && !errors.isEmpty()) {
                 return new ConnectionErrorState(errors);
             } else {
                 return nextState;
             }
-
         }
 
     }

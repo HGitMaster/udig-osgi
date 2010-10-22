@@ -15,12 +15,18 @@
 package net.refractions.udig.tutorials.examples;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
+import javax.sound.midi.MidiDevice.Info;
+
 import net.refractions.udig.catalog.CatalogPlugin;
+import net.refractions.udig.catalog.IRepository;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IServiceFactory;
+import net.refractions.udig.ui.ProgressManager;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -38,22 +44,31 @@ import org.osgi.framework.Bundle;
  */
 public class CatalogExample {
 
+    public static void addFileToCatalog() throws Exception {        
+        File file = new File( "C:\\data\\cities.shp" );
+        URL url = file.toURI().toURL();
+        
+        IProgressMonitor monitor = ProgressManager.instance().get();
+        
+        IRepository local = CatalogPlugin.getDefault().getLocal();
+        IService service = local.acquire( url, monitor );        
+    }
+    
 	/**
-	 * 
+	 * This is the "long" way to add an entry to the catalog.
 	 */
-	public CatalogExample() throws Exception {
-		
-		IStatus status = new Status(IStatus.ERROR, CatalogPlugin.ID, "error message");
-		CatalogPlugin.getDefault().getLog().log( status );
-		
-		CatalogPlugin.getDefault().getBundle();		
-		Bundle bundle = Platform.getBundle( CatalogPlugin.ID );
-		
+	public static void addFileToCatalogLong() throws Exception {
 		File file = new File( "C:\\data\\cities.shp" );
+		URL url = file.toURI().toURL();
 		
 		IServiceFactory serviceFactory = CatalogPlugin.getDefault().getServiceFactory();
-		List<IService> created = serviceFactory.createService( file.toURL() );
-				
+		List<IService> created = serviceFactory.createService( url );
+		
+		IRepository local = CatalogPlugin.getDefault().getLocal();
+		for( IService service : created ){
+		    IService registered = local.add(service);
+		    //...
+		}
 	}
 
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.refractions.udig.mapgraphic; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.mapgraphic.MapGraphicPlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -15,10 +15,10 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project.ui;visibility:=reexport,
  net.refractions.udig.style;visibility:=reexport,
  net.refractions.udig.style.sld,
- org.geotools.render;bundle-version="2.6.2",
+ org.geotools.render;bundle-version="2.6.5",
  org.opengis.geoapi;bundle-version="2.3.0",
- org.geotools.referencing;bundle-version="2.6.2",
- org.geotools.api;bundle-version="2.6.2"
+ org.geotools.referencing;bundle-version="2.6.5",
+ org.geotools.api;bundle-version="2.6.5"
 Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.mapgraphic,
  net.refractions.udig.mapgraphic.grid,

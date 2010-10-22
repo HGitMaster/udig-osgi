@@ -20,13 +20,15 @@
             name="Map Graphic"/>
    </extension>
    <extension
+         id="net.refractions.udig.mapgraphic.decoratorConnection"
          point="net.refractions.udig.catalog.ui.connectionFactory">
          <factory class="net.refractions.udig.mapgraphic.internal.ui.MapGraphicConnectionFactory"
-            id="net.refractions.udig.mapgraphic.wizardPageId"/>
+            id="net.refractions.udig.mapgraphic.decoratorFactory"/>
       <wizardPage
             class="net.refractions.udig.mapgraphic.internal.ui.MapGraphicWizardPage"
             description="%mapGraphic.wizardPageDescription"
             icon="icons/obj16/graphic_obj.gif"
+            id="net.refractions.udig.mapgraphic.decoratorPage"
             name="%mapGraphic.wizardPageName"/>
    </extension>
    <extension
@@ -36,8 +38,8 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            id="net.refractions.udig.mapgraphic.actionSet1"
-            label="net.refractions.udig.mapgraphic.actionSet1"
+            id="net.refractions.udig.mapgraphic.commonDecorators"
+            label="Common Decorators"
             visible="false">
          <action
                class="net.refractions.udig.mapgraphic.scalebar.ScalebarAction"
@@ -64,10 +66,10 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="net.refractions.udig.ui.mapPerspective">
-         <actionSet id="net.refractions.udig.mapgraphic.actionSet1"/>
+         <actionSet id="net.refractions.udig.mapgraphic.commonDecorators"/>
       </perspectiveExtension>
       <perspectiveExtension targetID="net.refractions.udig.ui.stylePerspective">
-         <actionSet id="net.refractions.udig.mapgraphic.actionSet1"/>
+         <actionSet id="net.refractions.udig.mapgraphic.commonDecorators"/>
       </perspectiveExtension>
    </extension>
    <extension

@@ -19,16 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 
 /**
  * This class is used to determine whether a FeatureEditor can be used to edit a feature of a given
  * SimpleFeatureType.
  * <p>
- * This class uses the SimpleFeatureType element of the FeatureEditor Extension point to determine whether
- * the editor can be used. See the FeatureEditor extension point declaration for more information.
+ * This class uses the SimpleFeatureType element of the FeatureEditor Extension point to determine
+ * whether the editor can be used. See the FeatureEditor extension point declaration for more
+ * information.
  * </p>
  * 
  * @author jones
@@ -44,7 +45,7 @@ public class FeatureTypeMatch {
      */
     protected static class AttributeMatcher {
         String name;
-        Class type;
+        Class< ? > type;
 
         /**
          * New instance.
@@ -66,7 +67,8 @@ public class FeatureTypeMatch {
          * @param attr
          * @return
          */
-        public AttributeDescriptor match( SimpleFeatureType featureType, List<AttributeDescriptor> used ) {
+        public AttributeDescriptor match( SimpleFeatureType featureType,
+                List<AttributeDescriptor> used ) {
             if (name != null) {
                 AttributeDescriptor attr = featureType.getDescriptor(name);
                 if (type == null || attr == null)
@@ -82,6 +84,20 @@ public class FeatureTypeMatch {
                 }
             }
             return null;
+        }
+        @Override
+        public String toString() {
+            StringBuffer buf = new StringBuffer();
+            buf.append("match(");
+            if (this.name != null) {
+                buf.append(this.name);
+            }
+            if (this.type != null) {
+                buf.append(" ");
+                buf.append(type.getSimpleName());
+            }
+            buf.append(")");
+            return buf.toString();
         }
     }
     /** A matcher that matches all FeatureTypes */
@@ -112,7 +128,7 @@ public class FeatureTypeMatch {
             try {
                 this.namespace = new URI(typeName.getAttribute("namespace")); //$NON-NLS-1$
             } catch (Exception e) {
-                ProjectUIPlugin.log(Messages.FeatureTypeMatch_BadURI, e); 
+                ProjectUIPlugin.log(Messages.FeatureTypeMatch_BadURI, e);
             }
         } else {
             IConfigurationElement[] attributes = element.getChildren("attribute"); //$NON-NLS-1$
@@ -126,10 +142,21 @@ public class FeatureTypeMatch {
 
     }
     /**
-     * Returns >-1 if the editor has specified a SimpleFeatureType declaration that matches the SimpleFeature
-     * passed in as a parameter. Each inaccuracy increases the count by 1. a 0 is a perfect match,
-     * using the featureType name and namespace. 1 would be all the attributeTypes have a name and
-     * type and there are no extra attributes in the feature's feature type.
+     * @param element
+     * @return true if matches( element ) is greater the -1
+     */
+    public boolean isMatch( Object element ) {
+        int matches = matches(element);
+        return matches > -1;
+    }
+
+    public static int PERFECT = 0;
+    public static int NO_MATCH = -1;
+    /**
+     * Returns >-1 if the editor has specified a SimpleFeatureType declaration that matches the
+     * SimpleFeature passed in as a parameter. Each inaccuracy increases the count by 1. a 0 is a
+     * perfect match, using the featureType name and namespace. 1 would be all the attributeTypes
+     * have a name and type and there are no extra attributes in the feature's feature type.
      * <p>
      * The matching is done as follows:
      * <ul>
@@ -148,45 +175,78 @@ public class FeatureTypeMatch {
      * </ul>
      * 
      * @param element
-     * @return true if the editor has specified a SimpleFeatureType declaration that matches the SimpleFeature
-     *         passed in as a parameter.
+     * @return 0 for a perfect match,
      */
     public int matches( Object element ) {
-        int accuracy = 0;
-        if (element instanceof SimpleFeature) {
-            SimpleFeature feature = (SimpleFeature) element;
+        SimpleFeatureType schema = null;
+        if (element instanceof SimpleFeatureType) {
+            schema = (SimpleFeatureType) element;
+        } else if (element instanceof SimpleFeatureType) {
+            schema = (SimpleFeatureType) element;
+        }
+
+        if (schema != null) {
+            Name featureName = schema.getName();
             if (namespace != null) {
-                if (namespace.equals(feature.getFeatureType().getName().getNamespaceURI())
-                        && typeName.equals(feature.getName().getLocalPart()))
-                    return 0;
-                return -1;
+
+                if (namespace.equals(featureName.getNamespaceURI())
+                        && typeName.equals(featureName.getLocalPart())) {
+                    return PERFECT;
+                }
+                return NO_MATCH;
             }
-            if (attributes.length == 0)
-                return -1;
+            if (attributes.length == 0) {
+                return NO_MATCH;
+            }
+            int accuracy = 0;
             accuracy++;
             List<AttributeDescriptor> matched = new ArrayList<AttributeDescriptor>();
+            // 1st pass check all named attributes are accounted for
             for( AttributeMatcher current : attributes ) {
-                if (current.name == null)
-                    continue;
-                AttributeDescriptor currentMatch = current.match(feature.getFeatureType(), matched);
-                if (currentMatch == null)
-                    return -1;
+                if (current.name == null) {
+                    continue; // skip
+                }
+                AttributeDescriptor currentMatch = current.match(schema, matched);
+                if (currentMatch == null) {
+                    return NO_MATCH;
+                }
                 matched.add(currentMatch);
             }
+            // section pass check unnamed attributes ... match default geometry type?
             for( AttributeMatcher current : attributes ) {
-                if (current.name != null)
+                if (current.name != null) {
                     continue;
-
+                }
                 accuracy++;
 
-                AttributeDescriptor currentMatch = current.match(feature.getFeatureType(), matched);
-                if (currentMatch == null)
-                    return -1;
+                AttributeDescriptor currentMatch = current.match(schema, matched);
+                if (currentMatch == null) {
+                    return NO_MATCH;
+                }
                 matched.add(currentMatch);
             }
-            accuracy += feature.getFeatureType().getAttributeCount() - matched.size();
+            accuracy += schema.getAttributeCount() - matched.size();
             return accuracy;
         }
-        return -1;
+        return NO_MATCH;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("FeatureTypeMatch ");
+        if (this.namespace != null) {
+            buf.append(this.namespace);
+        }
+        buf.append(this.typeName);
+        if (this.attributes != null) {
+            for( int i = 0; i < this.attributes.length; i++ ) {
+                buf.append(this.attributes[i]);
+                if (i < this.attributes.length - 1) {
+                    buf.append(",");
+                }
+            }
+        }
+        return buf.toString();
     }
 }

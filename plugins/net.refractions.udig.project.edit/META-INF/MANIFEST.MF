@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: net.refractions.udig.project.edit; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.project.internal.provider.ProjectEditPlugin$Implementation
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -15,8 +15,8 @@ Require-Bundle: net.refractions.udig.project;visibility:=reexport,
  org.eclipse.emf.edit.ui;visibility:=reexport,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog.ui,
- org.geotools.main;bundle-version="2.6.0",
- org.geotools.wms;bundle-version="2.6.0",
+ org.geotools.main;bundle-version="2.6.5",
+ org.geotools.wms;bundle-version="2.6.5",
  org.opengis.geoapi;bundle-version="2.3.0"
 Import-Package: org.picocontainer
 Bundle-ActivationPolicy: lazy

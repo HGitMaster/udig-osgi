@@ -42,6 +42,7 @@ import net.refractions.udig.catalog.ISearch;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.IResolveChangeEvent.Type;
 import net.refractions.udig.catalog.IResolveDelta.Kind;
+import net.refractions.udig.catalog.IServiceInfo;
 import net.refractions.udig.catalog.ui.internal.Messages;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -237,26 +238,25 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
             if (data == null){
                 return null;
             }
-            if( resolve.getID().getTypeQualifier() != null ){
-                return data.text + " ("+resolve.getID().getTypeQualifier() +")";
+            if( resolve instanceof IService ){
+                if( resolve.getID().getTypeQualifier() != null ){
+                    return data.text + " ("+resolve.getID().getTypeQualifier() +")";
+                }
             }
-            else {
-                return data.text;
-            }
+            return data.text;            
         }
 
         decorated.put(resolve, null);
         if (resolve.getTitle() != null) {
             LabelData data = new LabelData();
             data.text = resolve.getTitle();
-            decorated.put(resolve, data);
-            
-            if( resolve.getID().getTypeQualifier() != null ){
-                return data.text + " ("+resolve.getID().getTypeQualifier() +")";
+            decorated.put(resolve, data);       
+            if( resolve instanceof IService ){
+                if( resolve.getID().getTypeQualifier() != null ){
+                    return data.text + " ("+resolve.getID().getTypeQualifier() +")";
+                }
             }
-            else {
-                return data.text;
-            }
+            return data.text;            
         }
         toDecorate.offer(resolve);
         textWorker.schedule();
@@ -403,8 +403,11 @@ public class ResolveTitlesDecorator implements ILabelDecorator, IColorDecorator,
                         		service.getPersistentProperties().put(resource.getID() + "_title", data.text);
                         	} else if(element instanceof IService) {
                         		IService service = (IService) element;
-                        		data.text = service.getInfo(monitor).getTitle();
-                        		service.getPersistentProperties().put("title", data.text);
+                        		IServiceInfo info = service.getInfo(monitor);
+                        		if( info != null ){
+                        		    data.text = info.getTitle();
+                        		    service.getPersistentProperties().put("title", data.text);
+                        		}
                         	} else if(element instanceof IProcess) {
                         		IProcess proc = (IProcess) element;
                         		data.text = proc.getInfo(monitor).getTitle();

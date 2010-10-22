@@ -32,8 +32,6 @@ import net.refractions.udig.ui.operations.AbstractPropertyValue;
 import net.refractions.udig.ui.operations.PropertyValue;
 
 import org.geotools.data.FeatureStore;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  * returns true if the layer has a FeatureStore as a resource.
@@ -59,16 +57,13 @@ public class FeatureStoreResourceProperty extends AbstractPropertyValue<ILayer>
     public boolean isTrue( final ILayer object, String value ) {
         isEvaluating.set(true);
         try {
-            final FeatureStore<SimpleFeatureType, SimpleFeature> store = object.getResource(FeatureStore.class, ProgressManager
-                    .instance().get());
+             
             object.getBlackboard().addListener(new IBlackboardListener(){
-
                 public void blackBoardChanged( BlackboardEvent event ) {
                     if (event.getKey().equals(ProjectBlackboardConstants.LAYER__DATA_QUERY)) {
                         notifyListeners(object);
                     }
                 }
-
                 public void blackBoardCleared( IBlackboard source ) {
                     notifyListeners(object);
                 }
@@ -80,7 +75,12 @@ public class FeatureStoreResourceProperty extends AbstractPropertyValue<ILayer>
                 CatalogPlugin.getDefault().getLocalCatalog().addCatalogListener(
                         new ObjectPropertyCatalogListener(object, resource, isEvaluating, this));
             }
-            return store != null;
+            
+//TODO codereview: This resolves http://jira.codehaus.org/browse/UDIG-1686
+//            final FeatureStore<?,?> store  = object.getResource(FeatureStore.class, ProgressManager.instance().get());
+//            return store != null;
+            boolean canResolve = resource.canResolve(FeatureStore.class);
+            return canResolve;
         } catch (Exception e) {
             return false;
         } finally {

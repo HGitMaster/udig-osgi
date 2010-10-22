@@ -41,18 +41,18 @@
 
   ;Name and file
   ;:TODO: Change this with each release of uDIG!
-  Name "uDig VersionXXXX"
-  OutFile "udig-VersionXXXX.exe"
+  Name "uDig 1.2.0"
+  OutFile "udig-1.2.0.exe"
   ;:TODO: End of changes required when upgrading installer to new version of uDIG.
 
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\uDig\VersionXXXX"
+  InstallDir "$PROGRAMFILES\uDig\1.2.0"
   
   ;Get installation folder from registry if available - This will check the registry to see if an install directory
   ;is present, and if so, replace the value in InstallDir with it.  If there is no value, the installer will fall
   ;back on InstallDir as the default install directory.
-  InstallDirRegKey HKCU "Software\VersionXXXX" ""
+  InstallDirRegKey HKCU "Software\1.2.0" ""
 
 ;--------------------------------
 ;Variables
@@ -88,9 +88,7 @@
   
   ;You can obviously change any of this text junk. -ch
   !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the \
-      installation of uDig \r\n \r\nNote that this is the first \
-      attempt by the uDig project to create \
-      a Windows executable installer.  \
+      installation of uDig \r\n \r\n\
       Please report any problems or suggestions for improvement to \
       udig-devel@lists.refractions.net. \r\n \r\n \
       Click Next to continue."
@@ -126,7 +124,7 @@
   ;you like the uDig start menu
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\uDig1.2-M6" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\uDig1.2" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -164,7 +162,7 @@ Section "uDig Section" SecuDig
   File /r udig
     
   ;Store installation folderh
-  WriteRegStr HKCU "Software\uDigVersionXXXX" "" $INSTDIR
+  WriteRegStr HKCU "Software\uDig1.2.0" "" $INSTDIR
   
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -220,7 +218,7 @@ Section "uDig Section" SecuDig
      DONE:
     SetOutPath "$INSTDIR\udig\"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\uDig.lnk" \
-                   "$INSTDIR\udig\udig.bat" "-data $\"%HOMEDRIVE%%HOMEPATH%\uDig\$\" -configuration $\"%APPDATA%\udig\VersionXXXX\$\" -vm $\"$INSTDIR\udig\jre\bin\javaw.exe$\"" \
+                   "$INSTDIR\udig\udig.bat" "-data $\"%HOMEDRIVE%%HOMEPATH%\uDig\$\" -configuration $\"%APPDATA%\udig\1.2.0\$\" -vm $\"$INSTDIR\udig\jre\bin\javaw.exe$\"" \
                    "$INSTDIR\udig\icons\32-uDigIcon.ico" 0 SW_SHOWNORMAL
 
     ;Set path back to normal
@@ -272,7 +270,7 @@ Section "Uninstall"
   RMDIR "$INSTDIR\.."
 
   ;REMOVE THE CONFIGURATION DATA 
-  RMDIR /r "$APPDATA\uDig\uDigVersionXXXX"
+  RMDIR /r "$APPDATA\uDig\uDig1.2.0"
   ;WILL REMOVE IF THERE ARE NO MORE UDIG INSTALLS
   RMDIR "$APPDATA\uDig"
   
@@ -305,7 +303,7 @@ Section "Uninstall"
     
   RMDIR /r "$SMPROGRAMS\$MUI_TEMP"
 
-  DeleteRegKey /ifempty HKCU "Software\uDig1.2-M6"
+  DeleteRegKey /ifempty HKCU "Software\uDig1.2"
 
 SectionEnd
 

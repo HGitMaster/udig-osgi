@@ -24,10 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.refractions.udig.catalog.internal.CatalogImpl;
 import net.refractions.udig.catalog.internal.Messages;
-import net.refractions.udig.catalog.internal.ResolveChangeEvent;
-import net.refractions.udig.catalog.internal.ResolveDelta;
 import net.refractions.udig.ui.ErrorManager;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -337,13 +334,14 @@ public abstract class IService implements IResolve {
                         // broadcast the change - code taken from ArcServiceImpl
                         
                         // this delta describes what has changed
+                        /*
                         IResolveDelta delta = new ResolveDelta(this, IResolveDelta.Kind.CHANGED);
                         
                         // fire the change
                         CatalogImpl localCatalog = (CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog();
                         localCatalog.fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
+                        */
                     }
-
                 }
             }
         }

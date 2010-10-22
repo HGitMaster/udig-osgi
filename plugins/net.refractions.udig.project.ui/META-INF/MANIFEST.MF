@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.refractions.udig.project.ui; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: net.refractions.udig.project.ui.internal.ProjectUIPlugin
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
@@ -11,6 +11,7 @@ Export-Package: net.refractions.udig.project.internal.ui.wizard,
  net.refractions.udig.project.ui,
  net.refractions.udig.project.ui.commands,
  net.refractions.udig.project.ui.controls,
+ net.refractions.udig.project.ui.feature,
  net.refractions.udig.project.ui.internal,
  net.refractions.udig.project.ui.internal.actions,
  net.refractions.udig.project.ui.internal.adapters,
@@ -50,15 +51,15 @@ Require-Bundle: net.refractions.udig.style.sld,
  net.refractions.udig.project.edit,
  org.eclipse.ui.cheatsheets,
  org.eclipse.core.expressions,
- org.geotools.api;bundle-version="2.6.0",
- org.geotools.main;bundle-version="2.6.0",
- org.geotools.brewer;bundle-version="2.6.0",
- org.geotools.render;bundle-version="2.6.0",
- org.geotools.wms;bundle-version="2.6.0",
- org.geotools.coverage;bundle-version="2.6.0",
- org.geotools.geotiff;bundle-version="2.6.0",
- org.geotools.metadata;bundle-version="2.6.0",
- org.geotools.referencing;bundle-version="2.6.0"
+ org.geotools.api;bundle-version="2.6.5",
+ org.geotools.main;bundle-version="2.6.5",
+ org.geotools.brewer;bundle-version="2.6.5",
+ org.geotools.render;bundle-version="2.6.5",
+ org.geotools.wms;bundle-version="2.6.5",
+ org.geotools.coverage;bundle-version="2.6.5",
+ org.geotools.geotiff;bundle-version="2.6.5",
+ org.geotools.metadata;bundle-version="2.6.5",
+ org.geotools.referencing;bundle-version="2.6.5"
 Import-Package: com.lowagie.text;resolution:=optional,
  com.lowagie.text.pdf,
  com.vividsolutions.jts.geom,

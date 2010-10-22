@@ -30,11 +30,11 @@ import com.vividsolutions.jts.geom.Envelope;
  * The specific metadata to be searched is arbitrary; we are providing a limited
  * search based on plain text and an extent.
  * 
- * @author Jody Garnett (Refractions Research)
+ * @author Jody Garnett (Lisasoft)
  * 
  * @since 1.2.0
  * @see ICatalog
- * @see ILocalCatalog
+ * @see IRepository
  */
 public abstract class ISearch implements IResolve {
 	/**

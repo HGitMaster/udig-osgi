@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: net.refractions.udig.catalog.geotiff; singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: udig.refractions.net
 Bundle-Localization: plugin
 Eclipse-BuddyPolicy: ext
@@ -26,4 +26,5 @@ Import-Package: com.sun.media.jai.imageioimpl,
  org.opengis.referencing.crs
 Bundle-Activator: net.refractions.udig.catalog.internal.geotiff.GeoTiffPlugin
 Bundle-ActivationPolicy: lazy
+Export-Package: net.refractions.udig.catalog.internal.geotiff;x-friends:="net.refractions.udig.catalog.test.geotiff"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

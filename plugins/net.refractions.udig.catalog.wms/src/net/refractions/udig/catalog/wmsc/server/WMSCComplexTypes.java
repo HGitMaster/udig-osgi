@@ -469,20 +469,24 @@ public interface WMSCComplexTypes {
             WMSCCapabilities capabilities = new WMSCCapabilities();
 
             for( int i = 0; i < value.length; i++ ) {
-                if (sameName(elems[0], value[i])) {
-                    Service x = ((Service)value[i].getValue());
+                ElementValue elementValue = value[i];
+                // Service
+                if (sameName(elems[0], elementValue)) {
+                    Service x = ((Service)elementValue.getValue());
                     capabilities.setService(x);
                 }
-                if (sameName(elems[1], value[i])) {
-                    Capability c = ((Capability)value[i].getValue());
+                // Capability
+                if (sameName(elems[1], elementValue)) {
+                    Capability c = ((Capability)elementValue.getValue());
                     capabilities.setCapabilitiy(c);
                 }
-                if (sameName(elems[2], value[i])) {
-                    //vendor specific capabilities for 1.0alpha version of
-                    //geowebcache; once geowebcache fixed up this should not be necessary as
-                    //this should be inside a capabilities
+                // VendorSpecificCapabilities
+                if (sameName(elems[2], elementValue)) {
+                    // vendor specific capabilities for 1.0alpha version of
+                    // geowebcache; once geowebcache fixed up this should not be necessary as
+                    // this should be inside a capabilities
                     Capability c= new Capability();
-                    VendorSpecificCapabilities cs = ((VendorSpecificCapabilities)value[i].getValue());
+                    VendorSpecificCapabilities cs = ((VendorSpecificCapabilities)elementValue.getValue());
                     c.setVendorCapabilities(cs);
                     capabilities.setCapabilitiy(c);
                 }
@@ -734,11 +738,19 @@ public interface WMSCComplexTypes {
 //                    service.setKeywordList((String[]) value[i].getValue());
 //                }
 
+                // OnlineResource
                 if (sameName(elems[2], value[i])) {
-                    try {
-                        service.setOnlineResource(new URL((String)value[i].getValue()));
-                    } catch (MalformedURLException e) {
-                        WmsPlugin.log("Cannot convert string to url: " + (String)value[i].getValue(), e); //$NON-NLS-1$
+                    String spec = (String) value[i].getValue();
+                    if( spec == null || spec.length() == 0){
+                        // Service not avaialble
+                        System.out.println("OnlineResource cannot be empty");
+                    }
+                    else {
+                        try {
+                            service.setOnlineResource(new URL( spec ));
+                        } catch (MalformedURLException e) {
+                           System.out.println("OnlineResource cannot string to url: " +spec); //$NON-NLS-1$                           
+                        }
                     }
                 }
 

@@ -15,7 +15,9 @@ import net.refractions.udig.printing.model.BoxPrinter;
 import net.refractions.udig.printing.model.Connection;
 import net.refractions.udig.printing.model.ModelPackage;
 
+import org.eclipse.core.internal.runtime.AdapterManager;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.notify.Notification;
@@ -34,29 +36,33 @@ import org.eclipse.swt.widgets.Display;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getSourceConnections <em>Source Connections</em>}</li>
- *   <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getTargetConnections <em>Target Connections</em>}</li>
- *   <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getBoxPrinter <em>Box Printer</em>}</li>
- *   <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getID <em>ID</em>}</li>
+ * <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getSourceConnections <em>Source
+ * Connections</em>}</li>
+ * <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getTargetConnections <em>Target
+ * Connections</em>}</li>
+ * <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getBoxPrinter <em>Box Printer</em>}</li>
+ * <li>{@link net.refractions.udig.printing.model.impl.BoxImpl#getID <em>ID</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class BoxImpl extends ElementImpl implements Box {
 
-	/**
-     * The cached value of the '{@link #getSourceConnections() <em>Source Connections</em>}' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
+    /**
+     * The cached value of the '{@link #getSourceConnections() <em>Source Connections</em>}'
+     * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @see #getSourceConnections()
      * @generated
      * @ordered
      */
     protected EList<Connection> sourceConnections;
 
-	/**
-     * The cached value of the '{@link #getTargetConnections() <em>Target Connections</em>}' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
+    /**
+     * The cached value of the '{@link #getTargetConnections() <em>Target Connections</em>}'
+     * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @see #getTargetConnections()
      * @generated
      * @ordered
@@ -83,20 +89,20 @@ public class BoxImpl extends ElementImpl implements Box {
      */
     protected BoxPrinter boxPrinter = BOX_PRINTER_EDEFAULT;
 
-	/**
-     * The default value of the '{@link #getID() <em>ID</em>}' attribute.
-     * <!-- begin-user-doc -->
+    /**
+     * The default value of the '{@link #getID() <em>ID</em>}' attribute. <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * 
      * @see #getID()
      * @generated
      * @ordered
      */
     protected static final String ID_EDEFAULT = null;
 
-	/**
-     * The cached value of the '{@link #getID() <em>ID</em>}' attribute.
-     * <!-- begin-user-doc -->
+    /**
+     * The cached value of the '{@link #getID() <em>ID</em>}' attribute. <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * 
      * @see #getID()
      * @generated
      * @ordered
@@ -112,8 +118,9 @@ public class BoxImpl extends ElementImpl implements Box {
         super();
     }
 
-	/**
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
@@ -121,30 +128,35 @@ public class BoxImpl extends ElementImpl implements Box {
         return ModelPackage.Literals.BOX;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     public List<Connection> getSourceConnections() {
         if (sourceConnections == null) {
-            sourceConnections = new EObjectResolvingEList<Connection>(Connection.class, this, ModelPackage.BOX__SOURCE_CONNECTIONS);
+            sourceConnections = new EObjectResolvingEList<Connection>(Connection.class, this,
+                    ModelPackage.BOX__SOURCE_CONNECTIONS);
         }
         return sourceConnections;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     public List<Connection> getTargetConnections() {
         if (targetConnections == null) {
-            targetConnections = new EObjectResolvingEList<Connection>(Connection.class, this, ModelPackage.BOX__TARGET_CONNECTIONS);
+            targetConnections = new EObjectResolvingEList<Connection>(Connection.class, this,
+                    ModelPackage.BOX__TARGET_CONNECTIONS);
         }
         return targetConnections;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     public BoxPrinter getBoxPrinter() {
@@ -156,136 +168,141 @@ public class BoxImpl extends ElementImpl implements Box {
         setBoxPrinterGen(value);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
-    public void setBoxPrinterGen(BoxPrinter newBoxPrinter) {
+    public void setBoxPrinterGen( BoxPrinter newBoxPrinter ) {
         BoxPrinter oldBoxPrinter = boxPrinter;
         boxPrinter = newBoxPrinter;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.BOX__BOX_PRINTER, oldBoxPrinter, boxPrinter));
+            eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.BOX__BOX_PRINTER,
+                    oldBoxPrinter, boxPrinter));
     }
 
-	/**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     public String getID() {
         return iD;
     }
 
-	/**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
-    public void setID(String newID) {
+    public void setID( String newID ) {
         String oldID = iD;
         iD = newID;
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.BOX__ID, oldID, iD));
     }
 
-	/**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
-    public Object eGet(int featureID, boolean resolve, boolean coreType) {
-        switch (featureID) {
-            case ModelPackage.BOX__SOURCE_CONNECTIONS:
-                return getSourceConnections();
-            case ModelPackage.BOX__TARGET_CONNECTIONS:
-                return getTargetConnections();
-            case ModelPackage.BOX__BOX_PRINTER:
-                return getBoxPrinter();
-            case ModelPackage.BOX__ID:
-                return getID();
+    public Object eGet( int featureID, boolean resolve, boolean coreType ) {
+        switch( featureID ) {
+        case ModelPackage.BOX__SOURCE_CONNECTIONS:
+            return getSourceConnections();
+        case ModelPackage.BOX__TARGET_CONNECTIONS:
+            return getTargetConnections();
+        case ModelPackage.BOX__BOX_PRINTER:
+            return getBoxPrinter();
+        case ModelPackage.BOX__ID:
+            return getID();
         }
         return super.eGet(featureID, resolve, coreType);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void eSet(int featureID, Object newValue) {
-        switch (featureID) {
-            case ModelPackage.BOX__SOURCE_CONNECTIONS:
-                getSourceConnections().clear();
-                getSourceConnections().addAll((Collection<? extends Connection>)newValue);
-                return;
-            case ModelPackage.BOX__TARGET_CONNECTIONS:
-                getTargetConnections().clear();
-                getTargetConnections().addAll((Collection<? extends Connection>)newValue);
-                return;
-            case ModelPackage.BOX__BOX_PRINTER:
-                setBoxPrinter((BoxPrinter)newValue);
-                return;
-            case ModelPackage.BOX__ID:
-                setID((String)newValue);
-                return;
+    public void eSet( int featureID, Object newValue ) {
+        switch( featureID ) {
+        case ModelPackage.BOX__SOURCE_CONNECTIONS:
+            getSourceConnections().clear();
+            getSourceConnections().addAll((Collection< ? extends Connection>) newValue);
+            return;
+        case ModelPackage.BOX__TARGET_CONNECTIONS:
+            getTargetConnections().clear();
+            getTargetConnections().addAll((Collection< ? extends Connection>) newValue);
+            return;
+        case ModelPackage.BOX__BOX_PRINTER:
+            setBoxPrinter((BoxPrinter) newValue);
+            return;
+        case ModelPackage.BOX__ID:
+            setID((String) newValue);
+            return;
         }
         super.eSet(featureID, newValue);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
-    public void eUnset(int featureID) {
-        switch (featureID) {
-            case ModelPackage.BOX__SOURCE_CONNECTIONS:
-                getSourceConnections().clear();
-                return;
-            case ModelPackage.BOX__TARGET_CONNECTIONS:
-                getTargetConnections().clear();
-                return;
-            case ModelPackage.BOX__BOX_PRINTER:
-                setBoxPrinter(BOX_PRINTER_EDEFAULT);
-                return;
-            case ModelPackage.BOX__ID:
-                setID(ID_EDEFAULT);
-                return;
+    public void eUnset( int featureID ) {
+        switch( featureID ) {
+        case ModelPackage.BOX__SOURCE_CONNECTIONS:
+            getSourceConnections().clear();
+            return;
+        case ModelPackage.BOX__TARGET_CONNECTIONS:
+            getTargetConnections().clear();
+            return;
+        case ModelPackage.BOX__BOX_PRINTER:
+            setBoxPrinter(BOX_PRINTER_EDEFAULT);
+            return;
+        case ModelPackage.BOX__ID:
+            setID(ID_EDEFAULT);
+            return;
         }
         super.eUnset(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
-    public boolean eIsSet(int featureID) {
-        switch (featureID) {
-            case ModelPackage.BOX__SOURCE_CONNECTIONS:
-                return sourceConnections != null && !sourceConnections.isEmpty();
-            case ModelPackage.BOX__TARGET_CONNECTIONS:
-                return targetConnections != null && !targetConnections.isEmpty();
-            case ModelPackage.BOX__BOX_PRINTER:
-                return BOX_PRINTER_EDEFAULT == null ? boxPrinter != null : !BOX_PRINTER_EDEFAULT.equals(boxPrinter);
-            case ModelPackage.BOX__ID:
-                return ID_EDEFAULT == null ? iD != null : !ID_EDEFAULT.equals(iD);
+    public boolean eIsSet( int featureID ) {
+        switch( featureID ) {
+        case ModelPackage.BOX__SOURCE_CONNECTIONS:
+            return sourceConnections != null && !sourceConnections.isEmpty();
+        case ModelPackage.BOX__TARGET_CONNECTIONS:
+            return targetConnections != null && !targetConnections.isEmpty();
+        case ModelPackage.BOX__BOX_PRINTER:
+            return BOX_PRINTER_EDEFAULT == null ? boxPrinter != null : !BOX_PRINTER_EDEFAULT
+                    .equals(boxPrinter);
+        case ModelPackage.BOX__ID:
+            return ID_EDEFAULT == null ? iD != null : !ID_EDEFAULT.equals(iD);
         }
         return super.eIsSet(featureID);
     }
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
+        if (eIsProxy())
+            return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (boxPrinter: ");
@@ -327,7 +344,7 @@ public class BoxImpl extends ElementImpl implements Box {
 
     public void notifyPropertyChange( final PropertyChangeEvent event ) {
         Display display = Display.getCurrent();
-        if( display==null ){
+        if (display == null) {
             Display.getDefault().asyncExec(new Runnable(){
                 public void run() {
                     for( IPropertyChangeListener l : listeners ) {
@@ -335,11 +352,11 @@ public class BoxImpl extends ElementImpl implements Box {
                     }
                 }
             });
-        }else{
+        } else {
             for( IPropertyChangeListener l : listeners ) {
                 l.propertyChange(event);
             }
-            
+
         }
     }
 
@@ -351,12 +368,17 @@ public class BoxImpl extends ElementImpl implements Box {
         listeners.remove(l);
     }
 
-	@SuppressWarnings("unchecked")
-    public Object getAdapter(Class adapter) {
-	    if( getBoxPrinter()!=null ) {
-	        return ((IAdaptable) getBoxPrinter()).getAdapter(adapter);
-	    }
-	    return null;
-	}
-    
+    @SuppressWarnings("unchecked")
+    public Object getAdapter( Class adapter ) {
+        Object obj = Platform.getAdapterManager().getAdapter(this, adapter);
+        if (obj != null) {
+            return obj; // an explicit adapter factory for box was defined
+        }
+        BoxPrinter printer = getBoxPrinter();
+        if (printer != null) {
+            return printer.getAdapter(adapter);
+        }
+        return null;
+    }
+
 } // BoxImpl

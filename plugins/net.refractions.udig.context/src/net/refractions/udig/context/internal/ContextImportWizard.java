@@ -19,6 +19,7 @@ import net.refractions.udig.catalog.ICatalog;
 import net.refractions.udig.catalog.IGeoResource;
 import net.refractions.udig.catalog.IResolve;
 import net.refractions.udig.catalog.IService;
+import net.refractions.udig.catalog.IServiceFactory;
 import net.refractions.udig.context.ContextPlugin;
 import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.Map;
@@ -246,9 +247,9 @@ public class ContextImportWizard extends Wizard implements IImportWizard {
      * I would really rather the renderers dragged things into the catalog as the need them...
      * </p>
      * 
-     * @param url
-     * @param type
-     * @return
+     * @param url URL used to start searching in the catalog
+     * @param type The returned service must resolve to this type
+     * @return URL of resulting service
      */
     static final private URL service( URL url, Class<?> type ) {
         ICatalog local = CatalogPlugin.getDefault().getLocalCatalog();
@@ -258,15 +259,23 @@ public class ContextImportWizard extends Wizard implements IImportWizard {
                 return service.getIdentifier();
             }
         }
-
-        for( IService candidate : CatalogPlugin.getDefault().getServiceFactory().createService(url) ) {
-            if (candidate.canResolve(type)) {
-                local.add(candidate);
-                return candidate.getIdentifier();
+        IServiceFactory serviceFactory = CatalogPlugin.getDefault().getServiceFactory();
+        List<IService> candidates = serviceFactory.createService(url);
+        try {
+            for( Iterator<IService> i=candidates.iterator(); i.hasNext();){
+                IService service = i.next();
+                if (service.canResolve(type)) {
+                    IService registered = local.add(service);
+                    i.remove(); // don't clean this one up
+                    return registered.getIdentifier();
+                }
             }
         }
+        finally {
+            serviceFactory.dispose( candidates, null );
+        }
         // It is okay if we don't find anything, the user interface
-        // will let the user know - temping to force a brokwn WMS
+        // will let the user know - tempting to force a broken WMS
         // handle onto the catalog though
         return url;
     }

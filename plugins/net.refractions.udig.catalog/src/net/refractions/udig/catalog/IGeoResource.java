@@ -22,10 +22,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
-import net.refractions.udig.catalog.internal.CatalogImpl;
-import net.refractions.udig.catalog.internal.ResolveChangeEvent;
-import net.refractions.udig.catalog.internal.ResolveDelta;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -223,12 +219,13 @@ public abstract class IGeoResource implements IResolve {
                     } else {
                         // could issue a catalog event indicating new information is available
                         // this delta describes what has changed
+                        /*
                         IResolveDelta delta = new ResolveDelta(this, IResolveDelta.Kind.CHANGED);
                         
                         // fire the change
                         CatalogImpl localCatalog = (CatalogImpl) CatalogPlugin.getDefault().getLocalCatalog();
                         localCatalog.fire(new ResolveChangeEvent(this, IResolveChangeEvent.Type.POST_CHANGE, delta));
-
+                        */
                     }
                 }
             }
@@ -386,7 +383,7 @@ public abstract class IGeoResource implements IResolve {
         }
         return title;
     }
-
+    
     public IService service( IProgressMonitor monitor ) throws IOException {
         return service;
     }

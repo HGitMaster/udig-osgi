@@ -57,6 +57,7 @@ import net.refractions.udig.project.ui.UDIGEditorInput;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
@@ -309,7 +310,7 @@ public class MapGraphicBoxPrinter extends AbstractBoxPrinter {
         if (adapter.isAssignableFrom(IGeoResource.class)) {
             return getMapGraphic();
         }
-        return null;
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
     public MapGraphicResource getMapGraphic() {

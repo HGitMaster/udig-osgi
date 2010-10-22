@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.source"
       label="Geotools"
-      version="2.6.2.osgi1"
+      version="2.6.5.osgi1"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
@@ -116,6 +116,13 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.geotools.swing.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>         
+         
    <plugin
          id="org.geotools.shapefile.source"
          download-size="0"

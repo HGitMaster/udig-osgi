@@ -69,8 +69,11 @@ public class Data {
      *
      * @param exportedResource the newly exported resources 
      */
-    public void addNewResource( IGeoResource exportedResource ) {
-        exportedResources .add(exportedResource);
+    public void addNewResource( IGeoResource resource ) {
+        exportedResources.add(resource);
+    }
+    public void addNewResources( Collection<IGeoResource> resources ){
+        exportedResources.addAll( resources );
     }
 
     /**

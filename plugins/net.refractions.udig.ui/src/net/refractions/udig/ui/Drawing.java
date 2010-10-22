@@ -232,8 +232,9 @@ public final class Drawing {
             // TODO
         } else {
             Geometry g = findGeometry(feature, symbolizer);
-            if (g == null)
+            if (g == null){
                 return;
+            }
             if ( mathTransform!=null ){
                 try {
                     g=JTS.transform(g, mathTransform);
@@ -284,6 +285,7 @@ public final class Drawing {
          if( symb instanceof PolygonSymbolizer){
             PolygonSymbolizer polySymb = (PolygonSymbolizer) symb;
             Color stroke=SLDs.polyColor(polySymb);
+            
             double opacity=SLDs.polyFillOpacity(polySymb);
             Color fill=SLDs.polyFill(polySymb);
             
@@ -317,7 +319,7 @@ public final class Drawing {
             PointSymbolizer pointSymbolizer = (PointSymbolizer) symb;
             
             Color c = SLDs.pointColor( pointSymbolizer );
-            Color fill=SLDs.pointFill( pointSymbolizer );
+            Color fill=SLDs.pointFillWithAlpha( pointSymbolizer );
             int width = SLDs.width(SLDs.stroke(pointSymbolizer));
             float[] point=new float[6];
             shape.getPathIterator(null).currentSegment(point);

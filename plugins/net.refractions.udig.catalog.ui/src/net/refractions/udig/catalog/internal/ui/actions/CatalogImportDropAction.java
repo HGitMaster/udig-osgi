@@ -73,9 +73,12 @@ public class CatalogImportDropAction extends IDropAction {
     }
 
     /**
-     * returns true if the data can be imported into the catalog irregardless if it is already in
-     * catalog
-     * 
+     * True if the data can be imported into the catalog (irregardless if it is already in
+     * catalog).
+     * <p>
+     * This is where we check if the data is some form of URL, or file that is worth sending
+     * in the direction of the catalog code.
+     * </p>
      * @param data data to import
      * @return true if the data can be imported into the catalog irregardless if it is already in
      *         catalog

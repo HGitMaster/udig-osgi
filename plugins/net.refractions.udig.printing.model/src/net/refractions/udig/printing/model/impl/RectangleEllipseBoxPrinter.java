@@ -28,6 +28,7 @@ import net.refractions.udig.project.IProjectElement;
 import net.refractions.udig.project.ui.UDIGEditorInput;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -156,7 +157,7 @@ public class RectangleEllipseBoxPrinter extends AbstractBoxPrinter {
 
     @SuppressWarnings("unchecked")
     public Object getAdapter( Class adapter ) {
-        return null;
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
     public Color getLineColor() {

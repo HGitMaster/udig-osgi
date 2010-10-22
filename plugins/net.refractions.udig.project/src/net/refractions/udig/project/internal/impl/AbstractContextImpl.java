@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: AbstractContextImpl.java 29499 2008-02-28 01:06:55Z groldan $
+ * <copyright></copyright> $Id: AbstractContextImpl.java 31753 2010-05-08 07:58:08Z jgarnett $
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -94,7 +94,10 @@ public abstract class AbstractContextImpl implements AbstractContext {
     }
 
     public IEditManager getEditManager() {
-        return getMapInternal().getEditManager();
+        if( getMapInternal() != null){
+            return getMapInternal().getEditManager();
+        }
+        return null;
     }
 
     public Coordinate getPixelSize() {
@@ -118,9 +121,9 @@ public abstract class AbstractContextImpl implements AbstractContext {
     }
 
     public IMapDisplay getMapDisplay() {
-        if (getRenderManager() == null || getRenderManagerInternal().isDisposed() )
+        if (getRenderManager() == null || getRenderManagerInternal().isDisposed() ){
             return null;
-        
+        }        
         return getRenderManager().getMapDisplay();
     }
 

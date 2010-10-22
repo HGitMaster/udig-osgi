@@ -80,8 +80,14 @@ public class CreatePageAction implements IEditorActionDelegate {
 
         Map oldMap = (Map) ((MapEditorInput) input).getProjectElement();
         project = oldMap.getProjectInternal();
-
-        map = (Map) EcoreUtil.copy(oldMap);
+        try {
+            map = (Map) EcoreUtil.copy(oldMap);   
+        }
+        catch( Throwable t ){
+            // unable to copy map?
+            t.printStackTrace();
+            return;
+        }
 
         project.getElementsInternal().add(map);
 

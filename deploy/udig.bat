@@ -1,5 +1,4 @@
-echo on
-setlocal
-cd %~dp0
-start javaw -Xbootclasspath/a:%JAVA_HOME%\jre\lib\ext\clibwrapper_jiio.jar;%JAVA_HOME%\jre\lib\ext\jai_codec.jar;%JAVA_HOME%\jre\lib\ext\jai_core.jar;%JAVA_HOME%\jre\lib\ext\jai_imageio.jar;%JAVA_HOME%\jre\lib\ext\mlibwrapper_jai.jar -cp startup.jar org.eclipse.core.launcher.Main -application net.refractions.udig.ui.uDig %* 
-endlocal
+set GDAL_DATA=%cd%\gdal_data\
+set GDAL_DRIVER_PATH=%cd%\jre\bin\
+
+START /B udig_internal %*

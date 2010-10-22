@@ -21,7 +21,8 @@ import net.refractions.udig.project.internal.Layer;
 import net.refractions.udig.project.internal.SetDefaultStyleProcessor;
 
 /**
- * Sets the default style of the 
+ * Sets the default style of the layer.
+ * 
  * @author Jesse
  * @since 1.1.0
  */
@@ -29,8 +30,8 @@ public class SetStyleInterceptor implements LayerInterceptor {
 
     public void run( Layer layer ) {
         if( layer.getStyleBlackboard().getContent().isEmpty()){
-            SetDefaultStyleProcessor scp = createDefaultStyles(layer.getGeoResource(), layer);
-            scp.run();
+            SetDefaultStyleProcessor defaultStyleProcessor = createDefaultStyles(layer.getGeoResource(), layer);
+            defaultStyleProcessor.run();
         }
     }
 

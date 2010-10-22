@@ -15,7 +15,6 @@ done
 # Add imageio-ext variables
 PRGDIR=`dirname "$PRG"`
 export GDAL_DATA="$PRGDIR/gdal_data"
-export GTK_NATIVE_WINDOWS=1
 
 # Get standard environment variables
 DATA_ARG=false

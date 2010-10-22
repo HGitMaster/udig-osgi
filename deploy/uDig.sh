@@ -1,5 +1,36 @@
-#!/bin/bash
-JRE=$JAVA_HOME/jre/lib/ext
-JAI_CP=$JRE/clibwrapper_jiio.jar:$JRE/jai_codec.jar:$JRE/jai_core.jar:$JRE/jai_imageio.jar:$JRE/mlibwrapper_jai.jar
+#!/bin/sh
 
-java -Xbootclasspath/a:$JAI_CP -Dosgi.splashLocation=splash/splash.bmp -classpath startup.jar org.eclipse.core.launcher.Main -application net.refractions.udig.ui.uDig -os linux -ws gtk -arch x86 -nl en_US
+UDIGEXEC=udig_internal
+
+PRG="$0"
+echo PRG $PRG
+while [ -h "$PRG" ]; do
+	ls=`ls -ld "$PRG"`
+	link=`expr "$ls" : '.*-> \(.*\)$'`
+	if expr "$link" : '/.*' > /dev/null; then
+		PRG="$link"
+	else
+		PRG=`dirname "$PRG"`/"$link"
+	fi
+done
+export GTK_NATIVE_WINDOWS=1
+
+# Add imageio-ext variables
+PRGDIR=`dirname "$PRG"`
+PWD=`pwd`
+export GDAL_DATA="$PRGDIR/gdal_data"
+echo GDAL_DATA $GDAL_DATA
+
+# Get standard environment variables
+DATA_ARG=false
+
+for ARG in $@ 
+do
+	if [ $ARG = "-data" ]; then DATA_ARG=true; fi
+done
+
+if $DATA_ARG; then 
+	$PRGDIR/$UDIGEXEC $@
+else
+	$PRGDIR/$UDIGEXEC -data ~/uDigWorkspace $@
+fi
