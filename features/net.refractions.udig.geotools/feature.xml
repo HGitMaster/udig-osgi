@@ -2,7 +2,7 @@
 <feature
       id="org.geotools"
       label="Geotools"
-      version="2.6.5.osgi1"
+      version="2.6.5.osgi2"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">

@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.deps"
       label="Geotools Dependencies"
-      version="2.6.5.osgi1"
+      version="2.6.5.osgi2"
       provider-name="Harman/Becker"
       plugin="org.geotools.deps">
 
