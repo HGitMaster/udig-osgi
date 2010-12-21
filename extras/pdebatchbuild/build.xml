@@ -11,7 +11,7 @@
   <!-- read properties depending on the build machine from an external file -->
   <property file="local.properties" />
 
-  <property name="gt.version" value="2.6.5.osgi1"/>
+  <property name="gt.version" value="2.6.5.osgi2"/>
   <property name="maven.settings" value="settings.xml"/>
   <property name="deps.dir" value="dependencies/plugins"/>
   <property name="pluginPath" value="dependencies${path.separator}${delta.pack}"/>
