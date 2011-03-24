@@ -57,16 +57,14 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
     protected String dashOffset;
     protected String lineCap;
     protected String lineJoin;
-    
-    
 
     public LineSymbolizerWrapper( PolygonSymbolizer polygonSymbolizer, RuleWrapper parent ) {
         super(polygonSymbolizer, parent);
     }
-        
+
     public LineSymbolizerWrapper( Symbolizer symbolizer, RuleWrapper parent ) {
         super(symbolizer, parent);
-        
+
         LineSymbolizer lineSymbolizer = (LineSymbolizer) symbolizer;
 
         // offset
@@ -81,7 +79,8 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
 
         stroke = lineSymbolizer.getStroke();
         if (stroke != null) {
-            strokeColor = stroke.getColor().evaluate(null, String.class);
+            Expression color = stroke.getColor();
+            strokeColor = expressionToString(color);
             Expression width = stroke.getWidth();
             strokeWidth = expressionToString(width);
             Expression opacity = stroke.getOpacity();
@@ -89,14 +88,17 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
 
             if (strokeColor == null) {
                 strokeColor = DEFAULT_COLOR;
+                stroke.setColor(ff.literal(DEFAULT_COLOR));
             }
             if (strokeOpacity == null) {
                 strokeOpacity = DEFAULT_OPACITY;
+                stroke.setOpacity(ff.literal(DEFAULT_OPACITY));
             }
             if (strokeWidth == null) {
                 strokeWidth = DEFAULT_WIDTH;
+                stroke.setWidth(ff.literal(DEFAULT_WIDTH));
             }
-
+            
             strokeGraphicStroke = stroke.getGraphicStroke();
             if (strokeGraphicStroke != null) {
                 List<GraphicalSymbol> graphicalSymbolsList = strokeGraphicStroke.graphicalSymbols();
@@ -128,25 +130,24 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
         }
 
     }
-    
+
     public Graphic getStrokeGraphicStroke() {
         return strokeGraphicStroke;
     }
-    
+
     public void setStrokeGraphicStroke( Graphic strokeGraphicStroke ) {
         this.strokeGraphicStroke = strokeGraphicStroke;
         checkStrokeExists();
-        
+
         stroke.setGraphicStroke(strokeGraphicStroke);
     }
-    
-    
+
     // ///// GETTERS/SETTERS
     public void setHasStroke( boolean hasStroke ) {
         this.hasStroke = hasStroke;
         if (hasStroke) {
             checkStrokeExists();
-        }else{
+        } else {
             stroke = null;
             LineSymbolizer lineSymbolizer = (LineSymbolizer) getSymbolizer();
             lineSymbolizer.setStroke(null);
@@ -167,7 +168,7 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
             strokeGraphicStroke = stroke.getGraphicStroke();
         }
     }
-    
+
     public void setStrokeWidth( String strokeWidth, boolean isProperty ) {
         this.strokeWidth = strokeWidth;
         checkStrokeExists();
@@ -178,11 +179,15 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
         }
     }
 
-    public void setStrokeColor( String strokeColor ) {
+    public void setStrokeColor( String strokeColor, boolean isProperty ) {
         this.strokeColor = strokeColor;
         checkStrokeExists();
-        if (strokeColor != null) {
-            stroke.setColor(ff.literal(strokeColor));
+        if (isProperty) {
+            stroke.setColor(ff.property(strokeColor));
+        } else {
+            if (strokeColor != null) {
+                stroke.setColor(ff.literal(strokeColor));
+            }
         }
     }
 
@@ -206,7 +211,7 @@ public class LineSymbolizerWrapper extends SymbolizerWrapper {
     public void setDashOffset( String dashOffset ) {
         this.dashOffset = dashOffset;
         checkStrokeExists();
-        if (dashOffset!= null && dashOffset.length()>0) {
+        if (dashOffset != null && dashOffset.length() > 0) {
             stroke.setDashOffset(ff.literal(dashOffset));
         }
     }
