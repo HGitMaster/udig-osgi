@@ -158,8 +158,7 @@
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" version="1.2.0"/>
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" classifier="sources" version="1.2.0"/>
       <maven:dependency groupId="com.google.collect" artifactId="com.springsource.com.google.common.collect" version="0.8.0.20080820"/>
-      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>
-      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" classifier="sources" version="2.0.8"/>
+      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>      
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.11"/>
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" classifier="sources" version="1.11"/>
       <maven:dependency groupId="com.miglayout" artifactId="de.berlios.com.miglayout" version="3.7.2"/>
@@ -187,7 +186,7 @@
       <arg value="-noupdate" />
       <arg value="-application" />
       <arg value="org.eclipse.ant.core.antRunner" />
-      <!--arg value="-debug" /--> 
+      <arg value="-debug" /> 
      
       <!-- the Ant build file to be run in an Eclipse context -->
       <arg value="-buildfile" />
