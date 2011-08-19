@@ -8,17 +8,21 @@ import org.opengis.filter.spatial.Crosses;
  * 
  * @author Jody
  * @since 1.1.0
+ * @version 1.2.2
  */
-class AdaptingCrosses extends AdaptingFilter implements Crosses {
+class AdaptingCrosses extends AdaptingFilter<Crosses> implements Crosses {
 
     AdaptingCrosses( Crosses filter ) {
         super(filter);
     }
     public Expression getExpression1() {
-        return ((Crosses)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((Crosses)wrapped).getExpression2();
+        return wrapped.getExpression2();
+    }
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
     }
 }

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectPackage.java 30939 2008-10-29 12:52:51Z jeichar $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal;
 

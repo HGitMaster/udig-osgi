@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: BlackboardEntryImpl.java 16525 2005-10-27 01:38:05Z jeichar $
+ * $Id$
  */
 package net.refractions.udig.project.internal.impl;
 

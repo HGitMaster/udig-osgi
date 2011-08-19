@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderPackage.java 31434 2009-08-11 11:30:27Z aantonello $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.render;
 

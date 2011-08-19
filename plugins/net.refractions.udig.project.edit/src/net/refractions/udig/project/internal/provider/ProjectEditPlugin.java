@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ProjectEditPlugin.java 31424 2009-08-07 11:12:23Z aantonello $
+ * $Id$
  */
 package net.refractions.udig.project.internal.provider;
 

@@ -8,17 +8,21 @@ import org.opengis.filter.spatial.Disjoint;
  * 
  * @author Jody
  * @since 1.1.0
+ * @version 1.2.2
  */
-class AdaptingDisjoint extends AdaptingFilter implements Disjoint {
+class AdaptingDisjoint extends AdaptingFilter<Disjoint> implements Disjoint {
 
     AdaptingDisjoint( Disjoint filter ) {
         super(filter);
     }
     public Expression getExpression1() {
-        return ((Disjoint)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((Disjoint)wrapped).getExpression2();
+        return wrapped.getExpression2();
+    }
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
     }
 }

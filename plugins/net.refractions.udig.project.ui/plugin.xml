@@ -57,6 +57,14 @@
                id="net.refractions.udig.project.ui.newMap"
                label="%map.new.label"/>
          <action
+                 class="net.refractions.udig.project.ui.internal.actions.SaveAsProject"
+                 enablesFor="1"
+                 icon="icons/obj16/project_save.gif"
+                 id="net.refractions.udig.project.ui.saveAsProject"
+                 label="%project.action.save.name"
+                 tooltip="%project.action.save.tooltip">
+         </action>
+         <action
                class="net.refractions.udig.project.ui.internal.actions.OpenMapAction"
                enablesFor="+"
                icon="icons/obj16/project_obj.gif"
@@ -387,7 +395,7 @@
 	       <acceptedType class="java.net.URL"/>
 	       <acceptedType class="java.lang.String"/>
 	       <acceptedType class="java.io.File"/>
-	       <destination class="org.eclipse.ui.IEditorPart"/>
+	       <destination class="net.refractions.udig.project.ui.internal.MapPart"/>
            <destination
                  class="net.refractions.udig.project.ui.internal.LayersView"/>
            <acceptedType
@@ -920,6 +928,19 @@
                name="%Selection.MakeHole"
                targetClass="net.refractions.udig.project.ILayer">
          </operation>         
+         <operation
+               categoryId="net.refractions.udig.project.ui.operation.selectionCategory"
+               class="net.refractions.udig.project.ui.operations.SelectAllFeaturesOp"
+               enablesFor="1"
+               id="net.refractions.udig.project.ui.operations.SelectAllFeaturesOp"
+               name="Select all features"
+               targetClass="net.refractions.udig.project.ILayer">
+           <enablement>
+             <and>
+               <property propertyId="net.refractions.udig.project.FeatureStoreResourceProperty" expectedValue=""/>  
+             </and>
+            </enablement>
+         </operation>         
          <!--operation
                categoryId="net.refractions.udig.project.ui.operation.selectionCategory"
                class="net.refractions.udig.project.ui.operations.CreateLayerView"
@@ -1004,6 +1025,7 @@
                  allowLabelUpdate="true"
                  class="net.refractions.udig.project.ui.internal.actions.CloseProject"
                  enablesFor="+"
+                 icon="icons/obj16/project_close.gif"
                  id="net.refractions.udig.project.ui.closeProject"
                  label="%project.close.label"
                  menubarPath="file/project.ext"
@@ -1014,6 +1036,23 @@
                        name="net.refractions.udig.project.IProject">
                  </objectClass>
               </enablement>
+           </action>
+           <action
+                 allowLabelUpdate="true"
+                 class="net.refractions.udig.project.ui.internal.actions.SaveAsProject"
+                 enablesFor="1"
+                 icon="icons/obj16/project_save.gif"
+                 id="net.refractions.udig.project.ui.saveAsProject"
+                 label="%project.action.save.name"
+                 menubarPath="file/project.ext"
+                 style="push"
+                 tooltip="%project.action.save.tooltip">
+              <enablement>
+               <or>
+                  <objectClass name="net.refractions.udig.project.IMap"/>
+                  <objectClass name="net.refractions.udig.project.IProject"/>
+               </or>
+            </enablement>
            </action>
            <action
                  class="net.refractions.udig.project.ui.internal.actions.OpenProject"

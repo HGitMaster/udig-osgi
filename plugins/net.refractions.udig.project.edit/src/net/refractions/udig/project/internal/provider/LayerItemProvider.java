@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: LayerItemProvider.java 30940 2008-10-29 13:04:17Z jeichar $
+ * $Id$
  */
 package net.refractions.udig.project.internal.provider;
 

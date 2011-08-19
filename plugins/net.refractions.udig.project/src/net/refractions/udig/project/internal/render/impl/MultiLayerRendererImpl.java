@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: MultiLayerRendererImpl.java 15577 2005-09-02 17:55:00Z jeichar $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.render.impl;
 

@@ -414,8 +414,7 @@ public class TilingRenderer implements Renderer, RendererDecorator {
         return child.eCrossReferences();
     }
 
-    
-// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0    
+// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0
 //    public Object eInvoke( EOperation operation, EList< ? > arguments )
 //            throws InvocationTargetException {
 //        return child.eInvoke(operation, arguments);

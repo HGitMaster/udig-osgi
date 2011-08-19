@@ -9,18 +9,20 @@ import org.opengis.filter.spatial.Within;
  * @author Jody
  * @since 1.1.0
  */
-class AdaptingWithin extends AdaptingFilter implements Within {
+class AdaptingWithin extends AdaptingFilter<Within> implements Within {
 
     AdaptingWithin( Within filter ) {
         super(filter);
     }
 
     public Expression getExpression1() {
-        return ((Within)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((Within)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
-    
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
+    }
 }

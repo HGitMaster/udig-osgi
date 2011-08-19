@@ -8,17 +8,21 @@ import org.opengis.filter.spatial.Contains;
  * 
  * @author Jody
  * @since 1.1.0
+ * @version 1.2.2
  */
-class AdaptingContains extends AdaptingFilter implements Contains{
+class AdaptingContains extends AdaptingFilter<Contains> implements Contains{
 
     AdaptingContains( Contains filter ) {
         super(filter);
     }
     public Expression getExpression1() {
-        return ((Contains)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((Contains)wrapped).getExpression2();
+        return wrapped.getExpression2();
+    }
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
     }
 }

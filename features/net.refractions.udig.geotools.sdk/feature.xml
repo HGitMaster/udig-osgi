@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.sdk"
       label="Geotools"
-      version="2.6.5.osgi2"
+      version="8.0.0.M1osgi1"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
@@ -16,10 +16,6 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
-
-   <includes
-         id="org.opengis.geoapi.sdk"
-         version="0.0.0"/>
 
    <includes
          id="org.geotools.deps.sdk"

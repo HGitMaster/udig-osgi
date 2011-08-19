@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: EditManagerItemProvider.java 27342 2007-10-03 03:41:01Z jeichar $
+ * $Id$
  */
 package net.refractions.udig.project.internal.provider;
 

@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: LayerFactoryImpl.java 31802 2010-05-16 15:22:30Z jgarnett $
+ * $Id$
  */
 package net.refractions.udig.project.internal.impl;
 

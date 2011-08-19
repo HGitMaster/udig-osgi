@@ -9,6 +9,7 @@
 package net.refractions.udig.render.internal.gridcoverage.basic;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -16,6 +17,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,13 +38,19 @@ import net.refractions.udig.render.gridcoverage.basic.internal.Messages;
 import net.refractions.udig.ui.graphics.SLDs;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.GridEnvelope2D;
 import org.geotools.coverage.grid.GridGeometry2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.Hints;
+import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.image.ImageWorker;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.renderer.lite.RendererUtilities;
@@ -144,14 +152,29 @@ public class GridCoverageReaderRenderer extends RendererImpl {
                  }
              }
              ParameterValue<?> readGridGeometry2DParam = group.parameter(AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().toString());
-             GridEnvelope range=new GridEnvelope2D(0,0, mapDisplay.getWidth(), mapDisplay.getHeight() );
-             
-             
-             MathTransform displayToLayer=currentContext.worldToScreenMathTransform().inverse();
-             ReferencingFactoryFinder.getMathTransformFactory(null).createConcatenatedTransform(displayToLayer, currentContext.getLayer().mapToLayerTransform()); 
-             GridGeometry2D geom=new GridGeometry2D(range, displayToLayer, destinationCRS );
-             readGridGeometry2DParam.setValue(geom);
-             
+
+//            GridEnvelope range = new GridEnvelope2D(0, 0, mapDisplay.getWidth(), mapDisplay.getHeight());
+//            MathTransform displayToLayer = currentContext.worldToScreenMathTransform().inverse();
+//            ReferencingFactoryFinder.getMathTransformFactory(null).createConcatenatedTransform(displayToLayer,
+//                    currentContext.getLayer().mapToLayerTransform());
+//            GridGeometry2D geom = new GridGeometry2D(range, displayToLayer, destinationCRS);
+//            readGridGeometry2DParam.setValue(geom);
+
+            GridEnvelope2D gridEnvelope = new GridEnvelope2D(0, 0, mapDisplay.getWidth(), mapDisplay.getHeight());
+            org.opengis.geometry.Envelope env;
+            double west= bounds.getMinX();
+            double east= bounds.getMaxX();
+            double south= bounds.getMinY();
+            double north= bounds.getMaxY();
+            if (destinationCRS != null) {
+                env = new ReferencedEnvelope(west, east, south, north, destinationCRS);
+            } else {
+                DirectPosition2D minDp = new DirectPosition2D(west, south);
+                DirectPosition2D maxDp = new DirectPosition2D(east, north);
+                env = new Envelope2D(minDp, maxDp);
+            }
+            readGridGeometry2DParam.setValue(new GridGeometry2D(gridEnvelope, env));
+
              currentContext.setStatus(ILayer.WORKING);
              setState( STARTING );
              
@@ -175,12 +198,13 @@ public class GridCoverageReaderRenderer extends RendererImpl {
 	            //
 	            final TileCache tempCache=currentContext.getTileCache();
 	            hints.add(new RenderingHints(JAI.KEY_TILE_CACHE,tempCache));
-	            
+	            //hints.add( new Hints( Hints.RESAMPLE_TOLERANCE, 0.000000000001 )); 
+                
 	            if( CRS.getHorizontalCRS(destinationCRS) == null ){
 	                destinationCRS = coverage.getCoordinateReferenceSystem2D();
 	            }
 	            //
-	            AffineTransform worldToScreen = null; // we are leting the GridCoverageRenderer sor that out
+	            AffineTransform worldToScreen = null; // we are leting the GridCoverageRenderer sort that out
 	            
 	            //draw
 	            try {
@@ -193,6 +217,22 @@ public class GridCoverageReaderRenderer extends RendererImpl {
 	                if (minScale <= currentScale && currentScale <= maxScale ) {
 	                    final GridCoverageRenderer paint = new GridCoverageRenderer( destinationCRS, envelope, screenSize,worldToScreen,hints );
 	                    final RasterSymbolizer rasterSymbolizer = SLD.rasterSymbolizer(style);
+
+	                    // check if there is a color to mask
+	                    Object maskColor = getContext().getLayer().getStyleBlackboard().getString("raster-color-mask"); //$NON-NLS-1$	                    
+                        if (maskColor instanceof String) {
+                            // create a color mask
+                            String[] colorSplit = ((String) maskColor).split(":"); //$NON-NLS-1$
+                            Color color = new Color(Integer.parseInt(colorSplit[0]), Integer.parseInt(colorSplit[1]),
+                                    Integer.parseInt(colorSplit[2]));
+                            RenderedImage image = coverage.getRenderedImage();
+                            ImageWorker iw = new ImageWorker(image);
+                            iw.makeColorTransparent(color);
+                            image = iw.getRenderedImage();
+                            GridCoverageFactory gcF = CoverageFactoryFinder.getGridCoverageFactory(null);
+                            coverage = gcF.create(coverage.getName(), image, coverage.getCoordinateReferenceSystem(), coverage
+                                    .getGridGeometry().getGridToCRS(), coverage.getSampleDimensions(), null, null);
+                        }
 	                
 	                    //setState( RENDERING );
 	                    paint.paint( graphics, coverage, rasterSymbolizer );                        

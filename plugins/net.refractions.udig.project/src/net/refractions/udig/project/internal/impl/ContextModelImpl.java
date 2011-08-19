@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ContextModelImpl.java 30562 2008-08-08 20:22:05Z jgarnett $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.impl;
 

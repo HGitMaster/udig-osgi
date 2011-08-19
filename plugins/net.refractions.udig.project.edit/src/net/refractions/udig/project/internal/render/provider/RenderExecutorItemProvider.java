@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: RenderExecutorItemProvider.java 24145 2007-02-01 18:03:34Z jeichar $
+ * $Id$
  */
 package net.refractions.udig.project.internal.render.provider;
 

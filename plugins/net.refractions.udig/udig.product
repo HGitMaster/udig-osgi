@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="%product.name" uid="udig" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" version="1.2.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="%product.name" uid="udig" id="net.refractions.udig.product" application="net.refractions.udig.ui.application" version="1.2.2.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/net.refractions.udig/icons/about.gif"/>
+      <image path="/net.refractions.udig/icons/about.png"/>
       <text>
          %verboseAboutText
       </text>
@@ -14,7 +14,7 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xmx386M</vmArgs>
+      <vmArgs>-Xmx386M -Dosgi.parentClassloader=ext -Dorg.eclipse.emf.ecore.plugin.EcorePlugin.doNotLoadResourcesPlugin=true -XX:MaxPermSize=256m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.awt.headless=true</vmArgsMac>
    </launcherArgs>
 
@@ -25,7 +25,7 @@
       startupProgressRect="0,196,500,8"
       startupMessageRect="7,180,445,16"
       startupForegroundColor="FFFFFF" />
-   <launcher name="udigLite">
+   <launcher name="udig_internal">
       <linux icon="/net.refractions.udig/icons/udig.xpm"/>
       <macosx icon="/net.refractions.udig/icons/icon128.icns"/>
       <solaris/>
@@ -43,23 +43,20 @@
    <license>
         <url>http://www.gnu.org/licenses/lgpl.html</url>
         <text>
-   /*
- *    uDig - User-friendly Desktop Internet GIS
- *    http://udig.refractions.net
- *    (C) 2004-2010 Refractions Research Inc.
- *    http://www.refractions.net
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- */
+   uDig - User-friendly Desktop Internet GIS
+http://udig.refractions.net
+(C) 2004-2011 Refractions Research Inc.
+http://www.refractions.net
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation;
+version 2.1 of the License.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
          </text>
    </license>
 

@@ -19,10 +19,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.refractions.udig.catalog.internal.ui.Images;
 import net.refractions.udig.catalog.ui.AbstractUDIGImportPage;
 import net.refractions.udig.catalog.ui.CatalogUIPlugin;
 import net.refractions.udig.catalog.ui.ISharedImages;
@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -84,6 +85,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
     private Button savePassword;
     private Combo previousConnections;
     private String defaultPort;
+	private ExtraParamsControl extraParams;
 
     public UserHostPage(DatabaseServiceDialect dialect) {
         super("User and Host page"); //$NON-NLS-1$
@@ -132,7 +134,30 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
             }
             
         });
-        
+
+        this.extraParams = dialect.createHostPageExtraParamControl();
+
+        if(extraParams != null) {
+
+	        final Button optionalParams = new Button(top, SWT.CHECK);
+	        optionalParams.setText(localization.optionalParams);
+	        GridDataFactory.swtDefaults().span(4, 1).applyTo(optionalParams);
+	        optionalParams.setSelection(false);
+
+	        final Control extraParamsControl = extraParams.createControl(top);
+	        extraParamsControl.setVisible(false);
+	        data = new GridData(GridData.FILL_BOTH);
+	        data.horizontalSpan=4;
+	        extraParamsControl.setLayoutData(data);
+
+	        optionalParams.addListener(SWT.Selection, new Listener() {
+				
+				public void handleEvent(Event event) {
+					extraParamsControl.setVisible(optionalParams.getSelection());
+				}
+			});
+	        
+        }
     }
 
     protected void removeConnection() {
@@ -278,7 +303,7 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
         ImageRegistry imageRegistry = CatalogUIPlugin.getDefault().getImageRegistry();
         Image image = imageRegistry.get(REQUIRED_DECORATION);
         if (image == null) {
-            image = Images.getDescriptor(ISharedImages.WARNING_OVR).createImage();
+            image = CatalogUIPlugin.getDefault().getImageDescriptor(ISharedImages.WARNING_OVR).createImage();
             imageRegistry.put(REQUIRED_DECORATION, image);
         }
         decoration.setImage(image);
@@ -483,4 +508,18 @@ public class UserHostPage extends AbstractUDIGImportPage implements UDIGConnecti
     public String getPassword() {
         return password.getText();
     }
+
+	public Map<String, Serializable> addParams() {
+		Map<String, Serializable> params = new HashMap<String, Serializable>();
+        params.put(dialect.hostParam.key, getHost());
+        params.put(dialect.portParam.key, getPort());
+        params.put(dialect.usernameParam.key, getUsername());
+        params.put(dialect.passwordParam.key, getPassword());
+
+        if(extraParams!=null) {
+        	params.putAll(extraParams.getParams());
+        }
+        
+        return params;
+	}
 }

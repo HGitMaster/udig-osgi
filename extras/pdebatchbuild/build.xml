@@ -11,7 +11,7 @@
   <!-- read properties depending on the build machine from an external file -->
   <property file="local.properties" />
 
-  <property name="gt.version" value="2.6.5.osgi2"/>
+  <property name="gt.version" value="8.0.0.M1osgi1"/>
   <property name="maven.settings" value="settings.xml"/>
   <property name="deps.dir" value="dependencies/plugins"/>
   <property name="pluginPath" value="dependencies${path.separator}${delta.pack}"/>
@@ -38,8 +38,8 @@
     <maven:dependencies filesetId="platform.fileset" useScope="runtime" verbose="false" settingsFile="${maven.settings}">
       <maven:localRepository path="${maven.repo.local}"/>
 
-      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" version="2.3.0.M1osgi1"/>
-      <maven:dependency groupId="org.opengis" artifactId="geoapi-pending" classifier="sources" version="2.3.0.M1osgi1"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-opengis" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-opengis" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-api" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-api" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-brewer" version="${gt.version}"/>
@@ -54,6 +54,8 @@
       <maven:dependency groupId="org.geotools" artifactId="gt-epsg-wkt" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-geotiff" classifier="sources" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-image" version="${gt.version}"/>
+      <maven:dependency groupId="org.geotools" artifactId="gt-image" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-imagemosaic" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="gt-jdbc" version="${gt.version}"/>
@@ -92,10 +94,10 @@
       <!--maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.imageio.linux.x86_64" version="1.1"/-->
       <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" version="1.3.1"/>
       <!-- no sources <maven:dependency groupId="java3d.osgi" artifactId="java3d.osgi.vecmath" classifier="sources" version="1.3.1"/-->
-      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" version="1.0.6.1"/>
-      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" classifier="sources" version="1.0.6.1"/>
-      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" version="1.0.6.1"/>
-      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" classifier="sources" version="1.0.6.1"/>
+      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" version="1.1.0"/>
+      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.tiff" classifier="sources" version="1.1.0"/>
+      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" version="1.1.0"/>
+      <maven:dependency groupId="it.geosolutions.imageio-ext" artifactId="de.berlios.it.geosolutions.imageio.ext.utilities" classifier="sources" version="1.1.0"/>
 
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.bridge" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.bridge" classifier="sources" version="1.7.0"/>
@@ -159,13 +161,20 @@
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" classifier="sources" version="1.2.0"/>
       <maven:dependency groupId="com.google.collect" artifactId="com.springsource.com.google.common.collect" version="0.8.0.20080820"/>
       <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>      
-      <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.11"/>
-      <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" classifier="sources" version="1.11"/>
+      <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.12"/>
+      <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" classifier="sources" version="1.12"/>
       <maven:dependency groupId="com.miglayout" artifactId="de.berlios.com.miglayout" version="3.7.2"/>
       <maven:dependency groupId="com.google.collections" artifactId="de.berlios.com.google.collections.google-collections" version="1.0.4"/>
       <maven:dependency groupId="com.google.collections" artifactId="de.berlios.com.google.collections.google-collections" classifier="sources" version="1.0.4"/>
-
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-utils" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-utils" classifier="sources" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-vectorbinarize" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-vectorbinarize" classifier="sources" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-zonalstats" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-zonalstats" classifier="sources" version="1.2.0"/>
+      <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr275" version="1.0.0.beta-2"/>
       <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr275" classifier="sources" version="1.0.0.beta-2"/>
+      
     </maven:dependencies>
 
    <copy todir="${deps.dir}" verbose="false">
@@ -186,7 +195,7 @@
       <arg value="-noupdate" />
       <arg value="-application" />
       <arg value="org.eclipse.ant.core.antRunner" />
-      <arg value="-debug" /> 
+      <!-- arg value="-debug" /--> 
      
       <!-- the Ant build file to be run in an Eclipse context -->
       <arg value="-buildfile" />

@@ -28,10 +28,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 
 import net.refractions.udig.catalog.CatalogPlugin;
-import net.refractions.udig.catalog.IGeoResourceInfo;
 import net.refractions.udig.catalog.URLUtils;
 import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResource;
-import net.refractions.udig.catalog.rasterings.AbstractRasterGeoResourceInfo;
 import net.refractions.udig.catalog.rasterings.GridCoverageLoader;
 import net.refractions.udig.catalog.worldimage.internal.Messages;
 
@@ -117,7 +115,7 @@ public class WorldImageGeoResourceImpl extends AbstractRasterGeoResource {
 
     @Override
     public <T> boolean canResolve( Class<T> adaptee ) {
-        if (GridCoverageLoader.class.isAssignableFrom(adaptee) && !isTiff())
+        if (GridCoverageLoader.class.isAssignableFrom(adaptee))
             return true;
 
         return super.canResolve(adaptee);
@@ -125,16 +123,11 @@ public class WorldImageGeoResourceImpl extends AbstractRasterGeoResource {
 
     @Override
     public <T> T resolve( Class<T> adaptee, IProgressMonitor monitor ) throws IOException {
-        if (GridCoverageLoader.class.isAssignableFrom(adaptee) && !isTiff()) {
+        if (GridCoverageLoader.class.isAssignableFrom(adaptee)) {
             return adaptee.cast(loader);
         }
 
         return super.resolve(adaptee, monitor);
-    }
-
-    private boolean isTiff() {
-        boolean isTiff = fileName.toLowerCase().endsWith(".tiff") || fileName.toLowerCase().endsWith(".tif"); //$NON-NLS-1$ //$NON-NLS-2$
-        return isTiff;
     }
 
     /**

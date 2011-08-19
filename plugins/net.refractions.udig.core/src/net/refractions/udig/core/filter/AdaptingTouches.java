@@ -9,16 +9,20 @@ import org.opengis.filter.spatial.Touches;
  * @author Jody
  * @since 1.1.0
  */
-class AdaptingTouches extends AdaptingFilter implements Touches {
+class AdaptingTouches extends AdaptingFilter<Touches> implements Touches {
 
     AdaptingTouches( Touches filter ) {
         super(filter);
     }
     public Expression getExpression1() {
-        return ((Touches)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((Touches)wrapped).getExpression1();
+        return wrapped.getExpression1();
+    }
+    
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
     }
 }

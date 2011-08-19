@@ -1,7 +1,7 @@
 /*
  *    uDig - User Friendly Desktop Internet GIS client
  *    http://udig.refractions.net
- *    (C) 2004, Refractions Research Inc.
+ *    (C) 2004-2011, Refractions Research Inc.
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,16 +20,20 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.refractions.udig.catalog.ID;
 import net.refractions.udig.catalog.IService;
 import net.refractions.udig.catalog.ServiceExtension2;
+import net.refractions.udig.catalog.URLUtils;
 import net.refractions.udig.catalog.geotiff.internal.Messages;
 
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
+import org.geotools.gce.image.WorldImageFormat;
 
 
 /**
@@ -159,11 +163,15 @@ public class GeoTiffServiceExtension implements ServiceExtension2 {
         }
         return null;
     }
+    
     private boolean isSupportedExtension( URL url ) {
-        String file=url.getFile();
-        file=file.toLowerCase();
-
-        return (file.endsWith(".tiff") || file.endsWith(".tif")); //$NON-NLS-1$ //$NON-NLS-2$
+        File file = URLUtils.urlToFile(url);
+        String fileLower = file.getAbsolutePath().toLowerCase();
+        boolean isTiff = fileLower.endsWith(".tiff") || fileLower.endsWith(".tif"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (!isTiff) {
+            return false;
+        }
+        return true;
     }
 
     

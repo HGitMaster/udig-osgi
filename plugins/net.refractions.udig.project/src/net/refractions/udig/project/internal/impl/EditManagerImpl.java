@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: EditManagerImpl.java 31798 2010-05-16 10:51:05Z jgarnett $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -125,6 +125,9 @@ public class EditManagerImpl extends EObjectImpl implements EditManager {
      */
     protected static final boolean EDIT_LAYER_LOCKED_EDEFAULT = false;
 
+    /**
+     * Transaction used for the map.
+     */
     final UDIGTransaction transaction = new UDIGTransaction();
 
     /**
@@ -363,10 +366,13 @@ public class EditManagerImpl extends EObjectImpl implements EditManager {
         }
 
         for( Layer layer : getMapInternal().getLayersInternal() ) {
-            FeatureStore<SimpleFeatureType, SimpleFeature> resource = layer.getResource(
-                    FeatureStore.class, ProgressManager.instance().get());
-            if (resource != null && resource instanceof UDIGFeatureStore) {
-                ((UDIGFeatureStore) resource).editComplete();
+            FeatureStore<?,?> resource = layer.getResource(FeatureStore.class, ProgressManager.instance().get());
+            if( resource == null ) {
+                continue;
+            }
+            if( resource instanceof UDIGStore) {
+                UDIGStore store = (UDIGStore) resource;
+                store.editComplete();
             }
         }
         // the next line closes the CommitDialog

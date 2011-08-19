@@ -9,22 +9,25 @@ import org.opengis.filter.expression.Expression;
  * @author Jody
  * @since 1.1.0
  */
-class AdaptingPropertyIsNotEqualTo extends AdaptingFilter implements PropertyIsNotEqualTo  {
+class AdaptingPropertyIsNotEqualTo extends AdaptingFilter<PropertyIsNotEqualTo> implements PropertyIsNotEqualTo  {
 
     AdaptingPropertyIsNotEqualTo( PropertyIsNotEqualTo filter ) {
         super(filter);
     }
 
     public Expression getExpression1() {
-        return ((PropertyIsNotEqualTo)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((PropertyIsNotEqualTo)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public boolean isMatchingCase() {
-        return ((PropertyIsNotEqualTo)wrapped).isMatchingCase();
+        return wrapped.isMatchingCase();
     }
     
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
+    }
 }

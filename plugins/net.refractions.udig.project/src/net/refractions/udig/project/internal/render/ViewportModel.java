@@ -10,7 +10,6 @@ package net.refractions.udig.project.internal.render;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -80,22 +79,28 @@ public interface ViewportModel extends EObject, IMapDisplayListener, IViewportMo
     /**
      * List of preferred scale denominators for the map.
      * <p>
-     * This set is used to provide good options for a user to change the scale; or to support
-     * the creation of "fixed" zoom in and zoom out tools.
+     * This set is used to provide good options for a user to change the scale
+     * </p>
+     * <p>
+     * The values will always be present but if the object returned by {@link #getDefaultPreferredScaleDenominators()} and this method
+     * are the same <em>instance</em> then they are simply defaults and can be ignored if desired.  However if they are not the same
+     * then assume that the values are only hints and can be ignored
+     * </p>
      * 
-     * @see getScaleDEnominator for a definition of scale denominator
-     * @return List of preferred scale denominator values for the map
+     * @see #getScaleDenominator() for a definition of scale denominator
+     * @return Unmodifiable Set of preferred scale denominator values for the map
      * @model 
      */
     public SortedSet<Double> getPreferredScaleDenominators();
 
     /**
      * Sets the value of the '{@link net.refractions.udig.project.internal.render.ViewportModel#getPreferredScaleDenominators <em>Preferred Scale Denominators</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * 
+     * If set to null getPreferredScaleDenominators will return the defaults.
+     * 
      * @param value the new value of the '<em>Preferred Scale Denominators</em>' attribute.
      * @see #getPreferredScaleDenominators()
-     * @generated
+     * @generated NOTE
      */
     void setPreferredScaleDenominators( SortedSet<Double> value );
 
@@ -357,6 +362,25 @@ public interface ViewportModel extends EObject, IMapDisplayListener, IViewportMo
      * @model
      */
     public ViewportModel zoom( double zoom );
+
+    /**
+     * Increases or decreases the size of the viewport(in world space) by a constant factor, zoom.
+     * The zoom is equal in both directions. The function used is: bbox.height=bbox.height/divisor
+     * bbox.width=bbox.width/divisor
+     * <ul>
+     * <li>A zoom must be greater than 1.</li>
+     * <li>A zoom greater than 1 is a zoom towards the map(SimpleFeature appear larger.)</li>
+     * <li>A zoom less than 1 is a zoom away from the map</li>
+     * </ul>
+     * When get not null parameter fixedPoint then keep it fixed after zoom transform. In case of
+     * null parameter center point of map will be fixed
+     *
+     * @param zoom the zoom factor
+     * @param fixedPoint the point that will remain fixed after zoom, can be null
+     * @return This ViewportModel, allows for command chaining.
+     * @model
+     */
+    public ViewportModel zoom( double zoom, Coordinate fixedPoint );
 
     /**
      * sets the Viewport bounding box so that it fully contains the visible map extent

@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectPlugin.java 31424 2009-08-07 11:12:23Z aantonello $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal;
 

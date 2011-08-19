@@ -2,7 +2,7 @@
 <feature
       id="net.refractions.udig.sdk"
       label="uDig Lite Feature"
-      version="1.2.0.osgi3"
+      version="1.2.2.osgi1"
       provider-name="Harman/Becker"
       plugin="net.refractions.udig.sdk">
 

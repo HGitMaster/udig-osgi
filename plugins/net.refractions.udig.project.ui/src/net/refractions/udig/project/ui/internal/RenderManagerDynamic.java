@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderManagerDynamic.java 30770 2008-09-16 21:16:53Z egouge $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.ui.internal;
 

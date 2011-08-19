@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: BlackboardImpl.java 31795 2010-05-16 05:45:30Z jgarnett $
+ * $Id$
  */
 package net.refractions.udig.project.internal.impl;
 

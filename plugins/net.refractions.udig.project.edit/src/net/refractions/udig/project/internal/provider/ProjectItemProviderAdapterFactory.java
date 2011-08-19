@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ProjectItemProviderAdapterFactory.java 30939 2008-10-29 12:52:51Z jeichar $
+ * $Id$
  */
 package net.refractions.udig.project.internal.provider;
 

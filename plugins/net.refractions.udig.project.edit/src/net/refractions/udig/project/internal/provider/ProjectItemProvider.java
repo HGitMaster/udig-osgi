@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: ProjectItemProvider.java 30965 2008-11-25 01:29:51Z hbullen $
+ * $Id$
  */
 package net.refractions.udig.project.internal.provider;
 

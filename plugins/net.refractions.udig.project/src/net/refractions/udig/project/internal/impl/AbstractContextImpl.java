@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: AbstractContextImpl.java 31753 2010-05-08 07:58:08Z jgarnett $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.impl;
 

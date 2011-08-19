@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: RenderExecutorImpl.java 31087 2009-01-29 23:33:28Z egouge $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.render.impl;
 

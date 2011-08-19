@@ -849,7 +849,7 @@ public class LayerDecorator implements Layer, InternalEObject {
         return layer.getScaleRange();
     }
 
-// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0    
+// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0
 //    public Object eInvoke( EOperation operation, EList< ? > arguments )
 //            throws InvocationTargetException {
 //        return layer.eInvoke(operation, arguments);
@@ -873,12 +873,12 @@ public class LayerDecorator implements Layer, InternalEObject {
         return interalObject.eInverseRemove(otherEnd, featureID, baseClass, notifications);
     }
 
-// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0    
+// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0
 //    public Object eInvoke( int operationID, EList< ? > arguments ) throws InvocationTargetException {
 //        return interalObject.eInvoke(operationID, arguments);
 //    }
 
-// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0    
+// sborodavkin: TODO uncomment after EMF is upgraded to 2.6.0
 //    public int eDerivedOperationID( int baseOperationID, Class< ? > baseClass ) {   
 //        return interalObject.eDerivedOperationID(baseOperationID, baseClass);
 //    }

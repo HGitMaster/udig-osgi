@@ -18,7 +18,6 @@ package net.refractions.udig.ui.internal;
 
 import java.lang.reflect.Field;
 
-import net.refractions.udig.internal.ui.Images;
 import net.refractions.udig.internal.ui.UiPlugin;
 
 import org.eclipse.jface.action.IAction;
@@ -89,6 +88,8 @@ public class Messages extends NLS {
     public static String SendLogDialog_reading;
     public static String SendLogDialog_submit;
     public static String SendLogDialog_title;
+    public static String SubmitIssueDialog_instructions;
+    public static String SubmitIssueDialog_copy;
     public static String ShutdownTaskList_shutDown;
     public static String TransferPreference_transfer_preference_description;
 	public static String FeatureTextTransfer_transfer_name;
@@ -273,11 +274,11 @@ public class Messages extends NLS {
             }
             ImageDescriptor image;
 
-            image = Images.getDescriptor(ePath);
+            image = UiPlugin.getDefault().getImageDescriptor(ePath);
             if (id != null) {
                 a.setImageDescriptor(image);
             }
-            image = Images.getDescriptor(dPath);
+            image = UiPlugin.getDefault().getImageDescriptor(dPath);
             if (id != null) {
                 a.setDisabledImageDescriptor(image);
             }

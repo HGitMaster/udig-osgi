@@ -1,5 +1,5 @@
 /**
- * <copyright></copyright> $Id: ProjectRegistryImpl.java 31853 2010-06-27 09:45:52Z jgarnett $
+ * <copyright></copyright> $Id$
  */
 package net.refractions.udig.project.internal.impl;
 
@@ -223,6 +223,7 @@ public class ProjectRegistryImpl extends EObjectImpl implements ProjectRegistry 
                     // check to see if it exists; we don't like empty existing files
                     File file = new File( projectURI.toFileString() );
                     if( file.exists() ){
+                        if(!file.delete())
                         throw new NullPointerException("Unable to load "+uri+" file was empty");
                     }                    
                 }

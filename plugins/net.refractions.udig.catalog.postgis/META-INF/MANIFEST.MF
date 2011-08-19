@@ -10,15 +10,17 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
  net.refractions.udig.catalog.ui;visibility:=reexport,
- org.geotools.jdbc;bundle-version="2.6.5",
- org.geotools.jdbc.postgis;bundle-version="2.6.5",
- org.geotools.api;bundle-version="2.6.5",
- org.opengis.geoapi;bundle-version="2.3.0",
- org.geotools.data;bundle-version="2.6.5",
- org.geotools.referencing;bundle-version="2.6.5",
- org.geotools.metadata;bundle-version="2.6.5"
+ org.geotools.jdbc;bundle-version="8.0.0",
+ org.geotools.jdbc.postgis;bundle-version="8.0.0",
+ org.geotools.api;bundle-version="8.0.0",
+ org.geotools.opengis;bundle-version="8.0.0",
+ org.geotools.data;bundle-version="8.0.0",
+ org.geotools.referencing;bundle-version="8.0.0",
+ org.geotools.metadata;bundle-version="8.0.0",
+ org.geotools.image;bundle-version="8.0.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.catalog
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: com.vividsolutions.jts.geom,
  org.apache.commons.dbcp;version="1.2.2.osgi"
+

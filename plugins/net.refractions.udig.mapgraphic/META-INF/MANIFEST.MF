@@ -15,10 +15,10 @@ Require-Bundle: org.eclipse.ui,
  net.refractions.udig.project.ui;visibility:=reexport,
  net.refractions.udig.style;visibility:=reexport,
  net.refractions.udig.style.sld,
- org.geotools.render;bundle-version="2.6.5",
- org.opengis.geoapi;bundle-version="2.3.0",
- org.geotools.referencing;bundle-version="2.6.5",
- org.geotools.api;bundle-version="2.6.5"
+ org.geotools.render;bundle-version="8.0.0",
+ org.geotools.opengis;bundle-version="8.0.0",
+ org.geotools.referencing;bundle-version="8.0.0",
+ org.geotools.api;bundle-version="8.0.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.mapgraphic,
  net.refractions.udig.mapgraphic.grid,

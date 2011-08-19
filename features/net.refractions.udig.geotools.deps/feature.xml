@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.deps"
       label="Geotools Dependencies"
-      version="2.6.5.osgi2"
+      version="8.0.0.M1osgi1"
       provider-name="Harman/Becker"
       plugin="org.geotools.deps">
 
@@ -17,6 +17,34 @@
    <license>
       [Enter License Description here.]
    </license>
+
+   <plugin
+         id="net.java.dev.osgi.jsr275"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.jaitools.osgi.jt-utils"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.jaitools.osgi.jt-vectorbinarize"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.jaitools.osgi.jt-zonalstats"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="javax.media.jai.osgi"

@@ -9,20 +9,23 @@ import org.opengis.filter.expression.Expression;
  * @author Jody
  * @since 1.1.0
  */
-class AdaptingPropertyIsLessThan extends AdaptingFilter implements PropertyIsLessThan {
+class AdaptingPropertyIsLessThan extends AdaptingFilter<PropertyIsLessThan> implements PropertyIsLessThan {
 
     AdaptingPropertyIsLessThan( PropertyIsLessThan filter ) {
         super(filter);
     }
     public Expression getExpression1() {
-        return ((PropertyIsLessThan)wrapped).getExpression1();
+        return wrapped.getExpression1();
     }
 
     public Expression getExpression2() {
-        return ((PropertyIsLessThan)wrapped).getExpression2();
+        return wrapped.getExpression2();
     }
 
     public boolean isMatchingCase() {
-        return ((PropertyIsLessThan)wrapped).isMatchingCase();
+        return wrapped.isMatchingCase();
+    }
+    public MatchAction getMatchAction() {
+        return wrapped.getMatchAction();
     }
 }

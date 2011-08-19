@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MapItemProvider.java 27340 2007-10-03 01:32:56Z jeichar $
+ * $Id$
  */
 package net.refractions.udig.project.internal.provider;
 

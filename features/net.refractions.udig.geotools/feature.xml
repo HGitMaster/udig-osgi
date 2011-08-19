@@ -2,7 +2,7 @@
 <feature
       id="org.geotools"
       label="Geotools"
-      version="2.6.5.osgi2"
+      version="8.0.0.M1osgi1"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
@@ -18,15 +18,18 @@
    </license>
 
    <includes
-         id="org.opengis.geoapi"
-         version="0.0.0"/>
-
-   <includes
          id="org.geotools.deps"
          version="0.0.0"/>
 
    <plugin
          id="org.geotools.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.opengis"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -69,6 +72,13 @@
 
    <plugin
          id="org.geotools.geotiff"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.geotools.image"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: PageItemProvider.java 31340 2009-07-16 07:56:25Z aantonello $
+ * $Id$
  */
 package net.refractions.udig.printing.model.provider;
 

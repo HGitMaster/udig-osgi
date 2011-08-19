@@ -11,11 +11,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.refractions.udig.catalog,
  net.refractions.udig.catalog.ui,
- org.geotools.shapefile;bundle-version="2.6.0",
- org.geotools.referencing;bundle-version="2.6.0",
- org.geotools.api;bundle-version="2.6.0",
- org.geotools.data;bundle-version="2.6.0",
- org.geotools.main;bundle-version="2.6.0"
+ org.geotools.shapefile;bundle-version="8.0.0",
+ org.geotools.referencing;bundle-version="8.0.0",
+ org.geotools.api;bundle-version="8.0.0",
+ org.geotools.data;bundle-version="8.0.0",
+ org.geotools.main;bundle-version="8.0.0"
 Export-Package: net.refractions.udig.catalog.internal.shp;x-friends:="net.refractions.udig.project.tests.ui"
 Bundle-ActivationPolicy: lazy
 Import-Package: com.vividsolutions.jts.geom,
