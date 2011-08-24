@@ -175,7 +175,13 @@
       <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-zonalstats" classifier="sources" version="1.2.0"/>
       <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr275" version="1.0.0.beta-2"/>
       <maven:dependency groupId="net.java.dev.osgi" artifactId="net.java.dev.osgi.jsr275" classifier="sources" version="1.0.0.beta-2"/>
-      
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-utils" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-utils" classifier="sources" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-zonalstats" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-zonalstats" classifier="sources" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-vectorbinarize" version="1.2.0"/>
+      <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-vectorbinarize" classifier="sources" version="1.2.0"/>
+            
     </maven:dependencies>
 
    <copy todir="${deps.dir}" verbose="false">
