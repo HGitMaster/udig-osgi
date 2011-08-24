@@ -150,6 +150,8 @@
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.lang" classifier="sources" version="2.4.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.pool" version="1.4.0"/>
       <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.pool" classifier="sources" version="1.4.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.io" version="1.4.0"/>
+      <maven:dependency groupId="org.apache.commons" artifactId="com.springsource.org.apache.commons.io" classifier="sources" version="1.4.0"/>
       <maven:dependency groupId="org.apache.log4j" artifactId="com.springsource.org.apache.log4j" version="1.2.15"/>
       <maven:dependency groupId="org.apache.log4j" artifactId="com.springsource.org.apache.log4j" classifier="sources" version="1.2.15"/>
       <maven:dependency groupId="org.junit" artifactId="com.springsource.org.junit" version="4.7.0"/>
