@@ -19,6 +19,27 @@
    </license>
 
    <plugin
+         id="org.eclipse.xsd"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.emf.ecore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.emf.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
          id="net.java.dev.osgi.jsr275"
          download-size="0"
          install-size="0"
@@ -80,6 +101,27 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+		 
+   <plugin
+         id="com.springsource.javax.servlet.jsp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+	
+    <plugin
+         id="com.springsource.javax.servlet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+    <plugin
+         id="com.springsource.javax.el"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>			 
 
    <plugin
          id="com.springsource.org.apache.commons.lang"
@@ -192,6 +234,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+		 
+   <plugin
+         id="com.springsource.org.apache.commons.jxpath"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="com.springsource.org.apache.xerces"
@@ -291,7 +340,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+		 
    <plugin
          id="com.springsource.org.hamcrest.core"
          download-size="0"

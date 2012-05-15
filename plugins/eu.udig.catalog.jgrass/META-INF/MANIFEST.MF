@@ -8,9 +8,12 @@ Bundle-Vendor: HydroloGIS S.r.l.
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- net.refractions.udig.libs,
  net.refractions.udig.core,
+ net.refractions.udig.project,
  net.refractions.udig.catalog,
+ org.geotools.gce.grassraster;bundle-version="8.0.0",
+ org.geotools.gce.arcgrid;bundle-version="8.0.0",
+ de.berlios.it.geosolutions.imageio.ext.arcgrid;bundle-version="1.1.0",
  net.refractions.udig.catalog.rasterings;bundle-version="1.2.0",
  net.refractions.udig.catalog.ui,
  net.refractions.udig.project.ui,

@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.ui,
  org.geotools.data;bundle-version="8.0.0",
  org.geotools.referencing;bundle-version="8.0.0",
  org.geotools.metadata;bundle-version="8.0.0",
- org.geotools.image;bundle-version="8.0.0"
+ org.geotools.image;bundle-version="8.0.0",
+ de.berlios.com.google.collections.google-collections;bundle-version="1.0.4"
 Bundle-ActivationPolicy: lazy
 Export-Package: net.refractions.udig.catalog
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

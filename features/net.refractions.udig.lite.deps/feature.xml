@@ -170,6 +170,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   
+   <plugin
+         id="org.eclipse.xsd"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.cheatsheets"
@@ -280,7 +287,14 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>         
+         unpack="false"/>      
+    
+   <!--plugin
+         id="com.springsource.org.apache.commons.jxpath"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/-->		 
 
    <plugin
          id="org.eclipse.equinox.jsp.jasper"
@@ -340,6 +354,12 @@
      
    <plugin
          id="com.springsource.org.apache.commons.dbcp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="de.berlios.it.geosolutions.imageio.ext.arcgrid"
          download-size="0"
          install-size="0"
          version="0.0.0"

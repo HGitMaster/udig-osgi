@@ -6,12 +6,15 @@ Bundle-Version: 1.0.0
 Bundle-Activator: eu.udig.tools.jgrass.JGrassToolsPlugin
 Bundle-Vendor: HydroloGIS S.r.l.
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- net.refractions.udig.libs,
- net.refractions.udig.project.ui,
+Require-Bundle: net.refractions.udig.project.ui;bundle-version="1.2.0",
  net.refractions.udig.catalog.rasterings;bundle-version="1.2.0",
  net.refractions.udig.style.sld;bundle-version="1.2.0",
- eu.udig.catalog.jgrass;bundle-version="1.0.0"
+ eu.udig.catalog.jgrass;bundle-version="1.0.0",
+ org.geotools.xsd.kml;bundle-version="8.0.0",
+ org.geotools.api;bundle-version="8.0.0",
+ org.eclipse.ui,
+ org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
