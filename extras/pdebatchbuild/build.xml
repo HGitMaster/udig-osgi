@@ -222,7 +222,7 @@
       <arg value="-noupdate" />
       <arg value="-application" />
       <arg value="org.eclipse.ant.core.antRunner" />
-      <arg value="-debug" /> 
+      <!--arg value="-debug" /--> 
      
       <!-- the Ant build file to be run in an Eclipse context -->
       <arg value="-buildfile" />

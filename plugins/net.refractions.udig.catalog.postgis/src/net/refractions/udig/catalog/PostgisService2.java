@@ -171,7 +171,7 @@ public class PostgisService2 extends IService {
             return null;
         }
         Set<TableDescriptor> tables = runnable.getTableDescriptors();
-        Multimap<String, TableDescriptor> schemas = HashMultimap.create();
+        Multimap<String, TableDescriptor> schemas = new HashMultimap();
         for( TableDescriptor schema : tables ) {
             schemas.put(schema.schema,schema);
         }
