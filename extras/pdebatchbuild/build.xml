@@ -88,9 +88,9 @@
       <!-- KML SUPPROT-->
       <!--maven:dependency groupId="org.geotools" artifactId="xsd" version="${gt.version}"/-->
       <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-core" version="${gt.version}"/>
-      <!--maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-core" classifier="sources" version="${gt.version}"/-->
+      <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-core" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-kml" version="${gt.version}"/>
-      <!--maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-kml" classifier="sources" version="${gt.version}"/-->
+      <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-kml" classifier="sources" version="${gt.version}"/>
 	  <maven:dependency groupId="org.geotools" artifactId="gt-graph" version="${gt.version}"/>
 	  
       <!-- Grassraster -->

@@ -21,12 +21,6 @@
             name="%wizard.name"/>
    </extension>
    <extension
-         point="net.refractions.udig.catalog.ui.fileFormat">
-      <fileService
-            fileExtension="*.jgrass"
-            name="%fileService.name"/>
-   </extension>
-   <extension
          id="net.refractions.udig.catalog.shp.jgrasstofileresolver"
          point="net.refractions.udig.catalog.resolvers">
       <factory
@@ -46,29 +40,6 @@
       </category>
    </extension>
    <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="eu.udig.catalog.jgrass.category"
-            class="eu.udig.catalog.jgrass.workspacecreation.NewJGrassLocationWizard"
-            descriptionImage="icons/wizban/jgrass_wiz.png"
-            icon="icons/obj16/jgrass_obj.png"
-            id="eu.udig.catalog.jgrass.wizard.createworkspace"
-            name="%wizard.name">
-      </wizard>
-      <wizard
-            category="eu.udig.catalog.jgrass.category"
-            class="eu.udig.catalog.jgrass.workspacecreation.NewJGrassLocationFromFileWizard"
-            descriptionImage="icons/wizban/jgrass_wiz.png"
-            icon="icons/obj16/jgrass_obj.png"
-            id="eu.udig.catalog.jgrass.wizard.createworkspacefromfile"
-            name="%wizardfromfile.name">
-      </wizard>
-      <category
-            id="eu.udig.catalog.jgrass.category"
-            name="JGrass">
-      </category>
-   </extension>
-<extension
          id="activemapgraphicid"
          point="net.refractions.udig.mapgraphic.mapgraphic">
       <mapGraphic

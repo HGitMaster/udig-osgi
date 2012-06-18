@@ -1,20 +1,29 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: JGrass Tools Plug-in
-Bundle-SymbolicName: eu.udig.tools.jgrass;singleton:=true
-Bundle-Version: 1.0.0
-Bundle-Activator: eu.udig.tools.jgrass.JGrassToolsPlugin
-Bundle-Vendor: HydroloGIS S.r.l.
-Bundle-Localization: plugin
-Require-Bundle: net.refractions.udig.project.ui;bundle-version="1.2.0",
- net.refractions.udig.catalog.rasterings;bundle-version="1.2.0",
- net.refractions.udig.style.sld;bundle-version="1.2.0",
- eu.udig.catalog.jgrass;bundle-version="1.0.0",
- org.geotools.xsd.kml;bundle-version="8.0.0",
- org.geotools.api;bundle-version="8.0.0",
- org.eclipse.ui,
- org.eclipse.core.runtime
-Eclipse-LazyStart: true
-Bundle-ClassPath: .
+Export-Package: eu.udig.jgrass,eu.udig.jgrass.kml.core,eu.udig.jgrass.
+ kml.wizard,eu.udig.jgrass.coverageexport,eu.udig.jgrass.csv,eu.udig.j
+ grass.i18n,eu.udig.jgrass.movefeatures,eu.udig.jgrass.navigationview,
+ eu.udig.jgrass.orintationview,eu.udig.jgrass.profile,eu.udig.jgrass.p
+ rofile.borrowedfromjgrasstools,eu.udig.jgrass.utils
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Bundle-Name: JGrass Tools Plug-in
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: net.refractions.udig.project.ui;bundle-version="1.2.0"
+ ,net.refractions.udig.catalog.rasterings;bundle-version="1.2.0",net.r
+ efractions.udig.style.sld;bundle-version="1.2.0",eu.udig.catalog.jgra
+ ss;bundle-version="1.0.0",org.geotools.xsd.kml;bundle-version="8.0.0"
+ ,org.geotools.xsd.core;bundle-version="8.0.0",org.geotools.api;bundle
+ -version="8.0.0",org.eclipse.ui,org.eclipse.core.runtime,org.geotools
+ .opengis;bundle-version="8.0.0",org.geotools.referencing;bundle-versi
+ on="8.0.0",com.vividsolutions.osgi.jts;bundle-version="1.12",org.geot
+ ools.main;bundle-version="8.0.0"
+Bundle-Vendor: HydroloGIS S.r.l.
+Eclipse-LazyStart: true
+Bundle-Version: 1.2.0.201206021822
+Bundle-Activator: eu.udig.tools.jgrass.JGrassToolsPlugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: eu.udig.tools.jgrass;singleton:=true
+Import-Package: org.eclipse.xsd.util,org.eclipse.xsd,org.picocontaine
+ r,org.picocontainer.alternatives,org.picocontainer.defaults,org.picoc
+ ontainer.monitors
