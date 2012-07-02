@@ -176,12 +176,8 @@
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
-      <category
-            id="eu.udig.featureimportcategory"
-            name="import2featureLayer">
-      </category>
       <wizard
-            category="eu.udig.featureimportcategory"
+            category="org.eclipse.ui.Basic"
             class="eu.udig.tools.jgrass.kml.wizard.KmlImportWizard"
             icon="icons/icon_kml.png"
             id="eu.udig.tools.jgrass.kml.wizard.KmlImportWizard"

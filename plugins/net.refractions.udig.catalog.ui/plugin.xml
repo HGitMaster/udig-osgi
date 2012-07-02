@@ -289,6 +289,7 @@
    <extension
          point="org.eclipse.ui.importWizards">
       <wizard
+	        category="org.eclipse.ui.Basic"
             class="net.refractions.udig.catalog.internal.ui.CatalogImport$CatalogImportAdapter"
             icon="icons/obj16/repository_obj.gif"
             id="net.refractions.udig.catalog.ui.dataImportWizard"
