@@ -176,8 +176,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
+	  <category 
+            id="com.harmanbecker.import.wizard"
+            name="General">
+      </category>
       <wizard
-            category="org.eclipse.ui.Basic"
+            category="com.harmanbecker.import.wizard"
             class="eu.udig.tools.jgrass.kml.wizard.KmlImportWizard"
             icon="icons/icon_kml.png"
             id="eu.udig.tools.jgrass.kml.wizard.KmlImportWizard"
