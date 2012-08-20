@@ -2,7 +2,7 @@
 <feature
       id="net.refractions.udig.lite.deps"
       label="Dependencies of udigLite"
-      version="1.2.2.osgi1"
+      version="1.2.2.osgi2"
       provider-name="Harman/Becker">
 
    <description url="http://www.example.com/description">
