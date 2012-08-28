@@ -1,8 +1,8 @@
 <!--
   uDig OSGi branch
-  
+
   Top-level build file for batch builds with Ant, using Eclipse PDE
-  
+
   Author: Harald Wellmann
 -->
 
@@ -14,8 +14,8 @@
   <property name="gt.version" value="8.0.0.M1osgi2"/>
   <property name="maven.settings" value="settings.xml"/>
   <property name="deps.dir" value="dependencies/plugins"/>
-  <property name="pluginPath" value="dependencies${path.separator}${delta.pack}"/>
-  
+  <property name="pluginPath" value="dependencies"/>
+
   <target name="prepare">
     <fail message="Property buildRoot is not set in file local.properties" unless="buildRoot"/>
     <fail message="Property eclipse.home is not set in file local.properties" unless="eclipse.home"/>
@@ -25,7 +25,7 @@
     <fail message="Property delta.pack is not set in file local.properties" unless="delta.pack"/>
   </target>
 
-  <target name="clean">  
+  <target name="clean">
     <delete dir="${deps.dir}"/>
     <delete dir="${buildRoot}/I.udigLite"/>
     <delete includeEmptyDirs="true">
@@ -35,6 +35,7 @@
 
   <target name="platform">
     <mkdir dir="${deps.dir}"/>
+
     <maven:dependencies filesetId="platform.fileset" useScope="runtime" verbose="false" settingsFile="${maven.settings}">
       <maven:localRepository path="${maven.repo.local}"/>
 
@@ -84,25 +85,25 @@
       <!--<maven:dependency groupId="org.geotools" artifactId="org.geotools" classifier="sources" version="${gt.version}"/>-->
       <maven:dependency groupId="org.geotools" artifactId="org.geotools.deps" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools" artifactId="org.geotools.deps" classifier="sources" version="${gt.version}"/>
-		
+
       <!-- KML SUPPROT-->
       <!--maven:dependency groupId="org.geotools" artifactId="xsd" version="${gt.version}"/-->
       <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-core" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-core" classifier="sources" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-kml" version="${gt.version}"/>
       <maven:dependency groupId="org.geotools.xsd" artifactId="gt-xsd-kml" classifier="sources" version="${gt.version}"/>
-	  <maven:dependency groupId="org.geotools" artifactId="gt-graph" version="${gt.version}"/>
-	  
+      <maven:dependency groupId="org.geotools" artifactId="gt-graph" version="${gt.version}"/>
+
       <!-- Grassraster -->
       <maven:dependency groupId="org.geotools" artifactId="gt-grassraster" version="${gt.version}"/>
       <!-- Arc grid -->
       <maven:dependency groupId="org.geotools" artifactId="gt-arcgrid" version="${gt.version}"/>
-	  
-	  <maven:dependency groupId="javax.servlet" artifactId="com.springsource.javax.servlet.jsp" version="2.1.0" scope="runtime"/>
-	  <maven:dependency groupId="javax.servlet" artifactId="com.springsource.javax.servlet" version="2.5.0" scope="runtime"/>
-	  <maven:dependency groupId="javax.el" artifactId="com.springsource.javax.el" version="1.0.0" scope="runtime"/>
+
+      <maven:dependency groupId="javax.servlet" artifactId="com.springsource.javax.servlet.jsp" version="2.1.0" scope="runtime"/>
+      <maven:dependency groupId="javax.servlet" artifactId="com.springsource.javax.servlet" version="2.5.0" scope="runtime"/>
+      <maven:dependency groupId="javax.el" artifactId="com.springsource.javax.el" version="1.0.0" scope="runtime"/>
       <!--maven:dependency groupId="javax.media" artifactId="javax.media.jai.osgi" version="1.1.3" classifier="sources"  scope="runtime"/-->
-	  
+
       <maven:dependency groupId="javax.media" artifactId="javax.media.jai.osgi" version="1.1.3" scope="runtime"/>
       <maven:dependency groupId="javax.media" artifactId="javax.media.jai.osgi" version="1.1.3" classifier="sources"  scope="runtime"/>
       <maven:dependency groupId="javax.media.jai.osgi" artifactId="javax.media.jai.osgi.win32.x86" version="1.1.3" scope="runtime"/>
@@ -181,7 +182,7 @@
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" version="1.2.0"/>
       <maven:dependency groupId="org.picocontainer" artifactId="com.springsource.org.picocontainer" classifier="sources" version="1.2.0"/>
       <maven:dependency groupId="com.google.collect" artifactId="com.springsource.com.google.common.collect" version="0.8.0.20080820"/>
-      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>      
+      <maven:dependency groupId="com.lowagie.text" artifactId="com.springsource.com.lowagie.text" version="2.0.8"/>
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" version="1.12"/>
       <maven:dependency groupId="com.vividsolutions.osgi" artifactId="com.vividsolutions.osgi.jts" classifier="sources" version="1.12"/>
       <maven:dependency groupId="com.miglayout" artifactId="de.berlios.com.miglayout" version="3.7.2"/>
@@ -201,15 +202,19 @@
       <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-zonalstats" classifier="sources" version="1.2.0"/>
       <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-vectorbinarize" version="1.2.0"/>
       <maven:dependency groupId="org.jaitools.osgi" artifactId="org.jaitools.osgi.jt-vectorbinarize" classifier="sources" version="1.2.0"/>
-            
     </maven:dependencies>
 
-   <copy todir="${deps.dir}" verbose="false">
-     <fileset refid="platform.fileset" />
-     <mapper type="flatten" />
-   </copy>
+    <copy todir="${deps.dir}" verbose="false">
+      <fileset refid="platform.fileset" />
+      <mapper type="flatten" />
+    </copy>
 
-
+    <copy todir="${deps.dir}" verbose="false">
+      <fileset dir="${delta.pack}/plugins">
+        <include name="org.eclipse.equinox.launcher.gtk.linux.x86*/**/*.*"/>
+        <include name="org.eclipse.swt.gtk.linux.x86*.jar"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- compile uDig, invoking Eclipse in headless mode -->
@@ -222,8 +227,8 @@
       <arg value="-noupdate" />
       <arg value="-application" />
       <arg value="org.eclipse.ant.core.antRunner" />
-      <!--arg value="-debug" /--> 
-     
+      <!-- arg value="-debug" /-->
+
       <!-- the Ant build file to be run in an Eclipse context -->
       <arg value="-buildfile" />
       <arg value="${eclipse.home}/plugins/${eclipse.pde.build}/scripts/productBuild/productBuild.xml" />
@@ -234,7 +239,7 @@
 
   </target>
 
-  <target name="all" depends="clean, platform, compile"/>
+  <target name="all" depends="prepare, clean, platform, compile"/>
 
 </project>
 
