@@ -154,7 +154,7 @@
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.svggen" classifier="sources" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" version="1.7.0"/>
       <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.util" classifier="sources" version="1.7.0"/>
-      <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" version="1.7"/>
+      <maven:dependency groupId="org.apache.batik" artifactId="com.springsource.org.apache.batik.transcoder" version="1.7.0"/>
       <!--no sources <maven:dependency groupId="org.apache.batik.osgi" artifactId="org.apache.batik.osgi.transcoder" classifier="sources" version="1.6"/-->
       <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" version="1.0.0"/>
       <maven:dependency groupId="org.jdom" artifactId="com.springsource.org.jdom" classifier="sources" version="1.0.0"/>

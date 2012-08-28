@@ -194,7 +194,7 @@
          unpack="false"/>
          
    <plugin
-         id="org.apache.batik.osgi.transcoder"
+         id="com.springsource.org.apache.batik.transcoder"
          download-size="0"
          install-size="0"
          version="0.0.0"
