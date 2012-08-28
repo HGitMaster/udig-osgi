@@ -212,7 +212,9 @@
     <copy todir="${deps.dir}" verbose="false">
       <fileset dir="${delta.pack}/plugins">
         <include name="org.eclipse.equinox.launcher.gtk.linux.x86*/**/*.*"/>
+		<include name="org.eclipse.equinox.launcher.win32.win32.x86*/**/*.*"/>
         <include name="org.eclipse.swt.gtk.linux.x86*.jar"/>
+		<include name="org.eclipse.swt.gtk.win32.win32.x86*.jar"/>
       </fileset>
     </copy>
   </target>
